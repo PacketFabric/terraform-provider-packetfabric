@@ -55,15 +55,9 @@ Caveat: As of tfplugindocs 0.10.1, Nested schema elements are not properly disco
 Developing The Provider
 ---------------------
 
-Need some guidelines here.
+To work on the provider, you'll need [Go](http://www.golang.org) installed on your machine (version 1.11+ is *required*). You'll need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
 
-Example (this a copy of DOs provider docs..):
-
-### -START EXAMPLE -
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.11+ is *required*). You'll also need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
-
-To compile the provider, run `make build`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
+To compile, run `make build`. To compile and install, run `make install` . This will build (and install) the provider and put the provider binary in the `$GOPATH/bin` directory.
 
 ```sh
 $ make build
@@ -72,16 +66,15 @@ $ $GOPATH/bin/terraform-provider-packetfabric
 ...
 ```
 
-In order to test the provider, you can simply run `make test`.
+To test the provider, run `make test`.
 
 ```sh
 $ make test
 ```
 
-In order to check changes you made locally to the provider, you can use the binary you just compiled by adding the following
-to your `~/.terraformrc` file. This is valid for Terraform 0.14+. Please see
-[Terraform's documentation](https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers)
-for more details.
+To check changes you made locally to the provider, you can use the binary you compiled by adding the following
+to your `~/.terraformrc` file. This is valid for Terraform 0.14+. See
+[Terraform's documentation](https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers) for more details.
 
 ```
 provider_installation {
@@ -103,7 +96,6 @@ provider_installation {
 
 For information about writing acceptance tests, see the main Terraform [contributing guide](https://github.com/hashicorp/terraform/blob/master/.github/CONTRIBUTING.md#writing-acceptance-tests).
 
-### -END EXAMPLE-
 
 Releasing the Provider
 ----------------------
