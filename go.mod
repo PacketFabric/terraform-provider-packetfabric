@@ -1,6 +1,6 @@
 module github.com/PacketFabric/terraform-provider-packetfabric
 
-go 1.15
+go 1.18
 
 require (
 	github.com/google/uuid v1.1.2
