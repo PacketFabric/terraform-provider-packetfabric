@@ -36,7 +36,7 @@ func Provider() *schema.Provider {
 				Description: "Packet Fabric Cloud API endpoint. " +
 					"Example TF files input TF_VAR_pf_api_server shell environment variable. " +
 					"Defaults to https://api.packetfabric.com",
-				ValidateFunc: validation.StringIsNotEmpty,
+				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 			},
 			"token": {
 				Type:        schema.TypeString,
