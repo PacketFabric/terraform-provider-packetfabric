@@ -16,7 +16,7 @@ type CloudRouter struct {
 	Asn         int           `json:"asn"`
 	Name        string        `json:"name"`
 	AccountUUID string        `json:"account_uuid"`
-	Regions     []interface{} `json:"region"`
+	Regions     []interface{} `json:"regions"`
 	Capacity    string        `json:"capacity"`
 }
 
