@@ -124,8 +124,8 @@ type HostedAwsConnection struct {
 	Description  string `json:"description"`
 	Pop          string `json:"pop"`
 	Port         string `json:"port"`
-	Vlan         int64  `json:"vlan"`
-	SrcSvlan     int64  `json:"src_svlan"`
+	Vlan         int    `json:"vlan"`
+	SrcSvlan     int    `json:"src_svlan"`
 	Zone         string `json:"zone"`
 	Speed        string `json:"speed"`
 }

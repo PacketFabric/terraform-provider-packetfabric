@@ -99,8 +99,8 @@ func extractAwsHostedMktConn(d *schema.ResourceData) packetfabric.HostedAwsConne
 		Description:  d.Get("description").(string),
 		Pop:          d.Get("pop").(string),
 		Port:         d.Get("port").(string),
-		Vlan:         d.Get("vlan").(int64),
-		SrcSvlan:     d.Get("src_vlan").(int64),
+		Vlan:         d.Get("vlan").(int),
+		SrcSvlan:     d.Get("src_vlan").(int),
 		Zone:         d.Get("zone").(string),
 		Speed:        d.Get("speed").(string),
 	}
