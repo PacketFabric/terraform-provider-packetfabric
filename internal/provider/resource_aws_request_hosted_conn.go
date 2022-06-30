@@ -88,8 +88,8 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 		Description:  d.Get("description").(string),
 		Pop:          d.Get("pop").(string),
 		Port:         d.Get("port").(string),
-		Vlan:         d.Get("vlan").(int64),
-		SrcSvlan:     d.Get("src_svlan").(int64),
+		Vlan:         d.Get("vlan").(int),
+		SrcSvlan:     d.Get("src_svlan").(int),
 		Zone:         d.Get("zone").(string),
 		Speed:        d.Get("speed").(string),
 	}
