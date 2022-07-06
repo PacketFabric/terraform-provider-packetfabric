@@ -59,47 +59,47 @@ func Provider() *schema.Provider {
 				Sensitive:   true,
 			},
 		},
-		// cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
-		// aws_cloud_router_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
-		// cloud_router_bgp_session - https://docs.packetfabric.com/api/v2/redoc/#tag/BGP-Session-Settings
-		// cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_create
-		// cloud_services_aws_create_backbone_dedicated_cr - https://docs.packetfabric.com/api/v2/redoc/#operation/post_service_backbone
-		// cloud_services_aws_hosted_marketplace - https://docs.packetfabric.com/api/v2/redoc/#operation/post_aws_marketplace_cloud
-		// cloud_services_aws_hosted_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_hosted_connection_post
-		// cloud_services_aws_provision_requested_mkt_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/provision_marketplace_cloud
-		// cloud_services_aws_req_hosted_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_hosted_connection_post
-		// cloud_services_aws_dedicated - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
+		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
+		// packetfabric_aws_cloud_router_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
+		// packetfabric_cloud_router_bgp_session - https://docs.packetfabric.com/api/v2/redoc/#tag/BGP-Session-Settings
+		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_create
+		// packetfabric_cloud_services_aws_create_backbone_dedicated_cr - https://docs.packetfabric.com/api/v2/redoc/#operation/post_service_backbone
+		// packetfabric_cloud_services_aws_hosted_marketplace - https://docs.packetfabric.com/api/v2/redoc/#operation/post_aws_marketplace_cloud
+		// packetfabric_cloud_services_aws_hosted_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_hosted_connection_post
+		// packetfabric_cloud_services_aws_provision_requested_mkt_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/provision_marketplace_cloud
+		// packetfabric_cloud_services_aws_req_hosted_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_hosted_connection_post
+		// packetfabric_cloud_services_aws_dedicated - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
 		ResourcesMap: map[string]*schema.Resource{
-			"cloud_router":                                    resourceCloudRouter(),
-			"aws_cloud_router_connection":                     resourceRouterConnectionAws(),
-			"cloud_router_bgp_session":                        resourceBgpSession(),
-			"cloud_router_bgp_prefixes":                       resourceBgpPrefixes(),
-			"cloud_services_aws_create_backbone_dedicated_cr": resourceAwsBackbone(),
-			"cloud_services_aws_hosted_marketplace":           resourceAwsHostedMkt(),
-			"cloud_services_aws_hosted_connection":            resourceAwsHostedMktConn(),
-			"cloud_services_aws_provision_requested_mkt_conn": resourceAwsProvision(),
-			"cloud_services_aws_req_hosted_conn":              resourceAwsRequestHostConn(),
-			"cloud_services_aws_dedicated":                    resourceAwsReqDedicatedConn(),
-			"interface":                                       resourceInterfaces(),
+			"packetfabric_cloud_router":                                    resourceCloudRouter(),
+			"packetfabric_aws_cloud_router_connection":                     resourceRouterConnectionAws(),
+			"packetfabric_cloud_router_bgp_session":                        resourceBgpSession(),
+			"packetfabric_cloud_router_bgp_prefixes":                       resourceBgpPrefixes(),
+			"packetfabric_cloud_services_aws_create_backbone_dedicated_cr": resourceAwsBackbone(),
+			"packetfabric_cloud_services_aws_hosted_marketplace":           resourceAwsHostedMkt(),
+			"packetfabric_cloud_services_aws_hosted_connection":            resourceAwsHostedMktConn(),
+			"packetfabric_cloud_services_aws_provision_requested_mkt_conn": resourceAwsProvision(),
+			"packetfabric_cloud_services_aws_req_hosted_conn":              resourceAwsRequestHostConn(),
+			"packetfabric_cloud_services_aws_dedicated":                    resourceAwsReqDedicatedConn(),
+			"packetfabric_interface":                                       resourceInterfaces(),
 		},
-		// cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
-		// cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
-		// aws_cloud_router_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_connections
-		// cloud_router_bgp_session - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
-		// cloud_services_aws_connection_info - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connection
-		// cloud_services_aws_dedicated_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connections_dedicated_list
-		// billing - https://docs.packetfabric.com/api/v2/redoc/#operation/get_order
-		// locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
+		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
+		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
+		// packetfabric_aws_cloud_router_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_connections
+		// packetfabric_cloud_router_bgp_session - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
+		// packetfabric_cloud_services_aws_connection_info - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connection
+		// packetfabric_cloud_services_aws_dedicated_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connections_dedicated_list
+		// packetfabric_billing - https://docs.packetfabric.com/api/v2/redoc/#operation/get_order
+		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
-			"cloud_router":                           dataSourceCloudRouter(),
-			"cloud_router_bgp_prefixes":              dataSourceBgpPrefix(),
-			"aws_cloud_router_connection":            dataSourceCloudConnAws(),
-			"cloud_router_bgp_session":               dataSourceBgpSession(),
-			"cloud_services_aws_connection_info":     dataSourceCloudServicesConnInfoAWS(),
-			"cloud_services_aws_dedicated_conn":      datasourceAwsDedicatedConn(),
-			"aws_services_hosted_requested_mkt_conn": datasourceAwsProvisionRequested(),
-			"billing":                                dataSourceBilling(),
-			"locations":                              dataSourceLocations(),
+			"packetfabric_cloud_router":                           dataSourceCloudRouter(),
+			"packetfabric_cloud_router_bgp_prefixes":              dataSourceBgpPrefix(),
+			"packetfabric_aws_cloud_router_connection":            dataSourceCloudConnAws(),
+			"packetfabric_cloud_router_bgp_session":               dataSourceBgpSession(),
+			"packetfabric_cloud_services_aws_connection_info":     dataSourceCloudServicesConnInfoAWS(),
+			"packetfabric_cloud_services_aws_dedicated_conn":      datasourceAwsDedicatedConn(),
+			"packetfabric_aws_services_hosted_requested_mkt_conn": datasourceAwsProvisionRequested(),
+			"packetfabric_billing":                                dataSourceBilling(),
+			"packetfabric_locations":                              dataSourceLocations(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
