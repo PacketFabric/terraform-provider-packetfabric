@@ -12,7 +12,7 @@ run.sh
 log.txt
 terraform.tfstate
 terraform.tfstate.backup
-*main.tf
+#*main.tf
 .terraform.tfstate.lock.info
 # Test binary, built with `go test -c`
 *.test
@@ -26,3 +26,6 @@ terraform.tfstate.backup
 .terraform/
 /dist
 terraform.tfstate.d/
+
+# Secret
+secret*.tfvars
