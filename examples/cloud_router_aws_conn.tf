@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     packetfabric = {
-      source  = "PacketFabric/packetfabric/packetfabric"
+      source  = "packetfabric/packetfabric"
       version = "~> 0.0.1"
     }
   }
@@ -9,17 +9,17 @@ terraform {
 
 provider "packetfabric" {
   host = "https://api.packetfabric.com"
-  token = "api-ddae87ba-f88d-4d1f-8c84-8e6225bdcc42-0ce71a7b-4cf3-4c95-ac5e-d74a03448c51"
+  token = "api-ddae87ba-f88d-4d1f-8c84-xyz"
 }
 
 data "cloud_routers" "new" {
-  
+
 }
 
 resource "aws_cloud_router_connection" "new" {
   provider = packetfabric
-  account_uuid      = "6e5a143c-6ab6-4dfd-a064-462ccdfa9a8a"
-  aws_account_id    = "023456789102"
+  account_uuid      = "6e5a143c-6ab6-4dfd-a064-xxxx"
+  aws_account_id    = "xxxxx"
   maybe_nat         = false
   description       = "New AWS Cloud Router Connection"
   pop               = "DALI1"
