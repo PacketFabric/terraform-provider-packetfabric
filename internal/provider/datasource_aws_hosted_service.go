@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func datasourceAwsProvisionRequested() *schema.Resource {
+func datasourceProvisionRequested() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceAwsHostedServiceRead,
+		ReadContext: dataSourceHostedServiceRead,
 		Schema: map[string]*schema.Schema{
-			"aws_hosted_service_requests": {
+			"hosted_service_requests": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -171,7 +171,7 @@ func datasourceAwsProvisionRequested() *schema.Resource {
 	}
 }
 
-func dataSourceAwsHostedServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceHostedServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -179,14 +179,14 @@ func dataSourceAwsHostedServiceRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("aws_hosted_service_requests", flattenAwsHostedServiceRequests(&services)); err != nil {
+	if err := d.Set("hosted_service_requests", flattenHostedServiceRequests(&services)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
 	return diags
 }
 
-func flattenAwsHostedServiceRequests(services *[]packetfabric.AwsHostedMktResp) []interface{} {
+func flattenHostedServiceRequests(services *[]packetfabric.AwsHostedMktResp) []interface{} {
 	if services != nil {
 		flattens := make([]interface{}, len(*services), len(*services))
 		for i, service := range *services {
