@@ -430,6 +430,13 @@ data "aws_cloud_router_connection" "current" {
     aws_dx_connection_confirmation.confirmation_2,
   ]
 }
+locals {
+  aws_cloud_connections = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
+  helper_map = {for val in local.aws_cloud_connections:
+              val["pop"]=>val}
+  cc1 = local.helper_map["${var.pf_crc_pop1}"]
+  cc2 = local.helper_map["${var.pf_crc_pop2}"]
+}
 output "aws_cloud_router_connection" {
   value = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
 }
@@ -438,7 +445,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   connection_id  = data.aws_dx_connection.current_1.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  vlan           = "${flatten(data.aws_cloud_router_connection.current.aws_cloud_connections[*].cloud_settings[*].vlan_id_pf)[0]}"
+  vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
@@ -450,7 +457,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   connection_id  = data.aws_dx_connection.current_2.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_2.id
   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  vlan           = "${flatten(data.aws_cloud_router_connection.current.aws_cloud_connections[*].cloud_settings[*].vlan_id_pf)[1]}"
+  vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
