@@ -130,17 +130,6 @@ type HostedAwsConnection struct {
 	Speed        string `json:"speed"`
 }
 
-type HostedAwsConnectionResp struct {
-	CustomerUUID    string `json:"customer_uuid"`
-	UserUUID        string `json:"user_uuid"`
-	ServiceProvider string `json:"service_provider"`
-	PortType        string `json:"port_type"`
-	ServiceClass    string `json:"service_class"`
-	Description     string `json:"description"`
-	State           string `json:"state"`
-	Speed           string `json:"speed"`
-}
-
 type DedicatedAwsConn struct {
 	AwsRegion        string      `json:"aws_region"`
 	AccountUUID      string      `json:"account_uuid"`
@@ -267,8 +256,8 @@ func (c *PFClient) CreateAwsProvisionReq(conn ServiceAwsMktConn, vcRequestUUID s
 	return expectedResp, err
 }
 
-func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*HostedAwsConnectionResp, error) {
-	expectedResp := &HostedAwsConnectionResp{}
+func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*HostedConnectionResp, error) {
+	expectedResp := &HostedConnectionResp{}
 	_, err := c.sendRequest(hostedConnURI, postMethod, hostedConn, expectedResp)
 	if err != nil {
 		return nil, err
@@ -279,19 +268,6 @@ func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*HostedA
 func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*AwsDedicatedConnCreateResp, error) {
 	expectedResp := &AwsDedicatedConnCreateResp{}
 	_, err := c.sendRequest(dedicatedConnURI, postMethod, dedicatedConn, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	return expectedResp, err
-}
-
-func (c *PFClient) UpdateAwsServiceConn(description, cloudCID string) (*HostedAwsConnectionResp, error) {
-	formatedURI := fmt.Sprintf(updateCloudConnURI, cloudCID)
-	type UpdateServiceConn struct {
-		Description string `json:"description"`
-	}
-	expectedResp := &HostedAwsConnectionResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
 	if err != nil {
 		return nil, err
 	}

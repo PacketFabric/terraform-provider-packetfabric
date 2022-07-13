@@ -142,7 +142,7 @@ func resourceAwsServicesUpdate(ctx context.Context, d *schema.ResourceData, m in
 	if !ok {
 		return diag.Errorf("please provide a valid description for Cloud Service")
 	}
-	resp, err := c.UpdateAwsServiceConn(desc.(string), cloudCID.(string))
+	resp, err := c.UpdateServiceConn(desc.(string), cloudCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

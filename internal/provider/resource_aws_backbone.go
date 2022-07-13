@@ -138,7 +138,7 @@ func resourceAwsBackboneDelete(ctx context.Context, d *schema.ResourceData, m in
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if vcCircuitID, ok := d.GetOk("id"); ok {
-		resp, err := c.DeleteAwsBackbone(vcCircuitID.(string))
+		resp, err := c.DeleteBackbone(vcCircuitID.(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -167,20 +167,4 @@ func extractAwsBack(d *schema.ResourceData) packetfabric.AwsBackbone {
 		awsBack.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
 	return awsBack
-}
-
-func extractBandwidth(bw map[string]interface{}) packetfabric.AwsBackboneBandwidth {
-	bandwidth := packetfabric.AwsBackboneBandwidth{}
-	bandwidth.AccountUUID = bw["account_uuid"].(string)
-	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
-	bandwidth.Speed = bw["speed"].(string)
-	return bandwidth
-}
-
-func extractBackboneInterface(interf map[string]interface{}) packetfabric.AwsBackBoneInterface {
-	backboneInter := packetfabric.AwsBackBoneInterface{}
-	backboneInter.PortCircuitID = interf["port_circuit_id"].(string)
-	backboneInter.Vlan = interf["vlan"].(int)
-	backboneInter.Untagged = interf["untagged"].(bool)
-	return backboneInter
 }

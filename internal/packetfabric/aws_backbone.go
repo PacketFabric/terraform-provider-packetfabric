@@ -4,7 +4,6 @@ import "fmt"
 
 const awsBackbonURI = "/v2/services/backbone"
 const awsBackStatusURI = "/v2.1/services/%s/status"
-const awsBackDeleteURI = "/v2/services/%s"
 
 type AwsBackbone struct {
 	Description  string                 `json:"description"`
@@ -65,10 +64,6 @@ type AwsBackboneResp struct {
 	} `json:"interfaces"`
 }
 
-type AwsBackboneDeleteResp struct {
-	Message string `json:"message"`
-}
-
 func (c *PFClient) CreateAwsBackbone(awsBackbone AwsBackbone) (*AwsBackboneResp, error) {
 	awsBackboneResp := &AwsBackboneResp{}
 	_, err := c.sendRequest(awsBackbonURI, postMethod, awsBackbone, awsBackboneResp)
@@ -92,25 +87,6 @@ func (c *PFClient) GetAwsBackboneState(vcCircuitID string) (*ServiceState, error
 	expectedResp := &ServiceState{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
 	if err != nil {
-		return nil, err
-	}
-	return expectedResp, nil
-}
-
-func (c *PFClient) DeleteAwsBackbone(vcCircuitID string) (*AwsBackboneDeleteResp, error) {
-	formatedURI := fmt.Sprintf(awsBackDeleteURI, vcCircuitID)
-	expectedResp := &AwsBackboneDeleteResp{}
-	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	deleteOk := make(chan bool)
-	defer close(deleteOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetAwsBackboneState(vcCircuitID)
-	}
-	go c.CheckServiceStatus(deleteOk, err, fn)
-	if !<-deleteOk {
 		return nil, err
 	}
 	return expectedResp, nil
