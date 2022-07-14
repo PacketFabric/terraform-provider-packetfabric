@@ -43,6 +43,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
 - Don't have an AWS Account? [Get Started](https://aws.amazon.com/free/)
+    - Permissions required: VPC, EC2, Direct Connect
 
 ## Prerequisites
 
