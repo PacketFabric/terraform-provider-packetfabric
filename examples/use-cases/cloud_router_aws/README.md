@@ -9,8 +9,9 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Cloud Router Docs](https://docs.packetfabric.com/cr/)
-- [PacketFabric Terraform Registry](https://registry.terraform.io/providers/PacketFabric/packetfabric)
-- [AWS Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws)
+- [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
+- [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
+- [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 - [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
 - [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)
 
