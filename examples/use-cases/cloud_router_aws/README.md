@@ -16,7 +16,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 
 ## Terraform resources deployed
 
-- **aws_initial_setup**
+- **Resources**: (~ 25min)
     - resource **"aws_vpc"**: Create VPC in 2 AWS regions
     - resource **"aws_subnet"**: Create subnet in VPCs
     - resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
