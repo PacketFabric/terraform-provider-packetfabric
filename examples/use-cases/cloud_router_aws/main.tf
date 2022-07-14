@@ -330,6 +330,16 @@ resource "cloud_router" "cr" {
   regions      = var.pf_cr_regions
 }
 
+data "cloud_router" "current" {
+  provider = packetfabric
+  depends_on = [
+    cloud_router.cr
+  ]
+}
+output "cloud_router" {
+  value = data.cloud_router.current
+}
+
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "aws_cloud_router_connection" "crc_1" {
   provider       = packetfabric
@@ -362,15 +372,15 @@ resource "aws_cloud_router_connection" "crc_2" {
   ]
 }
 
-# Wait 30s for the connection to show up in AWS
+# Wait 60s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_30_seconds" {
+resource "time_sleep" "wait_60_seconds" {
   depends_on = [null_resource.previous]
-  create_duration = "30s"
+  create_duration = "60s"
 }
-# This resource will create (at least) 30 seconds after null_resource.previous
+# This resource will create (at least) 60 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_30_seconds]
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 # Retrieve the Direct Connect connection in AWS
@@ -435,9 +445,15 @@ data "aws_cloud_router_connection" "current" {
 locals {
   aws_cloud_connections = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
   helper_map = {for val in local.aws_cloud_connections:
-              val["pop"]=>val}
-  cc1 = local.helper_map["${var.pf_crc_pop1}"]
-  cc2 = local.helper_map["${var.pf_crc_pop2}"]
+              val["description"]=>val}
+  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
+  cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
+}
+output "cc1_vlan_id_pf" {
+    value = one(local.cc1.cloud_settings[*].vlan_id_pf)
+}
+output "cc2_vlan_id_pf" {
+    value = one(local.cc2.cloud_settings[*].vlan_id_pf)
 }
 output "aws_cloud_router_connection" {
   value = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
@@ -579,18 +595,6 @@ resource "cloud_router_bgp_prefixes" "crbp_2" {
     cloud_router_bgp_session.crbs_2
   ]
 }
-
-data "cloud_router" "current" {
-  provider = packetfabric
-  depends_on = [
-    cloud_router.cr
-  ]
-}
-
-output "cloud_router" {
-  value = data.cloud_router.current
-}
-
 
 # Private IPs of the demo Ubuntu instances
 output "ec2_private_ip_1" {

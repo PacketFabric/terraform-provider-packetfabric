@@ -127,7 +127,7 @@ variable "pf_cr_regions" {
 # PacketFabric Cloud-Router-Connections Parameter configuration:
 variable "pf_crc_pop1" {
   type    = string
-  default = "PDX2"
+  default = "PDX2" # PDX2/a LAX1/c SF06/a LON1/a
 }
 variable "pf_crc_zone1" {
   type    = string
@@ -135,7 +135,7 @@ variable "pf_crc_zone1" {
 }
 variable "pf_crc_pop2" {
   type    = string
-  default = "NYC1"
+  default = "NYC1" # NYC1/c WDC2/e
 }
 variable "pf_crc_zone2" {
   type    = string
