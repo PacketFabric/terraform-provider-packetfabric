@@ -119,6 +119,7 @@ resource "aws_route_table" "route_table_1" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw_1.id
   }
+  propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -131,6 +132,7 @@ resource "aws_route_table" "route_table_2" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw_2.id
   }
+  propagating_vgws = ["${aws_vpn_gateway.vpn_gw_2.id}"]
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -457,7 +459,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   connection_id  = data.aws_dx_connection.current_2.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_2.id
   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
+  vlan           = one(local.cc2.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
