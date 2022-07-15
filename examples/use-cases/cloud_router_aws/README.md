@@ -17,8 +17,6 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 
 ## Terraform resources deployed
 
-**Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
-
 - **Resources**:
     - resource **"aws_vpc"**: Create VPC in 2 AWS regions
     - resource **"aws_subnet"**: Create subnet in VPCs
@@ -40,6 +38,8 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
     - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
     - resource **"cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
     - resource **"cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
+
+**Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
 **Warning**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: PacketFabric pop ``LAX1`` is the closest to AWS region ``us-west-1`` in-use.
 
@@ -103,10 +103,6 @@ In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then upda
 4. Cleanup/Remove all in both PacketFabric and AWS.
 
 ```sh
-terraform state rm cloud_router_bgp_session.crbs_1
-terraform state rm cloud_router_bgp_session.crbs_2
-terraform state rm cloud_router_bgp_prefixes.crbp_1
-terraform state rm cloud_router_bgp_prefixes.crbp_2
 terraform destroy -var-file="secret.tfvars"
 ```
 **Note:** We are removing the Cloud Router BGP session and prefix resources from the terraform state as those will be deleted together with current Cloud Router Connection.
