@@ -108,7 +108,7 @@ resource "aws_internet_gateway" "gw_2" {
 
 # Virtual Private Gateway (creation + attachement to the VPC)
 resource "aws_vpn_gateway" "vpn_gw_1" {
-  vpc_id = aws_vpc.vpc_1.id
+  vpc_id          = aws_vpc.vpc_1.id
   amazon_side_asn = var.amazon_side_asn1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -118,8 +118,8 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   ]
 }
 resource "aws_vpn_gateway" "vpn_gw_2" {
-  provider = aws.region2
-  vpc_id = aws_vpc.vpc_2.id
+  provider        = aws.region2
+  vpc_id          = aws_vpc.vpc_2.id
   amazon_side_asn = var.amazon_side_asn2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -201,9 +201,9 @@ resource "aws_security_group" "ingress_all_1" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    from_port = -1
-    to_port = -1
-    protocol = "icmp"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   // Terraform removes the default rule
@@ -222,7 +222,7 @@ resource "aws_security_group" "ingress_all_1" {
 }
 resource "aws_security_group" "ingress_all_2" {
   provider = aws.region2
-  name   = "allow-icmp-ssh-http-locust-iperf-sg"
+  name     = "allow-icmp-ssh-http-locust-iperf-sg"
   vpc_id   = aws_vpc.vpc_2.id
   ingress {
     from_port   = 22
@@ -249,9 +249,9 @@ resource "aws_security_group" "ingress_all_2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    from_port = -1
-    to_port = -1
-    protocol = "icmp"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   // Terraform removes the default rule
@@ -422,15 +422,16 @@ resource "aws_cloud_router_connection" "crc_2" {
   ]
 }
 
-# Wait 60s for the connection to show up in AWS
+# From the AWS side: Accept the connection
+# Wait at least 30s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [null_resource.previous]
-  create_duration = "60s"
+resource "time_sleep" "wait_30_seconds" {
+  depends_on      = [null_resource.previous]
+  create_duration = "30s"
 }
-# This resource will create (at least) 60 seconds after null_resource.previous
+# This resource will create (at least) 30 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_30_seconds]
 }
 
 # Retrieve the Direct Connect connection in AWS
@@ -438,17 +439,25 @@ data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [
-    null_resource.next
+    null_resource.next,
+    aws_cloud_router_connection.crc_1
   ]
 }
 data "aws_dx_connection" "current_2" {
   provider = aws.region2
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   depends_on = [
-    null_resource.next
+    null_resource.next,
+    aws_cloud_router_connection.crc_2
   ]
 }
-# From the AWS side: Accept the connection
+output "aws_dx_connection_1" {
+  value = data.aws_dx_connection.current_1
+}
+output "aws_dx_connection_2" {
+  value = data.aws_dx_connection.current_2
+}
+
 resource "aws_dx_connection_confirmation" "confirmation_1" {
   provider      = aws
   connection_id = data.aws_dx_connection.current_1.id
@@ -494,17 +503,17 @@ data "aws_cloud_router_connection" "current" {
 }
 locals {
   aws_cloud_connections = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
-  helper_map = {for val in local.aws_cloud_connections:
-              val["description"]=>val}
+  helper_map = { for val in local.aws_cloud_connections :
+  val["description"] => val }
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
   cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
 }
-output "cc1_vlan_id_pf" {
-    value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-output "cc2_vlan_id_pf" {
-    value = one(local.cc2.cloud_settings[*].vlan_id_pf)
-}
+# output "cc1_vlan_id_pf" {
+#   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
+# }
+# output "cc2_vlan_id_pf" {
+#   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
+# }
 output "aws_cloud_router_connection" {
   value = data.aws_cloud_router_connection.current.aws_cloud_connections[*]
 }
@@ -537,7 +546,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
 
 # From the AWS side: Associate Virtual Private GW to Direct Connect GW
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
-  provider       = aws
+  provider              = aws
   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
   allowed_prefixes = [
@@ -551,11 +560,11 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
   ]
   timeouts {
     create = "1h"
-    delete = "2h"
+    delete = "1h"
   }
 }
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
-  provider       = aws.region2
+  provider              = aws.region2
   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_2.id
   associated_gateway_id = aws_vpn_gateway.vpn_gw_2.id
   allowed_prefixes = [
@@ -564,12 +573,12 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
   ]
   depends_on = [
     aws_dx_private_virtual_interface.direct_connect_vip_2,
-    aws_dx_gateway.direct_connect_gw_1,
+    aws_dx_gateway.direct_connect_gw_2,
     aws_vpn_gateway.vpn_gw_2
   ]
   timeouts {
     create = "1h"
-    delete = "2h"
+    delete = "1h"
   }
 }
 
@@ -582,7 +591,7 @@ resource "cloud_router_bgp_session" "crbs_1" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn1
   orlonger       = var.pf_crbs_orlonger
-  remote_address = aws_dx_private_virtual_interface.direct_connect_vip_1.amazon_address # AWS side
+  remote_address = aws_dx_private_virtual_interface.direct_connect_vip_1.amazon_address   # AWS side
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_1.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_1.bgp_auth_key
   depends_on = [
@@ -590,27 +599,27 @@ resource "cloud_router_bgp_session" "crbs_1" {
   ]
 }
 resource "cloud_router_bgp_prefixes" "crbp_1" {
-  provider = packetfabric
+  provider          = packetfabric
   bgp_settings_uuid = cloud_router_bgp_session.crbs_1.id
   prefixes {
     prefix = var.vpc_cidr1
-    type = "in"
-    order = 0
+    type   = "in"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr2
-    type = "in"
-    order = 0
+    type   = "in"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr1
-    type = "out"
-    order = 0
+    type   = "out"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr2
-    type = "out"
-    order = 0
+    type   = "out"
+    order  = 0
   }
   depends_on = [
     cloud_router_bgp_session.crbs_1
@@ -625,7 +634,7 @@ resource "cloud_router_bgp_session" "crbs_2" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn2
   orlonger       = var.pf_crbs_orlonger
-  remote_address = aws_dx_private_virtual_interface.direct_connect_vip_2.amazon_address # AWS side
+  remote_address = aws_dx_private_virtual_interface.direct_connect_vip_2.amazon_address   # AWS side
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_2.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_2.bgp_auth_key
   depends_on = [
@@ -633,27 +642,27 @@ resource "cloud_router_bgp_session" "crbs_2" {
   ]
 }
 resource "cloud_router_bgp_prefixes" "crbp_2" {
-  provider = packetfabric
+  provider          = packetfabric
   bgp_settings_uuid = cloud_router_bgp_session.crbs_2.id
   prefixes {
     prefix = var.vpc_cidr1
-    type = "in"
-    order = 0
+    type   = "in"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr2
-    type = "in"
-    order = 0
+    type   = "in"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr1
-    type = "out"
-    order = 0
+    type   = "out"
+    order  = 0
   }
   prefixes {
     prefix = var.vpc_cidr2
-    type = "out"
-    order = 0
+    type   = "out"
+    order  = 0
   }
   depends_on = [
     cloud_router_bgp_session.crbs_2
@@ -663,21 +672,21 @@ resource "cloud_router_bgp_prefixes" "crbp_2" {
 # Private IPs of the demo Ubuntu instances
 output "ec2_private_ip_1" {
   description = "Private ip address for EC2 instance for Region 1"
-  value = aws_instance.ec2_instance_1.private_ip
+  value       = aws_instance.ec2_instance_1.private_ip
 }
 
 output "ec2_private_ip_2" {
   description = "Private ip address for EC2 instance for Region 2"
-  value = aws_instance.ec2_instance_2.private_ip
+  value       = aws_instance.ec2_instance_2.private_ip
 }
 
 # Public IPs of the demo Ubuntu instances
 output "ec2_public_ip_1" {
   description = "Elastic ip address for EC2 instance for Region 1"
-  value = aws_eip.public_ip_1.public_ip
+  value       = aws_eip.public_ip_1.public_ip
 }
 
 output "ec2_public_ip_2" {
   description = "Elastic ip address for EC2 instance for Region 2"
-  value = aws_eip.public_ip_2.public_ip
+  value       = aws_eip.public_ip_2.public_ip
 }
