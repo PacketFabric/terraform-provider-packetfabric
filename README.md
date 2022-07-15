@@ -104,4 +104,4 @@ This provider is published using GitHub Actions triggered by tagging a branch us
 
 Once the branch is tagged the release is built and publish via the Terraform Registry.
 
-Provider release candidates will be based on main-branch and be committed on their own, dedicated, dev branch. The release branch will be qualifed and UAT then merged with main. A new Release branch will be created from main at the merge point. The Release branch will be tagged for publishing. This process allows us to support multiple versions of the provider simultaneously if desired.  
+Provider release candidates will be based on main-branch and be committed on their own, dedicated, dev branch. The release branch will be qualified and UAT then merged with main. A new Release branch will be created from main at the merge point. The Release branch will be tagged for publishing. This process allows us to support multiple versions of the provider simultaneously if desired.  

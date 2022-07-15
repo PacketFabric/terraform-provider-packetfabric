@@ -1,33 +1,34 @@
-## General VARs
 variable "tag_name" {
   default = "DEMO-PF"
 }
-
-# AWS VARs
 variable "amazon_side_asn1" { # used in BGP session
   type     = number
-  default  = 64512 # private
+  default  = 64512 # private (64512 to 65534)
   nullable = false
 }
 variable "amazon_side_asn2" { # used in BGP session
   type     = number
-  default  = 64513 # private
+  default  = 64513 # private (64512 to 65534)
   nullable = false
 }
+# Make sure you set the correct AWS region based on the PacketFabric pop selected
+# Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
+# Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. 
+# Example: PacketFabric pop LAX1 is the closest to AWS region us-west-1 in-use.
 variable "aws_region1" {
   type        = string
   description = "AWS region"
-  default     = "us-west-2"
+  default     = "us-west-1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
 }
 variable "aws_region2" {
   type        = string
   description = "AWS region"
-  default     = "us-east-1"
+  default     = "us-east-1" # aws_region2=us-east-1 when using pf_crc_pop2=NYC1
 }
 variable "aws_az1" {
   type        = string
   description = "AWS AZ"
-  default     = "us-west-2a"
+  default     = "us-west-1a"
 }
 variable "aws_az2" {
   type        = string
@@ -58,11 +59,12 @@ variable "public_subnet_cidr2" {
   description = "CIDR for the public subnet"
   default     = "10.2.1.0/24"
 }
+# Make sure you setup the correct AMI if you chance default AWS regions 1 and 2
 variable "ec2_ami1" {
-  default = "ami-0d70546e43a941d70" # Ubuntu 22.04 in aws_region1
+  default = "ami-085284d24fe829cd0" # Ubuntu 22.04 in aws_region1 (e.g. us-west-1)
 }
 variable "ec2_ami2" {
-  default = "ami-052efd3df9dad4825" # Ubuntu 22.04 in aws_region2
+  default = "ami-052efd3df9dad4825" # Ubuntu 22.04 in aws_region2 (e.g. us-east-1)
 }
 variable "ec2_instance_type" {
   default = "t2.micro" # Free tier
@@ -121,25 +123,29 @@ variable "pf_cr_capacity" {
 }
 variable "pf_cr_regions" {
   type    = list(string)
-  default = ["US"]
+  default = ["US"] #  ["UK"]
 }
 
 # PacketFabric Cloud-Router-Connections Parameter configuration:
+# Make sure you set the correct AWS region based on the PacketFabric pop selected
+# Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
+# Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. 
+# Example: PacketFabric pop LAX1 is the closest to AWS region us-west-1 in-use.
 variable "pf_crc_pop1" {
   type    = string
-  default = "PDX2" # PDX2/a LAX1/c SF06/a
+  default = "LAX1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "a"
+  default = "c" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
 }
 variable "pf_crc_pop2" {
   type    = string
-  default = "NYC1" # NYC1/c WDC2/e
+  default = "NYC1" # aws_region2=us-east-1 when using pf_crc_pop2=NYC1
 }
 variable "pf_crc_zone2" {
   type    = string
-  default = "c"
+  default = "c" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
 }
 variable "pf_crc_speed" {
   type    = string
