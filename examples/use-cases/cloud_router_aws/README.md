@@ -17,7 +17,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 
 ## Terraform resources deployed
 
-- **Resources**: (~ 25min)
+- **Resources**:
     - resource **"aws_vpc"**: Create VPC in 2 AWS regions
     - resource **"aws_subnet"**: Create subnet in VPCs
     - resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
@@ -38,6 +38,8 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
     - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
     - resource **"cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
     - resource **"cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
+
+**Note**: Virtual Gateway Assocociations with Direct Connect Gateways can take a while.
 
 ## Before You Begin
 

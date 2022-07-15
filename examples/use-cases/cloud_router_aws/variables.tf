@@ -1,6 +1,6 @@
 ## General VARs
 variable "tag_name" {
-  default = "DEMO"
+  default = "DEMO-PF"
 }
 
 # AWS VARs
@@ -121,13 +121,13 @@ variable "pf_cr_capacity" {
 }
 variable "pf_cr_regions" {
   type    = list(string)
-  default = ["US"] # US or Continental
+  default = ["US"]
 }
 
 # PacketFabric Cloud-Router-Connections Parameter configuration:
 variable "pf_crc_pop1" {
   type    = string
-  default = "PDX2" # PDX2/a LAX1/c SF06/a LON1/a
+  default = "PDX2" # PDX2/a LAX1/c SF06/a
 }
 variable "pf_crc_zone1" {
   type    = string
