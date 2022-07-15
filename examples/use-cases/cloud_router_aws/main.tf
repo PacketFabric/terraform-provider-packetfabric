@@ -68,6 +68,9 @@ resource "aws_subnet" "subnet_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_1
+  ]
 }
 resource "aws_subnet" "subnet_2" {
   provider          = aws.region2
@@ -77,6 +80,9 @@ resource "aws_subnet" "subnet_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_2
+  ]
 }
 
 # Define the internet gateways
@@ -85,6 +91,9 @@ resource "aws_internet_gateway" "gw_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_1
+  ]
 }
 resource "aws_internet_gateway" "gw_2" {
   provider = aws.region2
@@ -92,6 +101,9 @@ resource "aws_internet_gateway" "gw_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_2
+  ]
 }
 
 # Virtual Private Gateway (creation + attachement to the VPC)
@@ -101,6 +113,9 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_1
+  ]
 }
 resource "aws_vpn_gateway" "vpn_gw_2" {
   provider = aws.region2
@@ -109,6 +124,9 @@ resource "aws_vpn_gateway" "vpn_gw_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_2
+  ]
 }
 
 # Define the route tables
@@ -123,6 +141,9 @@ resource "aws_route_table" "route_table_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_1
+  ]
 }
 resource "aws_route_table" "route_table_2" {
   provider = aws.region2
@@ -136,6 +157,9 @@ resource "aws_route_table" "route_table_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_2
+  ]
 }
 
 # Assign the route table to the public subnet
@@ -192,6 +216,9 @@ resource "aws_security_group" "ingress_all_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_1
+  ]
 }
 resource "aws_security_group" "ingress_all_2" {
   provider = aws.region2
@@ -237,6 +264,9 @@ resource "aws_security_group" "ingress_all_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_vpc.vpc_2
+  ]
 }
 
 # Create NIC for the EC2 instances
@@ -246,6 +276,9 @@ resource "aws_network_interface" "nic1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_subnet.subnet_1
+  ]
 }
 resource "aws_network_interface" "nic2" {
   provider        = aws.region2
@@ -254,6 +287,9 @@ resource "aws_network_interface" "nic2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_subnet.subnet_2
+  ]
 }
 
 # Create the Key Pair
@@ -286,6 +322,10 @@ resource "aws_instance" "ec2_instance_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_network_interface.nic1,
+    aws_key_pair.ssh_key_1
+  ]
 }
 resource "aws_instance" "ec2_instance_2" {
   provider      = aws.region2
@@ -300,6 +340,10 @@ resource "aws_instance" "ec2_instance_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_network_interface.nic2,
+    aws_key_pair.ssh_key_2
+  ]
 }
 
 # Assign a public IP to both EC2 instances
@@ -309,6 +353,9 @@ resource "aws_eip" "public_ip_1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_instance.ec2_instance_1
+  ]
 }
 resource "aws_eip" "public_ip_2" {
   provider = aws.region2
@@ -317,6 +364,9 @@ resource "aws_eip" "public_ip_2" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    aws_instance.ec2_instance_2
+  ]
 }
 
 # From the PacketFabric side: Create a cloud router
@@ -467,7 +517,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.aws_cloud_router_connection.current
+    data.aws_cloud_router_connection.current,
+    aws_dx_gateway.direct_connect_gw_1
   ]
 }
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
@@ -479,7 +530,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.aws_cloud_router_connection.current
+    data.aws_cloud_router_connection.current,
+    aws_dx_gateway.direct_connect_gw_2
   ]
 }
 
@@ -493,8 +545,14 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
     var.vpc_cidr2
   ]
   depends_on = [
-    aws_dx_private_virtual_interface.direct_connect_vip_1
+    aws_dx_private_virtual_interface.direct_connect_vip_1,
+    aws_dx_gateway.direct_connect_gw_1,
+    aws_vpn_gateway.vpn_gw_1
   ]
+  timeouts {
+    create = "1h"
+    delete = "2h"
+  }
 }
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
   provider       = aws.region2
@@ -505,8 +563,14 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
     var.vpc_cidr2
   ]
   depends_on = [
-    aws_dx_private_virtual_interface.direct_connect_vip_2
+    aws_dx_private_virtual_interface.direct_connect_vip_2,
+    aws_dx_gateway.direct_connect_gw_1,
+    aws_vpn_gateway.vpn_gw_2
   ]
+  timeouts {
+    create = "1h"
+    delete = "2h"
+  }
 }
 
 # From the PacketFabric side: Configure BGP
