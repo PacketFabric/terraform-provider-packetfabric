@@ -103,6 +103,10 @@ In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then upda
 4. Cleanup/Remove all in both PacketFabric and AWS.
 
 ```sh
+terraform state rm cloud_router_bgp_session.crbs_1
+terraform state rm cloud_router_bgp_session.crbs_2
+terraform state rm cloud_router_bgp_prefixes.crbp_1
+terraform state rm cloud_router_bgp_prefixes.crbp_2
 terraform destroy -var-file="secret.tfvars"
 ```
 **Note:** We are removing the Cloud Router BGP session and prefix resources from the terraform state as those will be deleted together with current Cloud Router Connection.
