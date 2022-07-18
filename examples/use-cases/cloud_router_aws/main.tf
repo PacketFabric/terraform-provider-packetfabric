@@ -108,7 +108,6 @@ resource "aws_internet_gateway" "gw_2" {
 
 # Virtual Private Gateway (creation + attachement to the VPC)
 resource "aws_vpn_gateway" "vpn_gw_1" {
-  vpc_id          = aws_vpc.vpc_1.id
   amazon_side_asn = var.amazon_side_asn1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -117,15 +116,29 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
     aws_vpc.vpc_1
   ]
 }
+resource "aws_vpn_gateway_attachment" "vpn_attachment_1" {
+  vpc_id          = aws_vpc.vpc_1.id
+  vpn_gateway_id  = aws_vpn_gateway.vpn_gw_1.id
+  depends_on = [
+    aws_vpn_gateway.vpn_gw_1
+  ]
+}
 resource "aws_vpn_gateway" "vpn_gw_2" {
   provider        = aws.region2
-  vpc_id          = aws_vpc.vpc_2.id
   amazon_side_asn = var.amazon_side_asn2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_2
+  ]
+}
+resource "aws_vpn_gateway_attachment" "vpn_attachment_2" {
+  provider        = aws.region2
+  vpc_id          = aws_vpc.vpc_2.id
+  vpn_gateway_id  = aws_vpn_gateway.vpn_gw_2.id
+  depends_on = [
+    aws_vpn_gateway.vpn_gw_2
   ]
 }
 
@@ -559,8 +572,8 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
     aws_vpn_gateway.vpn_gw_1
   ]
   timeouts {
-    create = "1h"
-    delete = "1h"
+    create = "2h"
+    delete = "2h"
   }
 }
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
@@ -577,8 +590,8 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
     aws_vpn_gateway.vpn_gw_2
   ]
   timeouts {
-    create = "1h"
-    delete = "1h"
+    create = "2h"
+    delete = "2h"
   }
 }
 

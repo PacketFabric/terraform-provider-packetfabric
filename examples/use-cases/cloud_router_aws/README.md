@@ -41,7 +41,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
-**Warning**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: PacketFabric pop ``LAX1`` is the closest to AWS region ``us-west-1`` in-use.
+**Warning**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: AWS region ``us-west-1`` is the closest to PacketFabric pop ``LAX1``.
 
 ## Before You Begin
 
@@ -85,7 +85,7 @@ Apply the plan:
 terraform apply -var-file="secret.tfvars"
 ```
 
-**Note 1:** You can edit the ``variables.tf`` file and change some of the default variables (default AWS regions used are ``us-west-2`` and ``us-east-1``, PacketFabric pops ``PDX2`` and ``NYC1``).
+**Note 1:** You can edit the ``variables.tf`` file and change some of the default variables (default AWS regions used are ``us-west-1`` and ``us-east-1``, PacketFabric pops ``LAX1`` and ``NYC1``).
 
 **Note 2:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
 
