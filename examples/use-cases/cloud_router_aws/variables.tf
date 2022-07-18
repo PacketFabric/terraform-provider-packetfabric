@@ -14,7 +14,7 @@ variable "amazon_side_asn2" { # used in BGP session
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
 # Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. 
-# Example: PacketFabric pop LAX1 is the closest to AWS region us-west-1 in-use.
+# Example: AWS region us-west-1 is the closest to PacketFabric pop LAX1.
 variable "aws_region1" {
   type        = string
   description = "AWS region"
@@ -119,18 +119,18 @@ variable "pf_cr_scope" {
 }
 variable "pf_cr_capacity" {
   type    = string
-  default = "1Gbps" # 2Gbps
+  default = "1Gbps" # 100Mbps
 }
 variable "pf_cr_regions" {
   type    = list(string)
-  default = ["US"] #  ["UK"]
+  default = ["US"] # ["UK"] ["US", "UK"]
 }
 
 # PacketFabric Cloud-Router-Connections Parameter configuration:
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
 # Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. 
-# Example: PacketFabric pop LAX1 is the closest to AWS region us-west-1 in-use.
+# Example: AWS region us-west-1 is the closest to PacketFabric pop LAX1.
 variable "pf_crc_pop1" {
   type    = string
   default = "LAX1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
@@ -149,7 +149,7 @@ variable "pf_crc_zone2" {
 }
 variable "pf_crc_speed" {
   type    = string
-  default = "50Mbps" #  # 1Gbps  min for Transit Gateway
+  default = "100Mbps" # 50Mbps
 }
 variable "pf_crc_maybe_nat" {
   type    = bool
