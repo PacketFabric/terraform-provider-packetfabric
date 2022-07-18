@@ -31,7 +31,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
     - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
     - resource **"cloud_router"**: Create the Cloud Router in PacketFabric NaaS
     - resource **"aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
-    - resource **"time_sleep" "wait_30_seconds"**: Wait few seconds for the Connections to appear on AWS side
+    - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
     - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
     - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
     - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces

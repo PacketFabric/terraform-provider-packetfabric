@@ -45,6 +45,7 @@ resource "random_pet" "name" {}
 
 # Create the VPCs
 resource "aws_vpc" "vpc_1" {
+  provider             = aws
   cidr_block           = var.vpc_cidr1
   enable_dns_hostnames = true
   tags = {
@@ -62,9 +63,9 @@ resource "aws_vpc" "vpc_2" {
 
 # Define the public subnets
 resource "aws_subnet" "subnet_1" {
+  provider          = aws
   vpc_id            = aws_vpc.vpc_1.id
   cidr_block        = var.public_subnet_cidr1
-  availability_zone = var.aws_az1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -76,7 +77,6 @@ resource "aws_subnet" "subnet_2" {
   provider          = aws.region2
   vpc_id            = aws_vpc.vpc_2.id
   cidr_block        = var.public_subnet_cidr2
-  availability_zone = var.aws_az2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -87,7 +87,8 @@ resource "aws_subnet" "subnet_2" {
 
 # Define the internet gateways
 resource "aws_internet_gateway" "gw_1" {
-  vpc_id = aws_vpc.vpc_1.id
+  provider = aws
+  vpc_id   = aws_vpc.vpc_1.id
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -108,6 +109,7 @@ resource "aws_internet_gateway" "gw_2" {
 
 # Virtual Private Gateway (creation + attachement to the VPC)
 resource "aws_vpn_gateway" "vpn_gw_1" {
+  provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -117,8 +119,9 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   ]
 }
 resource "aws_vpn_gateway_attachment" "vpn_attachment_1" {
-  vpc_id          = aws_vpc.vpc_1.id
-  vpn_gateway_id  = aws_vpn_gateway.vpn_gw_1.id
+  provider       = aws
+  vpc_id         = aws_vpc.vpc_1.id
+  vpn_gateway_id = aws_vpn_gateway.vpn_gw_1.id
   depends_on = [
     aws_vpn_gateway.vpn_gw_1
   ]
@@ -134,9 +137,9 @@ resource "aws_vpn_gateway" "vpn_gw_2" {
   ]
 }
 resource "aws_vpn_gateway_attachment" "vpn_attachment_2" {
-  provider        = aws.region2
-  vpc_id          = aws_vpc.vpc_2.id
-  vpn_gateway_id  = aws_vpn_gateway.vpn_gw_2.id
+  provider       = aws.region2
+  vpc_id         = aws_vpc.vpc_2.id
+  vpn_gateway_id = aws_vpn_gateway.vpn_gw_2.id
   depends_on = [
     aws_vpn_gateway.vpn_gw_2
   ]
@@ -144,7 +147,8 @@ resource "aws_vpn_gateway_attachment" "vpn_attachment_2" {
 
 # Define the route tables
 resource "aws_route_table" "route_table_1" {
-  vpc_id = aws_vpc.vpc_1.id
+  provider = aws
+  vpc_id   = aws_vpc.vpc_1.id
   # internet gw
   route {
     cidr_block = "0.0.0.0/0"
@@ -177,6 +181,7 @@ resource "aws_route_table" "route_table_2" {
 
 # Assign the route table to the public subnet
 resource "aws_route_table_association" "route_association_1" {
+  provider       = aws
   subnet_id      = aws_subnet.subnet_1.id
   route_table_id = aws_route_table.route_table_1.id
 }
@@ -187,8 +192,9 @@ resource "aws_route_table_association" "route_association_2" {
 }
 
 resource "aws_security_group" "ingress_all_1" {
-  name   = "allow-icmp-ssh-http-locust-iperf-sg"
-  vpc_id = aws_vpc.vpc_1.id
+  provider = aws
+  name     = "allow-icmp-ssh-http-locust-iperf-sg"
+  vpc_id   = aws_vpc.vpc_1.id
   ingress {
     from_port   = 22
     to_port     = 22
@@ -284,6 +290,7 @@ resource "aws_security_group" "ingress_all_2" {
 
 # Create NIC for the EC2 instances
 resource "aws_network_interface" "nic1" {
+  provider        = aws
   subnet_id       = aws_subnet.subnet_1.id
   security_groups = ["${aws_security_group.ingress_all_1.id}"]
   tags = {
@@ -307,6 +314,7 @@ resource "aws_network_interface" "nic2" {
 
 # Create the Key Pair
 resource "aws_key_pair" "ssh_key_1" {
+  provider   = aws
   key_name   = "ssh_key-${random_pet.name.id}"
   public_key = var.public_key
   tags = {
@@ -324,6 +332,7 @@ resource "aws_key_pair" "ssh_key_2" {
 
 # Create the Ubuntu EC2 instances
 resource "aws_instance" "ec2_instance_1" {
+  provider      = aws
   ami           = var.ec2_ami1
   instance_type = var.ec2_instance_type
   network_interface {
@@ -361,6 +370,7 @@ resource "aws_instance" "ec2_instance_2" {
 
 # Assign a public IP to both EC2 instances
 resource "aws_eip" "public_ip_1" {
+  provider = aws
   instance = aws_instance.ec2_instance_1.id
   vpc      = true
   tags = {
@@ -418,6 +428,14 @@ resource "aws_cloud_router_connection" "crc_1" {
   depends_on = [
     cloud_router.cr
   ]
+  lifecycle {
+    ignore_changes = [
+      circuit_id,
+      description,
+      pop,
+      zone
+    ]
+  }
 }
 resource "aws_cloud_router_connection" "crc_2" {
   provider       = packetfabric
@@ -433,18 +451,26 @@ resource "aws_cloud_router_connection" "crc_2" {
   depends_on = [
     cloud_router.cr
   ]
+  lifecycle {
+    ignore_changes = [
+      circuit_id,
+      description,
+      pop,
+      zone
+    ]
+  }
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 30s for the connection to show up in AWS
+# Wait at least 60s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_30_seconds" {
+resource "time_sleep" "wait_60_seconds" {
   depends_on      = [null_resource.previous]
-  create_duration = "30s"
+  create_duration = "60s"
 }
-# This resource will create (at least) 30 seconds after null_resource.previous
+# This resource will create (at least) 60 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_30_seconds]
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 # Retrieve the Direct Connect connection in AWS

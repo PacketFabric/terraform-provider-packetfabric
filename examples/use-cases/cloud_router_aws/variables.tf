@@ -25,16 +25,6 @@ variable "aws_region2" {
   description = "AWS region"
   default     = "us-east-1" # aws_region2=us-east-1 when using pf_crc_pop2=NYC1
 }
-variable "aws_az1" {
-  type        = string
-  description = "AWS AZ"
-  default     = "us-west-1a"
-}
-variable "aws_az2" {
-  type        = string
-  description = "AWS AZ"
-  default     = "us-east-1a"
-}
 # VPC Variables
 variable "vpc_cidr1" { # used in PF BGP prefix
   type        = string
