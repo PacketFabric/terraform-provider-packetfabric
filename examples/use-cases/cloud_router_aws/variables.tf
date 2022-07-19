@@ -3,12 +3,12 @@ variable "tag_name" {
 }
 variable "amazon_side_asn1" { # used in BGP session
   type     = number
-  default  = 64512 # private (64512 to 65534)
+  default  = 64532 # private (64512 to 65534)
   nullable = false
 }
 variable "amazon_side_asn2" { # used in BGP session
   type     = number
-  default  = 64513 # private (64512 to 65534)
+  default  = 64533 # private (64512 to 65534)
   nullable = false
 }
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
@@ -100,7 +100,7 @@ variable "pf_provider_source" {
 # PacketFabric Cloud-Router Parameter configurations
 variable "pf_cr_asn" {
   type     = number
-  default  = 64515 # Private (64512 to 65534)
+  default  = 4556 # PacketFabric ASN
   nullable = false
 }
 variable "pf_cr_scope" {
