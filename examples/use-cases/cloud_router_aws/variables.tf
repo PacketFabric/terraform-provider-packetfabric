@@ -32,9 +32,9 @@ variable "vpc_cidr1" { # used in PF BGP prefix
   default     = "10.1.0.0/16"
 }
 # Subnet Variables
-variable "public_subnet_cidr1" {
+variable "subnet_cidr1" {
   type        = string
-  description = "CIDR for the public subnet"
+  description = "CIDR for the subnet"
   default     = "10.1.1.0/24"
 }
 # VPC Variables
@@ -44,9 +44,9 @@ variable "vpc_cidr2" { # used in PF BGP prefix
   default     = "10.2.0.0/16"
 }
 # Subnet Variables
-variable "public_subnet_cidr2" {
+variable "subnet_cidr2" {
   type        = string
-  description = "CIDR for the public subnet"
+  description = "CIDR for the subnet"
   default     = "10.2.1.0/24"
 }
 # Make sure you setup the correct AMI if you chance default AWS regions 1 and 2
