@@ -1,0 +1,48 @@
+--
+page_title: "packetfabric_cloud_services_azure_req_epress_dedicated_conn Resource - terraform-provider-packetfabric"
+subcategory: ""
+description: |-
+
+---
+
+# packetfabric_cloud_services_azure_req_epress_dedicated_conn (Resource)
+
+
+
+## Example Usage
+
+{{tffile "examples/resources/packetfabric_cloud_services_azure_req_epress_dedicated_conn/resource.tf"}}
+
+## Schema
+
+### Required
+
+- `account_uuid` (String) The UUID of the contact that will be billed.
+- `description` (String) The description of this connection.
+- `encapsulation` (String)
+- `pop` (String) The desired location of the new Azure dedicated connection.
+- `port_category` (String)
+- `service_class` (String) The service class for the given port, either lng haul or metro.
+- `speed` (String) The desired speed of the new connection.
+- `subscription_term` (Number) The billing term, in months, for this connection.
+
+### Optional
+
+- `loa` (String) A base64 encoded string of a PDF of a LOA.
+- `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
+- `zone` (String) The desired zone of the new connection.
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
