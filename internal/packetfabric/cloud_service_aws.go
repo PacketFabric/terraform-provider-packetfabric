@@ -45,29 +45,6 @@ type AwsHostedMktResp struct {
 	AllowUntaggedZ bool         `json:"allow_untagged_z,omitempty"`
 }
 
-type FromCustomer struct {
-	CustomerUUID      string `json:"customer_uuid,omitempty"`
-	Name              string `json:"name,omitempty"`
-	Market            string `json:"market,omitempty"`
-	MarketDescription string `json:"market_description,omitempty"`
-	ContactFirstName  string `json:"contact_first_name,omitempty"`
-	ContactLastName   string `json:"contact_last_name,omitempty"`
-	ContactEmail      string `json:"contact_email,omitempty"`
-	ContactPhone      string `json:"contact_phone,omitempty"`
-}
-type ToCustomer struct {
-	CustomerUUID      string `json:"customer_uuid,omitempty"`
-	Name              string `json:"name,omitempty"`
-	Market            string `json:"market,omitempty"`
-	MarketDescription string `json:"market_description,omitempty"`
-}
-type Bandwidth struct {
-	AccountUUID      string `json:"account_uuid,omitempty"`
-	LonghaulType     string `json:"longhaul_type,omitempty"`
-	SubscriptionTerm int    `json:"subscription_term,omitempty"`
-	Speed            string `json:"speed,omitempty"`
-}
-
 type ServiceAwsMktConn struct {
 	Provider    string           `json:"provider"`
 	Interface   ServiceAwsInterf `json:"interface"`

@@ -12,15 +12,15 @@ const _awsPortCircuitIDOne = "PF-AP-SAC1-1000"
 const _awsPortCircuitIDTwo = "PF-AP-LAS1-2000"
 
 func Test_CreateBackbone(t *testing.T) {
-	expectedPayload := AwsBackbone{}
-	expectedResp := AwsBackboneResp{}
+	expectedPayload := Backbone{}
+	expectedResp := BackboneResp{}
 	_ = json.Unmarshal(_buildCreateBackbonePayload(_awsBackboneDesc), &expectedPayload)
 	_ = json.Unmarshal(_buildCreateBackBoneResp(_awsBackboneDesc, _awsAccountID), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateBackbone, expectedPayload, expectedResp, _buildCreateBackBoneResp(_awsBackboneDesc, _awsAccountID), "aws-backbone-create", t)
 }
 
 func _callCreateBackbone(payload interface{}) (interface{}, error) {
-	return cTest.CreateAwsBackbone(payload.(AwsBackbone))
+	return cTest.CreateBackbone(payload.(Backbone))
 }
 
 func _buildCreateBackbonePayload(description string) []byte {
