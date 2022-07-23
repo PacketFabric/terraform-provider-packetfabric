@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/pontovinte/terraform-provider-packetfabric/internal/packetfabric"
 )
 
 func resourceGoogleHostedMktConn() *schema.Resource {
