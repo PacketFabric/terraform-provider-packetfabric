@@ -27,7 +27,7 @@ func resourceAzureProvision() *schema.Resource {
 
 func resourceAzureProvisionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceProvisionCreate(ctx, d, m, c.CreateMktProvisionReq)
+	return resourceProvisionCreate(ctx, d, m, c.CreateMktProvisionReq, azureProvider)
 }
 
 func resourceAzureProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

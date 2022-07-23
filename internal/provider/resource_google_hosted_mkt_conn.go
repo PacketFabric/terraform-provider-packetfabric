@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/pontovinte/terraform-provider-packetfabric/internal/packetfabric"
 )
 
-func resourceAzureHostedMktConn() *schema.Resource {
+func resourceGoogleHostedMktConn() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceCreateAzureHostedMkt,
-		ReadContext:   resourceAzureHostedMktRead,
-		UpdateContext: resourceAzureHostedMktUpdate,
-		DeleteContext: resourceDeleteAzureHostedMkt,
+		CreateContext: resourceGoogleHostedMktConnCreate,
+		ReadContext:   resourceGoogleHostedMktConnRead,
+		UpdateContext: resourceGoogleHostedMktConnUpdate,
+		DeleteContext: resourceGoogleHostedMktConnDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Update: schema.DefaultTimeout(10 * time.Minute),
@@ -31,37 +31,37 @@ func resourceAzureHostedMktConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The routing ID of the customer to whom this VC will be connected.\n\t\tExample: PF-1RI-OQ85",
+				Description:  "The routing ID of the customer to whom this VC will be connected.",
 			},
 			"market": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The market that the VC will be requested in.\n\t\tExample: ATL",
+				Description:  "The market that the VC will be requested in.",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The description of the AWS Marketplace Cloud connection.\n\t\tExample: My AWS Marketplace Cloud connection",
+				Description:  "The description of the Google Marketplace Cloud connection.",
 			},
-			"azure_service_key": {
+			"google_pairing_key": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Service Key provided by Microsoft Azure.",
+				Description:  "The Google pairing key to use for this connection.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
+				ValidateFunc: validation.IsUUID,
 				Description:  "The UUID of the contact that will be billed.",
 			},
-			"zone": {
+			"pop": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired zone of the new connection. Optional",
+				Default:      "The desired location for the new Google Hosted Connection.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -69,22 +69,16 @@ func resourceAzureHostedMktConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired speed of the new connection.\n\t\tEnum: [ \"50Mbps\", \"100Mbps\", \"200Mbps\", \"300Mbps\", \"400Mbps\", \"500Mbps\", \"1Gbps\", \"2Gbps\", \"5Gbps\", \"10Gbps\" ]",
 			},
-			"service_uuid": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "UUID of the marketplace service being requested.",
-			},
 		},
 	}
 }
 
-func resourceCreateAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGoogleHostedMktConnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	hostedAzure := extractAzureHostedMkt(d)
-	resp, err := c.CreateAzureHostedMktRequest(hostedAzure)
+	hostedGoogle := extractGoogleHostedMkt(d)
+	resp, err := c.CreateRequestHostedGoogleMktConn(hostedGoogle)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -92,17 +86,17 @@ func resourceCreateAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func resourceAzureHostedMktRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGoogleHostedMktConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
-func resourceAzureHostedMktUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGoogleHostedMktConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
-func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -117,31 +111,31 @@ func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func extractAzureHostedMkt(d *schema.ResourceData) packetfabric.AzureHostedMktReq {
-	hostedMkt := packetfabric.AzureHostedMktReq{}
+func extractGoogleHostedMkt(d *schema.ResourceData) packetfabric.GoogleMktCloudConn {
+	hostedGoogle := packetfabric.GoogleMktCloudConn{}
 	if routingID, ok := d.GetOk("routing_id"); ok {
-		hostedMkt.RoutingID = routingID.(string)
+		hostedGoogle.RoutingID = routingID.(string)
 	}
 	if market, ok := d.GetOk("market"); ok {
-		hostedMkt.Market = market.(string)
+		hostedGoogle.Market = market.(string)
 	}
 	if description, ok := d.GetOk("description"); ok {
-		hostedMkt.Description = description.(string)
+		hostedGoogle.Description = description.(string)
 	}
-	if serviceKey, ok := d.GetOk("azure_service_key"); ok {
-		hostedMkt.AzureServiceKey = serviceKey.(string)
+	if pairingKey, ok := d.GetOk("google_pairing_key"); ok {
+		hostedGoogle.GooglePairingKey = pairingKey.(string)
+	}
+	if vlanAttachment, ok := d.GetOk("google_vlan_attachment_name"); ok {
+		hostedGoogle.GoogleVlanAttachmentName = vlanAttachment.(string)
 	}
 	if accountUUID, ok := d.GetOk("account_uuid"); ok {
-		hostedMkt.AccountUUID = accountUUID.(string)
+		hostedGoogle.AccountUUID = accountUUID.(string)
 	}
-	if zone, ok := d.GetOk("pop"); ok {
-		hostedMkt.Zone = zone.(string)
+	if pop, ok := d.GetOk("pop"); ok {
+		hostedGoogle.Pop = pop.(string)
 	}
 	if speed, ok := d.GetOk("speed"); ok {
-		hostedMkt.Speed = speed.(string)
+		hostedGoogle.Speed = speed.(string)
 	}
-	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
-		hostedMkt.ServiceUUID = serviceUUID.(string)
-	}
-	return hostedMkt
+	return hostedGoogle
 }

@@ -23,7 +23,7 @@ func resourceAzureBackbone() *schema.Resource {
 
 func resourceAzureBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceBackboneCreate(ctx, d, m, c.CreateAzureBackbone)
+	return resourceBackboneCreate(ctx, d, m, c.CreateBackbone)
 }
 
 func resourceAzureBackboneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
