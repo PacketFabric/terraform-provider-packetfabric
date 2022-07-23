@@ -111,7 +111,7 @@ func resourceBackbone() map[string]*schema.Schema {
 	}
 }
 
-func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.AwsBackbone) (*packetfabric.AwsBackboneResp, error)) diag.Diagnostics {
+func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.Backbone) (*packetfabric.BackboneResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -154,7 +154,7 @@ func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if !ok {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
-			Summary:  "Aws Services Create",
+			Summary:  "Cloud Service Create",
 			Detail:   cloudCidNotFoundDetailsMsg,
 		})
 		return diags
@@ -190,8 +190,8 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return diag.Errorf("please provide a valid VC Circuit ID for deletion")
 }
 
-func extractBack(d *schema.ResourceData) packetfabric.AwsBackbone {
-	awsBack := packetfabric.AwsBackbone{
+func extractBack(d *schema.ResourceData) packetfabric.Backbone {
+	awsBack := packetfabric.Backbone{
 		Description: d.Get("description").(string),
 		Epl:         d.Get("epl").(bool),
 	}
@@ -207,18 +207,25 @@ func extractBack(d *schema.ResourceData) packetfabric.AwsBackbone {
 	return awsBack
 }
 
-func extractBandwidth(bw map[string]interface{}) packetfabric.AwsBackboneBandwidth {
-	bandwidth := packetfabric.AwsBackboneBandwidth{}
+func extractBandwidth(bw map[string]interface{}) packetfabric.BackboneBandwidth {
+	bandwidth := packetfabric.BackboneBandwidth{}
 	bandwidth.AccountUUID = bw["account_uuid"].(string)
 	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
 	bandwidth.Speed = bw["speed"].(string)
 	return bandwidth
 }
 
-func extractBackboneInterface(interf map[string]interface{}) packetfabric.AwsBackBoneInterface {
-	backboneInter := packetfabric.AwsBackBoneInterface{}
+func extractBackboneInterface(interf map[string]interface{}) packetfabric.BackBoneInterface {
+	backboneInter := packetfabric.BackBoneInterface{}
 	backboneInter.PortCircuitID = interf["port_circuit_id"].(string)
 	backboneInter.Vlan = interf["vlan"].(int)
 	backboneInter.Untagged = interf["untagged"].(bool)
 	return backboneInter
+}
+
+func speedOptions() []string {
+	return []string{
+		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
+		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
+		"5Gbps", "10Gbps"}
 }

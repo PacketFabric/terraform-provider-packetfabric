@@ -24,8 +24,8 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 		CreateContext: resourceAwsReqDedicatedConnCreate,
-		UpdateContext: resourceAwsServicesUpdate,
-		ReadContext:   resourceAwsServicesRead,
+		UpdateContext: resourceAwsReqDedicatedConnUpdate,
+		ReadContext:   resourceAwsReqDedicatedConnRead,
 		DeleteContext: resourceAwsServicesDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -125,51 +125,14 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func resourceAwsServicesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	cloudCID, ok := d.GetOk("id")
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Aws Services Create",
-			Detail:   cloudCidNotFoundDetailsMsg,
-		})
-		return diags
-	}
-	desc, ok := d.GetOk("description")
-	if !ok {
-		return diag.Errorf("please provide a valid description for Cloud Service")
-	}
-	resp, err := c.UpdateServiceConn(desc.(string), cloudCID.(string))
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	_ = d.Set("description", resp.Description)
-	return diags
+	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
-func resourceAwsServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAwsReqDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	dedicatedConns, err := c.GetCurrentCustomersDedicated()
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	for _, conn := range dedicatedConns {
-		if conn.CloudCircuitID == "" {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "Aws Services Read",
-				Detail:   cloudCidNotFoundDetailsMsg,
-			})
-		} else {
-			_ = d.Set("cloud_circuit_id", conn.CloudCircuitID)
-		}
-	}
-	return diags
+	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
 func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

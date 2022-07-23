@@ -8,27 +8,6 @@ const azureMktProvisionReqURI = "/v2/services/request/%s/provision/hosted"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
 const azureExpressRouteDedicatedURI = "/v2/services/cloud/dedicated/azure"
 
-// Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/post_service_backbone
-type AzureBackbone struct {
-	Description  string                    `json:"description,omitempty"`
-	Bandwidth    AzureBackboneBandwidth    `json:"bandwidth,omitempty"`
-	Interfaces   []AzureBackboneInterfaces `json:"interfaces,omitempty"`
-	RateLimitIn  int                       `json:"rate_limit_in,omitempty"`
-	RateLimitOut int                       `json:"rate_limit_out,omitempty"`
-	Epl          bool                      `json:"epl,omitempty"`
-}
-type AzureBackboneBandwidth struct {
-	AccountUUID      string `json:"account_uuid,omitempty"`
-	SubscriptionTerm int    `json:"subscription_term,omitempty"`
-	LonghaulType     string `json:"longhaul_type,omitempty"`
-	Speed            string `json:"speed,omitempty"`
-}
-type AzureBackboneInterfaces struct {
-	PortCircuitID string `json:"port_circuit_id,omitempty"`
-	Vlan          int    `json:"vlan,omitempty"`
-	Untagged      bool   `json:"untagged,omitempty"`
-}
-
 type AzureBackboneCreateResp struct {
 	VcCircuitID  string                      `json:"vc_circuit_id,omitempty"`
 	CustomerUUID string                      `json:"customer_uuid,omitempty"`
@@ -37,7 +16,7 @@ type AzureBackboneCreateResp struct {
 	ServiceClass string                      `json:"service_class,omitempty"`
 	Mode         string                      `json:"mode,omitempty"`
 	Connected    bool                        `json:"connected,omitempty"`
-	Bandwidth    AzureBackboneBandwidth      `json:"bandwidth,omitempty"`
+	Bandwidth    BackboneBandwidth           `json:"bandwidth,omitempty"`
 	Description  string                      `json:"description,omitempty"`
 	RateLimitIn  int                         `json:"rate_limit_in,omitempty"`
 	RateLimitOut int                         `json:"rate_limit_out,omitempty"`
@@ -217,15 +196,6 @@ type AzureExpressRouteDedicatedCreateResp struct {
 type AzureExpressSettings struct {
 	ZoneDest      string `json:"zone_dest,omitempty"`
 	Encapsulation string `json:"encapsulation,omitempty"`
-}
-
-func (c *PFClient) CreateAzureBackbone(azureBackbone AwsBackbone) (*AwsBackboneResp, error) {
-	azureBackboneResp := &AwsBackboneResp{}
-	_, err := c.sendRequest(azureBackboneURI, postMethod, azureBackbone, azureBackboneResp)
-	if err != nil {
-		return nil, err
-	}
-	return azureBackboneResp, nil
 }
 
 func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*AzureHostedMktReqResp, error) {

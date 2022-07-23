@@ -9,6 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const awsProvider = "aws"
+const azureProvider = "azure"
+const googleProvider = "google"
+
 func resourceProvision() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"id": {
@@ -38,7 +42,7 @@ func resourceProvision() map[string]*schema.Schema {
 	}
 }
 
-func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.ServiceAwsMktConn, string) (*packetfabric.MktConnProvisionResp, error)) diag.Diagnostics {
+func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.ServiceAwsMktConn, string) (*packetfabric.MktConnProvisionResp, error), provider string) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -46,7 +50,7 @@ func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m inte
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID")
 	}
-	awsProvision := extractProvision(d)
+	awsProvision := extractProvision(d, provider)
 	_, err := fn(awsProvision, requestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
@@ -66,9 +70,9 @@ func resourceProvisionDelete(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func extractProvision(d *schema.ResourceData) packetfabric.ServiceAwsMktConn {
+func extractProvision(d *schema.ResourceData, provider string) packetfabric.ServiceAwsMktConn {
 	return packetfabric.ServiceAwsMktConn{
-		Provider: "aws",
+		Provider: provider,
 		Interface: packetfabric.ServiceAwsInterf{
 			PortCircuitID: d.Get("port_circuit_id").(string),
 			Vlan:          d.Get("vlan").(int),

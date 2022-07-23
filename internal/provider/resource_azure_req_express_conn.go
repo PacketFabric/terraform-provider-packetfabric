@@ -97,10 +97,3 @@ func extractAzureExpressConn(d *schema.ResourceData) packetfabric.AzureExpressRo
 	}
 	return azureExpress
 }
-
-func speedOptions() []string {
-	return []string{
-		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
-		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
-		"5Gbps", "10Gbps"}
-}
