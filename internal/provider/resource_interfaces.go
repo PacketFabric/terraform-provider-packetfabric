@@ -151,6 +151,10 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	} else {
 		portCID = portCIDData.(string)
 	}
+	_, err := c.DisablePort(portCID)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	resp, err := c.DeletePort(portCID)
 	if err != nil {
 		return diag.FromErr(err)

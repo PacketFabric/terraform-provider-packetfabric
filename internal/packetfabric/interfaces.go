@@ -7,6 +7,8 @@ import (
 const portsURI = "/v2/ports"
 const portStatusURI = "/v2.1/ports/%s/status"
 const portByCIDURI = "/v2/ports/%s"
+const portEnableURI = "/v2/ports/%s/enable"
+const portDisableURI = "/v2/ports/%s/disable"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -108,7 +110,7 @@ type Links struct {
 	Location   string `json:"location,omitempty"`
 }
 
-type PortDeleteResp struct {
+type PortMessageResp struct {
 	Message string `json:"message"`
 }
 
@@ -125,6 +127,29 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	}
 	go c.CheckServiceStatus(createOk, err, fn)
 	if !<-createOk {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) EnablePort(portCID string) (*PortMessageResp, error) {
+	return c.changePortState(portCID, true)
+}
+
+func (c *PFClient) DisablePort(portCID string) (*PortMessageResp, error) {
+	return c.changePortState(portCID, false)
+}
+
+func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageResp, error) {
+	expectedResp := &PortMessageResp{}
+	var formatedURI string
+	if enable {
+		formatedURI = fmt.Sprintf(portEnableURI, portCID)
+	} else {
+		formatedURI = fmt.Sprintf(portDisableURI, portCID)
+	}
+	_, err := c.sendRequest(formatedURI, postMethod, nil, expectedResp)
+	if err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
@@ -177,9 +202,9 @@ func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*Inter
 	return expectedResp, nil
 }
 
-func (c *PFClient) DeletePort(portCID string) (*PortDeleteResp, error) {
+func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
-	expectedResp := &PortDeleteResp{}
+	expectedResp := &PortMessageResp{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
