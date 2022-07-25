@@ -80,6 +80,9 @@ func resourceInterfaces() *schema.Resource {
 				Description:  "Availability zone of the port",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
