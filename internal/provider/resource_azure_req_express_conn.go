@@ -11,6 +11,10 @@ import (
 
 func resourceAzureReqExpressConn() *schema.Resource {
 	return &schema.Resource{
+		CreateContext: resourceAzureReqExpressConnCreate,
+		ReadContext:   resourceAzureProvisionRead,
+		UpdateContext: resourceAzureProvisionUpdate,
+		DeleteContext: resourceAzureProvisionDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
