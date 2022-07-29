@@ -14,7 +14,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 		CreateContext: resourceGoogleReqHostConnCreate,
 		UpdateContext: resourceGoogeReqHostConnUpdate,
 		ReadContext:   resourceGoogleReqHostConnRead,
-		// DeleteContext: resourceServicesDelete,
+		DeleteContext: resourceGoogleReqHostConnDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -97,6 +97,11 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 func resourceGoogeReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+}
+
+func resourceGoogleReqHostConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceBackboneDelete(ctx, d, m, c.DeleteBackbone)
 }
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {

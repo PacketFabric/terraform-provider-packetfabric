@@ -61,7 +61,7 @@ func resourceGoogleHostedMktConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Default:      "The desired location for the new Google Hosted Connection.",
+				Description:  "The desired location for the new Google Hosted Connection.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
