@@ -18,9 +18,9 @@ func resourceAwsHostedMktConn() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceAwsHostedMktConnCreate,
-		ReadContext:   resourceAwsServicesRead,
-		UpdateContext: resourceAwsServicesUpdate,
-		DeleteContext: resourceAwsServicesDelete,
+		ReadContext:   resourceAwsHostedMktConnRead,
+		UpdateContext: resourceAwsHostedMktConnUpdate,
+		DeleteContext: resourceAwsHostedMktConnDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:        schema.TypeString,
@@ -90,6 +90,20 @@ func resourceAwsHostedMktConnCreate(ctx context.Context, d *schema.ResourceData,
 	}
 	d.SetId(resp.CustomerUUID)
 	return diags
+}
+
+func resourceAwsHostedMktConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+}
+
+func resourceAwsHostedMktConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+}
+
+func resourceAwsHostedMktConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceProvisionDelete(ctx, d, m)
 }
 
 func extractAwsHostedMktConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {

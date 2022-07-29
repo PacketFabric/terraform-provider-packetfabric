@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func datasourceAwsDedicatedConn() *schema.Resource {
+func datasourceDedicatedConn() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceAwsDedicatedConRead,
+		ReadContext: dataSourceDedicatedConRead,
 		Schema: map[string]*schema.Schema{
-			"aws_dedicated_connections": {
+			"dedicated_connections": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -159,7 +159,7 @@ func datasourceAwsDedicatedConn() *schema.Resource {
 }
 
 // https://docs.packetfabric.com/api/v2/redoc/#operation/get_connections_dedicated_list
-func dataSourceAwsDedicatedConRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceDedicatedConRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -167,7 +167,7 @@ func dataSourceAwsDedicatedConRead(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("aws_dedicated_connections", flattenAwsDedicatedConns(&sessions))
+	err = d.Set("dedicated_connections", flattenDedicatedConns(&sessions))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -175,7 +175,7 @@ func dataSourceAwsDedicatedConRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenAwsDedicatedConns(conns *[]packetfabric.AwsDedicatedConnResp) []interface{} {
+func flattenDedicatedConns(conns *[]packetfabric.AwsDedicatedConnResp) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {

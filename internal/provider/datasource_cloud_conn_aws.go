@@ -9,15 +9,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudConnAws() *schema.Resource {
+func dataSourceCloudConn() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCloudConnAwsRead,
+		ReadContext: dataSourceCloudConnRead,
 		Schema: map[string]*schema.Schema{
 			"circuit_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"aws_cloud_connections": {
+			"cloud_connections": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -208,7 +208,7 @@ func dataSourceCloudConnAws() *schema.Resource {
 	}
 }
 
-func dataSourceCloudConnAwsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -220,7 +220,7 @@ func dataSourceCloudConnAwsRead(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("aws_cloud_connections", flattenAwsCloudConn(&awsConns))
+	err = d.Set("cloud_connections", flattenCloudConn(&awsConns))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -228,7 +228,7 @@ func dataSourceCloudConnAwsRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenAwsCloudConn(conns *[]packetfabric.AwsConnectionReadResponse) []interface{} {
+func flattenCloudConn(conns *[]packetfabric.AwsConnectionReadResponse) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {

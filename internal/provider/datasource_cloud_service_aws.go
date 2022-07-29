@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudServicesConnInfoAWS() *schema.Resource {
+func dataSourceCloudServicesConnInfo() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCloudServicesAwsRead,
+		ReadContext: dataSourceCloudServicesRead,
 		Schema: map[string]*schema.Schema{
 			"cloud_circuit_id": {
 				Type:        schema.TypeString,
@@ -92,7 +92,7 @@ func dataSourceCloudServicesConnInfoAWS() *schema.Resource {
 }
 
 // https://docs.packetfabric.com/api/v2/redoc/#operation/get_connection
-func dataSourceCloudServicesAwsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

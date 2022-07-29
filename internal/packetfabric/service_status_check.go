@@ -50,7 +50,10 @@ func (c *PFClient) CheckServiceStatus(ch chan bool, err error, fn func() (*Servi
 			ch <- false
 		}
 		if state != nil {
-			if state.Status.LastWorkflow.Progress.Position ==
+			if state.Status.Current.State == "COMPLETE" {
+				ticker.Stop()
+				ch <- true
+			} else if state.Status.LastWorkflow.Progress.Position ==
 				state.Status.LastWorkflow.Progress.Steps && state.Status.LastWorkflow.IsFinal {
 				ticker.Stop()
 				ch <- true
