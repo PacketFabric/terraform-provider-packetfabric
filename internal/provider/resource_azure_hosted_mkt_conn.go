@@ -58,10 +58,9 @@ func resourceAzureHostedMktConn() *schema.Resource {
 				Description:  "The UUID of the contact that will be billed.",
 			},
 			"zone": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired zone of the new connection. Optional",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The desired zone of the new connection. Optional",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -70,10 +69,9 @@ func resourceAzureHostedMktConn() *schema.Resource {
 				Description:  "The desired speed of the new connection.\n\t\tEnum: [ \"50Mbps\", \"100Mbps\", \"200Mbps\", \"300Mbps\", \"400Mbps\", \"500Mbps\", \"1Gbps\", \"2Gbps\", \"5Gbps\", \"10Gbps\" ]",
 			},
 			"service_uuid": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "UUID of the marketplace service being requested.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "UUID of the marketplace service being requested.",
 			},
 		},
 	}
