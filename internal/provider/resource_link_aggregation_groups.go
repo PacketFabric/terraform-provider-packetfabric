@@ -49,6 +49,10 @@ func resourceLinkAggregationGroups() *schema.Resource {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "List of member port identifiers. All members must have the same speed and media.",
+				Elem: &schema.Schema{
+					Type:        schema.TypeString,
+					Description: "The member",
+				},
 			},
 		},
 		Importer: &schema.ResourceImporter{

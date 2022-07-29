@@ -44,7 +44,7 @@ func resourceAzureReqExpressConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The port to connect to Azure.",
 			},
-			"vlan_pivate": {
+			"vlan_private": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
