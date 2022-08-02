@@ -121,6 +121,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_services_azr_connection_info":     dataSourceCloudServicesConnInfo(),
 			"packetfabric_cloud_services_azr_dedicated_conn":      datasourceDedicatedConn(),
 			"packetfabric_azr_services_hosted_requested_mkt_conn": datasourceProvisionRequested(),
+			"packetfabric_activitylog":							   datasourceActivityLog(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
