@@ -12,11 +12,6 @@ variable "pf_api_server" {
   description = "PacketFabric API endpoint URL"
 }
 
-variable "pf_provider_source" {
-  type = string
-  default = packetfabric/packetfabric
-}
-
 variable "pf_account_uuid" {
   type = string
   default = "change me"
@@ -34,6 +29,7 @@ variable "pf_aws_account_id" {
 variable "pf_cr_asn" {
   type = number
   nullable = false
+  default = 65535
 }
 
 variable "pf_cr_scope" {
@@ -257,4 +253,21 @@ variable "pf_cs_interface_speed" {
 variable "pf_cs_interface_nni" {
   type = bool
   default = false
+}
+
+
+# PacketFabric Azure Parameters:
+variable "pf_azr_srvc_key" {
+  type = string
+  default = "61360d64-e3a3-4c89-bf5c-changeme"
+}
+variable "pf_azr_account_uuid" {
+  type = string
+  default = "08fa6556-013e-4548-ba35-changeme"
+}
+
+# PacketFabric GCP Parameters:
+variable "pf_gcp_pair_key" {
+  type = string
+  default = "7e51371e-72a3-40b5-b844-changeme/us-central1/2"
 }
