@@ -1,5 +1,5 @@
 variable "tag_name" {
-  default = "DEMO-PF"
+  default = "demo-pf-aws"
 }
 variable "amazon_side_asn1" { # used in BGP session
   type     = number
@@ -20,33 +20,39 @@ variable "aws_region1" {
   description = "AWS region"
   default     = "us-west-1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
 }
+variable "aws_region1_zone1" {
+  type        = string
+  description = "AWS Availability Zone"
+  default     = "us-west-1a"
+}
 variable "aws_region2" {
   type        = string
   description = "AWS region"
   default     = "us-east-1" # aws_region2=us-east-1 when using pf_crc_pop2=NYC1
 }
-# VPC Variables
+variable "aws_region2_zone1" {
+  type        = string
+  description = "AWS Availability Zone"
+  default     = "us-east-1a"
+}
 variable "vpc_cidr1" { # used in PF BGP prefix
   type        = string
   description = "CIDR for the VPC"
   default     = "10.1.0.0/16"
 }
-# Subnet Variables
-variable "public_subnet_cidr1" {
+variable "subnet_cidr1" {
   type        = string
-  description = "CIDR for the public subnet"
+  description = "CIDR for the subnet"
   default     = "10.1.1.0/24"
 }
-# VPC Variables
 variable "vpc_cidr2" { # used in PF BGP prefix
   type        = string
   description = "CIDR for the VPC"
   default     = "10.2.0.0/16"
 }
-# Subnet Variables
-variable "public_subnet_cidr2" {
+variable "subnet_cidr2" {
   type        = string
-  description = "CIDR for the public subnet"
+  description = "CIDR for the subnet"
   default     = "10.2.1.0/24"
 }
 # Make sure you setup the correct AMI if you chance default AWS regions 1 and 2
@@ -70,9 +76,6 @@ variable "aws_secret_key" {
   sensitive   = true
 }
 variable "public_key" {
-  sensitive = true
-}
-variable "public_key_location" {
   sensitive = true
 }
 
@@ -103,6 +106,7 @@ variable "pf_cr_asn" {
   default  = 4556 # PacketFabric ASN
   nullable = false
 }
+# Parameter deprecated
 variable "pf_cr_scope" {
   type    = string
   default = "private"
