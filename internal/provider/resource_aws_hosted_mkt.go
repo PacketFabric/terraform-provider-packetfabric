@@ -13,8 +13,8 @@ import (
 func resourceAwsHostedMkt() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCreateAwsHostedMkt,
-		UpdateContext: resourceAwsServicesUpdate,
-		ReadContext:   resourceAwsServicesRead,
+		UpdateContext: resourceUpdateAwsHostedMkt,
+		ReadContext:   resourceReadAwsHostedMkt,
 		DeleteContext: resourceDeleteAwsHostedMkt,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -83,6 +83,16 @@ func resourceCreateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	}
 	d.SetId(resp.VcRequestUUID)
 	return diags
+}
+
+func resourceReadAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+}
+
+func resourceUpdateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
 func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

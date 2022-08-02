@@ -80,6 +80,9 @@ func resourceInterfaces() *schema.Resource {
 				Description:  "Availability zone of the port",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -150,6 +153,10 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.Errorf("please provide a valid Port Circuit ID")
 	} else {
 		portCID = portCIDData.(string)
+	}
+	_, err := c.DisablePort(portCID)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	resp, err := c.DeletePort(portCID)
 	if err != nil {

@@ -11,8 +11,8 @@ import (
 func resourceAwsRequestHostConn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAwsReqHostConnCreate,
-		UpdateContext: resourceAwsServicesUpdate,
-		ReadContext:   resourceAwsServicesRead,
+		UpdateContext: resourceAwsReqHostConnUpdate,
+		ReadContext:   resourceAwsReqHostConnRead,
 		DeleteContext: resourceAwsServicesDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -79,6 +79,16 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 	d.SetId(resp.Description)
 	return diags
+}
+
+func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+}
+
+func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
 func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {

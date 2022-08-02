@@ -40,6 +40,7 @@ variable "vpc_cidr1" { # used in PF BGP prefix
   description = "CIDR for the VPC"
   default     = "10.1.0.0/16"
 }
+# Subnet Variables
 variable "subnet_cidr1" {
   type        = string
   description = "CIDR for the subnet"
@@ -50,6 +51,7 @@ variable "vpc_cidr2" { # used in PF BGP prefix
   description = "CIDR for the VPC"
   default     = "10.2.0.0/16"
 }
+# Subnet Variables
 variable "subnet_cidr2" {
   type        = string
   description = "CIDR for the subnet"

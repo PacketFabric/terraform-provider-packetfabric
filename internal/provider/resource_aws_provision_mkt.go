@@ -13,8 +13,8 @@ import (
 func resourceAwsProvision() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAwsProvisionCreate,
-		UpdateContext: resourceAwsServicesUpdate,
-		ReadContext:   resourceAwsServicesRead,
+		UpdateContext: resourceAwsProvisionUpdate,
+		ReadContext:   resourceAwsProvisionRead,
 		DeleteContext: resourceAwsProvisionDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -66,6 +66,16 @@ func resourceAwsProvisionCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 	d.SetId(uuid.New().String())
 	return diags
+}
+
+func resourceAwsProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+}
+
+func resourceAwsProvisionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
 func resourceAwsProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

@@ -7,6 +7,8 @@ import (
 const portsURI = "/v2/ports"
 const portStatusURI = "/v2.1/ports/%s/status"
 const portByCIDURI = "/v2/ports/%s"
+const portEnableURI = "/v2/ports/%s/enable"
+const portDisableURI = "/v2/ports/%s/disable"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -62,45 +64,45 @@ type InterfaceCreateResp struct {
 }
 
 type InterfaceReadResp struct {
-	Autoneg             bool        `json:"autoneg,omitempty"`
-	PortCircuitID       string      `json:"port_circuit_id,omitempty"`
-	State               string      `json:"state,omitempty"`
-	Pop                 string      `json:"pop,omitempty"`
-	Speed               string      `json:"speed,omitempty"`
-	Media               string      `json:"media,omitempty"`
-	Zone                string      `json:"zone,omitempty"`
-	Mtu                 int         `json:"mtu,omitempty"`
-	Description         string      `json:"description,omitempty"`
-	VcMode              interface{} `json:"vc_mode,omitempty"`
-	IsLag               bool        `json:"is_lag,omitempty"`
-	IsLagMember         bool        `json:"is_lag_member,omitempty"`
-	IsCloud             bool        `json:"is_cloud,omitempty"`
-	IsPtp               bool        `json:"is_ptp,omitempty"`
-	LagInterval         interface{} `json:"lag_interval,omitempty"`
-	MemberCount         int         `json:"member_count,omitempty"`
-	ParentLagCircuitID  interface{} `json:"parent_lag_circuit_id,omitempty"`
-	Disabled            bool        `json:"disabled,omitempty"`
-	Status              string      `json:"status,omitempty"`
-	TimeCreated         string      `json:"time_created,omitempty"`
-	TimeUpdated         string      `json:"time_updated,omitempty"`
-	IsCloudRouter       bool        `json:"is_cloud_router,omitempty"`
-	IsNatCapable        bool        `json:"is_nat_capable,omitempty"`
-	IsIpsecCapable      bool        `json:"is_ipsec_capable,omitempty"`
-	Provider            string      `json:"provider,omitempty"`
-	Region              string      `json:"region,omitempty"`
-	Market              string      `json:"market,omitempty"`
-	MarketDescription   string      `json:"market_description,omitempty"`
-	Site                string      `json:"site,omitempty"`
-	SiteCode            string      `json:"site_code,omitempty"`
-	OperationalStatus   string      `json:"operational_status,omitempty"`
-	AdminStatus         string      `json:"admin_status,omitempty"`
-	AccountUUID         string      `json:"account_uuid,omitempty"`
-	SubscriptionTerm    int         `json:"subscription_term,omitempty"`
-	IsNni               bool        `json:"is_nni,omitempty"`
-	CustomerName        string      `json:"customer_name,omitempty"`
-	CustomerUUID        string      `json:"customer_uuid,omitempty"`
-	MaxCloudRouterSpeed string      `json:"max_cloud_router_speed,omitempty"`
-	Links               Links       `json:"_links,omitempty"`
+	Autoneg             bool   `json:"autoneg,omitempty"`
+	PortCircuitID       string `json:"port_circuit_id,omitempty"`
+	State               string `json:"state,omitempty"`
+	Pop                 string `json:"pop,omitempty"`
+	Speed               string `json:"speed,omitempty"`
+	Media               string `json:"media,omitempty"`
+	Zone                string `json:"zone,omitempty"`
+	Mtu                 int    `json:"mtu,omitempty"`
+	Description         string `json:"description,omitempty"`
+	VcMode              string `json:"vc_mode,omitempty"`
+	IsLag               bool   `json:"is_lag,omitempty"`
+	IsLagMember         bool   `json:"is_lag_member,omitempty"`
+	IsCloud             bool   `json:"is_cloud,omitempty"`
+	IsPtp               bool   `json:"is_ptp,omitempty"`
+	LagInterval         string `json:"lag_interval,omitempty"`
+	MemberCount         int    `json:"member_count,omitempty"`
+	ParentLagCircuitID  string `json:"parent_lag_circuit_id,omitempty"`
+	Disabled            bool   `json:"disabled,omitempty"`
+	Status              string `json:"status,omitempty"`
+	TimeCreated         string `json:"time_created,omitempty"`
+	TimeUpdated         string `json:"time_updated,omitempty"`
+	IsCloudRouter       bool   `json:"is_cloud_router,omitempty"`
+	IsNatCapable        bool   `json:"is_nat_capable,omitempty"`
+	IsIpsecCapable      bool   `json:"is_ipsec_capable,omitempty"`
+	Provider            string `json:"provider,omitempty"`
+	Region              string `json:"region,omitempty"`
+	Market              string `json:"market,omitempty"`
+	MarketDescription   string `json:"market_description,omitempty"`
+	Site                string `json:"site,omitempty"`
+	SiteCode            string `json:"site_code,omitempty"`
+	OperationalStatus   string `json:"operational_status,omitempty"`
+	AdminStatus         string `json:"admin_status,omitempty"`
+	AccountUUID         string `json:"account_uuid,omitempty"`
+	SubscriptionTerm    int    `json:"subscription_term,omitempty"`
+	IsNni               bool   `json:"is_nni,omitempty"`
+	CustomerName        string `json:"customer_name,omitempty"`
+	CustomerUUID        string `json:"customer_uuid,omitempty"`
+	MaxCloudRouterSpeed string `json:"max_cloud_router_speed,omitempty"`
+	Links               Links  `json:"_links,omitempty"`
 }
 
 type Links struct {
@@ -108,7 +110,7 @@ type Links struct {
 	Location   string `json:"location,omitempty"`
 }
 
-type PortDeleteResp struct {
+type PortMessageResp struct {
 	Message string `json:"message"`
 }
 
@@ -125,6 +127,29 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	}
 	go c.CheckServiceStatus(createOk, err, fn)
 	if !<-createOk {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) EnablePort(portCID string) (*PortMessageResp, error) {
+	return c.changePortState(portCID, true)
+}
+
+func (c *PFClient) DisablePort(portCID string) (*PortMessageResp, error) {
+	return c.changePortState(portCID, false)
+}
+
+func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageResp, error) {
+	expectedResp := &PortMessageResp{}
+	var formatedURI string
+	if enable {
+		formatedURI = fmt.Sprintf(portEnableURI, portCID)
+	} else {
+		formatedURI = fmt.Sprintf(portDisableURI, portCID)
+	}
+	_, err := c.sendRequest(formatedURI, postMethod, nil, expectedResp)
+	if err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
@@ -177,9 +202,9 @@ func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*Inter
 	return expectedResp, nil
 }
 
-func (c *PFClient) DeletePort(portCID string) (*PortDeleteResp, error) {
+func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
-	expectedResp := &PortDeleteResp{}
+	expectedResp := &PortMessageResp{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
