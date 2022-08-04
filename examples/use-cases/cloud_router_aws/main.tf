@@ -372,9 +372,6 @@ resource "packetfabric_cloud_router" "cr" {
   account_uuid = var.pf_account_uuid
   capacity     = var.pf_cr_capacity
   regions      = var.pf_cr_regions
-  lifecycle {
-    ignore_changes = all
-  }
 }
 
 data "packetfabric_cloud_router" "current" {
@@ -399,9 +396,6 @@ resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   zone           = var.pf_crc_zone1
   is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
-  lifecycle {
-    ignore_changes = all
-  }
 }
 resource "packetfabric_aws_cloud_router_connection" "crc_2" {
   provider       = packetfabric
@@ -414,9 +408,6 @@ resource "packetfabric_aws_cloud_router_connection" "crc_2" {
   zone           = var.pf_crc_zone2
   is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
-  lifecycle {
-    ignore_changes = all
-  }
 }
 
 # From the AWS side: Accept the connection
