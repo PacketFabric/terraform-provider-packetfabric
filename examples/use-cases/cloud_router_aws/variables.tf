@@ -23,7 +23,7 @@ variable "aws_region1" {
 variable "aws_region1_zone1" {
   type        = string
   description = "AWS Availability Zone"
-  default     = "us-west-1a"
+  default     = "us-west-1b"
 }
 variable "aws_region2" {
   type        = string
