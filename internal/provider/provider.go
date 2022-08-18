@@ -119,6 +119,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_hosted_connection":              dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_azure_dedicated_connection":           datasourceDedicatedConn(),
 			"packetfabric_cs_azure_hosted_marketplace_connection":  datasourceProvisionRequested(),
+			"packetfabric_activitylog":                             datasourceActivityLog(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
