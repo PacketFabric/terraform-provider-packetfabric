@@ -4,7 +4,6 @@ import "fmt"
 
 const azureBackboneURI = "/v2/services/backbone"
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
-const azureMktProvisionReqURI = "/v2/services/request/%s/provision/hosted"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
 const azureExpressRouteDedicatedURI = "/v2/services/cloud/dedicated/azure"
 
@@ -205,17 +204,6 @@ func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*
 		return nil, err
 	}
 	return azureMktReqResp, nil
-}
-
-func (c *PFClient) CreateMktProvisionReq(azureMktProvision ServiceAwsMktConn, vcRequestUUID string) (*MktConnProvisionResp, error) {
-	azureMktProvisionResp := &MktConnProvisionResp{}
-	azureMktProvision.Provider = "azure"
-	formatedURI := fmt.Sprintf(azureMktProvisionReqURI, vcRequestUUID)
-	_, err := c.sendRequest(formatedURI, postMethod, azureMktProvision, azureMktProvisionResp)
-	if err != nil {
-		return nil, err
-	}
-	return azureMktProvisionResp, nil
 }
 
 func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*AzureExpressRouteCreateResp, error) {

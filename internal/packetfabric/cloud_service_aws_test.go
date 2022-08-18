@@ -72,7 +72,7 @@ func Test_callGetHostedCloudConnRequestsSent(t *testing.T) {
 }
 
 func Test_GetCurrentCustomersDedicated(t *testing.T) {
-	var expectedResp []AwsDedicatedConnResp
+	var expectedResp []DedicatedConnResp
 	_ = json.Unmarshal(_buildFakeGetCurrentCustomersDedicatedResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callGetCurrentCustomersDedicated, nil, expectedResp, _buildFakeGetCurrentCustomersDedicatedResp(), "test-get-current-customers-dedicated", t)
 }

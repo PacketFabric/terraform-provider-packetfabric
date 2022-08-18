@@ -155,7 +155,7 @@ type AwsDedicatedConnCreateResp struct {
 	TimeUpdated     string `json:"time_updated"`
 }
 
-type AwsDedicatedConnResp struct {
+type DedicatedConnResp struct {
 	UUID                    string                  `json:"uuid"`
 	CustomerUUID            string                  `json:"customer_uuid"`
 	UserUUID                string                  `json:"user_uuid"`
@@ -280,8 +280,8 @@ func (c *PFClient) GetHostedCloudConnRequestsSent() ([]AwsHostedMktResp, error) 
 	return expectedResp, nil
 }
 
-func (c *PFClient) GetCurrentCustomersDedicated() ([]AwsDedicatedConnResp, error) {
-	expectedResp := make([]AwsDedicatedConnResp, 0)
+func (c *PFClient) GetCurrentCustomersDedicated() ([]DedicatedConnResp, error) {
+	expectedResp := make([]DedicatedConnResp, 0)
 	_, err := c.sendRequest(cloudConnectionCurrentCustmersDedicatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err

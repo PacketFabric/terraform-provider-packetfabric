@@ -124,7 +124,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}, fn func() ([]packetfabric.AwsDedicatedConnResp, error)) diag.Diagnostics {
+func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}, fn func() ([]packetfabric.DedicatedConnResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

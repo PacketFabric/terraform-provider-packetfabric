@@ -51,6 +51,12 @@ func resourceGoogleHostedMktConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The Google pairing key to use for this connection.",
 			},
+			"google_vlan_attachment_name": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The Google Vlan attachment name.",
+			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
