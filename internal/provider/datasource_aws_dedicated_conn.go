@@ -175,7 +175,7 @@ func dataSourceDedicatedConRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenDedicatedConns(conns *[]packetfabric.AwsDedicatedConnResp) []interface{} {
+func flattenDedicatedConns(conns *[]packetfabric.DedicatedConnResp) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {
