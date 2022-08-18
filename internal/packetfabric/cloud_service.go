@@ -1,9 +1,15 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+)
 
 const backboneURI = "/v2/services/backbone"
-const backDeleteURI = "/v2/services/%s"
+const backDeleteURI = "/v2/services/cloud/%s"
+const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
 
 type Backbone struct {
 	Description  string              `json:"description"`
@@ -124,9 +130,26 @@ func (c *PFClient) UpdateServiceConn(description, cloudCID string) (*HostedConne
 	return expectedResp, err
 }
 
+func (c *PFClient) CreateMktProvisionReq(mktProvision ServiceAwsMktConn, vcRequestUUID, provider string) (*MktConnProvisionResp, error) {
+	mktProvisionResp := &MktConnProvisionResp{}
+	mktProvision.Provider = provider
+	formatedURI := fmt.Sprintf(mktProvisionReqURI, vcRequestUUID)
+	_, err := c.sendRequest(formatedURI, postMethod, mktProvision, mktProvisionResp)
+	if err != nil {
+		return nil, err
+	}
+	return mktProvisionResp, nil
+}
+
 func (c *PFClient) DeleteBackbone(vcCircuitID string) (*BackboneDeleteResp, error) {
-	formatedURI := fmt.Sprintf(backDeleteURI, vcCircuitID)
+	_, uuidParseErr := uuid.Parse(vcCircuitID)
+	tflog.Debug(c.Ctx, fmt.Sprintf("\n#### [CLOUD_SERVICE | DELETE BACKBONE] %s", uuidParseErr))
+	if uuidParseErr == nil {
+		currentDedicated, _ := c.GetCurrentCustomersDedicated()
+		vcCircuitID = currentDedicated[0].CloudCircuitID
+	}
 	expectedResp := &BackboneDeleteResp{}
+	formatedURI := fmt.Sprintf(backDeleteURI, vcCircuitID)
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err

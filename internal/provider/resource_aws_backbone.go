@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAwsBackbone() *schema.Resource {
+func resourceAwsVcBackbone() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAwsBackboneCreate,
 		UpdateContext: resourceAwsBackboneUpdate,

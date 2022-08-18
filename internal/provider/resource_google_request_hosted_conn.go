@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -26,7 +27,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "The UUID of the contact that will be billed.",
 			},
-			"googe_pairing_key": {
+			"google_pairing_key": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
@@ -47,7 +48,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			"port": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The port to connect to AWS.",
+				Description: "The port to connect to Google.",
 			},
 			"vlan": {
 				Type:        schema.TypeInt,
@@ -81,11 +82,11 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	reqConn := extractGoogleReqConn(d)
-	resp, err := c.CreateRequestHostedGoogleConn(reqConn)
+	_, err := c.CreateRequestHostedGoogleConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.Description)
+	d.SetId(uuid.New().String())
 	return diags
 }
 
