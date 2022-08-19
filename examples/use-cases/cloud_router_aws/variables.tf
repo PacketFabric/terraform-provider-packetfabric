@@ -1,6 +1,9 @@
+## General VARs
 variable "tag_name" {
   default = "demo-pf-aws"
 }
+
+## AWS VARs
 variable "amazon_side_asn1" { # used in BGP session
   type     = number
   default  = 64532 # private (64512 to 65534)
