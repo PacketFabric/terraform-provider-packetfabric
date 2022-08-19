@@ -18,6 +18,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 ## Terraform resources deployed
 
 - **Resources**:
+    - resource **"random_pet"**: Get a random pet name (use to name objects created)
     - resource **"aws_vpc"**: Create VPC in 2 AWS regions
     - resource **"aws_subnet"**: Create subnet in VPCs
     - resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
@@ -29,15 +30,15 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
     - resource **"aws_key_pair"**: Create SSH key Pair for future EC2 instances
     - resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
     - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
-    - resource **"cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-    - resource **"aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
+    - resource & data source **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
+    - resource & data source **"packetfabric_aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
     - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
-    - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
+    - resource & data source **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
     - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
     - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
     - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
-    - resource **"cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-    - resource **"cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
+    - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
+    - resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -100,16 +101,13 @@ terraform apply -var-file="secret.tfvars"
 
 In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then update the host with the correct IP (using `` <ec2_private_ip_2>`` from instance 2), set the number of users to ``500`` and spawn rate to ``50``.
 
+If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the ssh private key linked to the public key you specified in the ``secret.tfvars`` file.
+
 4. Cleanup/Remove all in both PacketFabric and AWS.
 
 ```sh
-terraform state rm cloud_router_bgp_session.crbs_1
-terraform state rm cloud_router_bgp_session.crbs_2
-terraform state rm cloud_router_bgp_prefixes.crbp_1
-terraform state rm cloud_router_bgp_prefixes.crbp_2
 terraform destroy -var-file="secret.tfvars"
 ```
-**Note:** We are removing the Cloud Router BGP session and prefix resources from the terraform state as those will be deleted together with current Cloud Router Connection.
 
 ## Screenshots
 
