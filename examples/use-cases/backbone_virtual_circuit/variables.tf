@@ -71,7 +71,7 @@ variable "pf_document_uuid2" {
 }
 variable "pf_interface_site1" {
   type    = string
-  default = "PN-PIT"  # use API /v2/locations to get site_code
+  default = "PN-PIT" # use API /v2/locations to get site_code
 }
 variable "pf_interface_site2" {
   type    = string

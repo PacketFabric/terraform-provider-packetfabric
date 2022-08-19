@@ -78,7 +78,7 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   account_uuid                = var.pf_account_uuid
   port                        = var.pf_port_circuit_id
   speed                       = var.pf_cs_speed
-  google_pairing_key           = google_compute_interconnect_attachment.interconnect_1.pairing_key
+  google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key
   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"
   pop                         = var.pf_cs_pop1
   vlan                        = var.pf_cs_vlan1

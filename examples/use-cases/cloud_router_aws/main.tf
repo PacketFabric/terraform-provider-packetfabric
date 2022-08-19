@@ -365,7 +365,7 @@ output "ec2_public_ip_2" {
 
 # From the PacketFabric side: Create a cloud router
 resource "packetfabric_cloud_router" "cr" {
-  provider = packetfabric
+  provider     = packetfabric
   scope        = var.pf_cr_scope # Parameter deprecated
   asn          = var.pf_cr_asn
   name         = "${var.tag_name}-${random_pet.name.id}"

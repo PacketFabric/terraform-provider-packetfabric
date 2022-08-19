@@ -98,15 +98,15 @@ resource "aws_route_table_association" "route_association_1" {
 
 # From the PacketFabric side: Create a GCP Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1" {
-  provider = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
-  account_uuid = var.pf_account_uuid
+  provider       = packetfabric
+  description    = "${var.tag_name}-${random_pet.name.id}"
+  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
-  port = var.pf_port_circuit_id
-  speed = var.pf_cs_speed
-  pop = var.pf_cs_pop1
-  vlan = var.pf_cs_vlan1
-  zone = var.pf_cs_zone1
+  port           = var.pf_port_circuit_id
+  speed          = var.pf_cs_speed
+  pop            = var.pf_cs_pop1
+  vlan           = var.pf_cs_vlan1
+  zone           = var.pf_cs_zone1
 }
 
 output "packetfabric_cs_aws_hosted_connection" {
@@ -155,7 +155,7 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 
 # From the AWS side: Create and attach a VIF
 data "packetfabric_cs_aws_hosted_connection" "current" {
-  provider   = packetfabric
+  provider         = packetfabric
   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1.id
 
   depends_on = [

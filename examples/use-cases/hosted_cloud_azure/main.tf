@@ -99,7 +99,7 @@ resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
 }
 
 output "packetfabric_cs_azure_hosted_connection" {
-  value = packetfabric_cs_azure_hosted_connection.pf_cs_conn1
+  value     = packetfabric_cs_azure_hosted_connection.pf_cs_conn1
   sensitive = true
 }
 
