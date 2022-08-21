@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 const backboneURI = "/v2/services/backbone"
 const backDeleteURI = "/v2/services/cloud/%s"
 const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
+const servicesURI = "/v2/services"
 
 type Backbone struct {
 	Description  string              `json:"description"`
@@ -108,6 +108,53 @@ type BackboneDeleteResp struct {
 	Message string `json:"message"`
 }
 
+type Services struct {
+	VcCircuitID         string             `json:"vc_circuit_id,omitempty"`
+	State               string             `json:"state,omitempty"`
+	ServiceType         string             `json:"service_type,omitempty"`
+	ServiceClass        string             `json:"service_class,omitempty"`
+	Mode                string             `json:"mode,omitempty"`
+	Connected           bool               `json:"connected,omitempty"`
+	Bandwidth           ServiceBandwidth   `json:"bandwidth,omitempty"`
+	Description         string             `json:"description,omitempty"`
+	TimeCreated         string             `json:"time_created,omitempty"`
+	TimeUpdated         string             `json:"time_updated,omitempty"`
+	AggregateCapacityID interface{}        `json:"aggregate_capacity_id,omitempty"`
+	AccountUUID         string             `json:"account_uuid,omitempty"`
+	RateLimitIn         int                `json:"rate_limit_in,omitempty"`
+	RateLimitOut        int                `json:"rate_limit_out,omitempty"`
+	CustomerUUID        string             `json:"customer_uuid,omitempty"`
+	Interfaces          []ServiceInterface `json:"interfaces,omitempty"`
+}
+type ServiceBandwidth struct {
+	AccountUUID      string `json:"account_uuid,omitempty"`
+	SubscriptionTerm int    `json:"subscription_term,omitempty"`
+	Speed            string `json:"speed,omitempty"`
+}
+type ServiceInterface struct {
+	TimeCreated        string `json:"time_created,omitempty"`
+	TimeUpdated        string `json:"time_updated,omitempty"`
+	PortCircuitID      string `json:"port_circuit_id,omitempty"`
+	Pop                string `json:"pop,omitempty"`
+	Site               string `json:"site,omitempty"`
+	SiteName           string `json:"site_name,omitempty"`
+	Speed              string `json:"speed,omitempty"`
+	Media              string `json:"media,omitempty"`
+	Zone               string `json:"zone,omitempty"`
+	Description        string `json:"description,omitempty"`
+	Vlan               int    `json:"vlan,omitempty"`
+	Untagged           bool   `json:"untagged,omitempty"`
+	Svlan              int    `json:"svlan,omitempty"`
+	ProvisioningStatus string `json:"provisioning_status,omitempty"`
+	AdminStatus        string `json:"admin_status,omitempty"`
+	OperationalStatus  string `json:"operational_status,omitempty"`
+	CustomerName       string `json:"customer_name,omitempty"`
+	CustomerUUID       string `json:"customer_uuid,omitempty"`
+	Region             string `json:"region,omitempty"`
+	IsCloud            bool   `json:"is_cloud,omitempty"`
+	IsPtp              bool   `json:"is_ptp,omitempty"`
+}
+
 func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 	backboneResp := &BackboneResp{}
 	_, err := c.sendRequest(backboneURI, postMethod, backbone, backboneResp)
@@ -141,12 +188,23 @@ func (c *PFClient) CreateMktProvisionReq(mktProvision ServiceAwsMktConn, vcReque
 	return mktProvisionResp, nil
 }
 
+func (c *PFClient) GetServices() ([]Services, error) {
+	services := make([]Services, 0)
+	_, err := c.sendRequest(servicesURI, getMethod, nil, &services)
+	if err != nil {
+		return nil, err
+	}
+	return services, nil
+}
+
 func (c *PFClient) DeleteBackbone(vcCircuitID string) (*BackboneDeleteResp, error) {
 	_, uuidParseErr := uuid.Parse(vcCircuitID)
-	tflog.Debug(c.Ctx, fmt.Sprintf("\n#### [CLOUD_SERVICE | DELETE BACKBONE] %s", uuidParseErr))
 	if uuidParseErr == nil {
-		currentDedicated, _ := c.GetCurrentCustomersDedicated()
-		vcCircuitID = currentDedicated[0].CloudCircuitID
+		currentServices, servicesErr := c.GetServices()
+		if servicesErr != nil {
+			return nil, servicesErr
+		}
+		vcCircuitID = currentServices[0].VcCircuitID
 	}
 	expectedResp := &BackboneDeleteResp{}
 	formatedURI := fmt.Sprintf(backDeleteURI, vcCircuitID)
