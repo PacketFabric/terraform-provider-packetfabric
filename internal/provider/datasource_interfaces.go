@@ -134,7 +134,7 @@ func interfacesSchema() map[string]*schema.Schema {
 						Description: "TRUE when Interface Port is Point to Point.",
 					},
 					"is_nni": {
-						Type:        schema.TypeString,
+						Type:        schema.TypeBool,
 						Computed:    true,
 						Description: "TRUE when Interface Port is NNI.",
 					},

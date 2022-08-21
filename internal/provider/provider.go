@@ -108,6 +108,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_aws_dedicated_connection_conn":        datasourceDedicatedConn(),
 			"packetfabric_cs_aws_hosted_marketplace_connection":    datasourceProvisionRequested(),
 			"packetfabric_billing":                                 dataSourceBilling(),
+			"packetfabric_interface":                               datasourceInterfaces(),
 			"packetfabric_locations":                               dataSourceLocations(),
 			"packetfabric_link_aggregation_group":                  datasourceLinkAggregationGroups(),
 			"packetfabric_outbound_cross_connect":                  dataSourceOutboundCrossConnect(),
