@@ -15,7 +15,7 @@ type AzureBackboneCreateResp struct {
 	ServiceClass string                      `json:"service_class,omitempty"`
 	Mode         string                      `json:"mode,omitempty"`
 	Connected    bool                        `json:"connected,omitempty"`
-	Bandwidth    BackboneBandwidth           `json:"bandwidth,omitempty"`
+	Bandwidth    Bandwidth                   `json:"bandwidth,omitempty"`
 	Description  string                      `json:"description,omitempty"`
 	RateLimitIn  int                         `json:"rate_limit_in,omitempty"`
 	RateLimitOut int                         `json:"rate_limit_out,omitempty"`
