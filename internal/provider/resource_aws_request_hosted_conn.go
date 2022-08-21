@@ -6,6 +6,7 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceAwsRequestHostConn() *schema.Resource {
@@ -20,34 +21,40 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Computed: true,
 			},
 			"aws_account_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The AWS account ID to connect with. Must be 12 characters long.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The AWS account ID to connect with. Must be 12 characters long.",
 			},
 			"account_uuid": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The UUID of the contact that will be billed.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.IsUUID,
+				Description:  "The UUID of the contact that will be billed.",
 			},
 			"description": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The description of this connection.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The description of this connection.",
 			},
 			"pop": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The desired location for the new AWS Hosted Connection.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The desired location for the new AWS Hosted Connection.",
 			},
 			"port": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The port to connect to AWS.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The port to connect to AWS.",
 			},
 			"vlan": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Valid VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
 				Type:        schema.TypeInt,
@@ -60,9 +67,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description: "The desired zone of the new connection.",
 			},
 			"speed": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The desired speed of the new connection.\n\t\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice(speedOptions(), true),
+				Description:  "The desired speed of the new connection.\n\t\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
 			},
 		},
 	}
@@ -92,15 +100,33 @@ func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
-	return packetfabric.HostedAwsConnection{
-		AwsAccountID: d.Get("aws_account_id").(string),
-		AccountUUID:  d.Get("account_uuid").(string),
-		Description:  d.Get("description").(string),
-		Pop:          d.Get("pop").(string),
-		Port:         d.Get("port").(string),
-		Vlan:         d.Get("vlan").(int),
-		SrcSvlan:     d.Get("src_svlan").(int),
-		Zone:         d.Get("zone").(string),
-		Speed:        d.Get("speed").(string),
+	hostedAwsConn := packetfabric.HostedAwsConnection{}
+	if awsAccountID, ok := d.GetOk("aws_account_id"); ok {
+		hostedAwsConn.AwsAccountID = awsAccountID.(string)
 	}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		hostedAwsConn.AccountUUID = accountUUID.(string)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		hostedAwsConn.Description = description.(string)
+	}
+	if pop, ok := d.GetOk("pop"); ok {
+		hostedAwsConn.Pop = pop.(string)
+	}
+	if port, ok := d.GetOk("port"); ok {
+		hostedAwsConn.Port = port.(string)
+	}
+	if vlan, ok := d.GetOk("vlan"); ok {
+		hostedAwsConn.Vlan = vlan.(int)
+	}
+	if srcSvlan, ok := d.GetOk("src_svlan"); ok {
+		hostedAwsConn.SrcSvlan = srcSvlan.(int)
+	}
+	if zone, ok := d.GetOk("zone"); ok {
+		hostedAwsConn.Zone = zone.(string)
+	}
+	if speed, ok := d.GetOk("speed"); ok {
+		hostedAwsConn.Speed = speed.(string)
+	}
+	return hostedAwsConn
 }
