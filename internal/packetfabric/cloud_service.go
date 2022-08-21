@@ -13,17 +13,11 @@ const servicesURI = "/v2/services"
 
 type Backbone struct {
 	Description  string              `json:"description"`
-	Bandwidth    BackboneBandwidth   `json:"bandwidth"`
+	Bandwidth    Bandwidth           `json:"bandwidth"`
 	Interfaces   []BackBoneInterface `json:"interfaces"`
 	RateLimitIn  int                 `json:"rate_limit_in"`
 	RateLimitOut int                 `json:"rate_limit_out"`
 	Epl          bool                `json:"epl"`
-}
-
-type BackboneBandwidth struct {
-	AccountUUID      string `json:"account_uuid"`
-	SubscriptionTerm int    `json:"subscription_term"`
-	Speed            string `json:"speed"`
 }
 
 type BackBoneInterface struct {
@@ -33,19 +27,19 @@ type BackBoneInterface struct {
 }
 
 type BackboneResp struct {
-	VcCircuitID  string            `json:"vc_circuit_id"`
-	CustomerUUID string            `json:"customer_uuid"`
-	State        string            `json:"state"`
-	ServiceType  string            `json:"service_type"`
-	ServiceClass string            `json:"service_class"`
-	Mode         string            `json:"mode"`
-	Connected    bool              `json:"connected"`
-	Bandwidth    BackboneBandwidth `json:"bandwidth"`
-	Description  string            `json:"description"`
-	RateLimitIn  int               `json:"rate_limit_in"`
-	RateLimitOut int               `json:"rate_limit_out"`
-	TimeCreated  string            `json:"time_created"`
-	TimeUpdated  string            `json:"time_updated"`
+	VcCircuitID  string    `json:"vc_circuit_id"`
+	CustomerUUID string    `json:"customer_uuid"`
+	State        string    `json:"state"`
+	ServiceType  string    `json:"service_type"`
+	ServiceClass string    `json:"service_class"`
+	Mode         string    `json:"mode"`
+	Connected    bool      `json:"connected"`
+	Bandwidth    Bandwidth `json:"bandwidth"`
+	Description  string    `json:"description"`
+	RateLimitIn  int       `json:"rate_limit_in"`
+	RateLimitOut int       `json:"rate_limit_out"`
+	TimeCreated  string    `json:"time_created"`
+	TimeUpdated  string    `json:"time_updated"`
 	Interfaces   []struct {
 		PortCircuitID      string `json:"port_circuit_id"`
 		Pop                string `json:"pop"`
