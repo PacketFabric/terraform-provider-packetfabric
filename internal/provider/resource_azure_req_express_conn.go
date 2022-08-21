@@ -57,10 +57,9 @@ func resourceAzureReqExpressConn() *schema.Resource {
 				Description:  "Microsoft Peering VLAN.",
 			},
 			"src_svlan": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(4, 4094),
-				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -89,15 +88,30 @@ func resourceAzureReqExpressConnCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func extractAzureExpressConn(d *schema.ResourceData) packetfabric.AzureExpressRoute {
-	azureExpress := packetfabric.AzureExpressRoute{
-		AzureServiceKey: d.Get("azure_service_key").(string),
-		AccountUUID:     d.Get("account_uuid").(string),
-		Description:     d.Get("description").(string),
-		Port:            d.Get("port").(string),
-		VlanPrivate:     d.Get("vlan_private").(int),
-		VlanMicrosoft:   d.Get("vlan_microsoft").(int),
-		SrcSvlan:        d.Get("src_svlan").(int),
-		Speed:           d.Get("speed").(string),
+	azureExpress := packetfabric.AzureExpressRoute{}
+	if azureServiceKey, ok := d.GetOk("azure_service_key"); ok {
+		azureExpress.AzureServiceKey = azureServiceKey.(string)
+	}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		azureExpress.AccountUUID = accountUUID.(string)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		azureExpress.Description = description.(string)
+	}
+	if port, ok := d.GetOk("port"); ok {
+		azureExpress.Port = port.(string)
+	}
+	if vlanPrivate, ok := d.GetOk("vlan_private"); ok {
+		azureExpress.VlanPrivate = vlanPrivate.(int)
+	}
+	if vlanMicrosoft, ok := d.GetOk("vlan_microsoft"); ok {
+		azureExpress.VlanMicrosoft = vlanMicrosoft.(int)
+	}
+	if srcSvlan, ok := d.GetOk("src_svlan"); ok {
+		azureExpress.SrcSvlan = srcSvlan.(int)
+	}
+	if speed, ok := d.GetOk("speed"); ok {
+		azureExpress.Speed = speed.(string)
 	}
 	return azureExpress
 }
