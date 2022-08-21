@@ -51,15 +51,15 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				Description: "The port to connect to Google.",
 			},
 			"vlan": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Valid VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(4, 4094),
-				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
@@ -106,15 +106,33 @@ func resourceGoogleReqHostConnDelete(ctx context.Context, d *schema.ResourceData
 }
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {
-	return packetfabric.GoogleReqHostedConn{
-		AccountUUID:              d.Get("account_uuid").(string),
-		GooglePairingKey:         d.Get("google_pairing_key").(string),
-		GoogleVlanAttachmentName: d.Get("google_vlan_attachment_name").(string),
-		Description:              d.Get("description").(string),
-		Pop:                      d.Get("pop").(string),
-		Port:                     d.Get("port").(string),
-		Vlan:                     d.Get("vlan").(int),
-		SrcSvlan:                 d.Get("src_svlan").(int),
-		Speed:                    d.Get("speed").(string),
+	googleHosted := packetfabric.GoogleReqHostedConn{}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		googleHosted.AccountUUID = accountUUID.(string)
 	}
+	if pairingKey, ok := d.GetOk("google_pairing_key"); ok {
+		googleHosted.GooglePairingKey = pairingKey.(string)
+	}
+	if vlanAttach, ok := d.GetOk("google_vlan_attachment_name"); ok {
+		googleHosted.GoogleVlanAttachmentName = vlanAttach.(string)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		googleHosted.Description = description.(string)
+	}
+	if pop, ok := d.GetOk("pop"); ok {
+		googleHosted.Pop = pop.(string)
+	}
+	if port, ok := d.GetOk("port"); ok {
+		googleHosted.Port = port.(string)
+	}
+	if vlan, ok := d.GetOk("vlan"); ok {
+		googleHosted.Vlan = vlan.(int)
+	}
+	if srcSvlan, ok := d.GetOk("src_svlan"); ok {
+		googleHosted.SrcSvlan = srcSvlan.(int)
+	}
+	if speed, ok := d.GetOk("speed"); ok {
+		googleHosted.Speed = speed.(string)
+	}
+	return googleHosted
 }
