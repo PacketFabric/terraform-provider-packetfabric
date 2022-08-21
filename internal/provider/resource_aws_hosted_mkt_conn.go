@@ -64,10 +64,9 @@ func resourceAwsHostedMktConn() *schema.Resource {
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(4, 4094),
-				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
