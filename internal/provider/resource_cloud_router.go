@@ -47,7 +47,7 @@ func resourceCloudRouter() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
+				ValidateFunc: validation.IsUUID,
 				Description:  "PacketFabric account UUID. The contact that will be billed.",
 			},
 			"regions": {
@@ -160,13 +160,26 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
-	router := packetfabric.CloudRouter{
-		Scope:       d.Get("scope").(string),
-		Asn:         d.Get("asn").(int),
-		Name:        d.Get("name").(string),
-		AccountUUID: d.Get("account_uuid").(string),
-		Capacity:    d.Get("capacity").(string),
-		Regions:     d.Get("regions").([]interface{}),
+	router := packetfabric.CloudRouter{Regions: make([]packetfabric.Region, 0)}
+	if scope, ok := d.GetOk("scope"); ok {
+		router.Scope = scope.(string)
+	}
+	if asn, ok := d.GetOk("asn"); ok {
+		router.Asn = asn.(int)
+	}
+	if name, ok := d.GetOk("name"); ok {
+		router.Name = name.(string)
+	}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		router.AccountUUID = accountUUID.(string)
+	}
+	if capacity, ok := d.GetOk("capacity"); ok {
+		router.Capacity = capacity.(string)
+	}
+	if regions, ok := d.GetOk("regions"); ok {
+		for _, region := range regions.([]interface{}) {
+			router.Regions = append(router.Regions, region.(packetfabric.Region))
+		}
 	}
 	return router
 }
