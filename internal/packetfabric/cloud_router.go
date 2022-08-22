@@ -42,9 +42,9 @@ type Region struct {
 }
 
 type CloudRouterUpdate struct {
-	Name     string        `json:"name"`
-	Regions  []interface{} `json:"regions"`
-	Capacity string        `json:"capacity"`
+	Name     string   `json:"name"`
+	Regions  []Region `json:"regions"`
+	Capacity string   `json:"capacity"`
 }
 
 // This struct represents a Cloud Router delete response
