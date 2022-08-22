@@ -124,7 +124,7 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	routerUpdate := packetfabric.CloudRouterUpdate{
 		Name:     d.Get("name").(string),
-		Regions:  d.Get("regions").([]interface{}),
+		Regions:  extractRegions(d),
 		Capacity: d.Get("capacity").(string),
 	}
 
@@ -176,10 +176,20 @@ func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	if capacity, ok := d.GetOk("capacity"); ok {
 		router.Capacity = capacity.(string)
 	}
-	if regions, ok := d.GetOk("regions"); ok {
-		for _, region := range regions.([]interface{}) {
-			router.Regions = append(router.Regions, region.(packetfabric.Region))
-		}
-	}
+	router.Regions = extractRegions(d)
 	return router
+}
+
+func extractRegions(d *schema.ResourceData) []packetfabric.Region {
+	if regions, ok := d.GetOk("regions"); ok {
+		regs := make([]packetfabric.Region, 0)
+		for _, reg := range regions.(*schema.Set).List() {
+			regs = append(regs, packetfabric.Region{
+				Name: reg.(map[string]interface{})["name"].(string),
+				Code: reg.(map[string]interface{})["code"].(string),
+			})
+		}
+		return regs
+	}
+	return make([]packetfabric.Region, 0)
 }
