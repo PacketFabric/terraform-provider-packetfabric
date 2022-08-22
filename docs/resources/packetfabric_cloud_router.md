@@ -59,14 +59,12 @@ output "packetfabric_cloud_router" {
 - `capacity` (String) The Cloud Router capacity.
 		Options: 100Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps, 20Gbps, 30Gbps, 40Gbps, 50Gbps, 60Gbps, 80Gbps, 100Gbps, >100Gbps
 - `name` (String) Cloud Router name.
-- `scope` (String) Whether the Cloud Router is private or public. Public Cloud Routers use ASN 4556.
-		Valid values: "private" , "public"
 
 ### Optional
 
 - `circuit_id` (String) The Cloud Router ID.
 - `regions` (List of String) List of PacketFabric Cloud Router regions.
-	Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US,UK"]`.
+	Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
