@@ -128,9 +128,16 @@ func resourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceDat
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	_, err := c.GetOutboundCrossConnect(d.Id())
+	crossConnID := d.Get("id").(string)
+	resp, err := c.GetOutboundCrossConnect(crossConnID)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("port", resp.Port)
+		_ = d.Set("site", resp.Site)
+		_ = d.Set("document_uuid", resp.DocumentUUID)
+		_ = d.Set("description", resp.Description)
 	}
 	return diags
 }
