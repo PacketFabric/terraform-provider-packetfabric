@@ -2,6 +2,7 @@ package packetfabric
 
 const serviceGoogleMktConnReqURI = "/v2/services/third-party/hosted/google"
 const serviceGoogleHostedConnURI = "/v2/services/cloud/hosted/google"
+const serviceGoogleDedicatedConnURI = "/v2/services/cloud/dedicated/google"
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/post_google_marketplace_cloud
 type GoogleMktCloudConn struct {
@@ -61,6 +62,20 @@ type GoogleReqDedicatedConn struct {
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
+type GoogleReqDedicatedConnCreateResp struct {
+	CustomerUUID    string `json:"customer_uuid,omitempty"`
+	UserUUID        string `json:"user_uuid,omitempty"`
+	ServiceProvider string `json:"service_provider,omitempty"`
+	PortType        string `json:"port_type,omitempty"`
+	ServiceClass    string `json:"service_class,omitempty"`
+	Description     string `json:"description,omitempty"`
+	State           string `json:"state,omitempty"`
+	Speed           string `json:"speed,omitempty"`
+	CloudCircuitID  string `json:"cloud_circuit_id,omitempty"`
+	TimeCreated     string `json:"time_created,omitempty"`
+	TimeUpdated     string `json:"time_updated,omitempty"`
+}
+
 func (c *PFClient) CreateRequestHostedGoogleMktConn(googleConn GoogleMktCloudConn) (*GoogleMktCloudConnCreateResp, error) {
 	expectedResp := &GoogleMktCloudConnCreateResp{}
 	_, err := c.sendRequest(serviceGoogleMktConnReqURI, postMethod, googleConn, expectedResp)
@@ -73,6 +88,15 @@ func (c *PFClient) CreateRequestHostedGoogleMktConn(googleConn GoogleMktCloudCon
 func (c *PFClient) CreateRequestHostedGoogleConn(googleConn GoogleReqHostedConn) (*HostedConnectionResp, error) {
 	expectedResp := &HostedConnectionResp{}
 	_, err := c.sendRequest(serviceGoogleHostedConnURI, postMethod, googleConn, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) CreateRequestDedicatedGoogleConn(googleConn GoogleReqDedicatedConn) (*GoogleReqDedicatedConnCreateResp, error) {
+	expectedResp := &GoogleReqDedicatedConnCreateResp{}
+	_, err := c.sendRequest(serviceGoogleDedicatedConnURI, postMethod, googleConn, expectedResp)
 	if err != nil {
 		return nil, err
 	}

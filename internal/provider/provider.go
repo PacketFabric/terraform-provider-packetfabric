@@ -86,6 +86,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_google_hosted_marketplace_connection": resourceGoogleHostedMktConn(),
 			"packetfabric_cs_google_provision_marketplace":         resourceGoogleProvision(),
 			"packetfabric_cs_google_hosted_connection":             resourceGoogleRequestHostConn(),
+			"packetfabric_cs_google_dedicated_connection":          resourceGoogleDedicatedConn(),
 			"packetfabric_cs_azure_hosted_marketplace_connection":  resourceAzureHostedMktConn(),
 			"packetfabric_cs_azure_provision_marketplace":          resourceAzureProvision(),
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
