@@ -3,11 +3,12 @@
 page_title: "PacketFabric Provider"
 subcategory: ""
 description: Terraform provider for PacketFabric Carrier-Class Cloud Connectivity (https://packetfabric.com/)
+  
 ---
 
 # PacketFabric Provider
 
-Terraform provider for [PacketFabric](https://packetfabric.com/).
+
 
 ## Example Usage
 

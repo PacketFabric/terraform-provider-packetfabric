@@ -76,7 +76,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_bgp_prefixes":               resourceBgpPrefixes(),
 			"packetfabric_backbone_virtual_circuit":                resourceAwsVcBackbone(),
 			"packetfabric_cs_aws_hosted_marketplace_connection":    resourceAwsHostedMkt(),
-			"packetfabric_cloud_services_aws_hosted_connection":    resourceAwsHostedMktConn(),
+			//"packetfabric_cloud_services_aws_hosted_connection":    resourceAwsHostedMktConn(),
 			"packetfabric_cs_aws_provision_marketplace":            resourceAwsProvision(),
 			"packetfabric_cs_aws_hosted_connection":                resourceAwsRequestHostConn(),
 			"packetfabric_cs_aws_dedicated_connection":             resourceAwsReqDedicatedConn(),

@@ -3,14 +3,14 @@
 page_title: "packetfabric_aws_cloud_router_connection Data Source - terraform-provider-packetfabric"
 subcategory: ""
 description: |-
-
+  
 ---
 
 # packetfabric_aws_cloud_router_connection (Data Source)
 
 
 
-## Data Example
+## Example Usage
 
 ```terraform
 [
@@ -56,68 +56,52 @@ description: |-
 
 ### Read-Only
 
-- `packetfabric_aws_cloud_connections` (List of Object) (see [below for nested schema](#nestedatt--packetfabric_aws_cloud_connections))
+- `cloud_connections` (List of Object) (see [below for nested schema](#nestedatt--cloud_connections))
 - `id` (String) The ID of this resource.
 
-<a id="nestedatt--packetfabric_aws_cloud_connections"></a>
-### Nested Schema for `packetfabric_aws_cloud_connections`
+<a id="nestedatt--cloud_connections"></a>
+### Nested Schema for `cloud_connections`
 
 Read-Only:
 
-- `account_uuid` (String) The UUID of the PacketFabric contact that will be billed.
-      Example: a2115890-ed02-4795-a6dd-c485bec12345
-- `bgp_state` (String) The status of the BGP session
-      Enum: established, configuring, fetching, etc.
-- `cloud_circuit_id` (String) The unique PF circuit ID for this connection.
-      Example: \"PF-AP-LAX1-1002\"
-- `cloud_provider` (Set of Object) (see [below for nested schema](#nestedobjatt--packetfabric_aws_cloud_connections--cloud_provider))
-- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
-      Example: dxcon-fgadaaa1
-- `cloud_router_circuit_id` (String) The circuit ID of the cloud router this connection is associated with.
-      Example: PF-L3-CUST-2001
-- `cloud_settings` (Set of Object) (see [below for nested schema](#nestedobjatt--packetfabric_aws_cloud_connections--cloud_settings))
-- `connection_type` (String) The type of the connection.
-      Enum: cloud_hosted, cloud_dedicated, ipsec, packetfabric
-- `customer_uuid` (String) The UUID for the customer this connection belongs to
-- `deleted` (Boolean) Whether or not the connection has been fully deleted.
-- `description` (String) The description of this connection.
-- `nat_capable` (Boolean) Indicates whether this connection supports NAT
-- `pending_delete` (Boolean) Whether or not the connection is currently deleting.
-- `pop` (String) Point of Presence for the cloud provider location
-      Example: LAX1
-- `port_circuit_id` (String) The circuit ID of the port to connect to the cloud router.
-      Example "PF-AE-1234"
+- `account_uuid` (String)
+- `bgp_state` (String)
+- `cloud_circuit_id` (String)
+- `cloud_provider` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_provider))
+- `cloud_provider_connection_id` (String)
+- `cloud_router_circuit_id` (String)
+- `cloud_settings` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_settings))
+- `connection_type` (String)
+- `customer_uuid` (String)
+- `deleted` (Boolean)
+- `description` (String)
+- `nat_capable` (Boolean)
+- `pending_delete` (Boolean)
+- `pop` (String)
+- `port_circuit_id` (String)
 - `port_type` (String)
-- `service_class` (String) The service class of the connection.
-      Enum: metro, longhaul
-- `service_provider` (String) The service provider of the connection.
-      Enum: aws, azure, packet, google, ibm, salesforce, webex
-- `service_type` (String) The type of connection, this will currently always be cr_connection.
-      Enum: cr_connection
-- `site` (String) Region short name
-      Example: us-west-1
-- `speed` (String) The speed of the connection.
-      Enum: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps
-- `state` (String) The state of the connection
-      Enum: Requested, Active, Inactive, PendingDelete
-- `time_created` (String) Date and time of connection creation
-- `time_updated` (String) Date and time connection was last updated
-- `user_uuid` (String) The UUID for the user this connection belongs to
-- `uuid` (String) The UUID of the connection.
+- `service_class` (String)
+- `service_provider` (String)
+- `service_type` (String)
+- `site` (String)
+- `speed` (String)
+- `state` (String)
+- `time_created` (String)
+- `time_updated` (String)
+- `user_uuid` (String)
+- `uuid` (String)
 
-<a id="nestedobjatt--packetfabric_aws_cloud_connections--cloud_provider"></a>
-### Nested Schema for `packetfabric_aws_cloud_connections.cloud_provider`
+<a id="nestedobjatt--cloud_connections--cloud_provider"></a>
+### Nested Schema for `cloud_connections.cloud_provider`
 
 Read-Only:
 
-- `pop` (String) Point of Presence for the cloud provider location
-      Example: LAX1
-- `site` (String) Region short name
-      Example: us-west-1
+- `pop` (String)
+- `site` (String)
 
 
-<a id="nestedobjatt--packetfabric_aws_cloud_connections--cloud_settings"></a>
-### Nested Schema for `packetfabric_aws_cloud_connections.cloud_settings`
+<a id="nestedobjatt--cloud_connections--cloud_settings"></a>
+### Nested Schema for `cloud_connections.cloud_settings`
 
 Read-Only:
 
@@ -129,3 +113,5 @@ Read-Only:
 - `public_ip` (String)
 - `vlan_id_cust` (Number)
 - `vlan_id_pf` (Number)
+
+

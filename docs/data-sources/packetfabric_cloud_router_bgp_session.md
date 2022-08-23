@@ -3,14 +3,14 @@
 page_title: "packetfabric_cloud_router_bgp_session Data Source - terraform-provider-packetfabric"
 subcategory: ""
 description: |-
-
+  
 ---
 
 # packetfabric_cloud_router_bgp_session (Data Source)
 
 
 
-## Data Example
+## Example Usage
 
 ```terraform
 {
@@ -37,18 +37,19 @@ description: |-
 }
 ```
 
+
 ## Schema
 
 ### Optional
 
-- `bgp_sessions` (Block List) (see [below for nested schema](#nestedblock--packetfabric_bgp_sessions))
+- `bgp_sessions` (Block List) (see [below for nested schema](#nestedblock--bgp_sessions))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--packetfabric_bgp_sessions"></a>
-### Nested Schema for `packetfabric_bgp_sessions`
+<a id="nestedblock--bgp_sessions"></a>
+### Nested Schema for `bgp_sessions`
 
 Optional:
 
@@ -73,3 +74,5 @@ Optional:
 - `remote_asn` (Number) The cloud-side ASN of the instance.
 - `time_created` (String) Time the instance was created.
 - `time_updated` (String) Time the instance was last updated.
+
+
