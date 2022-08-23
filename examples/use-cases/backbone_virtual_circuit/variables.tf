@@ -19,34 +19,30 @@ variable "pf_api_server" {
 }
 
 # PacketFabric Interface Parameter configuration
-variable "pf_interface_media" {
+variable "pf_interface_pop1" {
   type    = string
-  default = "LX"
+  default = "PDX1"
 }
 variable "pf_interface_avzone1" {
   type    = string
   default = "A"
 }
-variable "pf_interface_avzone2" {
-  type    = string
-  default = "E"
-}
-variable "pf_interface_pop1" {
-  type    = string
-  default = "PDX1"
-}
 variable "pf_interface_pop2" {
   type    = string
-  default = "WDC1"
+  default = "NYC4"
+}
+variable "pf_interface_avzone2" {
+  type    = string
+  default = "A"
+}
+variable "pf_interface_media" {
+  type    = string
+  default = "LX"
 }
 variable "pf_interface_subterm" {
   type    = number
   default = 1 # default 1 month
 }
-# variable "pf_interface_srvclass" {
-#   type    = string
-#   default = "metro"
-# }
 variable "pf_interface_autoneg" {
   type    = bool
   default = false
@@ -75,17 +71,17 @@ variable "pf_interface_site1" {
 }
 variable "pf_interface_site2" {
   type    = string
-  default = "EQ-DC5"
+  default = "EQ-NY1"
 }
 
 # Virtual Circuit
 variable "pf_vc_vlan1" {
   type    = number
-  default = 4
+  default = 145
 }
 variable "pf_vc_vlan2" {
   type    = number
-  default = 5
+  default = 146
 }
 variable "pf_vc_longhaul_type" {
   type    = string

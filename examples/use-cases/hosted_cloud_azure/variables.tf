@@ -21,7 +21,7 @@ variable "pf_api_server" {
 # Azure Hosted Connection
 variable "pf_port_circuit_id" {
   type    = string
-  default = "PF-AP-LAX2-1234567"
+  default = "PF-AP-WDC1-1726464"
 }
 variable "pf_cs_speed" {
   type    = string

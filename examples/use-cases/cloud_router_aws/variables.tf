@@ -7,12 +7,10 @@ variable "tag_name" {
 variable "amazon_side_asn1" { # used in BGP session
   type     = number
   default  = 64532 # private (64512 to 65534)
-  nullable = false
 }
 variable "amazon_side_asn2" { # used in BGP session
   type     = number
   default  = 64533 # private (64512 to 65534)
-  nullable = false
 }
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
@@ -23,20 +21,10 @@ variable "aws_region1" {
   description = "AWS region"
   default     = "us-west-1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
 }
-variable "aws_region1_zone1" {
-  type        = string
-  description = "AWS Availability Zone"
-  default     = "us-west-1b"
-}
 variable "aws_region2" {
   type        = string
   description = "AWS region"
   default     = "us-east-1" # aws_region2=us-east-1 when using pf_crc_pop2=NYC1
-}
-variable "aws_region2_zone1" {
-  type        = string
-  description = "AWS Availability Zone"
-  default     = "us-east-1a"
 }
 variable "vpc_cidr1" { # used in PF BGP prefix
   type        = string

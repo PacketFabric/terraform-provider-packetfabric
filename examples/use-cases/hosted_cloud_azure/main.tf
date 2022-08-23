@@ -1,8 +1,6 @@
 terraform {
   required_providers {
     packetfabric = {
-      # source  = "PacketFabric/packetfabric"
-      # version = "0.2.0"
       source  = "terraform.local/PacketFabric/packetfabric"
       version = "~> 0.0.0"
     }
@@ -134,6 +132,8 @@ output "express_route_circuit" {
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
+
+### Below resources can take a while to create/delete, manually uncomment below code
 
 # # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
 # resource "azurerm_public_ip" "public_ip_vng_1" {

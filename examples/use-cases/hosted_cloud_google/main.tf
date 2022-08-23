@@ -1,8 +1,6 @@
 terraform {
   required_providers {
     packetfabric = {
-      # source  = "PacketFabric/packetfabric"
-      # version = "0.2.0"
       source  = "terraform.local/PacketFabric/packetfabric"
       version = "~> 0.0.0"
     }
@@ -74,7 +72,7 @@ resource "google_compute_interconnect_attachment" "interconnect_1" {
 # From the PacketFabric side: Create a GCP Hosted Connection 
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   provider                    = packetfabric
-  description                 = "${var.tag_name}-${random_pet.name.id}"
+  description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
   account_uuid                = var.pf_account_uuid
   port                        = var.pf_port_circuit_id
   speed                       = var.pf_cs_speed
@@ -86,14 +84,13 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
 
 output "packetfabric_cs_google_hosted_connection" {
   value     = packetfabric_cs_google_hosted_connection.pf_cs_conn1
-  sensitive = true
 }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
 
-# Expose bgpPeers from google_compute_router #11458
+# Vote for 11458 Expose bgpPeers from google_compute_router
 # https://github.com/hashicorp/terraform-provider-google/issues/11458
 # Workaround: use https://github.com/terraform-google-modules/terraform-google-gcloud
 

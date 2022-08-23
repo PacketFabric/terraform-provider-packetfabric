@@ -1,8 +1,6 @@
 terraform {
   required_providers {
     packetfabric = {
-      # source  = "PacketFabric/packetfabric"
-      # version = "0.2.0"
       source  = "terraform.local/PacketFabric/packetfabric"
       version = "~> 0.0.0"
     }
@@ -41,7 +39,6 @@ resource "aws_vpc" "vpc_1" {
 resource "aws_subnet" "subnet_1" {
   provider          = aws
   vpc_id            = aws_vpc.vpc_1.id
-  availability_zone = var.aws_region1_zone1
   cidr_block        = var.subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -96,8 +93,8 @@ resource "aws_route_table_association" "route_association_1" {
   route_table_id = aws_route_table.route_table_1.id
 }
 
-# From the PacketFabric side: Create a GCP Hosted Connection 
-resource "packetfabric_cs_aws_hosted_connection" "cs_conn1" {
+# From the PacketFabric side: Create a AWS Hosted Connection 
+resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider       = packetfabric
   description    = "${var.tag_name}-${random_pet.name.id}"
   account_uuid   = var.pf_account_uuid
@@ -110,7 +107,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1" {
 }
 
 output "packetfabric_cs_aws_hosted_connection" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1
+  value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
 }
 
 # From the AWS side: Accept the connection
@@ -128,16 +125,18 @@ resource "null_resource" "next" {
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current_1" {
   provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
   depends_on = [
     null_resource.next,
-    packetfabric_aws_cloud_router_connection.crc_1
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
 output "aws_dx_connection_1" {
   value = data.aws_dx_connection.current_1
 }
 
+# Vote for 26335 aws_dx_connection_confirmation add timeout and do not fail when state is available
+# https://github.com/hashicorp/terraform-provider-aws/issues/26335
 resource "aws_dx_connection_confirmation" "confirmation_1" {
   provider      = aws
   connection_id = data.aws_dx_connection.current_1.id
@@ -146,17 +145,17 @@ resource "aws_dx_connection_confirmation" "confirmation_1" {
 # From the AWS side: Create a gateway
 resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
-  name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
   amazon_side_asn = var.amazon_side_asn1
   depends_on = [
-    packetfabric_aws_cloud_router_connection.crc_1
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
 
 # From the AWS side: Create and attach a VIF
 data "packetfabric_cs_aws_hosted_connection" "current" {
   provider         = packetfabric
-  cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1.id
+  cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
 
   depends_on = [
     aws_dx_connection_confirmation.confirmation_1
@@ -171,12 +170,12 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider       = aws
   connection_id  = data.aws_dx_connection.current_1.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
   vlan           = var.pf_cs_vlan1
   address_family = "ipv4"
-  bgp_asn        = var.pf_cr_asn
+  bgp_asn        = var.customer_side_asn1
   depends_on = [
-    data.packetfabric_aws_cloud_router_connection.current
+    data.packetfabric_cs_aws_hosted_connection.current
   ]
 }
 
@@ -184,14 +183,16 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
 
+# Vote for 26432 New aws_dx_virtual_interface_router_configuration data source #26432
+# https://github.com/hashicorp/terraform-provider-aws/issues/26432
+
 # From the AWS side: Associate Virtual Private GW to Direct Connect GW
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
   provider              = aws
   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
   allowed_prefixes = [
-    var.vpc_cidr1,
-    var.vpc_cidr2
+    var.vpc_cidr1
   ]
   depends_on = [
     aws_dx_private_virtual_interface.direct_connect_vip_1

@@ -1,8 +1,6 @@
 terraform {
   required_providers {
     packetfabric = {
-      # source  = "PacketFabric/packetfabric"
-      # version = "0.2.0"
       source  = "terraform.local/PacketFabric/packetfabric"
       version = "~> 0.0.0"
     }
@@ -71,19 +69,25 @@ output "packetfabric_billing_port_2" {
   value = data.packetfabric_billing.port_2
 }
 
-# Get PacketFabric locations
-data "packetfabric_locations" "location_1" {
-  provider = packetfabric
-  # filter {
-  #   pop = var.pf_interface_pop1
-  # }
-}
-data "packetfabric_locations" "location_2" {
-  provider = packetfabric
-  # filter {
-  #   pop = var.pf_interface_pop2
-  # }
-}
+# # Get PacketFabric locations
+# data "packetfabric_locations" "location_1" {
+#   provider = packetfabric
+#   # filter {
+#   #   pop = var.pf_interface_pop1
+#   # }
+# }
+# output "packetfabric_location_1" {
+#   value = data.packetfabric_locations.location_1
+# }
+# data "packetfabric_locations" "location_2" {
+#   provider = packetfabric
+#   # filter {
+#   #   pop = var.pf_interface_pop2
+#   # }
+# }
+# output "packetfabric_location_2" {
+#   value = data.packetfabric_locations.location_2
+# }
 
 # Create Cross Connect
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {

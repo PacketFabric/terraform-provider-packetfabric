@@ -1,12 +1,12 @@
-# Use Case: PacketFabric’s Hosted cloud connection to AWS
+# Use Case: PacketFabric’s Dedicated cloud connection to AWS
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
-to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
+to automate the creation of a Dedicated Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
 
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
-- [PacketFabric Hosted AWS Connection](https://docs.packetfabric.com/cloud/aws/hosted/create/)
+- [PacketFabric Dedicated AWS Connection](https://docs.packetfabric.com/cloud/aws/dedicated/create/)
 - [AWS Direct Connect Locations](https://aws.amazon.com/directconnect/locations/)
 - [PacketFabric Cloud On-Ramps Locations](https://packetfabric.com/locations/cloud-on-ramps)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
@@ -24,10 +24,13 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (or Private VIF - Virtual Interface)
 - resource **"aws_route_table"**: Create route table for the VPCs
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
-- resource & data source **"packetfabric_cs_aws_hosted_connection"**: Create a AWS Hosted Cloud Connection 
+- resource & data source **"packetfabric_cs_aws_dedicated_connection"**: Create a AWS Dedicated Cloud Connection 
+- data source **"packetfabric_locations"**: Get PacketFabric available locations
+- data source **"aws_dx_locations"**: Get AWS available locations
+- resource & data source **"aws_dx_connection"**: Create a Direct Connect Connection in AWS
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
-- data source **"aws_dx_connection"**: Retreive Direct Connect Connection details
-- resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
+- resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect using AWS LOA
+- resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between a port and the AWS Dedicated Cloud interface 
 - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
 - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
 - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
