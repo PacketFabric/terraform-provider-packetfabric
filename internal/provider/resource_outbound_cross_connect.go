@@ -166,9 +166,11 @@ func resourceOutboundCrossConnectDelete(ctx context.Context, d *schema.ResourceD
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	err := c.DeleteOutboundCrossConnect(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	if port, ok := d.GetOk("port"); ok {
+		err := c.DeleteOutboundCrossConnect(port.(string))
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	return diags
 }
