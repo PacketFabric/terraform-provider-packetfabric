@@ -364,12 +364,12 @@ output "ec2_public_ip_2" {
 # From the PacketFabric side: Create a cloud router
 resource "packetfabric_cloud_router" "cr" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope # Parameter deprecated
-  asn          = var.pf_cr_asn
   name         = "${var.tag_name}-${random_pet.name.id}"
   account_uuid = var.pf_account_uuid
+  asn          = var.pf_cr_asn
   capacity     = var.pf_cr_capacity
   regions      = var.pf_cr_regions
+  scope        = var.pf_cr_scope # Parameter deprecated
 }
 
 data "packetfabric_cloud_router" "current" {
@@ -385,27 +385,27 @@ output "packetfabric_cloud_router" {
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   provider       = packetfabric
+  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id     = packetfabric_cloud_router.cr.id
   account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
-  maybe_nat      = var.pf_crc_maybe_nat
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   pop            = var.pf_crc_pop1
   zone           = var.pf_crc_zone1
-  is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
+  maybe_nat      = var.pf_crc_maybe_nat
+  is_public      = var.pf_crc_is_public
 }
 resource "packetfabric_aws_cloud_router_connection" "crc_2" {
   provider       = packetfabric
+  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id     = packetfabric_cloud_router.cr.id
   account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
-  maybe_nat      = var.pf_crc_maybe_nat
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   pop            = var.pf_crc_pop2
   zone           = var.pf_crc_zone2
-  is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
+  maybe_nat      = var.pf_crc_maybe_nat
+  is_public      = var.pf_crc_is_public
 }
 
 # From the AWS side: Accept the connection

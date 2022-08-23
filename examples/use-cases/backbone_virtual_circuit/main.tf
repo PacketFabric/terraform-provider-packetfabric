@@ -15,44 +15,44 @@ provider "packetfabric" {
 # Create random name to use to name objects
 resource "random_pet" "name" {}
 
-# Create a PacketFabric ports/interfaces
-resource "packetfabric_interface" "port_1" {
+# Create a PacketFabric ports
+resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
-  autoneg           = var.pf_interface_autoneg
+  autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
-  media             = var.pf_interface_media
-  nni               = var.pf_interface_nni
-  pop               = var.pf_interface_pop1
-  speed             = var.pf_interface_speed
-  subscription_term = var.pf_interface_subterm
-  zone              = var.pf_interface_avzone1
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
 }
 output "packetfabric_port_1" {
-  value = packetfabric_interface.port_1
+  value = packetfabric_port.port_1
 }
-resource "packetfabric_interface" "port_2" {
+resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
-  autoneg           = var.pf_interface_autoneg
+  autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
-  media             = var.pf_interface_media
-  nni               = var.pf_interface_nni
-  pop               = var.pf_interface_pop2
-  speed             = var.pf_interface_speed
-  subscription_term = var.pf_interface_subterm
-  zone              = var.pf_interface_avzone2
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop2
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone2
 }
 output "packetfabric_port_2" {
-  value = packetfabric_interface.port_2
+  value = packetfabric_port.port_2
 }
 
 # Get billing information related to the interface created
 data "packetfabric_billing" "port_1" {
   provider   = packetfabric
-  circuit_id = packetfabric_interface.port_1.id
+  circuit_id = packetfabric_port.port_1.id
   depends_on = [
-    packetfabric_interface.port_1
+    packetfabric_port.port_1
   ]
 }
 output "packetfabric_billing_port_1" {
@@ -60,9 +60,9 @@ output "packetfabric_billing_port_1" {
 }
 data "packetfabric_billing" "port_2" {
   provider   = packetfabric
-  circuit_id = packetfabric_interface.port_2.id
+  circuit_id = packetfabric_port.port_2.id
   depends_on = [
-    packetfabric_interface.port_2
+    packetfabric_port.port_2
   ]
 }
 output "packetfabric_billing_port_2" {
@@ -73,7 +73,7 @@ output "packetfabric_billing_port_2" {
 # data "packetfabric_locations" "location_1" {
 #   provider = packetfabric
 #   # filter {
-#   #   pop = var.pf_interface_pop1
+#   #   pop = var.pf_port_pop1
 #   # }
 # }
 # output "packetfabric_location_1" {
@@ -82,7 +82,7 @@ output "packetfabric_billing_port_2" {
 # data "packetfabric_locations" "location_2" {
 #   provider = packetfabric
 #   # filter {
-#   #   pop = var.pf_interface_pop2
+#   #   pop = var.pf_port_pop2
 #   # }
 # }
 # output "packetfabric_location_2" {
@@ -94,8 +94,8 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
   description   = "${var.tag_name}-${random_pet.name.id}"
   document_uuid = var.pf_document_uuid1
-  port          = packetfabric_interface.port_1.id
-  site          = var.pf_interface_site1
+  port          = packetfabric_port.port_1.id
+  site          = var.pf_port_site1
   # https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63
   #site = data.packetfabric_locations.location_1.site_code
 }
@@ -106,8 +106,8 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
   provider      = packetfabric
   description   = "${var.tag_name}-${random_pet.name.id}"
   document_uuid = var.pf_document_uuid2
-  port          = packetfabric_interface.port_1.id
-  site          = var.pf_interface_site2
+  port          = packetfabric_port.port_1.id
+  site          = var.pf_port_site2
   # https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63
   #site = data.packetfabric_locations.location_2.site_code
 }
@@ -121,12 +121,12 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
   description = "${var.tag_name}-${random_pet.name.id}"
   epl         = false
   interface_a {
-    port_circuit_id = packetfabric_interface.port_1.id
+    port_circuit_id = packetfabric_port.port_1.id
     untagged        = false
     vlan            = var.pf_vc_vlan1
   }
   interface_z {
-    port_circuit_id = packetfabric_interface.port_2.id
+    port_circuit_id = packetfabric_port.port_2.id
     untagged        = false
     vlan            = var.pf_vc_vlan2
   }

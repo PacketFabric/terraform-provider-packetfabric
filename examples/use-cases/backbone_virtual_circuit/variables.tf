@@ -18,40 +18,40 @@ variable "pf_api_server" {
   description = "PacketFabric API endpoint URL"
 }
 
-# PacketFabric Interface Parameter configuration
-variable "pf_interface_pop1" {
+# PacketFabric Port Parameter configuration
+variable "pf_port_pop1" {
   type    = string
   default = "PDX1"
 }
-variable "pf_interface_avzone1" {
+variable "pf_port_avzone1" {
   type    = string
   default = "A"
 }
-variable "pf_interface_pop2" {
+variable "pf_port_pop2" {
   type    = string
   default = "NYC4"
 }
-variable "pf_interface_avzone2" {
+variable "pf_port_avzone2" {
   type    = string
   default = "A"
 }
-variable "pf_interface_media" {
+variable "pf_port_media" {
   type    = string
   default = "LX"
 }
-variable "pf_interface_subterm" {
+variable "pf_port_subterm" {
   type    = number
   default = 1 # default 1 month
 }
-variable "pf_interface_autoneg" {
+variable "pf_port_autoneg" {
   type    = bool
   default = false
 }
-variable "pf_interface_speed" {
+variable "pf_port_speed" {
   type    = string
   default = "1Gbps"
 }
-variable "pf_interface_nni" {
+variable "pf_port_nni" {
   type    = bool
   default = false
 }
@@ -65,11 +65,11 @@ variable "pf_document_uuid2" {
   type    = string
   default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
 }
-variable "pf_interface_site1" {
+variable "pf_port_site1" {
   type    = string
   default = "PN-PIT" # use API /v2/locations to get site_code
 }
-variable "pf_interface_site2" {
+variable "pf_port_site2" {
   type    = string
   default = "EQ-NY1"
 }

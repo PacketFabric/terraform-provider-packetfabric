@@ -8,7 +8,7 @@ the outbound Cross connect for those 2 ports.
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
-- [PacketFabric Ports/Interfaces Overview](https://docs.packetfabric.com/ports/)
+- [PacketFabric Ports Overview](https://docs.packetfabric.com/ports/)
 - [PacketFabric Cross Connects Overview](https://docs.packetfabric.com/xconnect/)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 - [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
@@ -17,7 +17,7 @@ the outbound Cross connect for those 2 ports.
 ## Terraform resources deployed
 
 - resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_interface"**: Create 2 ports in 2 PacketFabric Point of Presence (PoP)
+- resource **"packetfabric_port"**: Create 2 ports in 2 PacketFabric Point of Presence (PoP)
 - data source **"packetfabric_billing"**: Get the billing details for those 2 ports
 - data source **"packetfabric_locations"**: Get PacketFabric available locations
 - resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect (You provide PacketFabric with an LOA/CFA authorizing us to make the connection)
