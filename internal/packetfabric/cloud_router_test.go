@@ -41,7 +41,7 @@ func Test_CreateCloudRouter(t *testing.T) {
 		Asn:         4556,
 		Name:        "New Cloud Router",
 		AccountUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b",
-		Regions:     regions,
+		Regions:     []string{"UK", "US"},
 		Capacity:    "10Gbps",
 	}
 
@@ -51,7 +51,7 @@ func Test_CreateCloudRouter(t *testing.T) {
 func Test_UpdateCloudRouter(t *testing.T) {
 	routerUpdt := CloudRouterUpdate{
 		Name:     "New Cloud Router",
-		Regions:  regions,
+		Regions:  []string{"UK"},
 		Capacity: "1Gbps",
 	}
 
