@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     packetfabric = {
-      source  = "terraform.local/PacketFabric/packetfabric"
-      version = "~> 0.0.0"
+      source  = "PacketFabric/packetfabric"
+      version = "0.2.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -62,6 +62,7 @@ resource "aws_vpc" "vpc_2" {
 resource "aws_subnet" "subnet_1" {
   provider          = aws
   vpc_id            = aws_vpc.vpc_1.id
+  availability_zone = var.aws_region1_zone1
   cidr_block        = var.subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -70,6 +71,7 @@ resource "aws_subnet" "subnet_1" {
 resource "aws_subnet" "subnet_2" {
   provider          = aws.region2
   vpc_id            = aws_vpc.vpc_2.id
+  availability_zone = var.aws_region2_zone1
   cidr_block        = var.subnet_cidr2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"

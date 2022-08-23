@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -115,7 +116,7 @@ func resourceOutboundCrossConnectCreate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(crossConn.DataCenterCrossConnectID)
+	d.SetId(uuid.New().String())
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "Outbound Cross Connect Create",
@@ -128,9 +129,16 @@ func resourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceDat
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	_, err := c.GetOutboundCrossConnect(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	if crossConnID, ok := d.GetOk("data_center_cross_connect_id"); ok {
+		resp, err := c.GetOutboundCrossConnect(crossConnID.(string))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Existing outbound cross connect ID",
+			Detail:   resp.OutboundCrossConnectID,
+		})
 	}
 	return diags
 }

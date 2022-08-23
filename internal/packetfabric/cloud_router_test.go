@@ -14,10 +14,11 @@ var token = "2512d9bf-fd4c-46ae-a340-1d663f4fb01b"
 
 var cTest, _ = NewPFClient(&host, &token)
 
-var regions = make([]interface{}, 0)
+var regions = make([]Region, 0)
 
 func init() {
-	regions = append(regions, "US")
+	regions = append(regions, Region{Name: "Continental U.S.", Code: "US"})
+	regions = append(regions, Region{Name: "Europe", Code: "UK"})
 }
 
 var clrExpectedResp = CloudRouterResponse{

@@ -124,7 +124,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}, fn func() ([]packetfabric.AwsDedicatedConnResp, error)) diag.Diagnostics {
+func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interface{}, fn func() ([]packetfabric.DedicatedConnResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -204,12 +204,22 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
 		awsBack.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
+	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
+		awsBack.RateLimitIn = rateLimitIn.(int)
+	}
+	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
+		awsBack.RateLimitOut = rateLimitOut.(int)
+	}
 	return awsBack
 }
 
-func extractBandwidth(bw map[string]interface{}) packetfabric.BackboneBandwidth {
-	bandwidth := packetfabric.BackboneBandwidth{}
+func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
+	bandwidth := packetfabric.Bandwidth{}
 	bandwidth.AccountUUID = bw["account_uuid"].(string)
+	longhaulType := bw["longhaul_type"]
+	if longhaulType != nil {
+		bandwidth.LonghaulType = longhaulType.(string)
+	}
 	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
 	bandwidth.Speed = bw["speed"].(string)
 	return bandwidth

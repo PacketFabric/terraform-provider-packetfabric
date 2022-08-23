@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -26,7 +27,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "The UUID of the contact that will be billed.",
 			},
-			"googe_pairing_key": {
+			"google_pairing_key": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
@@ -47,18 +48,18 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			"port": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The port to connect to AWS.",
+				Description: "The port to connect to Google.",
 			},
 			"vlan": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Valid VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(4, 4094),
-				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
@@ -81,11 +82,11 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	reqConn := extractGoogleReqConn(d)
-	resp, err := c.CreateRequestHostedGoogleConn(reqConn)
+	_, err := c.CreateRequestHostedGoogleConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.Description)
+	d.SetId(uuid.New().String())
 	return diags
 }
 
@@ -105,15 +106,33 @@ func resourceGoogleReqHostConnDelete(ctx context.Context, d *schema.ResourceData
 }
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {
-	return packetfabric.GoogleReqHostedConn{
-		AccountUUID:              d.Get("account_uuid").(string),
-		GooglePairingKey:         d.Get("google_pairing_key").(string),
-		GoogleVlanAttachmentName: d.Get("google_vlan_attachment_name").(string),
-		Description:              d.Get("description").(string),
-		Pop:                      d.Get("pop").(string),
-		Port:                     d.Get("port").(string),
-		Vlan:                     d.Get("vlan").(int),
-		SrcSvlan:                 d.Get("src_svlan").(int),
-		Speed:                    d.Get("speed").(string),
+	googleHosted := packetfabric.GoogleReqHostedConn{}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		googleHosted.AccountUUID = accountUUID.(string)
 	}
+	if pairingKey, ok := d.GetOk("google_pairing_key"); ok {
+		googleHosted.GooglePairingKey = pairingKey.(string)
+	}
+	if vlanAttach, ok := d.GetOk("google_vlan_attachment_name"); ok {
+		googleHosted.GoogleVlanAttachmentName = vlanAttach.(string)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		googleHosted.Description = description.(string)
+	}
+	if pop, ok := d.GetOk("pop"); ok {
+		googleHosted.Pop = pop.(string)
+	}
+	if port, ok := d.GetOk("port"); ok {
+		googleHosted.Port = port.(string)
+	}
+	if vlan, ok := d.GetOk("vlan"); ok {
+		googleHosted.Vlan = vlan.(int)
+	}
+	if srcSvlan, ok := d.GetOk("src_svlan"); ok {
+		googleHosted.SrcSvlan = srcSvlan.(int)
+	}
+	if speed, ok := d.GetOk("speed"); ok {
+		googleHosted.Speed = speed.(string)
+	}
+	return googleHosted
 }

@@ -42,7 +42,7 @@ func resourceProvision() map[string]*schema.Schema {
 	}
 }
 
-func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.ServiceAwsMktConn, string) (*packetfabric.MktConnProvisionResp, error), provider string) diag.Diagnostics {
+func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(packetfabric.ServiceAwsMktConn, string, string) (*packetfabric.MktConnProvisionResp, error), provider string) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -50,8 +50,8 @@ func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m inte
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID")
 	}
-	awsProvision := extractProvision(d, provider)
-	_, err := fn(awsProvision, requestUUID.(string))
+	provision := extractProvision(d, provider)
+	_, err := fn(provision, requestUUID.(string), provider)
 	if err != nil {
 		return diag.FromErr(err)
 	}

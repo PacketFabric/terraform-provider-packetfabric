@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     packetfabric = {
-      source  = "terraform.local/PacketFabric/packetfabric"
-      version = "~> 0.0.0"
+      source  = "PacketFabric/packetfabric"
+      version = "0.2.0"
     }
     aws = {
       source  = "hashicorp/aws"

@@ -12,12 +12,12 @@ const errorMsg = "Please provide a valid Account UUID."
 // This struct represents a Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_create
 type CloudRouter struct {
-	Scope       string        `json:"scope"`
-	Asn         int           `json:"asn"`
-	Name        string        `json:"name"`
-	AccountUUID string        `json:"account_uuid"`
-	Regions     []interface{} `json:"regions"`
-	Capacity    string        `json:"capacity"`
+	Scope       string   `json:"scope"`
+	Asn         int      `json:"asn"`
+	Name        string   `json:"name"`
+	AccountUUID string   `json:"account_uuid"`
+	Regions     []Region `json:"regions"`
+	Capacity    string   `json:"capacity"`
 }
 
 // This struct represents a Cloud Router create response
@@ -42,9 +42,9 @@ type Region struct {
 }
 
 type CloudRouterUpdate struct {
-	Name     string        `json:"name"`
-	Regions  []interface{} `json:"regions"`
-	Capacity string        `json:"capacity"`
+	Name     string   `json:"name"`
+	Regions  []Region `json:"regions"`
+	Capacity string   `json:"capacity"`
 }
 
 // This struct represents a Cloud Router delete response
