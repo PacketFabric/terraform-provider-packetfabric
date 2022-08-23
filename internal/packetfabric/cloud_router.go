@@ -16,7 +16,7 @@ type CloudRouter struct {
 	Asn         int      `json:"asn"`
 	Name        string   `json:"name"`
 	AccountUUID string   `json:"account_uuid"`
-	Regions     []Region `json:"regions"`
+	Regions     []string `json:"regions"`
 	Capacity    string   `json:"capacity"`
 }
 
@@ -43,7 +43,7 @@ type Region struct {
 
 type CloudRouterUpdate struct {
 	Name     string   `json:"name"`
-	Regions  []Region `json:"regions"`
+	Regions  []string `json:"regions"`
 	Capacity string   `json:"capacity"`
 }
 
