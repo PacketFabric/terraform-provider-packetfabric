@@ -84,8 +84,16 @@ func (c *PFClient) UpdateOutboundCrossConnect(outboundCrossConnID, userDesc stri
 	return err
 }
 
-func (c *PFClient) DeleteOutboundCrossConnect(outboundCrossConnID string) error {
-	formatedURI := fmt.Sprintf(outboundCrossConnectWithIDURI, outboundCrossConnID)
-	_, err := c.sendRequest(formatedURI, deleteMethod, nil, nil)
+func (c *PFClient) DeleteOutboundCrossConnect(port string) error {
+	crossConns, err := c.GetOutboundCrossConnects()
+	if err != nil {
+		return err
+	}
+	for _, crossConn := range *crossConns {
+		if crossConn.Port == port {
+			formatedURI := fmt.Sprintf(outboundCrossConnectWithIDURI, crossConn.DataCenterCrossConnectID)
+			_, err = c.sendRequest(formatedURI, deleteMethod, nil, nil)
+		}
+	}
 	return err
 }
