@@ -153,8 +153,8 @@ type AzureBilling struct {
 	AccountUUID string `json:"account_uuid,omitempty"`
 }
 type AzureComponents struct {
-	IfdPortCircuitIDCust int `json:"ifd_port_circuit_id_cust,omitempty"`
-	IfdPortCircuitIDPf   int `json:"ifd_port_circuit_id_pf,omitempty"`
+	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
+	IfdPortCircuitIDPf   string `json:"ifd_port_circuit_id_pf,omitempty"`
 }
 type AzureSettings struct {
 	VlanIDPrivate   int    `json:"vlan_id_private,omitempty"`
