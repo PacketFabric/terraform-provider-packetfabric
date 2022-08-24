@@ -172,8 +172,8 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 # }
 
 # locals {
-#   # below may need to be updated https://github.com/PacketFabric/terraform-provider-packetfabric/issues/41
-#   # also https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
+#   # below may need to be updated
+#   # https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
 #   cloud_connections = data.packetfabric_cs_aws_hosted_connection.current.cloud_connections[*]
 #   helper_map = { for val in local.cloud_connections :
 #   val["description"] => val }
