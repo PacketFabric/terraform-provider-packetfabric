@@ -106,7 +106,7 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
   provider      = packetfabric
   description   = "${var.tag_name}-${random_pet.name.id}"
   document_uuid = var.pf_document_uuid2
-  port          = packetfabric_port.port_1.id
+  port          = packetfabric_port.port_2.id
   site          = var.pf_port_site2
   # https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63
   #site = data.packetfabric_locations.location_2.site_code
