@@ -29,7 +29,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - resource **"aws_key_pair"**: Create SSH key Pair for future EC2 instances
 - resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
-- resource & data source **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
+- resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
 - resource & data source **"packetfabric_aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retreive Direct Connect Connection details
@@ -106,7 +106,58 @@ If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the 
 4. Cleanup/Remove all in both PacketFabric and AWS.
 
 ```sh
+terraform state rm cloud_router_bgp_session.crbs_1
+terraform state rm cloud_router_bgp_session.crbs_2
+terraform state rm cloud_router_bgp_prefixes.crbp_1
+terraform state rm cloud_router_bgp_prefixes.crbp_2
 terraform destroy -var-file="secret.tfvars"
+```
+
+**Note:** We are removing the Cloud Router BGP session and prefix resources from the terraform state as those will be deleted together with current Cloud Router Connection. See https://github.com/PacketFabric/terraform-provider-packetfabric/issues/20.
+
+## Troubleshooting
+
+In case you get the following error:
+
+```
+╷
+│ Error: error waiting for Direct Connection Connection (dxcon-fgq3o1ff) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
+│ 
+│   with aws_dx_connection_confirmation.confirmation_2,
+│   on main.tf line 451, in resource "aws_dx_connection_confirmation" "confirmation_2":
+│  451: resource "aws_dx_connection_confirmation" "confirmation_2" {
+│ 
+```
+
+You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
+
+As a workaround, edit the `main.tf` and comment out the following resource:
+
+```
+# resource "aws_dx_connection_confirmation" "confirmation_2" {
+#   provider      = aws.region2
+#   connection_id = data.aws_dx_connection.current_2.id
+# }
+```
+
+And comment out the dependency with `confirmation_2` in `packetfabric_aws_cloud_router_connection` data source: 
+
+```
+data "packetfabric_aws_cloud_router_connection" "current" {
+  provider   = packetfabric
+  circuit_id = packetfabric_cloud_router.cr.id
+
+  depends_on = [
+    aws_dx_connection_confirmation.confirmation_1,
+    # aws_dx_connection_confirmation.confirmation_2,
+  ]
+}
+```
+
+Then remove the `confirmation_2` state and re-apply the terraform plan:
+```
+terraform state rm aws_dx_connection_confirmation.confirmation_2
+terraform apply -var-file="secret.tfvars"
 ```
 
 ## Screenshots
