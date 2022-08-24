@@ -3,7 +3,7 @@
 page_title: "packetfabric_cloud_router Data Source - terraform-provider-packetfabric"
 subcategory: ""
 description: |-
-
+  
 ---
 
 # packetfabric_cloud_router (Data Source)
@@ -52,26 +52,28 @@ description: |-
 
 ### Read-Only
 
-- `cloud_routers` (List of Object) (see [below for nested schema](#nestedatt--packetfabric_cloud_routers))
+- `cloud_routers` (List of Object) (see [below for nested schema](#nestedatt--cloud_routers))
 - `id` (String) The ID of this resource.
 
-<a id="nestedatt--packetfabric_cloud_routers"></a>
-### Nested Schema for `packetfabric_cloud_routers`
+<a id="nestedatt--cloud_routers"></a>
+### Nested Schema for `cloud_routers`
 
 Read-Only:
 
-- `asn` (Number) The configured ASN of the instance.
-- `capacity` (String) The total configured capacity of this particular Cloud Router.
-- `name` (String) The name of this particular CloudRouter.
-- `regions` (Set of Object) (see [below for nested schema](#nestedobjatt--packetfabric_cloud_routers--regions))
-- `scope` (String) Whether the cloud router is private or public.
+- `asn` (Number)
+- `capacity` (String)
+- `name` (String)
+- `regions` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_routers--regions))
+- `scope` (String)
 - `time_created` (String)
 - `time_updated` (String)
 
-<a id="nestedobjatt--packetfabric_cloud_routers--regions"></a>
-### Nested Schema for `packetfabric_cloud_routers.regions`
+<a id="nestedobjatt--cloud_routers--regions"></a>
+### Nested Schema for `cloud_routers.regions`
 
 Read-Only:
 
-- `code` (String) PacketFabric POP code.
-- `name` (String) Common Name of POP location.
+- `code` (String)
+- `name` (String)
+
+
