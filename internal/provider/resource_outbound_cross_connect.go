@@ -112,16 +112,11 @@ func resourceOutboundCrossConnectCreate(ctx context.Context, d *schema.ResourceD
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	crossConn := extractCrossConnect(d)
-	resp, err := c.CreateOutboundCrossConnect(crossConn)
+	_, err := c.CreateOutboundCrossConnect(crossConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Outbound Cross Connect Create",
-		Detail:   resp.Message,
-	})
 	return diags
 }
 
