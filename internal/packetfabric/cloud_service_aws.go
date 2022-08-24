@@ -96,15 +96,15 @@ type Interfaces struct {
 }
 
 type HostedAwsConnection struct {
-	AwsAccountID string `json:"aws_account_id"`
-	AccountUUID  string `json:"account_uuid"`
-	Description  string `json:"description"`
-	Pop          string `json:"pop"`
-	Port         string `json:"port"`
-	Vlan         int    `json:"vlan"`
-	SrcSvlan     int    `json:"src_svlan"`
-	Zone         string `json:"zone"`
-	Speed        string `json:"speed"`
+	AwsAccountID string `json:"aws_account_id,omitempty"`
+	AccountUUID  string `json:"account_uuid,omitempty"`
+	Description  string `json:"description,omitempty"`
+	Pop          string `json:"pop,omitempty"`
+	Port         string `json:"port,omitempty"`
+	Vlan         int    `json:"vlan,omitempty"`
+	SrcSvlan     int    `json:"src_svlan,omitempty"`
+	Zone         string `json:"zone,omitempty"`
+	Speed        string `json:"speed,omitempty"`
 }
 
 type DedicatedAwsConn struct {
