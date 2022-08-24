@@ -7,7 +7,8 @@ import (
 )
 
 const backboneURI = "/v2/services/backbone"
-const backDeleteURI = "/v2/services/cloud/%s"
+const backDeleteURI = "/v2/services/%s"
+const cloudConnDeleteURI = "/v2/services/cloud/%s"
 const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
 const servicesURI = "/v2/services"
 
@@ -192,6 +193,14 @@ func (c *PFClient) GetServices() ([]Services, error) {
 }
 
 func (c *PFClient) DeleteBackbone(vcCircuitID string) (*BackboneDeleteResp, error) {
+	return c._deleteService(vcCircuitID, backDeleteURI)
+}
+
+func (c *PFClient) DeleteCloudConn(vcCircuitID string) (*BackboneDeleteResp, error) {
+	return c._deleteService(vcCircuitID, cloudConnDeleteURI)
+}
+
+func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteResp, error) {
 	_, uuidParseErr := uuid.Parse(vcCircuitID)
 	if uuidParseErr == nil {
 		currentServices, servicesErr := c.GetServices()
@@ -201,7 +210,7 @@ func (c *PFClient) DeleteBackbone(vcCircuitID string) (*BackboneDeleteResp, erro
 		vcCircuitID = currentServices[0].VcCircuitID
 	}
 	expectedResp := &BackboneDeleteResp{}
-	formatedURI := fmt.Sprintf(backDeleteURI, vcCircuitID)
+	formatedURI := fmt.Sprintf(baseURI, vcCircuitID)
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
