@@ -372,14 +372,8 @@ resource "packetfabric_cloud_router" "cr" {
   scope        = var.pf_cr_scope # Parameter deprecated
 }
 
-data "packetfabric_cloud_router" "current" {
-  provider = packetfabric
-  depends_on = [
-    packetfabric_cloud_router.cr
-  ]
-}
 output "packetfabric_cloud_router" {
-  value = data.packetfabric_cloud_router.current
+  value = packetfabric_cloud_router.cr
 }
 
 # From the PacketFabric side: Create a cloud router connection to AWS
@@ -482,8 +476,8 @@ data "packetfabric_aws_cloud_router_connection" "current" {
   ]
 }
 locals {
-  # below may need to be updated https://github.com/PacketFabric/terraform-provider-packetfabric/issues/41
-  # also https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
+  # below may need to be updated
+  # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
   cloud_connections = data.packetfabric_aws_cloud_router_connection.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
