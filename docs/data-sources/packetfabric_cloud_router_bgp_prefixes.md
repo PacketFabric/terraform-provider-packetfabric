@@ -3,14 +3,14 @@
 page_title: "packetfabric_cloud_router_bgp_prefixes Data Source - terraform-provider-packetfabric"
 subcategory: ""
 description: |-
-
+  
 ---
 
 # packetfabric_cloud_router_bgp_prefixes (Data Source)
 
 
 
-## Data Example
+## Example Usage
 
 ```terraform
 {
@@ -41,14 +41,14 @@ description: |-
 
 ### Optional
 
-- `bgp_prefixes` (Block List) (see [below for nested schema](#nestedblock--packetfabric_bgp_prefixes))
+- `bgp_prefixes` (Block List) (see [below for nested schema](#nestedblock--bgp_prefixes))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--packetfabric_bgp_prefixes"></a>
-### Nested Schema for `packetfabric_bgp_prefixes`
+<a id="nestedblock--bgp_prefixes"></a>
+### Nested Schema for `bgp_prefixes`
 
 Optional:
 
@@ -56,3 +56,5 @@ Optional:
 - `order` (Number) The Order of this Prefix agains the others.
 - `prefix` (String) The actual IP Prefix of this instance.
 - `type` (String) Whether this prefix is in or out.
+
+
