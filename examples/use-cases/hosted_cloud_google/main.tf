@@ -86,6 +86,15 @@ output "packetfabric_cs_google_hosted_connection" {
   value     = packetfabric_cs_google_hosted_connection.pf_cs_conn1
 }
 
+# data "packetfabric_cs_google_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.pf_cs_conn1.id
+# }
+
+# output "data_packetfabric_cs_google_hosted_connection" {
+#   value = data.packetfabric_cs_google_hosted_connection.current
+# }
+
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
 ##########################################################################################

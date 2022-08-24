@@ -111,21 +111,21 @@ output "packetfabric_cs_aws_hosted_connection" {
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 60s for the connection to show up in AWS
+# Wait at least 90s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_90_seconds" {
   depends_on      = [null_resource.previous]
-  create_duration = "60s"
+  create_duration = "90s"
 }
-# This resource will create (at least) 60 seconds after null_resource.previous
+# This resource will create (at least) 90 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_90_seconds]
 }
 
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current_1" {
   provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+  name     = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [
     null_resource.next,
     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
@@ -145,39 +145,62 @@ resource "aws_dx_connection_confirmation" "confirmation_1" {
 # From the AWS side: Create a gateway
 resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
-  name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+  name            = "${var.tag_name}-${random_pet.name.id}"
   amazon_side_asn = var.amazon_side_asn1
   depends_on = [
     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
 
-# From the AWS side: Create and attach a VIF
-data "packetfabric_cs_aws_hosted_connection" "current" {
-  provider         = packetfabric
-  cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
+### Cannot create the VIF automatically right now because the VLAN "cloud_settings": {}, are missing from /v2/services/cloud/connections/{cloud_circuit_id} 
+### but also from aws_dx_gateway data source 
+# Vote for 26461 aws_dx_connection data source: add VLAN ID #26461
+# https://github.com/hashicorp/terraform-provider-aws/issues/26461
 
-  depends_on = [
-    aws_dx_connection_confirmation.confirmation_1
-  ]
-}
+# # From the AWS side: Create and attach a VIF
+# data "packetfabric_cs_aws_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
 
-output "packetfabric_cs_aws_hosted_connection_updated" {
-  value = data.packetfabric_cs_aws_hosted_connection.current
-}
+#   depends_on = [
+#     aws_dx_connection_confirmation.confirmation_1
+#   ]
+# }
 
-resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-  provider       = aws
-  connection_id  = data.aws_dx_connection.current_1.id
-  dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
-  vlan           = var.pf_cs_vlan1
-  address_family = "ipv4"
-  bgp_asn        = var.customer_side_asn1
-  depends_on = [
-    data.packetfabric_cs_aws_hosted_connection.current
-  ]
-}
+# output "data_packetfabric_cs_aws_hosted_connection" {
+#   value = data.packetfabric_cs_aws_hosted_connection.current
+# }
+
+# locals {
+#   # below may need to be updated https://github.com/PacketFabric/terraform-provider-packetfabric/issues/41
+#   # also https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
+#   cloud_connections = data.packetfabric_cs_aws_hosted_connection.current.cloud_connections[*]
+#   helper_map = { for val in local.cloud_connections :
+#   val["description"] => val }
+#   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}"]
+# }
+# # output "cc1_vlan_id_pf" {
+# #   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
+# # }
+# # output "cc2_vlan_id_pf" {
+# #   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
+# # }
+# output "packetfabric_aws_cloud_router_connection" {
+#   value = data.packetfabric_aws_cloud_router_connection.current.cloud_connections[*]
+# }
+
+# resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
+#   provider       = aws
+#   connection_id  = data.aws_dx_connection.current_1.id
+#   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
+#   name           = "${var.tag_name}-${random_pet.name.id}"
+#   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf) ## Problem here
+#   address_family = "ipv4"
+#   bgp_asn        = var.customer_side_asn1
+#   depends_on = [
+#     aws_dx_connection_confirmation.confirmation_1
+#   ]
+# }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
@@ -186,19 +209,19 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
 # Vote for 26432 New aws_dx_virtual_interface_router_configuration data source #26432
 # https://github.com/hashicorp/terraform-provider-aws/issues/26432
 
-# From the AWS side: Associate Virtual Private GW to Direct Connect GW
-resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
-  provider              = aws
-  dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
-  associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
-  allowed_prefixes = [
-    var.vpc_cidr1
-  ]
-  depends_on = [
-    aws_dx_private_virtual_interface.direct_connect_vip_1
-  ]
-  timeouts {
-    create = "2h"
-    delete = "2h"
-  }
-}
+# # From the AWS side: Associate Virtual Private GW to Direct Connect GW
+# resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
+#   provider              = aws
+#   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
+#   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
+#   allowed_prefixes = [
+#     var.vpc_cidr1
+#   ]
+#   depends_on = [
+#     aws_dx_private_virtual_interface.direct_connect_vip_1
+#   ]
+#   timeouts {
+#     create = "2h"
+#     delete = "2h"
+#   }
+# }

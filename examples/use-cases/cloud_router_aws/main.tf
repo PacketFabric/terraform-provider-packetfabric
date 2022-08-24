@@ -409,15 +409,15 @@ resource "packetfabric_aws_cloud_router_connection" "crc_2" {
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 60s for the connection to show up in AWS
+# Wait at least 90s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_90_seconds" {
   depends_on      = [null_resource.previous]
-  create_duration = "60s"
+  create_duration = "90s"
 }
-# This resource will create (at least) 60 seconds after null_resource.previous
+# This resource will create (at least) 90 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_90_seconds]
 }
 
 # Retrieve the Direct Connect connections in AWS

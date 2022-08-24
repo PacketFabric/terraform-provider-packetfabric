@@ -28,9 +28,9 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retreive Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
-- resource **"aws_dx_gateway"**: Create Direct Connect Gateways
-- resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
-- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
+<!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
+<!--  - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces -->
+<!--  - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG)  -->
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 

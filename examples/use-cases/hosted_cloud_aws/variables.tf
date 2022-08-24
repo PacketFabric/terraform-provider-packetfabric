@@ -27,7 +27,7 @@ variable "pf_port_circuit_id" {
 }
 variable "pf_cs_pop1" {
   type    = string
-  default = "SFO6"
+  default = "SFO6" 
 }
 variable "pf_cs_zone1" {
   type    = string
@@ -54,7 +54,7 @@ variable "customer_side_asn1" { # used in BGP session
 variable "aws_region1" {
   type        = string
   description = "AWS region"
-  default     = "us-west-1"
+  default     = "us-west-1" # has to be in the same region as aws_region1 var
 }
 variable "vpc_cidr1" {
   type        = string
