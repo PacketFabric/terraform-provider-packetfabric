@@ -160,7 +160,7 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
-	router := packetfabric.CloudRouter{Regions: make([]packetfabric.Region, 0)}
+	router := packetfabric.CloudRouter{}
 	if scope, ok := d.GetOk("scope"); ok {
 		router.Scope = scope.(string)
 	}
@@ -180,16 +180,13 @@ func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	return router
 }
 
-func extractRegions(d *schema.ResourceData) []packetfabric.Region {
+func extractRegions(d *schema.ResourceData) []string {
 	if regions, ok := d.GetOk("regions"); ok {
-		regs := make([]packetfabric.Region, 0)
-		for _, reg := range regions.(*schema.Set).List() {
-			regs = append(regs, packetfabric.Region{
-				Name: reg.(map[string]interface{})["name"].(string),
-				Code: reg.(map[string]interface{})["code"].(string),
-			})
+		regs := make([]string, 0)
+		for _, reg := range regions.([]interface{}) {
+			regs = append(regs, reg.(string))
 		}
 		return regs
 	}
-	return make([]packetfabric.Region, 0)
+	return make([]string, 0)
 }
