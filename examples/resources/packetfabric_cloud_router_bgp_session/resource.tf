@@ -20,7 +20,7 @@ data "packetfabric_cloud_router_bgp_session" "current" {
   provider = packetfabric
 }
 
-data "packetfabric_cloud_services_aws_dedicated_conn" "current" {
+data "packetfabric_cs_aws_dedicated_connection" "current" {
   provider = packetfabric
 }
 
@@ -72,7 +72,7 @@ resource "packetfabric_cloud_router_bgp_session" "new" {
   md5              = var.pf_crbs_md5
   depends_on = [
     packetfabric_aws_cloud_router_connection.new,
-    data.packetfabric_cloud_services_aws_connection_info.new,
+    data.packetfabric_cs_aws_dedicated_connection.new,
     data.packetfabric_cloud_router.current
   ]
 }
@@ -81,8 +81,8 @@ output "packetfabric_cloud_router" {
   value = data.packetfabric_cloud_router.current
 }
 
-output "packetfabric_cloud_router_conn" {
-  value = data.packetfabric_cloud_services_aws_connection_info.new
+output "packetfabric_cs_aws_dedicated_connection" {
+  value = data.packetfabric_cs_aws_dedicated_connection.new
 }
 
 output "packetfabric_cloud_router_bgp_session" {
