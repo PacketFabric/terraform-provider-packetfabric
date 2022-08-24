@@ -62,7 +62,6 @@ resource "aws_vpc" "vpc_2" {
 resource "aws_subnet" "subnet_1" {
   provider          = aws
   vpc_id            = aws_vpc.vpc_1.id
-  availability_zone = var.aws_region1_zone1
   cidr_block        = var.subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -71,7 +70,6 @@ resource "aws_subnet" "subnet_1" {
 resource "aws_subnet" "subnet_2" {
   provider          = aws.region2
   vpc_id            = aws_vpc.vpc_2.id
-  availability_zone = var.aws_region2_zone1
   cidr_block        = var.subnet_cidr2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -365,13 +363,13 @@ output "ec2_public_ip_2" {
 
 # From the PacketFabric side: Create a cloud router
 resource "packetfabric_cloud_router" "cr" {
-  provider = packetfabric
-  scope        = var.pf_cr_scope # Parameter deprecated
-  asn          = var.pf_cr_asn
+  provider     = packetfabric
   name         = "${var.tag_name}-${random_pet.name.id}"
   account_uuid = var.pf_account_uuid
+  asn          = var.pf_cr_asn
   capacity     = var.pf_cr_capacity
   regions      = var.pf_cr_regions
+  scope        = var.pf_cr_scope # Parameter deprecated
 }
 
 data "packetfabric_cloud_router" "current" {
@@ -387,39 +385,39 @@ output "packetfabric_cloud_router" {
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   provider       = packetfabric
+  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id     = packetfabric_cloud_router.cr.id
   account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
-  maybe_nat      = var.pf_crc_maybe_nat
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   pop            = var.pf_crc_pop1
   zone           = var.pf_crc_zone1
-  is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
+  maybe_nat      = var.pf_crc_maybe_nat
+  is_public      = var.pf_crc_is_public
 }
 resource "packetfabric_aws_cloud_router_connection" "crc_2" {
   provider       = packetfabric
+  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id     = packetfabric_cloud_router.cr.id
   account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
-  maybe_nat      = var.pf_crc_maybe_nat
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   pop            = var.pf_crc_pop2
   zone           = var.pf_crc_zone2
-  is_public      = var.pf_crc_is_public
   speed          = var.pf_crc_speed
+  maybe_nat      = var.pf_crc_maybe_nat
+  is_public      = var.pf_crc_is_public
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 60s for the connection to show up in AWS
+# Wait at least 90s for the connection to show up in AWS
 resource "null_resource" "previous" {}
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_90_seconds" {
   depends_on      = [null_resource.previous]
-  create_duration = "60s"
+  create_duration = "90s"
 }
-# This resource will create (at least) 60 seconds after null_resource.previous
+# This resource will create (at least) 90 seconds after null_resource.previous
 resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_90_seconds]
 }
 
 # Retrieve the Direct Connect connections in AWS
