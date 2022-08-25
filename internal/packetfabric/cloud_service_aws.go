@@ -52,8 +52,10 @@ type ServiceAwsMktConn struct {
 }
 
 type ServiceAwsInterf struct {
-	PortCircuitID string `json:"port_circuit_id"`
-	Vlan          int    `json:"vlan"`
+	PortCircuitID string `json:"port_circuit_id,omitempty"`
+	Vlan          int    `json:"vlan,omitempty"`
+	VlanPrivate   int    `json:"vlan_private,omitempty"`
+	VlanMicrosoft int    `json:"vlan_microsoft,omitempty"`
 }
 
 type MktConnProvisionResp struct {

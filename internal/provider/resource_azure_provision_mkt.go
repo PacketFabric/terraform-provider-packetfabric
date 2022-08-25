@@ -21,7 +21,7 @@ func resourceAzureProvision() *schema.Resource {
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
-		Schema: resourceProvision(),
+		Schema: resourceProvisionAzure(),
 	}
 }
 
