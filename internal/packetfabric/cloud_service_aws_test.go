@@ -33,7 +33,7 @@ func Test_CreateAwsProvisionReq(t *testing.T) {
 
 func Test_CreateAwsHostedConn(t *testing.T) {
 	var payload HostedAwsConnection
-	var expectedResp HostedConnectionResp
+	var expectedResp CloudServiceConnCreateResp
 	_ = json.Unmarshal(_buildFakeCreateAwsHostedConn(), &payload)
 	_ = json.Unmarshal(_buildFakeCreateAwsHostedConnResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateAwsHostedConn, payload, expectedResp, _buildFakeCreateAwsHostedConnResp(), "test-create-aws-hosted-conn", t)
@@ -41,14 +41,14 @@ func Test_CreateAwsHostedConn(t *testing.T) {
 
 func Test_CreateDedicadedAWSConn(t *testing.T) {
 	var payload DedicatedAwsConn
-	var expectedResp AwsDedicatedConnCreateResp
+	var expectedResp CloudServiceConnCreateResp
 	_ = json.Unmarshal(_buildFakeCreateDedicadedAWSConn(), &payload)
 	_ = json.Unmarshal(_buildFakeCreateDedicadedAWSConnResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateDedicadedAWSConn, payload, expectedResp, _buildFakeCreateDedicadedAWSConnResp(), "test-create-dedicated-aws-conn", t)
 }
 
 func Test_UpdateAwsServiceConn(t *testing.T) {
-	var expectedResp HostedConnectionResp
+	var expectedResp CloudServiceConnCreateResp
 	_ = json.Unmarshal(_buildFakeUpdateAwsServiceConnResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callUpdateAwsServiceConn, _awsServiceConnDesc, expectedResp, _buildFakeUpdateAwsServiceConnResp(), "test-update-aws-services-conn", t)
 }
