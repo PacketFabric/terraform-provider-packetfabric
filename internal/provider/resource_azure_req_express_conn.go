@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -11,6 +12,12 @@ import (
 
 func resourceAzureReqExpressConn() *schema.Resource {
 	return &schema.Resource{
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
+		},
 		CreateContext: resourceAzureReqExpressConnCreate,
 		ReadContext:   resourceAzureProvisionRead,
 		UpdateContext: resourceAzureProvisionUpdate,
@@ -79,11 +86,32 @@ func resourceAzureReqExpressConnCreate(ctx context.Context, d *schema.ResourceDa
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	azureExpress := extractAzureExpressConn(d)
-	resp, err := c.CreateAzureExpressRoute(azureExpress)
+	expectedResp, err := c.CreateAzureExpressRoute(azureExpress)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CustomerUUID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersDedicated()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 

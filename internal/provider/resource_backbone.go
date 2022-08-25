@@ -146,7 +146,7 @@ func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string, string) (*packetfabric.HostedConnectionResp, error)) diag.Diagnostics {
+func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string, string) (*packetfabric.CloudServiceConnCreateResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
