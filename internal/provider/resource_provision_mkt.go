@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 const awsProvider = "aws"
@@ -30,9 +31,46 @@ func resourceProvision() map[string]*schema.Schema {
 			Description: "The circuit ID of the customer's port.",
 		},
 		"vlan": {
-			Type:        schema.TypeInt,
+			Type:         schema.TypeInt,
+			Required:     true,
+			ValidateFunc: validation.IntBetween(4, 4094),
+			Description:  "Valid VLAN range is from 4-4094, inclusive.",
+		},
+		"description": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Connection description",
+		},
+	}
+}
+
+func resourceProvisionAzure() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"id": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"vc_request_uuid": {
+			Type:        schema.TypeString,
 			Required:    true,
-			Description: "Valid VLAN range is from 4-4094, inclusive.",
+			Description: "UUID of the service request",
+		},
+		"port_circuit_id": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The circuit ID of the customer's port.",
+		},
+		"vlan_private": {
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(4, 4094),
+			Description:  "Valid VLAN range is from 4-4094, inclusive.",
+		},
+		"vlan_microsoft": {
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(4, 4094),
+			Description:  "Valid VLAN range is from 4-4094, inclusive.",
 		},
 		"description": {
 			Type:        schema.TypeString,
@@ -71,12 +109,23 @@ func resourceProvisionDelete(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func extractProvision(d *schema.ResourceData, provider string) packetfabric.ServiceAwsMktConn {
-	return packetfabric.ServiceAwsMktConn{
-		Provider: provider,
-		Interface: packetfabric.ServiceAwsInterf{
-			PortCircuitID: d.Get("port_circuit_id").(string),
-			Vlan:          d.Get("vlan").(int),
-		},
-		Description: d.Get("description").(string),
+	mktConn := packetfabric.ServiceAwsMktConn{Provider: provider}
+	interf := packetfabric.ServiceAwsInterf{}
+	if portCid, ok := d.GetOk("port_circuit_id"); ok {
+		interf.PortCircuitID = portCid.(string)
 	}
+	if vlan, ok := d.GetOk("vlan"); ok {
+		interf.Vlan = vlan.(int)
+	}
+	if vlanMicrosoft, ok := d.GetOk("vlan_microsoft"); ok {
+		interf.VlanMicrosoft = vlanMicrosoft.(int)
+	}
+	if vlanPriv, ok := d.GetOk("vlan_private"); ok {
+		interf.VlanPrivate = vlanPriv.(int)
+	}
+	if desc, ok := d.GetOk("description"); ok {
+		mktConn.Description = desc.(string)
+	}
+	mktConn.Interface = interf
+	return mktConn
 }
