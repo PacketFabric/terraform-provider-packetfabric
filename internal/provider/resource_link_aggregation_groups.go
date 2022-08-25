@@ -114,13 +114,30 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 
 func extractLAG(d *schema.ResourceData) packetfabric.LinkAggregationGroup {
 	lag := packetfabric.LinkAggregationGroup{}
-	lag.Description = d.Get("description").(string)
-	lag.Interval = d.Get("interval").(string)
-	lag.Pop = d.Get("pop").(string)
-	lag.Members = d.Get("members").([]string)
+	if description, ok := d.GetOk("description"); ok {
+		lag.Description = description.(string)
+	}
+	if interval, ok := d.GetOk("interval"); ok {
+		lag.Interval = interval.(string)
+	}
+	if pop, ok := d.GetOk("pop"); ok {
+		lag.Pop = pop.(string)
+	}
+	lag.Members = extractMembers(d)
 	return lag
 }
 
 func intervalOptions() []string {
 	return []string{"fast", "slow"}
+}
+
+func extractMembers(d *schema.ResourceData) []string {
+	if members, ok := d.GetOk("members"); ok {
+		membersResult := make([]string, 0)
+		for _, member := range members.([]interface{}) {
+			membersResult = append(membersResult, member.(string))
+		}
+		return membersResult
+	}
+	return make([]string, 0)
 }
