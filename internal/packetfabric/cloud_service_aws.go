@@ -20,13 +20,14 @@ const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connectio
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
 
 type ServiceAws struct {
-	RoutingID    string `json:"routing_id"`
-	Market       string `json:"market"`
-	Description  string `json:"description"`
-	AwsAccountID string `json:"aws_account_id"`
-	AccountUUID  string `json:"account_uuid"`
-	Pop          string `json:"pop"`
-	Speed        string `json:"speed"`
+	RoutingID    string `json:"routing_id,omitempty"`
+	Market       string `json:"market,omitempty"`
+	Description  string `json:"description,omitempty"`
+	AwsAccountID string `json:"aws_account_id,omitempty"`
+	AccountUUID  string `json:"account_uuid,omitempty"`
+	Pop          string `json:"pop,omitempty"`
+	Zone         string `json:"zone,omitempty"`
+	Speed        string `json:"speed,omitempty"`
 }
 
 // This struct represent the AWS Hosted Backbone Marketplace Cloud connection response
