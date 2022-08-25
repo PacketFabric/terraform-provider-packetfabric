@@ -176,7 +176,7 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if vcCircuitID, ok := d.GetOk("id"); ok {
-		resp, err := c.DeleteBackbone(vcCircuitID.(string))
+		resp, err := fn(vcCircuitID.(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}
