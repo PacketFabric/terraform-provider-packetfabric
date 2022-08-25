@@ -7,7 +7,7 @@ import (
 const serviceAwsURI = "/v2/services/third-party/hosted/aws"
 const provisionMktConnURI = "/v2/services/requests/%s/provision/hosted"
 const hostedConnURI = "/v2/services/cloud/hosted/aws"
-const hostedMktService = "/v2/services/requests/%s"
+const hostedMktService = "/v2/services/cloud/%s"
 const dedicatedConnURI = "/v2/services/cloud/dedicated/aws"
 const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
