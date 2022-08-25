@@ -62,6 +62,12 @@ func resourceAwsHostedMkt() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired location for the new AWS Hosted Connection.\n\t\tExample: DAL1",
 			},
+			"zone": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The desired zone of the new connection",
+			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -129,6 +135,9 @@ func extractHostedMkt(d *schema.ResourceData) packetfabric.ServiceAws {
 	}
 	if pop, ok := d.GetOk("pop"); ok {
 		hostedMkt.Pop = pop.(string)
+	}
+	if zone, ok := d.GetOk("zone"); ok {
+		hostedMkt.Zone = zone.(string)
 	}
 	if speed, ok := d.GetOk("speed"); ok {
 		hostedMkt.Speed = speed.(string)
