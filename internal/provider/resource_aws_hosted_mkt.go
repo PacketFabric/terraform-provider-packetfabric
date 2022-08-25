@@ -78,6 +78,8 @@ func resourceAwsHostedMkt() *schema.Resource {
 	}
 }
 
+// Request a hosted AWS Marketplace Cloud connection with a third party
+// https://docs.packetfabric.com/api/v2/redoc/#tag/Cloud-Services-AWS/operation/post_aws_marketplace_cloud
 func resourceCreateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -87,7 +89,7 @@ func resourceCreateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcRequestUUID)
+	d.SetId(resp.VcCircuitID)
 	return diags
 }
 
@@ -105,11 +107,11 @@ func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcRequestUUID, ok := d.GetOk("id")
+	vcCircuitID, ok := d.GetOk("id")
 	if !ok {
-		return diag.Errorf("please provide a valid VC Request UUID to delete")
+		return diag.Errorf("please provide a valid VC Circuit ID to delete")
 	}
-	err := c.DeleteRequestedHostedMktService(vcRequestUUID.(string))
+	err := c.DeleteRequestedHostedMktService(vcCircuitID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

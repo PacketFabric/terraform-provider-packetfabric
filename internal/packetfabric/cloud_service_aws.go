@@ -34,6 +34,7 @@ type ServiceAws struct {
 // https://docs.packetfabric.com/api/v2/redoc/#operation/post_aws_marketplace_cloud
 type AwsHostedMktResp struct {
 	VcRequestUUID  string       `json:"vc_request_uuid,omitempty"`
+	VcCircuitID    string       `json:"vc_circuit_id,omitempty"`
 	FromCustomer   FromCustomer `json:"from_customer,omitempty"`
 	ToCustomer     ToCustomer   `json:"to_customer,omitempty"`
 	Text           string       `json:"text,omitempty"`
