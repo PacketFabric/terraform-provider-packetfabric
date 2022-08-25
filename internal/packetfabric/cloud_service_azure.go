@@ -134,21 +134,6 @@ type AzureExpressRoute struct {
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
-type AzureExpressRouteCreateResp struct {
-	UUID            string          `json:"uuid,omitempty"`
-	CustomerUUID    string          `json:"customer_uuid,omitempty"`
-	UserUUID        string          `json:"user_uuid,omitempty"`
-	ServiceProvider string          `json:"service_provider,omitempty"`
-	PortType        string          `json:"port_type,omitempty"`
-	Speed           string          `json:"speed,omitempty"`
-	ServiceClass    string          `json:"service_class,omitempty"`
-	Description     string          `json:"description,omitempty"`
-	State           string          `json:"state,omitempty"`
-	CloudCircuitID  interface{}     `json:"cloud_circuit_id,omitempty"`
-	Billing         AzureBilling    `json:"billing,omitempty"`
-	Components      AzureComponents `json:"components,omitempty"`
-	Settings        AzureSettings   `json:"settings,omitempty"`
-}
 type AzureBilling struct {
 	AccountUUID string `json:"account_uuid,omitempty"`
 }
@@ -177,26 +162,6 @@ type AzureExpressRouteDedicated struct {
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
-type AzureExpressRouteDedicatedCreateResp struct {
-	CustomerUUID      string               `json:"customer_uuid,omitempty"`
-	UserUUID          string               `json:"user_uuid,omitempty"`
-	ServiceProvider   string               `json:"service_provider,omitempty"`
-	PortType          string               `json:"port_type,omitempty"`
-	ServiceClass      string               `json:"service_class,omitempty"`
-	Description       string               `json:"description,omitempty"`
-	State             string               `json:"state,omitempty"`
-	Speed             string               `json:"speed,omitempty"`
-	CloudCircuitID    string               `json:"cloud_circuit_id,omitempty"`
-	TimeCreated       string               `json:"time_created,omitempty"`
-	TimeUpdated       string               `json:"time_updated,omitempty"`
-	AzurePortCategory string               `json:"azure_port_category,omitempty"`
-	Settings          AzureExpressSettings `json:"settings,omitempty"`
-}
-type AzureExpressSettings struct {
-	ZoneDest      string `json:"zone_dest,omitempty"`
-	Encapsulation string `json:"encapsulation,omitempty"`
-}
-
 func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*AzureHostedMktReqResp, error) {
 	azureMktReqResp := &AzureHostedMktReqResp{}
 	_, err := c.sendRequest(azureHostedMktReqURI, postMethod, azureMktReq, azureMktReqResp)
@@ -206,8 +171,8 @@ func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*
 	return azureMktReqResp, nil
 }
 
-func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*AzureExpressRouteCreateResp, error) {
-	expressRouteResp := &AzureExpressRouteCreateResp{}
+func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*CloudServiceConnCreateResp, error) {
+	expressRouteResp := &CloudServiceConnCreateResp{}
 	formatedURI := fmt.Sprintf(azureExpressRouteURI)
 	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
 	if err != nil {
@@ -216,8 +181,8 @@ func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) 
 	return expressRouteResp, nil
 }
 
-func (c *PFClient) CreateAzureExpressRouteDedicated(azureExpressDedicated AzureExpressRouteDedicated) (*AzureExpressRouteDedicatedCreateResp, error) {
-	expressRouteResp := &AzureExpressRouteDedicatedCreateResp{}
+func (c *PFClient) CreateAzureExpressRouteDedicated(azureExpressDedicated AzureExpressRouteDedicated) (*CloudServiceConnCreateResp, error) {
+	expressRouteResp := &CloudServiceConnCreateResp{}
 	_, err := c.sendRequest(azureExpressRouteDedicatedURI, postMethod, azureExpressDedicated, expressRouteResp)
 	if err != nil {
 		return nil, err

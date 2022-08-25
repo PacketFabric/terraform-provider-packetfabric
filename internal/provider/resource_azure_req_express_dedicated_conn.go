@@ -13,10 +13,10 @@ import (
 func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceAzureReqExpressDedicatedConnCreate,
 		ReadContext:   resourceAzureProvisionRead,
@@ -103,11 +103,32 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	azureExpress := extractAzureExpressDedicatedConn(d)
-	resp, err := c.CreateAzureExpressRouteDedicated(azureExpress)
+	expectedResp, err := c.CreateAzureExpressRouteDedicated(azureExpress)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CustomerUUID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersDedicated()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 

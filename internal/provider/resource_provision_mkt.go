@@ -97,17 +97,6 @@ func resourceProvisionCreate(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func resourceProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Delete Connection provision requests",
-		Detail:   "Connection provision requests must be deleted by deleting a connection request.",
-	})
-	d.SetId("")
-	return diags
-}
-
 func extractProvision(d *schema.ResourceData, provider string) packetfabric.ServiceAwsMktConn {
 	mktConn := packetfabric.ServiceAwsMktConn{Provider: provider}
 	interf := packetfabric.ServiceAwsInterf{}

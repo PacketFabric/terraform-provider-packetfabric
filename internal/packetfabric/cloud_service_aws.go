@@ -144,18 +144,56 @@ type AwsCloudConnInfo struct {
 	Site        string `json:"site"`
 }
 
-type AwsDedicatedConnCreateResp struct {
-	CustomerUUID    string `json:"customer_uuid"`
-	UserUUID        string `json:"user_uuid"`
-	ServiceProvider string `json:"service_provider"`
-	PortType        string `json:"port_type"`
-	ServiceClass    string `json:"service_class"`
-	Description     string `json:"description"`
-	State           string `json:"state"`
-	Speed           string `json:"speed"`
-	CloudCircuitID  string `json:"cloud_circuit_id"`
-	TimeCreated     string `json:"time_created"`
-	TimeUpdated     string `json:"time_updated"`
+type CloudServiceConnCreateResp struct {
+	UUID                    string      `json:"uuid,omitempty"`
+	CustomerUUID            string      `json:"customer_uuid,omitempty"`
+	UserUUID                string      `json:"user_uuid,omitempty"`
+	ServiceProvider         string      `json:"service_provider,omitempty"`
+	PortType                string      `json:"port_type,omitempty"`
+	Deleted                 bool        `json:"deleted,omitempty"`
+	CloudCircuitID          string      `json:"cloud_circuit_id,omitempty"`
+	AccountUUID             string      `json:"account_uuid,omitempty"`
+	CustomerSiteCode        interface{} `json:"customer_site_code,omitempty"`
+	CustomerSiteName        interface{} `json:"customer_site_name,omitempty"`
+	ServiceClass            string      `json:"service_class,omitempty"`
+	Description             string      `json:"description,omitempty"`
+	State                   string      `json:"state,omitempty"`
+	Settings                Settings    `json:"settings,omitempty"`
+	Billing                 Billing     `json:"billing,omitempty"`
+	Components              Components  `json:"components,omitempty"`
+	IsCloudRouterConnection bool        `json:"is_cloud_router_connection,omitempty"`
+	AzurePortCategory       string      `json:"azure_port_category,ommitempty"`
+	Speed                   string      `json:"speed,omitempty"`
+}
+type Settings struct {
+	VlanIDPf                    int         `json:"vlan_id_pf,omitempty"`
+	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
+	VlanIdPrivate               int         `json:"vlan_id_private,ommitempty"`
+	VlanIdMicrosoft             int         `json:"vlan_id_microsoft,ommitempty"`
+	VcIdPrivate                 int         `json:"vc_id_private,ommitempty"`
+	SvlanIdCustomer             interface{} `json:"svlan_id_customer,ommitempty"`
+	AzureServiceKey             string      `json:"azure_service_key,ommitempty"`
+	AzureServiceTag             int         `json:"azure_service_tag,ommitempty"`
+	GooglePairingKey            string      `json:"google_pairing_key,ommitempty"`
+	Google_vlan_attachment_name string      `json:"google_vlan_attchment_name,ommitempty"`
+	AwsRegion                   string      `json:"aws_region,omitempty"`
+	AwsHostedType               string      `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID             string      `json:"aws_connection_id,omitempty"`
+	AwsAccountID                string      `json:"aws_account_id,omitempty"`
+	ZoneDest                    string      `json:"zone_dest,ommitempty"`
+	Autoneg                     bool        `json:"autoneg,ommitempty"`
+	Encapsulation               string      `json:"encapsulation,ommitempty"`
+}
+type Billing struct {
+	AccountUUID      string `json:"account_uuid,omitempty"`
+	SubscriptionTerm int    `json:"subscription_term,omitempty"`
+	Speed            string `json:"speed,omitempty"`
+}
+type Components struct {
+	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
+	VcIdMicrosoft        string `json:"vc_id_microsoft,ommitempty"`
+	VcIdPrivate          string `json:"vc_id_private,ommitempty"`
 }
 
 type DedicatedConnResp struct {
@@ -236,8 +274,8 @@ func (c *PFClient) CreateAwsProvisionReq(conn ServiceAwsMktConn, vcRequestUUID s
 	return expectedResp, err
 }
 
-func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*HostedConnectionResp, error) {
-	expectedResp := &HostedConnectionResp{}
+func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*CloudServiceConnCreateResp, error) {
+	expectedResp := &CloudServiceConnCreateResp{}
 	_, err := c.sendRequest(hostedConnURI, postMethod, hostedConn, expectedResp)
 	if err != nil {
 		return nil, err
@@ -245,8 +283,8 @@ func (c *PFClient) CreateAwsHostedConn(hostedConn HostedAwsConnection) (*HostedC
 	return expectedResp, err
 }
 
-func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*AwsDedicatedConnCreateResp, error) {
-	expectedResp := &AwsDedicatedConnCreateResp{}
+func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*CloudServiceConnCreateResp, error) {
+	expectedResp := &CloudServiceConnCreateResp{}
 	_, err := c.sendRequest(dedicatedConnURI, postMethod, dedicatedConn, expectedResp)
 	if err != nil {
 		return nil, err
