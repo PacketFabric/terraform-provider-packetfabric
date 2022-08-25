@@ -13,10 +13,10 @@ import (
 func resourceGoogleDedicatedConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceGoogleDedicatedConnCreate,
 		ReadContext:   resourceGoogleDedicatedConnRead,
@@ -101,11 +101,32 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	dedicatedConn := extractGoogleDedicatedConn(d)
-	resp, err := c.CreateRequestDedicatedGoogleConn(dedicatedConn)
+	expectedResp, err := c.CreateRequestDedicatedGoogleConn(dedicatedConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CloudCircuitID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersDedicated()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 
@@ -120,7 +141,32 @@ func resourceGoogleDedicatedConnUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGoogleDedicatedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceProvisionDelete(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	cloudCID, ok := d.GetOk("id")
+	if !ok {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Google Service Delete",
+			Detail:   cloudCidNotFoundDetailsMsg,
+		})
+		return diags
+	}
+	err := c.DeleteCloudService(cloudCID.(string))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	deleteOkCh := make(chan bool)
+	defer close(deleteOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudServiceStatus(cloudCID.(string))
+	}
+	go c.CheckServiceStatus(deleteOkCh, err, fn)
+	if !<-deleteOkCh {
+		return diag.FromErr(err)
+	}
+	return diags
 }
 
 func extractGoogleDedicatedConn(d *schema.ResourceData) packetfabric.GoogleReqDedicatedConn {

@@ -41,5 +41,30 @@ func resourceAzureProvisionUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceAzureProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceProvisionDelete(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	cloudCID, ok := d.GetOk("id")
+	if !ok {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Azure Service Delete",
+			Detail:   cloudCidNotFoundDetailsMsg,
+		})
+		return diags
+	}
+	err := c.DeleteCloudService(cloudCID.(string))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	deleteOkCh := make(chan bool)
+	defer close(deleteOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudServiceStatus(cloudCID.(string))
+	}
+	go c.CheckServiceStatus(deleteOkCh, err, fn)
+	if !<-deleteOkCh {
+		return diag.FromErr(err)
+	}
+	return diags
 }

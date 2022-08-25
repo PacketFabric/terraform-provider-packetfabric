@@ -2,9 +2,9 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -12,6 +12,12 @@ import (
 
 func resourceGoogleRequestHostConn() *schema.Resource {
 	return &schema.Resource{
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
+		},
 		CreateContext: resourceGoogleReqHostConnCreate,
 		UpdateContext: resourceGoogeReqHostConnUpdate,
 		ReadContext:   resourceGoogleReqHostConnRead,
@@ -82,11 +88,32 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	reqConn := extractGoogleReqConn(d)
-	_, err := c.CreateRequestHostedGoogleConn(reqConn)
+	expectedResp, err := c.CreateRequestHostedGoogleConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersDedicated()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 

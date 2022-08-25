@@ -2,12 +2,9 @@ package provider
 
 import (
 	"context"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -96,10 +93,7 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	dedicatedConn := extractDedicatedConn(d)
-	pfPluginUUID := uuid.New()
-	dedicatedConn.Description = fmt.Sprintf("%s: %s", pfPluginUUID.String(), dedicatedConn.Description)
-	resp, err := c.CreateDedicadedAWSConn(dedicatedConn)
-	expectedResp := &packetfabric.AwsDedicatedConnCreateResp{}
+	expectedResp, err := c.CreateDedicadedAWSConn(dedicatedConn)
 	createOk := make(chan bool)
 	defer close(createOk)
 	ticker := time.NewTicker(10 * time.Second)
@@ -108,7 +102,7 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 			dedicatedConns, err := c.GetCurrentCustomersDedicated()
 			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
 				for _, conn := range dedicatedConns {
-					if strings.Contains(conn.Description, pfPluginUUID.String()) && conn.State == "active" {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
 						expectedResp.CloudCircuitID = conn.CloudCircuitID
 						ticker.Stop()
 						createOk <- true
@@ -121,7 +115,7 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CloudCircuitID)
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 

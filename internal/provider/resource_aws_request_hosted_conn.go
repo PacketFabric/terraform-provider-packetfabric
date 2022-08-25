@@ -85,7 +85,7 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.Description)
+	d.SetId(resp.CloudCircuitID)
 	return diags
 }
 
