@@ -8,6 +8,9 @@ description: |-
 
 # packetfabric_backbone_virtual_circuit (Resource)
 
+A virtual circuit between two ports in the PacketFabric network. For more information, see [the PacketFabric documentation on virtual circuits](https://docs.packetfabric.com/vc/).
+
+
 ## Example Usage
 
 {{tffile "examples/resources/packetfabric_backbone_virtual_circuit/resource.tf"}}
@@ -18,17 +21,21 @@ description: |-
 ### Required
 
 - `bandwidth` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--bandwidth))
-- `description` (String) Backbone Dedicated CR Description
-- `epl` (Boolean) f true, created circuit will be an EPL otherwise EVPL
-		EPL provides Point-to-Point connection between a pair of interfaces
-		EVPL supports multiple Ethernet Virtual Connections per interface
+- `description` (String) A brief description of this connection.
+- `epl` (Boolean) If true, the circuit will be an EPL connection rather than an EVPL. Default is false.  
+	
+	EPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections. 
+	
+	EVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.  
+	
+	For more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).
 - `interface_a` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_a))
 - `interface_z` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_z))
 
 ### Optional
 
-- `rate_limit_in` (Number) The upper bound, in Mbps, to limit incoming data by.
-- `rate_limit_out` (Number) The upper bound, in Mbps, to limit outgoing data by.
+- `rate_limit_in` (Number) The upper bound, in Mbps, by which to limit incoming data.
+- `rate_limit_out` (Number) The upper bound, in Mbps, by which to limit outgoing data. 
 
 ### Read-Only
 
@@ -39,16 +46,20 @@ description: |-
 
 Required:
 
-- `account_uuid` (String) PacketFabric account UUID. The contact that will be billed.
-- `speed` (String) The desired speed of the new connection.
-		Enum: []"1gps", "10gbps"]
-- `subscription_term` (Number) The billing term, in months, for this connection.
-		Enum: ["1", "12", "24", "36"]
+- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `speed` (String) The desired speed of the new connection.  
+	Only applicable if `longhaul_type` is “dedicated" or "hourly".
+	
+	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps"]
+- `subscription_term` (Number) The billing term, in months, for this connection. Only applicable if `longhaul_type` is “dedicated".
+
+	Enum: ["1", "12", "24", "36"]
 
 Optional:
 
-- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing
-		Enum ["dedicated" "usage" "hourly"]
+- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing
+
+	Enum ["dedicated" "usage" "hourly"]
 
 
 <a id="nestedblock--interface_a"></a>
@@ -56,8 +67,8 @@ Optional:
 
 Required:
 
-- `port_circuit_id` (String) The circuit ID of the customer's port.
-- `untagged` (Boolean) Whether or not the interface should be untagged.
+- `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
+- `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
@@ -66,8 +77,8 @@ Required:
 
 Required:
 
-- `port_circuit_id` (String) The circuit ID of the customer's port.
-- `untagged` (Boolean) Whether or not the interface should be untagged.
+- `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
+- `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 

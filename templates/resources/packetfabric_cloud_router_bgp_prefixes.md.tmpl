@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cloud_router_bgp_prefixes (Resource)
 
-
+The allowed prefixes for a BGP session. For more information, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
 
 ## Example Usage
 
@@ -19,7 +19,7 @@ description: |-
 
 ### Required
 
-- `bgp_settings_uuid` (String) UUID of BGP settings to fetch prefixes for.
+- `bgp_settings_uuid` (String) UUID of the BGP session for which you are fetching or setting prefixes.
 
 ### Optional
 
@@ -34,9 +34,9 @@ description: |-
 
 Required:
 
-- `order` (Number) The Order of this Prefix agains the others.
+- `order` (Number) The order of this prefix against the others.
 - `prefix` (String) The actual IP Prefix of this instance.
-- `type` (String) Whether this prefix is in or out.
+- `type` (String) Specify `"in` or `"out"`. Prefixes that are "in" are allowed into the attached cloud environment. Prefixes that are "out" are going to cloud router connections. 
 
 Read-Only:
 

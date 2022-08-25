@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_outbound_cross_connect (Resource)
 
-
+A customer inbound/PacketFabric outbound cross connect. For more information, see [Cross Connects in the PacketFabric documentation](https://docs.packetfabric.com/xconnect/).
 
 ## Example Usage
 
@@ -51,13 +51,13 @@ output "my-occ-info" {
 
 ### Required
 
-- `document_uuid` (String) Document UUID for the LOAD
-- `port` (String) port_circuit_id to use for the cross connect.
-- `site` (String) site_code for the port location.
+- `document_uuid` (String) Document UUID for the LOA. When you order a cross connect, you must provide an LOA/CFA authorizing PacketFabric access to your equipment.
+- `port` (String) The circuit ID of the PacketFabric port to which your are building the cross connect. This starts with "PF-AP-".
+- `site` (String) The site code for the port location.
 
 ### Optional
 
-- `data_center_cross_connect_id` (String) Display ID for the OBCC.
+- `data_center_cross_connect_id` (String) Display ID for the outbound cross connect.
 - `description` (String) PacketFabric outbound cross connect description.
 - `destination_circuit_id` (String) Z-side circuit id for the far side of the cross connect.
 - `destination_name` (String) Z-side company name for the far side of the cross connect.
@@ -66,7 +66,7 @@ output "my-occ-info" {
 - `position` (String) Z-side fiber position info.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this cross connect should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `user_description` (String) The user desctiption used for update.
+- `user_description` (String) The user description used for update.
 
 ### Read-Only
 

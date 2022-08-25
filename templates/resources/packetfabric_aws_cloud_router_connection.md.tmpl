@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_aws_cloud_router_connection (Resource)
 
-
+A connection from your cloud router to your AWS environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/).
 
 ## Example Usage
 
@@ -19,22 +19,21 @@ description: |-
 
 ### Required
 
-- `account_uuid` (String) The UUID of the PacketFabric contact that will be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
-- `circuit_id` (String) Circuit ID of the target cloud router.
-		 Example: "PF-L3-CUST-2"
-- `description` (String) The description of this connection.
-- `is_public` (Boolean) Whether or not PacketFabric should allocate an IP address for the user.
-- `maybe_nat` (Boolean) Whether or not this connection is intended for NAT later.
-		 true or false
-- `pop` (String) The desired location for the new AWS Hosted Connection.
+- `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
+- `description` (String) A brief description of this connection.
+- `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.
+- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. 
+- `pop` (String) The POP in which you want to provision the connection.
 - `speed` (String) The desired speed of the new connection.
-		 Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
+
+	Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 
 
 ### Optional
 
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired zone of the new connection. AWS Availability Zone
+- `zone` (String) The desired AWS availability zone of the new connection. 
 
 ### Read-Only
 

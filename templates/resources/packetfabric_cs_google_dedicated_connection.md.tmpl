@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cs_google_dedicated_connection (Resource)
 
-
+This is a port located in a Google cloud on-ramp facility, which will be connected to the Google network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
 ## Example Usage
 
@@ -19,18 +19,24 @@ description: |-
 
 ### Required
 
-- `account_uuid` (String) The UUID of the contact that will be billed.
-- `description` (String) The description of this connection.
-- `encapsulation` (String)
-- `pop` (String) The desired location of the new Azure dedicated connection.
-- `port_category` (String)
-- `service_class` (String) The service class for the given port, either lng haul or metro.
-- `speed` (String) The desired speed of the new connection.
+- `account_uuid` (String) The UUID for the billing account that should be billed. 
+- `description` (String) A brief description of this connection.
+- `pop` (String) The POP in which the dedicated port should be provisioned (the cloud on-ramp).
+
+	Example: DAL1
+- `service_class` (String) The service class for the given port, either long haul or metro. Specify metro if the cloud on-ramp (the `pop`) is in the same market as the source ports (the ports to which you will be building out virtual circuits). 
+
+	Enum: ["longhaul","metro"]
+- `speed` (String) The desired capacity of the port.
+
+	Enum: ["10Gps", "100Gbps"]
 - `subscription_term` (Number) The billing term, in months, for this connection.
+	
+	Enum: ["1", "12", "24", "36"]
 
 ### Optional
 
-- `loa` (String) A base64 encoded string of a PDF of a LOA.
+- `loa` (String) A base64 encoded string of a PDF of the LOA that Google provided.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired zone of the new connection.

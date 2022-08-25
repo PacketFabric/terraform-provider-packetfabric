@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_link_aggregation_group (Resource)
 
-
+A Link Aggregation Group interface (or a LAG) is a group of ports on the PacketFabric network. For more information, see [Ports in the PacketFabric documentation](https://docs.packetfabric.com/ports/).
 
 ## Example Usage
 
@@ -50,10 +50,12 @@ output "my-lag-info" {
 
 ### Required
 
-- `description` (String) The Link Aggregation Group description.
-- `interval` (String) Interval at which LACP packets are sent: fast/slow
-- `members` (List of String) List of member port identifiers. All members must have the same speed and media.
-- `pop` (String) Point of presence.
+- `description` (String) A brief description of the LAG.
+- `interval` (String) The LACP interval determines the frequency in which LACP control packets (LACP PDUs) are sent. If you specify fast, they are sent at 1 second intervals. If you specify slow, they are sent at 30 second intervals. 
+
+    Enum: "fast" "slow" 
+- `members` (List of String) A list of port circuit IDs to include in the LAG. To be included in a LAG, the ports must be at the same site, in the same zone, and have the same speed and media.
+- `pop` (String) Point of presence in which the LAG should be located.
 
 ### Optional
 
