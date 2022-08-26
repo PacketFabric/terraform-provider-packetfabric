@@ -243,7 +243,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	}
 	session, err := c.GetBgpSessionBy(cID.(string), connCID.(string), bgpSettingsUUID.(string))
 	if err != nil {
-		return diag.Errorf("could not find BGP session associated with the provided Cloud Router ID", err)
+		return diag.Errorf("could not find BGP session associated with the provided Cloud Router ID: %v", err)
 	}
 	sessionToDisable := session.BuildNewBgpSessionInstance()
 	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
