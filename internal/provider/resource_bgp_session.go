@@ -25,12 +25,12 @@ func resourceBgpSession() *schema.Resource {
 			"circuit_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Circuit ID of the target cloud router.\n\t\tExample: \"PF-L3-CUST-2\"",
+				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"connection_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The circuit ID of the connection to update.\n\t\tExample: \"PF-AE-1234\"",
+				Description: "The circuit ID of the connection associated with the BGP session. This starts with \"PF-L3-CON-\".",
 			},
 			"md5": {
 				Type:        schema.TypeString,
@@ -41,47 +41,47 @@ func resourceBgpSession() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The L3 Address of this instance. Not used for Azure connections.",
+				Description:  "The L3 address of this instance. Not used for Azure connections.",
 			},
 			"primary_subnet": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Currently for Azure use only, provide this as the primary subnet when creating an Azure cloud router connection.",
+				Description: "Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.",
 			},
 			"secondary_subnet": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Currently for Azure use only, provide this as the secondary subnet when creating an Azure cloud router connection.",
+				Description: "Currently for Azure use only. Provide this as the secondary subnet when creating an Azure cloud router connection.",
 			},
 			"address_family": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Whether this instance is IPv4 or IPv6.\n\t\tEnum: \"v4\" \"v6\"",
+				Description: "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported.\n\n\tEnum: \"v4\" \"v6\"",
 			},
 			"remote_address": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The cloud-side address of the instance.",
+				Description: "The cloud-side router peer IP.",
 			},
 			"remote_asn": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The cloud-side ASN of the instance.",
+				Description: "The cloud-side ASN.",
 			},
 			"multihop_ttl": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The TTL of this session.\n\t\tDefaults to 1.",
+				Description: "The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).",
 			},
 			"local_preference": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The preference for this instance.",
+				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router.",
 			},
 			"med": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The Multi-Exit Discriminator of this instance.",
+				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS.",
 			},
 			"community": {
 				Type:        schema.TypeInt,
@@ -101,32 +101,34 @@ func resourceBgpSession() *schema.Resource {
 			"bfd_interval": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Minimum interval, in microseconds, for transmitting BFD Control packets.\n\t\tAvailable range is 3 through 30000.",
+				Description: "If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.\n\n\tAvailable range is 3 through 30000.",
 			},
 			"bfd_multiplier": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The number of BFD Control packets not received by a neighbor that causes the session to be declared down.\n\t\tAvailable range is 2 through 16.",
+				Description: "If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.\n\n\tAvailable range is 2 through 16.",
 			},
 			"disabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Whether this BGP session is disabled.\n\t\tDefault \"false\"",
+				Description: "Whether this BGP session is disabled. Default is false.",
 			},
 			"pre_nat_sources": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,
-					Description: "The source IP address + mask of the host before NAT translation.\n\t\tExample: 10.0.0.0/24",
+					Description: "IP prefix using CIDR format.",
 				},
 			},
 			"pool_prefixes": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,
-					Description: "The source IP address + mask of the NAT pool prefix.\n\t\tExample: 10.0.0.0/32",
+					Description: "IP prefix using CIDR format.",
 				},
 			},
 		},

@@ -17,7 +17,7 @@ func resourceBackbone() map[string]*schema.Schema {
 		"description": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "Backbone Dedicated CR Description",
+			Description: "A brief description of this connection.",
 		},
 		"bandwidth": {
 			Type:     schema.TypeSet,
@@ -27,22 +27,22 @@ func resourceBackbone() map[string]*schema.Schema {
 					"account_uuid": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "PacketFabric account UUID. The contact that will be billed.",
+						Description: "The UUID for the billing account that should be billed.",
 					},
 					"speed": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
+						Description: "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 					},
 					"subscription_term": {
 						Type:        schema.TypeInt,
 						Required:    true,
-						Description: "The billing term, in months, for this connection.\n\t\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
+						Description: "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 					},
 					"longhaul_type": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
+						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
 			},
@@ -55,7 +55,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "The circuit ID of the customer's port.",
+						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
 						Type:        schema.TypeInt,
@@ -65,7 +65,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"untagged": {
 						Type:        schema.TypeBool,
 						Required:    true,
-						Description: "Whether or not the interface should be untagged.",
+						Description: "Whether the interface should be untagged.",
 					},
 				},
 			},
@@ -78,7 +78,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "The circuit ID of the customer's port.",
+						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
 						Type:        schema.TypeInt,
@@ -88,7 +88,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"untagged": {
 						Type:        schema.TypeBool,
 						Required:    true,
-						Description: "Whether or not the interface should be untagged.",
+						Description: "Whether the interface should be untagged.",
 					},
 				},
 			},
@@ -96,17 +96,17 @@ func resourceBackbone() map[string]*schema.Schema {
 		"rate_limit_in": {
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Description: "The upper bound, in Mbps, to limit incoming data by.",
+			Description: "The upper bound, in Mbps, by which to limit incoming data.",
 		},
 		"rate_limit_out": {
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Description: "The upper bound, in Mbps, to limit outgoing data by.",
+			Description: "The upper bound, in Mbps, by which to limit outgoing data.",
 		},
 		"epl": {
 			Type:        schema.TypeBool,
 			Required:    true,
-			Description: "f true, created circuit will be an EPL otherwise EVPL\n\t\tEPL provides Point-to-Point connection between a pair of interfaces\n\t\tEVPL supports multiple Ethernet Virtual Connections per interface",
+			Description: "If true, the circuit will be an EPL connection rather than an EVPL. Default is false.\n\n\tEPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.\n\n\tEVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.\n\n\tFor more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).",
 		},
 	}
 }

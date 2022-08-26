@@ -8,6 +8,8 @@ description: |-
 
 # packetfabric_cs_aws_dedicated_connection (Resource)
 
+A port located in an AWS cloud on-ramp facility, which will be connected to the AWS network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+
 ## Example Usage
 
 ```terraform
@@ -53,30 +55,35 @@ output "packetfabric_cs_aws_dedicated_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID of the contact that will be billed.
-		Example: a2115890-ed02-4795-a6dd-c485bec3529c
-- `autoneg` (Boolean) Whether the port auto-negotiates or not, this is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
+- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
 - `aws_region` (String) The region that the new connection will connect to.
-		Example: us-west-1
-- `description` (String) The description of this connection.
-		Example: AWS Hosted connection for Foo Corp
-- `pop` (String) The desired location for the new AWS Hosted Connection.
-		Example: DAL1
-- `service_class` (String) The service class for the given port, either long haul or metro.
-		Enum: ["longhaul","metro"]
-- `speed` (String) The desired speed of the new connection.
-		Enum: []"1gps", "10gbps"]
+
+	Example: us-west-1
+- `description` (String) A brief description of this connection.
+- `pop` (String) The POP in which the dedicated port should be provisioned (the cloud on-ramp).
+
+	Example: DAL1
+- `service_class` (String) The service class for the given port, either long haul or metro. Specify metro if the cloud on-ramp (the `pop`) is in the same market as the source ports (the ports to which you will be building out virtual circuits).
+
+	Enum: ["longhaul","metro"]
+- `speed` (String) The desired capacity of the port.
+
+	Enum: ["1Gps", "10Gbps"]
 - `subscription_term` (Number) The billing term, in months, for this connection.
-		Enum: ["1", "12", "24", "36"]
+
+	Enum: ["1", "12", "24", "36"]
 
 ### Optional
 
-- `loa` (String) A base64 encoded string of a PDF of a LOA
-		Example: SSBhbSBhIFBERg==
+- `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
+
+	Example: SSBhbSBhIFBERg==
 - `should_create_lag` (Boolean) Create the dedicated connection as a LAG interface.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired AWS Availability zone of the new connection.
-		Example: "A"
+- `zone` (String) The desired AWS availability zone of the new connection.
+
+	Example: "A"
 
 ### Read-Only
 
@@ -91,5 +98,7 @@ Optional:
 - `delete` (String)
 - `read` (String)
 - `update` (String)
+
+
 
 

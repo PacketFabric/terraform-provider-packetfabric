@@ -8,6 +8,8 @@ description: |-
 
 # packetfabric_cs_google_hosted_connection (Resource)
 
+A hosted cloud connection to your Google Cloud environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+
 ## Example Usage
 
 ```terraform
@@ -43,22 +45,37 @@ resource "packetfabric_cs_google_hosted_connection" "new" {
 
 ### Required
 
-- `account_uuid` (String) The UUID of the contact that will be billed.
-- `description` (String) The description of this connection.
-- `google_pairing_key` (String) The Google pairing key to use for this connection.
-- `google_vlan_attachment_name` (String) The Google Vlan attachment name.
-- `pop` (String) The desired location for the new Connection.
-- `port` (String) The port to connect to Google.
-- `speed` (String) The desired speed of the new connection.
-		 Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
+- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `description` (String) A brief description of this connection.
+- `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.
+- `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
+- `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
+- `port` (String) The circuit ID of the PacketFabric port you wish to connect to Google. This starts with "PF-AP-".
+- `speed` (String) The speed of the new connection.
+
+	 Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 ### Optional
 
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
+
+
+
 
 

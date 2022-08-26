@@ -30,25 +30,25 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
-				Description:  "The UUID of the contact that will be billed.",
+				Description:  "The UUID for the billing account that should be billed.",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The description of this connection.",
+				Description:  "A brief description of this connection.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired location for the new AWS Hosted Connection.",
+				Description:  "The POP in which the hosted connection should be provisioned (the cloud on-ramp).",
 			},
 			"port": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The port to connect to AWS.",
+				Description:  "The circuit ID of the PacketFabric port you want to connect to AWS. This starts with \"PF-AP-\".",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
@@ -70,7 +70,7 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(speedOptions(), true),
-				Description:  "The desired speed of the new connection.\n\t\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
+				Description:  "The speed of the new connection.\n\n\tAvailable: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
 			},
 		},
 	}

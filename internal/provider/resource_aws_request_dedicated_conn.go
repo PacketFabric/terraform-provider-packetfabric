@@ -32,47 +32,47 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			"aws_region": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The region that the new connection will connect to.\n\t\tExample: us-west-1",
+				Description: "The region that the new connection will connect to.\n\n\tExample: us-west-1",
 			},
 			"account_uuid": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The UUID of the contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
+				Description: "The UUID for the billing account that should be billed.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The description of this connection.\n\t\tExample: AWS Hosted connection for Foo Corp",
+				Description: "A brief description of this connection.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The desired AWS Availability zone of the new connection.\n\t\tExample: \"A\"",
+				Description: "The desired AWS availability zone of the new connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The desired location for the new AWS Hosted Connection.\n\t\tExample: DAL1",
+				Description: "The POP in which the dedicated port should be provisioned (the cloud on-ramp).\n\n\tExample: DAL1",
 			},
 			"subscription_term": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The billing term, in months, for this connection.\n\t\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
+				Description: "The billing term, in months, for this connection.\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 			},
 			"service_class": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The service class for the given port, either long haul or metro.\n\t\tEnum: [\"longhaul\",\"metro\"]",
+				Description: "The service class for the given port, either long haul or metro. Specify metro if the cloud on-ramp (the `pop`) is in the same market as the source ports (the ports to which you will be building out virtual circuits).\n\n\tEnum: [\"longhaul\",\"metro\"]",
 			},
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "Whether the port auto-negotiates or not, this is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
+				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
 			},
 			"speed": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
+				Description: "The desired capacity of the port.\n\n\tEnum: [\"1Gps\", \"10Gbps\"]",
 			},
 			"should_create_lag": {
 				Type:        schema.TypeBool,
@@ -82,7 +82,7 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			"loa": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "A base64 encoded string of a PDF of a LOA\n\t\tExample: SSBhbSBhIFBERg==",
+				Description: "A base64 encoded string of a PDF of the LOA that AWS provided.\n\n\tExample: SSBhbSBhIFBERg==",
 			},
 		},
 	}

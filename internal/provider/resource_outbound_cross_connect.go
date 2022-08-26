@@ -32,19 +32,19 @@ func resourceOutboundCrossConnect() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "port_circuit_id to use for the cross connect.",
+				Description:  "The circuit ID of the PacketFabric port to which your are building the cross connect. This starts with \"PF-AP-\".",
 			},
 			"site": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "site_code for the port location.",
+				Description:  "The site code for the port location.",
 			},
 			"document_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
-				Description:  "Document UUID for the LOAD",
+				Description:  "Document UUID for the LOA. When you order a cross connect, you must provide an LOA/CFA authorizing PacketFabric access to your equipment.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -86,7 +86,7 @@ func resourceOutboundCrossConnect() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Display ID for the OBCC.",
+				Description:  "Display ID for the outbound cross connect.",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
@@ -98,7 +98,7 @@ func resourceOutboundCrossConnect() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The user desctiption used for update.",
+				Description:  "The user description used for update.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
