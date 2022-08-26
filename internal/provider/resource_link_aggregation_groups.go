@@ -17,10 +17,10 @@ func resourceLinkAggregationGroups() *schema.Resource {
 		UpdateContext: resourceLinkAggregationGroupsUpdate,
 		DeleteContext: resourceLinkAggregationGroupsDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -67,6 +67,8 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 	var diags diag.Diagnostics
 	lag := extractLAG(d)
 	resp, err := c.CreateLinkAggregationGroup(lag)
+	// Adding this workaround due to a system delay.
+	time.Sleep(45 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -100,10 +102,12 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+	time.Sleep(45 * time.Second)
 	resp, err := c.DeleteLinkAggregationGroup(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	time.Sleep(45 * time.Second)
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "Link Aggregation Group delete workflow",
