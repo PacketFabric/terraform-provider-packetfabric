@@ -193,8 +193,8 @@ type Billing struct {
 }
 type Components struct {
 	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
-	VcIdMicrosoft        string `json:"vc_id_microsoft,ommitempty"`
-	VcIdPrivate          string `json:"vc_id_private,ommitempty"`
+	VcIdMicrosoft        int    `json:"vc_id_microsoft,ommitempty"`
+	VcIdPrivate          int    `json:"vc_id_private,ommitempty"`
 }
 
 type DedicatedConnResp struct {
