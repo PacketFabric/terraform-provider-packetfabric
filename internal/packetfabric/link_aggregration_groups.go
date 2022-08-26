@@ -1,6 +1,8 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const lagURI = "/v2/lags"
 const lagPortCircuitURI = "/v2/lags/%s"
@@ -81,7 +83,7 @@ func (c *PFClient) changeLinkAggregationGroupState(portCircuitID string, enable 
 func (c *PFClient) GetLAGInterfaces(lagPortCircuitURI string) (*[]InterfaceReadResp, error) {
 	formatedURI := fmt.Sprintf(lagInterfacesMemberURI, lagPortCircuitURI)
 	expectedResp := make([]InterfaceReadResp, 0)
-	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}
