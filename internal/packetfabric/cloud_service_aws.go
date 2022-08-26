@@ -17,6 +17,7 @@ const cloudConnectionInstStatusURI = "/v2/services/cloud/connections/%s/status"
 const cloudConnectionInstStatusOptsURI = "/v2/services/cloud/connections/%s/upgrade/options"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
+const cloudConnectionCurrentCustomersHostedURI = "v2/services/cloud/connections/hosted"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
 
 type ServiceAws struct {
@@ -255,6 +256,50 @@ type CloudConnCurrentCustomers struct {
 	Interfaces  []Interfaces `json:"interfaces"`
 }
 
+type HostedConnResp struct {
+	UUID                    string             `json:"uuid,omitempty"`
+	CustomerUUID            string             `json:"customer_uuid,omitempty"`
+	UserUUID                string             `json:"user_uuid,omitempty"`
+	ServiceProvider         string             `json:"service_provider,omitempty"`
+	PortType                string             `json:"port_type,omitempty"`
+	Deleted                 bool               `json:"deleted,omitempty"`
+	TimeUpdated             string             `json:"time_updated,omitempty"`
+	TimeCreated             string             `json:"time_created,omitempty"`
+	CloudCircuitID          string             `json:"cloud_circuit_id,omitempty"`
+	AccountUUID             string             `json:"account_uuid,omitempty"`
+	CloudProvider           CloudProvider      `json:"cloud_provider,omitempty"`
+	ServiceClass            string             `json:"service_class,omitempty"`
+	Description             string             `json:"description,omitempty"`
+	State                   string             `json:"state,omitempty"`
+	IsCloudRouterConnection bool               `json:"is_cloud_router_connection,omitempty"`
+	Speed                   string             `json:"speed,omitempty"`
+	Interfaces              []HostedInterfaces `json:"interfaces,omitempty"`
+}
+
+type HostedInterfaces struct {
+	TimeCreated        string `json:"time_created,omitempty"`
+	TimeUpdated        string `json:"time_updated,omitempty"`
+	PortCircuitID      string `json:"port_circuit_id,omitempty"`
+	Pop                string `json:"pop,omitempty"`
+	Site               string `json:"site,omitempty"`
+	SiteName           string `json:"site_name,omitempty"`
+	Speed              string `json:"speed,omitempty"`
+	Media              string `json:"media,omitempty"`
+	Zone               string `json:"zone,omitempty"`
+	Description        string `json:"description,omitempty"`
+	Vlan               int    `json:"vlan,omitempty"`
+	Untagged           bool   `json:"untagged,omitempty"`
+	Svlan              int    `json:"svlan,omitempty"`
+	ProvisioningStatus string `json:"provisioning_status,omitempty"`
+	AdminStatus        string `json:"admin_status,omitempty"`
+	OperationalStatus  string `json:"operational_status,omitempty"`
+	CustomerName       string `json:"customer_name,omitempty"`
+	CustomerUUID       string `json:"customer_uuid,omitempty"`
+	Region             string `json:"region,omitempty"`
+	IsCloud            bool   `json:"is_cloud,omitempty"`
+	IsPtp              bool   `json:"is_ptp,omitempty"`
+}
+
 func (c *PFClient) CreateAwsHostedMkt(serviceAws ServiceAws) (*AwsHostedMktResp, error) {
 	expectedResp := &AwsHostedMktResp{}
 	_, err := c.sendRequest(serviceAwsURI, postMethod, serviceAws, expectedResp)
@@ -302,8 +347,8 @@ func (c *PFClient) GetCloudConnInfo(cID string) (*AwsCloudConnInfo, error) {
 	return resp, err
 }
 
-func (c *PFClient) GetCurrentCustomersHosted() ([]CloudConnCurrentCustomers, error) {
-	expectedResp := make([]CloudConnCurrentCustomers, 0)
+func (c *PFClient) GetCurrentCustomersHosted() ([]HostedConnResp, error) {
+	expectedResp := make([]HostedConnResp, 0)
 	_, err := c.sendRequest(cloudConnectionCurrentCustomersURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
