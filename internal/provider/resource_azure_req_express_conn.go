@@ -95,7 +95,7 @@ func resourceAzureReqExpressConnCreate(ctx context.Context, d *schema.ResourceDa
 	ticker := time.NewTicker(10 * time.Second)
 	go func() {
 		for range ticker.C {
-			dedicatedConns, err := c.GetCurrentCustomersDedicated()
+			dedicatedConns, err := c.GetCurrentCustomersHosted()
 			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
 				for _, conn := range dedicatedConns {
 					if expectedResp.UUID == conn.UUID && conn.State == "active" {
