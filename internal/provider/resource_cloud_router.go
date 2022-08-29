@@ -29,31 +29,31 @@ func resourceCloudRouter() *schema.Resource {
 			},
 			"scope": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Whether the cloud router is private or public.\n\t\tValid Values: " + "\"private\" , \"public\"",
+				Description:  "Whether the cloud router is private or public. Deprecated.",
 			},
 			"asn": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The ASN of the instance.\n\t\tValues must be within 64512 - 65534, or 4556.\n\t\tDefaults to 4556 if unspecified.",
+				Description: "The ASN of the cloud router.\n\n\tThis can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.\n\n\tDefaults to 4556 if unspecified.",
 			},
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The name of this particular CloudRouter.",
+				Description:  "Cloud router name.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
-				Description:  "PacketFabric account UUID. The contact that will be billed.",
+				Description:  "The UUID for the billing account that should be billed.",
 			},
 			"regions": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "List of PacketFabric Reigions.\n\t\tExample: \"[LAX1,SEA]\"\n\t\tPacketFabric Locations: https://packetfabric.com/locations",
+				Description: "The regions in which the Cloud Router connections will be located.\n\t\tUse `[\"US\"]` for North America and `[\"UK\"]` for EMEA. For transatlantic, use `[\"US\",\"UK\"]`.",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
@@ -63,7 +63,7 @@ func resourceCloudRouter() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The total capacity of this particular Cloud Router.\n\t\tExample: 1Gbps or 10Gbps",
+				Description:  "The cloud router capacity.\n\n\tEnum: \"100Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\" \">100Gbps\"",
 			},
 			"circuit_id": {
 				Type:     schema.TypeString,

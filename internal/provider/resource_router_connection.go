@@ -30,7 +30,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"circuit_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Circuit ID of the target cloud router.\n\t\t Example: \"PF-L3-CUST-2\"",
+				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"aws_account_id": {
 				Type:        schema.TypeString,
@@ -40,37 +40,37 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"account_uuid": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The UUID of the PacketFabric contact that will be billed.",
+				Description: "The UUID for the billing account that should be billed.",
 			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "Whether or not this connection is intended for NAT later.\n\t\t true or false",
+				Description: "Set this to true if you intend to use NAT on this connection.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The description of this connection.",
+				Description: "A brief description of this connection.",
 			},
 			"pop": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The desired location for the new AWS Hosted Connection.",
+				Description: "The POP in which you want to provision the connection.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The desired zone of the new connection. AWS Availability Zone",
+				Description: "The desired AWS availability zone of the new connection.",
 			},
 			"is_public": {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "Whether or not PacketFabric should allocate an IP address for the user.",
+				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.",
 			},
 			"speed": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The desired speed of the new connection.\n\t\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
+				Description: "The desired speed of the new connection.\n\n\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
 			},
 		},
 		Importer: &schema.ResourceImporter{
