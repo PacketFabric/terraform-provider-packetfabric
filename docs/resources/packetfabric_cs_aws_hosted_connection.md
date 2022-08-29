@@ -8,6 +8,8 @@ description: |-
 
 # packetfabric_cs_aws_hosted_connection (Resource)
 
+A hosted cloud connection to your AWS environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+
 ## Usage Example
 
 ```terraform
@@ -20,13 +22,14 @@ blank
 
 ### Required
 
-- `account_uuid` (String) The UUID of the contact that will be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
-- `description` (String) The description of this connection.
-- `pop` (String) The desired location for the new AWS Hosted Connection.
-- `port` (String) The port to connect to AWS.
-- `speed` (String) The desired speed of the new connection.
-		 Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
+- `description` (String) A brief description of this connection.
+- `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
+- `port` (String) The circuit ID of the PacketFabric port you want to connect to AWS. This starts with "PF-AP-".
+- `speed` (String) The speed of the new connection.
+
+	Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 ### Optional
@@ -37,5 +40,7 @@ blank
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+
 
 

@@ -54,22 +54,23 @@ output "packetfabric_cloud_router" {
 
 ### Required
 
-- `account_uuid` (String) PacketFabric account UUID. The contact that will be billed.
-- `asn` (Number) The ASN of the instance.
-		Values must be within 64512 - 65534, or 4556.
-		Defaults to 4556 if unspecified.
-- `capacity` (String) The total capacity of this particular Cloud Router.
-		Example: 1Gbps or 10Gbps
-- `name` (String) The name of this particular CloudRouter.
-- `scope` (String) Whether the cloud router is private or public.
-		Valid Values: "private" , "public"
+- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `asn` (Number) The ASN of the cloud router.
+
+	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.
+
+	Defaults to 4556 if unspecified.
+- `capacity` (String) The cloud router capacity.
+
+	Enum: "100Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps" ">100Gbps"
+- `name` (String) Cloud router name.
 
 ### Optional
 
 - `circuit_id` (String)
-- `regions` (List of String) List of PacketFabric Reigions.
-		Example: "[LAX1,SEA]"
-		PacketFabric Locations: https://packetfabric.com/locations
+- `regions` (List of String) The regions in which the Cloud Router connections will be located.
+		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
+- `scope` (String) Whether the cloud router is private or public. Deprecated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
@@ -85,5 +86,7 @@ Optional:
 - `delete` (String)
 - `read` (String)
 - `update` (String)
+
+
 
 

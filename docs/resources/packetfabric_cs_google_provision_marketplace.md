@@ -8,6 +8,9 @@ description: |-
 
 # packetfabric_cs_google_provision_marketplace (Resource)
 
+From the marketplace provider's side, provision a requested Google hosted connection. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/) and [Marketplace to Cloud Connections](https://docs.packetfabric.com/eco/marketplace_cloud/).
+
+
 ## Example Usage
 
 ```terraform
@@ -38,13 +41,13 @@ resource "packetfabric_cs_google_provision_marketplace" "new" {
 
 ### Required
 
-- `port_circuit_id` (String) The circuit ID of the customer's port.
-- `vc_request_uuid` (String) UUID of the service request
+- `port_circuit_id` (String) The circuit ID of the port on which you want to provision the request. This starts with "PF-AP-".
+- `vc_request_uuid` (String) UUID of the service request you received from the marketplace customer.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 ### Optional
 
-- `description` (String) Connection description
+- `description` (String) A brief description of this connection.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
