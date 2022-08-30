@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = "0.2.0"
+      version = ">= 0.2.1"
     }
     google = {
       source  = "hashicorp/google"
