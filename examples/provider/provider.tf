@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     packetfabric = {
-      source  = var.pf_provider_source
-      version = "~> 0.0.0"
+      source  = "packetfabric/packetfabric"
+      version = ">= 0.2.1"
     }
   }
 }

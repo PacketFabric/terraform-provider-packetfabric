@@ -1,20 +1,23 @@
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
-}
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_marketplace_conn1" {
+  provider          = packetfabric
+  description       = var.description
+  account_uuid      = var.pf_account_uuid
+  azure_service_key = var.azure_service_key
+  routing_id        = var.routing_id
+  market            = var.market
+  speed             = var.pf_cs_speed # will be deprecated
 }
 
-resource "packetfabric_cs_azure_provision_marketplace" "new" {
-  provider = packetfabric
-  description = "my-azure-provisioned-circuit"
-  port_circuit_id = "PF-AP-XYZ1-1234"
-  vc_request_uuid = "PF-BC-AB1-YZ1-1234567"
-  vlan = "25"
+output "packetfabric_cs_azure_hosted_marketplace_connection" {
+  sensitive = true
+  value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_marketplace_conn1
+}
+
+resource "packetfabric_cs_azure_provision_marketplace" "accept_request_azure" {
+  provider        = packetfabric
+  description     = var.description
+  port_circuit_id = var.port_circuit_id_marketplace
+  vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_marketplace_conn1.id
+  vlan_private    = var.pf_cs_vlan_private
+  vlan_microsoft  = var.pf_cs_vlan_microsoft
 }

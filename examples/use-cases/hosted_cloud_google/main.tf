@@ -83,7 +83,7 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
 }
 
 output "packetfabric_cs_google_hosted_connection" {
-  value     = packetfabric_cs_google_hosted_connection.pf_cs_conn1
+  value = packetfabric_cs_google_hosted_connection.pf_cs_conn1
 }
 
 # data "packetfabric_cs_google_hosted_connection" "current" {

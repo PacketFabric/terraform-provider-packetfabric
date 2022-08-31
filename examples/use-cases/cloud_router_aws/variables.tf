@@ -5,12 +5,12 @@ variable "tag_name" {
 
 ## AWS VARs
 variable "amazon_side_asn1" { # used in BGP session
-  type     = number
-  default  = 64532 # private (64512 to 65534)
+  type    = number
+  default = 64532 # private (64512 to 65534)
 }
 variable "amazon_side_asn2" { # used in BGP session
-  type     = number
-  default  = 64533 # private (64512 to 65534)
+  type    = number
+  default = 64533 # private (64512 to 65534)
 }
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)

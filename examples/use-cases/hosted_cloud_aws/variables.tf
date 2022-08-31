@@ -27,7 +27,7 @@ variable "pf_port_circuit_id" {
 }
 variable "pf_cs_pop1" {
   type    = string
-  default = "SFO6" 
+  default = "SFO6"
 }
 variable "pf_cs_zone1" {
   type    = string
@@ -44,12 +44,12 @@ variable "pf_cs_vlan1" {
 
 # AWS VARs
 variable "amazon_side_asn1" { # used in BGP session
-  type     = number
-  default  = 64538 # private (64512 to 65534)
+  type    = number
+  default = 64538 # private (64512 to 65534)
 }
 variable "customer_side_asn1" { # used in BGP session
-  type     = number
-  default  = 64539 # private (64512 to 65534)
+  type    = number
+  default = 64539 # private (64512 to 65534)
 }
 variable "aws_region1" {
   type        = string
