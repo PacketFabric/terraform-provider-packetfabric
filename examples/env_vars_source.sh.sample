@@ -1,0 +1,5 @@
+export TF_VAR_pf_api_server="https://api.packetfabric.com"
+export TF_VAR_pf_api_key="abcd-ebgh-ijkl-mnop-qrst"
+export TF_VAR_pf_account_uuid="abcd-ebgh-ijkl-mnop-qrst" # Billing Account ID
+export TF_VAR_pf_aws_account_id="123456789"
+export TF_VAR_pf_provider_source="packetfabric/packetfabric" # use "PacketFabric/packetfabric/packetfabric" for local dev version

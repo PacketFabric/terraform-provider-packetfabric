@@ -1,4 +1,4 @@
-# Use Case: PacketFabric’s Hosted cloud connection to Google Cloud
+# Use Case: PacketFabric Hosted cloud connection to Google Cloud
 
 This use case shows an example on how to use the PacketFabric & Google Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and Google in a Cloud On-Ramps facility.
@@ -52,7 +52,8 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Create resources 
+2. Initialize Terraform, create an execution plan and execute the plan.
+
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
@@ -64,7 +65,7 @@ Apply the plan:
 terraform apply -var-file="secret.tfvars"
 ```
 
-3. Cleanup/Remove all in both PacketFabric and Google.
+3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform destroy -var-file="secret.tfvars"

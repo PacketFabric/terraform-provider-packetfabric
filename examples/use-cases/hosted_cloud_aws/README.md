@@ -1,4 +1,4 @@
-# Use Case: PacketFabric’s Hosted cloud connection to AWS
+# Use Case: PacketFabric Hosted cloud connection to AWS
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
@@ -26,7 +26,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
 - resource & data source **"packetfabric_cs_aws_hosted_connection"**: Create a AWS Hosted Cloud Connection 
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
-- data source **"aws_dx_connection"**: Retreive Direct Connect Connection details
+- data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 <!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
 <!--  - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces -->
@@ -64,7 +64,8 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Create resources 
+2. Initialize Terraform, create an execution plan and execute the plan.
+
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
@@ -76,7 +77,7 @@ Apply the plan:
 terraform apply -var-file="secret.tfvars"
 ```
 
-3. Cleanup/Remove all in both PacketFabric and AWS.
+3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform destroy -var-file="secret.tfvars"

@@ -32,7 +32,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
 - resource & data source **"packetfabric_aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
-- data source **"aws_dx_connection"**: Retreive Direct Connect Connection details
+- data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
 - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
@@ -74,7 +74,8 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Create resources 
+2. Initialize Terraform, create an execution plan and execute the plan.
+
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
@@ -103,7 +104,7 @@ In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then upda
 
 If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the ssh private key linked to the public key you specified in the ``secret.tfvars`` file.
 
-4. Cleanup/Remove all in both PacketFabric and AWS.
+4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform state rm cloud_router_bgp_session.crbs_1
