@@ -1,23 +1,5 @@
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.0"
-    }
-  }
-}
-
-provider "packetfabric" {
-  host = var.pf_api_server
-  token = var.pf_api_key
-}
-
-data "packetfabric_cloud_router" "current" {
-  provider = packetfabric
-}
-
-resource "packetfabric_cloud_router" "new" {
-  provider = packetfabric
+resource "packetfabric_cloud_router" "cr1" {
+  provider     = packetfabric
   scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
@@ -27,5 +9,5 @@ resource "packetfabric_cloud_router" "new" {
 }
 
 output "packetfabric_cloud_router" {
-  value = data.packetfabric_cloud_router.current
+  value = packetfabric_cloud_router.cr1
 }

@@ -37,9 +37,9 @@ resource "aws_vpc" "vpc_1" {
 
 # Define the subnets
 resource "aws_subnet" "subnet_1" {
-  provider          = aws
-  vpc_id            = aws_vpc.vpc_1.id
-  cidr_block        = var.subnet_cidr1
+  provider   = aws
+  vpc_id     = aws_vpc.vpc_1.id
+  cidr_block = var.subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -95,16 +95,16 @@ resource "aws_route_table_association" "route_association_1" {
 
 # From the PacketFabric side: Create a AWS Dedicated Connection 
 resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
-  provider = packetfabric
-  aws_region = var.aws_region1
-  account_uuid = var.pf_account_uuid
-  description = "${var.tag_name}-${random_pet.name.id}"
-  zone = var.pf_cs_zone1
-  pop = var.pf_cs_pop1
+  provider          = packetfabric
+  aws_region        = var.aws_region1
+  account_uuid      = var.pf_account_uuid
+  description       = "${var.tag_name}-${random_pet.name.id}"
+  zone              = var.pf_cs_zone1
+  pop               = var.pf_cs_pop1
   subscription_term = var.pf_cs_subterm
-  service_class = var.pf_cs_srvclass
-  autoneg = var.pf_cs_aws_d_autoneg
-  speed = var.pf_cs_speed
+  service_class     = var.pf_cs_srvclass
+  autoneg           = var.pf_cs_aws_d_autoneg
+  speed             = var.pf_cs_speed
   should_create_lag = var.should_create_lag
 }
 
@@ -137,10 +137,10 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
 
 # From the AWS side: Create the Direct Connect Connection 
 resource "aws_dx_connection" "current_1" {
-  provider = aws
-  name      = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
-  bandwidth = var.pf_cs_speed
-  location  = var.aws_dx_location
+  provider      = aws
+  name          = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+  bandwidth     = var.pf_cs_speed
+  location      = var.aws_dx_location
   provider_name = "PacketFabric"
 }
 

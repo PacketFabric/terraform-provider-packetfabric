@@ -72,7 +72,7 @@ output "packetfabric_billing_port_2" {
 ### Get the site filtering on the pop using packetfabric_locations
 
 # List PacketFabric locations
-data "packetfabric_locations" "main" {
+data "packetfabric_locations" "locations_all" {
   provider = packetfabric
   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63 to use filter
   # filter {
@@ -80,11 +80,11 @@ data "packetfabric_locations" "main" {
   # }
 }
 # output "packetfabric_locations" {
-#   value = data.packetfabric_locations.main
+#   value = data.packetfabric_locations.locations_all
 # }
 
 locals {
-  all_locations = data.packetfabric_locations.main.locations[*]
+  all_locations = data.packetfabric_locations.locations_all.locations[*]
   helper_map = { for val in local.all_locations :
   val["pop"] => val }
   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]

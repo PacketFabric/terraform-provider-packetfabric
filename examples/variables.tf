@@ -7,13 +7,13 @@ variable "tag_name" {
 variable "pf_api_key" {
   type        = string
   description = "PacketFabric platform API access key"
-  default = "secret"
+  default     = "secret"
   sensitive   = true
 }
 variable "pf_account_uuid" {
-  type = string
-  default = "secret"
-  sensitive   = true
+  type      = string
+  default   = "secret"
+  sensitive = true
 }
 variable "pf_api_server" {
   type        = string
@@ -241,11 +241,11 @@ variable "pf_cs_srvclass" {
   default = "longhaul" # longhaul or metro
 }
 variable "pf_cs_autoneg" {
-  type = bool
+  type    = bool
   default = false
 }
 variable "should_create_lag" {
-  type = bool
+  type    = bool
   default = false
 }
 variable "pf_cs_subterm" {
@@ -276,9 +276,9 @@ variable "pf_cr_regions" {
   default = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
 variable "pf_aws_account_id" {
-  type = number
-  default = "secret"
-  sensitive   = true
+  type      = number
+  default   = "secret"
+  sensitive = true
 }
 variable "pf_crc_speed" {
   type    = string

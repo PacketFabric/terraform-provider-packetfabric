@@ -39,11 +39,11 @@ variable "pf_cs_srvclass" {
   default = "longhaul" # longhaul or metro
 }
 variable "pf_cs_aws_d_autoneg" {
-  type = bool
+  type    = bool
   default = false
 }
 variable "should_create_lag" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -94,8 +94,8 @@ variable "amazon_side_asn1" { # used in BGP session
   nullable = false
 }
 variable "customer_side_asn1" { # used in BGP session
-  type     = number
-  default  = 64539 # private (64512 to 65534)
+  type    = number
+  default = 64539 # private (64512 to 65534)
 }
 variable "aws_region1" {
   type        = string
@@ -104,8 +104,8 @@ variable "aws_region1" {
 }
 # https://aws.amazon.com/directconnect/locations/
 variable "aws_dx_location" {
-  type        = string
-  default     = "CSSV4" # need to match with pf_cs_pop1 and aws_region1
+  type    = string
+  default = "CSSV4" # need to match with pf_cs_pop1 and aws_region1
 }
 variable "vpc_cidr1" {
   type        = string

@@ -60,17 +60,17 @@ resource "aws_vpc" "vpc_2" {
 
 # Define the subnets
 resource "aws_subnet" "subnet_1" {
-  provider          = aws
-  vpc_id            = aws_vpc.vpc_1.id
-  cidr_block        = var.subnet_cidr1
+  provider   = aws
+  vpc_id     = aws_vpc.vpc_1.id
+  cidr_block = var.subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
 }
 resource "aws_subnet" "subnet_2" {
-  provider          = aws.region2
-  vpc_id            = aws_vpc.vpc_2.id
-  cidr_block        = var.subnet_cidr2
+  provider   = aws.region2
+  vpc_id     = aws_vpc.vpc_2.id
+  cidr_block = var.subnet_cidr2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -589,6 +589,13 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
     order  = 0
   }
 }
+data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
+  provider          = packetfabric
+  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
+}
+output "bgp_prefix_crbp_1" {
+  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
+}
 
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   provider       = packetfabric
@@ -615,4 +622,11 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
     type   = "in" # Allowed Prefixes from Cloud
     order  = 0
   }
+}
+data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
+  provider          = packetfabric
+  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
+}
+output "bgp_prefix_crbp_2" {
+  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
 }
