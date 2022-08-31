@@ -118,9 +118,6 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
 # # Get PacketFabric locations
 # data "packetfabric_locations" "location_1" {
 #   provider = packetfabric
-#   # filter {
-#   #   pop = var.pf_cs_pop1
-#   # }
 # }
 # output "packetfabric_locations" {
 #   value = data.packetfabric_locations.location_1
