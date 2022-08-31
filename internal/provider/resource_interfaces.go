@@ -92,6 +92,7 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
+	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -155,6 +156,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 		portCID = portCIDData.(string)
 	}
 	resp, err := c.DeletePort(portCID)
+	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
