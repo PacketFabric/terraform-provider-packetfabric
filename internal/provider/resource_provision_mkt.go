@@ -23,12 +23,12 @@ func resourceProvision() map[string]*schema.Schema {
 		"vc_request_uuid": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "UUID of the service request",
+			Description: "UUID of the service request you received from the marketplace customer.",
 		},
 		"port_circuit_id": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The circuit ID of the customer's port.",
+			Description: "The circuit ID of the port on which you want to provision the request. This starts with \"PF-AP-\".",
 		},
 		"vlan": {
 			Type:         schema.TypeInt,
@@ -39,7 +39,7 @@ func resourceProvision() map[string]*schema.Schema {
 		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Connection description",
+			Description: "A brief description of this connection.",
 		},
 	}
 }
@@ -53,12 +53,12 @@ func resourceProvisionAzure() map[string]*schema.Schema {
 		"vc_request_uuid": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "UUID of the service request",
+			Description: "UUID of the service request you received from the marketplace customer.",
 		},
 		"port_circuit_id": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The circuit ID of the customer's port.",
+			Description: "The circuit ID of the port on which you want to provision the request. This starts with \"PF-AP-\".",
 		},
 		"vlan_private": {
 			Type:         schema.TypeInt,
@@ -75,7 +75,7 @@ func resourceProvisionAzure() map[string]*schema.Schema {
 		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Connection description",
+			Description: "A brief description of this connection.",
 		},
 	}
 }

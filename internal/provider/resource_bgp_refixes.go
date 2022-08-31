@@ -20,12 +20,12 @@ func resourceBgpPrefixes() *schema.Resource {
 			"id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The Unique ID of Prefixes after create.",
+				Description: "The unique ID of prefixes after they are created.",
 			},
 			"bgp_settings_uuid": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "UUID of BGP settings to fetch prefixes for.",
+				Description: "UUID of the BGP session for which you are fetching or setting prefixes.",
 			},
 			"prefixes": {
 				Type:        schema.TypeSet,
@@ -41,17 +41,17 @@ func resourceBgpPrefixes() *schema.Resource {
 						"prefix": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "The actual IP Prefix of this instance.",
+							Description: "The actual IP prefix of this instance.",
 						},
 						"type": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Whether this prefix is in or out.",
+							Description: "Specify `\"in\"` or `\"out\"`. Prefixes that are \"in\" are allowed into the attached cloud environment. Prefixes that are \"out\" are going to cloud router connections.",
 						},
 						"order": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "The Order of this Prefix agains the others.",
+							Description: "The order of this prefix against the others.",
 						},
 					},
 				},
