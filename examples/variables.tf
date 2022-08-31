@@ -147,11 +147,11 @@ variable "pf_cs_vlan1" {
 # AWS Hosted Connection
 variable "pf_cs_pop2" {
   type    = string
-  default = "DEN1"
+  default = "SFO6"
 }
 variable "pf_cs_zone2" {
   type    = string
-  default = "A" # E
+  default = "A"
 }
 variable "pf_cs_speed2" {
   type    = string
@@ -276,9 +276,8 @@ variable "pf_cr_regions" {
   default = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
 variable "pf_aws_account_id" {
-  type      = number
-  default   = "secret"
-  sensitive = true
+  type    = string
+  default = "123456789"
 }
 variable "pf_crc_speed" {
   type    = string
