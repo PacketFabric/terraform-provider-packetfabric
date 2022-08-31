@@ -74,7 +74,8 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Create resources 
+2. Initialize Terraform, creates an execution plan and execute the plan.
+
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
@@ -103,7 +104,7 @@ In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then upda
 
 If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the ssh private key linked to the public key you specified in the ``secret.tfvars`` file.
 
-4. Cleanup/Remove all in both PacketFabric and AWS.
+4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform state rm cloud_router_bgp_session.crbs_1

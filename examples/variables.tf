@@ -1,273 +1,302 @@
-# General PacketFabic API VARs
-variable "pf_api_key" {
-  type = string
-  default = "api-abcde-change-me"
-  description = "PacketFabric platform API access key"
-  sensitive = true
+## General VARs
+variable "tag_name" {
+  default = "demo"
 }
 
+## PacketFabic VARs
+variable "pf_api_key" {
+  type        = string
+  description = "PacketFabric platform API access key"
+  default = "secret"
+  sensitive   = true
+}
+variable "pf_account_uuid" {
+  type = string
+  default = "secret"
+  sensitive   = true
+}
 variable "pf_api_server" {
-  type    = string
-  default = "https://api.packetfabric.com"
+  type        = string
+  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
 }
 
-variable "pf_account_uuid" {
-  type = string
-  default = "change me"
+########################################
+###### PORTS / CROSS CONNECT / VC
+########################################
+
+# Ports
+variable "pf_port_media" {
+  type    = string
+  default = "LR" # LX
 }
-
-variable "pf_aws_account_id" {
-  type = number
-  default = 123456789
+variable "pf_port_pop1" {
+  type    = string
+  default = "DEN2" # PDX1
 }
-
-
-
-# PacketFabric Cloud-Router Parameter configurations
-
-variable "pf_cr_asn" {
-  type = number
-  nullable = false
-  default = 65535
+variable "pf_port_avzone1" {
+  type    = string
+  default = "A" # A
 }
-
-variable "pf_cr_scope" {
-  type = string
-  default = "private"
+variable "pf_port_pop2" {
+  type    = string
+  default = "WDC1"
 }
-
-variable "pf_cr_name" {
-  type = string
-  nullable = false
-  default = "PF New Router"
+variable "pf_port_avzone2" {
+  type    = string
+  default = "E"
 }
-
-variable "pf_cr_capacity" {
-  type = string
-  default = "1Gps"
+variable "pf_port_subterm" {
+  type    = number
+  default = 1 # default 1 month
 }
-variable "pf_cr_regions" {
-  type = list(string)
-  default = ["US"]
+variable "pf_port_autoneg" {
+  type    = bool
+  default = false
 }
-
-
-
-# PacketFabric Cloud-Router-Connections Parameter configuration:
-
-variable "pf_crc_maybe_nat" {
-  type = bool
+variable "pf_port_speed" {
+  type    = string
+  default = "10Gbps" # 100Mbps, 10Gbps, 5Gbps
+}
+variable "pf_port_nni" {
+  type    = bool
   default = false
 }
 
-variable "pf_crc_description" {
-  type = string
-  default = "PF Cloud-Router-Connection Description here"
+# Cross connect
+variable "pf_document_uuid1" {
+  type    = string
+  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e" # use API /v2/documents to get UUID
+}
+variable "pf_document_uuid2" {
+  type    = string
+  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
 }
 
-variable "pf_crc_pop" {
-  type = string
-  default = "LAX1"
+# Virtual Circuit
+variable "pf_vc_vlan1" {
+  type    = number
+  default = 4
+}
+variable "pf_vc_vlan2" {
+  type    = number
+  default = 5
+}
+variable "pf_vc_longhaul_type" {
+  type    = string
+  default = "dedicated"
+}
+variable "pf_vc_speed" {
+  type    = string
+  default = "200Mbps"
+}
+variable "pf_vc_subterm" {
+  type    = number
+  default = 1 # default 1 month
 }
 
-variable "pf_crc_zone" {
-  type = string
-  default = "a"
+########################################
+###### HOSTED CLOUD CONNECTIONS
+########################################
+# Demo Port used for all
+variable "pf_demo_port" {
+  type    = string
+  default = "PF-AP-WDC1-1726464"
 }
 
-variable "pf_crc_is_public" {
-  type = bool
-  default = true
+# Azure Hosted Connection
+variable "azure_service_key" {
+  sensitive = true
+  default   = "123456-abcdef-123456-abcdef-123456"
+}
+variable "pf_cs_src_svlan" {
+  type    = number
+  default = 100
+}
+variable "pf_cs_vlan_private" {
+  type    = number
+  default = 166
+}
+variable "pf_cs_vlan_microsoft" {
+  type    = number
+  default = 167
 }
 
-variable "pf_crc_speed" {
-  type = string
-  default = "50Mbps"
+# GCP Hosted Connection
+variable "google_pairing_key" {
+  sensitive = true
+  default   = "123456-abcdef-123456-abcdef-123456/us-west1/any"
 }
-
-# PacketFabric Cloud-Router-BGP-Session Parameter configuration:
-
-variable "pf_crbs_af" {
-  type = string
-  default = "v4"
+variable "google_vlan_attachment_name" {
+  sensitive = true
+  default   = "demo-darling-albacore"
 }
-
-variable "pf_crbs_mhttl" {
-  type = number
-  default = 1
-}
-
-variable "pf_crbs_rasn" {
-  type = number
-  default = 64515
-}
-
-variable "pf_crbs_orlonger" {
-  type = bool
-  default = false
-}
-
-variable "pf_crbs_remoteaddr" {
-  type = string
-  default = "169.254.253.5/30"
-}
- variable "pf_crbs_l3addr" {
-  type = string
-  default = "169.254.253.6/30"
- }
-
- variable "pf_crbs_md5" {
-  type = string
-  default = "123456789abcdef123456789abcdef12"
- }
-
-# PacketFabric Cloud-Router-BGP-Prefixes Parameter configuration:
-
-variable "pf_crbp_pfx00" {
-  type = string
-  default = "169.254.253.4/30"
-}
-variable "pf_crbp_pfx00_type" {
-  type = string
-  default = "in"
-}
-variable "pf_crbp_pfx00_order" {
-  type = number
-  default = 0
-}
-variable "pf_crbp_pfx01" {
-  type = string
-  default = "169.254.253.4/30"
-}
-variable "pf_crbp_pfx01_type" {
-  type = string
-  default = "out"
-}
-variable "pf_crbp_pfx01_order" {
-  type = number
-  default = 0
-}
-
-# PacketFabric Cloud-Services-AWS-Dedicated Parameter configuration:
-variable "pf_cs_aws_d_region" {
-  type = string
-  default = "us-west-2"
-}
-variable "pf_cs_aws_d_descr" {
-  type = string
-  default = "CloudService AWS Dedicated Description"
-}
-variable "pf_cs_aws_d_avzone" {
-  type = string
-  default = "A"
-}
-variable "pf_cs_aws_d_pop" {
-  type = string
-  default = "PDX1"
-}
-variable "pf_cs_aws_d_subterm" {
-  type = number
-  default = 1
-}
-variable "pf_cs_aws_d_srvclass" {
-  type = string
-  default = "metro"
-}
-variable "pf_cs_aws_d_autoneg" {
-  type = bool
-  default = false
-}
-variable "pf_cs_aws_d_speed" {
-  type = string
-  default = "10Gbps"
-}
-variable "pf_cs_aws_d_createlag" {
-  type = bool
-  default = true
-}
-
-# PacketFabric Cloud-Service-AWS-Hosted-Marketplace parameter configuration:
-variable "pf_cs_aws_hm_descr" {
-  type = string
-  default = "CloudService AWS Hosted Marketplace Description"
-}
-variable "pf_cs_aws_hm_avzone" {
-  type = string
-  default = "A"
-}
-variable "pf_cs_aws_hm_pop" {
-  type = string
-  default = "PDX1"
-}
-variable "pf_cs_aws_hm_rid" {
-  type = string
-  default = "CLO-DWI-UDUC"
-}
-variable "pf_cs_aws_hm_market" {
-  type = string
-  default = "DAL"
-}
-variable "pf_cs_aws_hm_svcuuid" {
-  type = string
-  default = "0d5225a8-f000-47ee-b3ea-64888f6d5da9"
-}
-variable "pf_cs_aws_hm_speed" {
-  type = string
-  default = "10Gbps"
-}
-
-# PacketFabric interface Parameter configuration:
-variable "pf_cs_interface_media" {
-  type = string
-  default = "LX"
-}
-variable "pf_cs_interface_descr" {
-  type = string
-  default = "CloudService AWS Dedicated Description"
-}
-variable "pf_cs_interface_avzone" {
-  type = string
-  default = "A"
-}
-variable "pf_cs_interface_pop" {
-  type = string
+variable "pf_cs_pop1" {
+  type    = string
   default = "SFO1"
 }
-variable "pf_cs_interface_subterm" {
+variable "pf_cs_speed1" {
+  type    = string
+  default = "50Mbps"
+}
+variable "pf_cs_vlan1" {
+  type    = number
+  default = 106
+}
+
+# AWS Hosted Connection
+variable "pf_cs_pop2" {
+  type    = string
+  default = "DEN1"
+}
+variable "pf_cs_zone2" {
+  type    = string
+  default = "A" # E
+}
+variable "pf_cs_speed2" {
+  type    = string
+  default = "50Mbps"
+}
+variable "pf_cs_vlan2" {
+  type    = number
+  default = 107
+}
+
+# Markeptlace
+variable "routing_id" {
+  type    = string
+  default = "PDB-ROJ-9Y0K" # DEMO B
+}
+variable "market" {
+  type    = string
+  default = "ATL" # DEMO B
+}
+variable "port_circuit_id_marketplace" {
+  type    = string
+  default = "PF-AP-ATL1-1744189" # DEMO B in the market
+}
+
+########################################
+###### DEDICATED CLOUD CONNECTIONS
+########################################
+
+# AWS Dedicated Connection
+variable "pf_cs_pop3" {
+  type    = string
+  default = "NYC6"
+}
+variable "pf_cs_zone3" {
+  type    = string
+  default = "D" #A
+}
+variable "pf_cs_speed3" {
+  type    = string
+  default = "10Gbps"
+}
+variable "aws_region3" {
+  type        = string
+  description = "AWS region"
+  default     = "us-east-1"
+}
+
+# Google Dedicated Connection
+variable "pf_cs_pop4" {
+  type    = string
+  default = "ATL1"
+}
+variable "pf_cs_zone4" {
+  type    = string
+  default = "C"
+}
+variable "pf_cs_speed4" {
+  type    = string
+  default = "10Gbps"
+}
+
+# Azure Dedicated Connection
+variable "pf_cs_pop5" {
+  type    = string
+  default = "DEN1"
+}
+variable "pf_cs_zone5" {
+  type    = string
+  default = "E"
+}
+variable "pf_cs_speed5" {
+  type    = string
+  default = "10Gbps"
+}
+variable "encapsulation" {
+  type    = string
+  default = "dot1q"
+}
+variable "port_category" {
+  type    = string
+  default = "primary"
+}
+
+# Dedicated all clouds
+variable "pf_cs_srvclass" {
+  type    = string
+  default = "longhaul" # longhaul or metro
+}
+variable "pf_cs_autoneg" {
+  type = bool
+  default = false
+}
+variable "should_create_lag" {
+  type = bool
+  default = false
+}
+variable "pf_cs_subterm" {
+  type    = number
+  default = 1 # default 1 month
+}
+
+
+########################################
+###### CLOUD ROUTER
+########################################
+variable "pf_cr_asn" {
+  type     = number
+  default  = 4556 # PacketFabric ASN
+  nullable = false
+}
+# Parameter deprecated
+variable "pf_cr_scope" {
+  type    = string
+  default = "private"
+}
+variable "pf_cr_capacity" {
+  type    = string
+  default = "1Gbps" # 2Gbps
+}
+variable "pf_cr_regions" {
+  type    = list(string)
+  default = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
+}
+variable "pf_aws_account_id" {
   type = number
-  default = 1
+  default = "secret"
+  sensitive   = true
 }
-variable "pf_cs_interface_srvclass" {
-  type = string
-  default = "metro"
+variable "pf_crc_speed" {
+  type    = string
+  default = "50Mbps"
 }
-variable "pf_cs_interface_autoneg" {
-  type = bool
+variable "pf_crc_pop1" {
+  type    = string
+  default = "PDX2" # PDX2/a LAX1/c SF06/a LON1/a
+}
+variable "pf_crc_zone1" {
+  type    = string
+  default = "a"
+}
+variable "pf_crc_maybe_nat" {
+  type    = bool
   default = false
 }
-variable "pf_cs_interface_speed" {
-  type = string
-  default = "1Gbps"
-}
-variable "pf_cs_interface_nni" {
-  type = bool
+variable "pf_crc_is_public" {
+  type    = bool
   default = false
-}
-
-
-# PacketFabric Azure Parameters:
-variable "pf_azr_srvc_key" {
-  type = string
-  default = "61360d64-e3a3-4c89-bf5c-changeme"
-}
-variable "pf_azr_account_uuid" {
-  type = string
-  default = "08fa6556-013e-4548-ba35-changeme"
-}
-
-# PacketFabric GCP Parameters:
-variable "pf_gcp_pair_key" {
-  type = string
-  default = "7e51371e-72a3-40b5-b844-changeme/us-central1/2"
 }

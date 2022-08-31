@@ -67,7 +67,8 @@ az provider register -n Microsoft.Network
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Create resources 
+2. Initialize Terraform, creates an execution plan and execute the plan.
+
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
@@ -79,7 +80,7 @@ Apply the plan:
 terraform apply -var-file="secret.tfvars"
 ```
 
-3. Cleanup/Remove all in both PacketFabric and Azure.
+3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform state rm azurerm_express_route_circuit.azure_express_route_1

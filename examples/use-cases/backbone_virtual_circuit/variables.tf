@@ -18,7 +18,7 @@ variable "pf_api_server" {
   description = "PacketFabric API endpoint URL"
 }
 
-# PacketFabric Port Parameter configuration
+# Port
 variable "pf_port_pop1" {
   type    = string
   default = "PDX1"
@@ -64,14 +64,6 @@ variable "pf_document_uuid1" {
 variable "pf_document_uuid2" {
   type    = string
   default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
-}
-variable "pf_port_site1" {
-  type    = string
-  default = "PN-PIT" # use API /v2/locations to get site_code
-}
-variable "pf_port_site2" {
-  type    = string
-  default = "EQ-NY1"
 }
 
 # Virtual Circuit
