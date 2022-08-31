@@ -1,4 +1,4 @@
-# Use Case: PacketFabric’s Hosted cloud connection to Microsoft Azure ExpressRoute
+# Use Case: PacketFabric Hosted cloud connection to Microsoft Azure ExpressRoute
 
 This use case shows an example on how to use the PacketFabric & Azure Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and Azure in a Cloud On-Ramps facility.
@@ -67,7 +67,7 @@ az provider register -n Microsoft.Network
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Initialize Terraform, creates an execution plan and execute the plan.
+2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init

@@ -16,7 +16,7 @@ cp secret.tfvars.sample secret.tfvars
 
 2. Edit the ``main.tf`` and ``variables.tf`` files and uncomment/comment out sections as needed. It is highly recommended to use the [PacketFabric documentation in the Terraform registry](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs).
 
-3. Initialize Terraform, creates an execution plan and execute the plan (``-var-file="secret.tfvars"`` can be removed if you used ``env_vars_source.sh``)
+3. Initialize Terraform, create an execution plan and execute the plan (``-var-file="secret.tfvars"`` can be removed if you used ``env_vars_source.sh``)
 
 ```sh
 terraform init

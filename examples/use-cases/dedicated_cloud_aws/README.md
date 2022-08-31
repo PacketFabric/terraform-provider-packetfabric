@@ -1,4 +1,4 @@
-# Use Case: PacketFabric’s Dedicated cloud connection to AWS
+# Use Case: PacketFabric Dedicated cloud connection to AWS
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Dedicated Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
@@ -67,7 +67,7 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Initialize Terraform, creates an execution plan and execute the plan.
+2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init

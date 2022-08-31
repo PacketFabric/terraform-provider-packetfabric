@@ -49,7 +49,7 @@ Make sure you have the following items available:
 cp secret.tfvars.sample secret.tfvars
 ```
 
-2. Initialize Terraform, creates an execution plan and execute the plan.
+2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init
