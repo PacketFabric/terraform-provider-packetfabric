@@ -13,36 +13,50 @@ A customer inbound/PacketFabric outbound cross connect. For more information, se
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
+# Create a PacketFabric interfaces
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  account_uuid      = var.pf_account_uuid
+  autoneg           = var.pf_port_autoneg
+  description       = var.description
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
 }
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
 }
 
-resource "packetfabric_outbound_cross_connect" "new" {
+### Get the site filtering on the pop using packetfabric_locations
+
+# List PacketFabric locations
+data "packetfabric_locations" "main" {
   provider = packetfabric
-  description = "my-OCC"
-  document_uuid = "55A7A654-4C3C-4C69-BCBE-755790F0417C"
-  port = "PF-SO-ME-111"
-  site = "DR-ATL1"
-
 }
 
-data "packetfabric_outbound_cross_connect" "current" {
-  filter {
-    id = packetfabric_outbound_cross_connect.new.id
-  }
+locals {
+  all_locations = data.packetfabric_locations.main.locations[*]
+  helper_map = { for val in local.all_locations :
+  val["pop"] => val }
+  pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
+}
+output "pf_port_site1" {
+  value = local.pf_port_site1
 }
 
-output "my-occ-info" {
-  value = packetfabric_outbound_cross_connect.current
+# Create Cross Connect
+resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
+  provider      = packetfabric
+  description   = var.description
+  document_uuid = var.pf_document_uuid1
+  port          = packetfabric_port.port_1.id
+  site          = local.pf_port_site1
+}
+output "packetfabric_outbound_cross_connect1" {
+  value = packetfabric_outbound_cross_connect.crossconnect_1
 }
 ```
 

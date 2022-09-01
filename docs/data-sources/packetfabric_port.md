@@ -9,10 +9,16 @@ description: |-
 # packetfabric_port (Data Source)
 
 
-## Data Example
+## Example Usage
 
 ```terraform
-blank
+data "packetfabric_port" "ports_all" {
+  provider = packetfabric
+}
+
+output "packetfabric_ports_all" {
+  value = data.packetfabric_port.ports_all
+}
 ```
 
 

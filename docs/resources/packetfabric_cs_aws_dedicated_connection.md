@@ -13,40 +13,22 @@ A port located in an AWS cloud on-ramp facility, which will be connected to the 
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.0"
-    }
-  }
-}
-
-provider "packetfabric" {
-  host = var.pf_api_server
-  token = var.pf_api_key
-}
-
-data "packetfabric_cs_aws_dedicated_connection" "current" {
-  provider = packetfabric
-}
-
-resource "packetfabric_cs_aws_dedicated_connection" "new" {
-  provider = packetfabric
-  aws_region = var.pf_cs_aws_d_region
-  account_uuid = var.pf_aws_account_id
-  description = var.pf_cs_aws_d_descr
-  zone = var.pf_cs_aws_d_avzone
-  pop = var.pf_cs_aws_d_pop
-  subscription_term = var.pf_cs_aws_d_subterm
-  service_class = var.pf_cs_aws_d_srvclass
-  autoneg = var.pf_cs_aws_d_autoneg
-  speed = var.pf_cs_aws_d_speed
-  should_create_lag = var.pf_cs_aws_d_createlag
+resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
+  provider          = packetfabric
+  aws_region        = var.aws_region
+  account_uuid      = var.pf_account_uuid
+  description       = var.description
+  zone              = var.pf_cs_zone
+  pop               = var.pf_cs_pop
+  subscription_term = var.pf_cs_subterm
+  service_class     = var.pf_cs_srvclass
+  autoneg           = var.pf_cs_autoneg
+  speed             = var.pf_cs_speed
+  should_create_lag = var.should_create_lag
 }
 
 output "packetfabric_cs_aws_dedicated_connection" {
-  value = data.packetfabric_cs_aws_dedicated_connection.current
+  value = packetfabric_cs_aws_dedicated_connection.pf_cs_conn1_dedicated_aws
 }
 ```
 
