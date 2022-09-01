@@ -13,28 +13,22 @@ Connect a marketplace provider to your Google cloud environment. For more inform
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
-}
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_marketplace_conn1" {
+  provider                    = packetfabric
+  description                 = var.description
+  account_uuid                = var.pf_account_uuid
+  routing_id                  = var.routing_id
+  market                      = var.market
+  speed                       = var.pf_cs_speed
+  google_pairing_key          = var.google_pairing_key
+  google_vlan_attachment_name = var.google_vlan_attachment_name
+  pop                         = var.pf_cs_pop
+
 }
 
-resource "packetfabric_cs_google_hosted_marketplace_connection" "new" {
-  provider = packetfabric
-  routing_id = "PF-1RI-1234"
-  market = "ATL"
-  pop = "DAL1"
-  description = "my-gcp-hosted-mkt-conn"
-  google_pairing_key = var.pf_gcp_pair_key
-  account_uuid = var.pf_account_uuid
-  speed = "100Mbps"
+output "packetfabric_cs_google_hosted_marketplace_connection" {
+  value     = packetfabric_cs_google_hosted_marketplace_connection.cs_marketplace_conn1
+  sensitive = true
 }
 ```
 

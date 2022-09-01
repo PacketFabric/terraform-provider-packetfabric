@@ -13,29 +13,19 @@ Connect a marketplace provider to your Microsoft Azure cloud environment. For mo
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
-}
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_marketplace_conn1" {
+  provider          = packetfabric
+  description       = var.description
+  account_uuid      = var.pf_account_uuid
+  azure_service_key = var.azure_service_key
+  routing_id        = var.routing_id
+  market            = var.market
+  speed             = var.pf_cs_speed # will be deprecated
 }
 
-resource "packetfabric_cs_azure_hosted_marketplace_connection" "new" {
-  provider = packetfabric
-  routing_id = "PF-1RI-1234"
-  market = "ATL"
-  description = "my-azure-hosted-mkt-conn"
-  azure_service_key = var.pf_azr_srvc_key
-  account_uuid = var.pf_account_uuid
-  zone = "A"
-  speed = "100Mbps"
-  service_uuid = "7138cc00-c611-4dec-a05e-change-me"
+output "packetfabric_cs_azure_hosted_marketplace_connection" {
+  sensitive = true
+  value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_marketplace_conn1
 }
 ```
 

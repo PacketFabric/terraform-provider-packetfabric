@@ -13,37 +13,59 @@ A virtual circuit between two ports in the PacketFabric network. For more inform
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
+# Create a PacketFabric interfaces
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  account_uuid      = var.pf_account_uuid
+  autoneg           = var.pf_port_autoneg
+  description       = var.description
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
 }
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
 }
 
-resource "packetfabric_backbone_virtual_circuit" "new" {
-  provider = packetfabric
-  description = "my-backbone-vc"
-  epl =  false
+resource "packetfabric_port" "port_2" {
+  provider          = packetfabric
+  account_uuid      = var.pf_account_uuid
+  autoneg           = var.pf_port_autoneg
+  description       = var.description
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop2
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone2
+}
+output "packetfabric_port_2" {
+  value = packetfabric_port.port_2
+}
+
+# Create backbone Virtual Circuit
+resource "packetfabric_create_backbone_virtual_circuit" "vc1" {
+  provider    = packetfabric
+  description = var.description
+  epl         = false
   interface_a {
-    port_circuit_id = "PF-AP-XYZ1-1234"
-    untagged = false
-    vlan = 4
+    port_circuit_id = packetfabric_port.port_1.id
+    untagged        = false
+    vlan            = var.pf_vc_vlan1
   }
   interface_z {
-    port_circuit_id = "PF-AP-ABC1-4321"
-    untagged = false
-    vlan = 7    
+    port_circuit_id = packetfabric_port.port_2.id
+    untagged        = false
+    vlan            = var.pf_vc_vlan2
   }
   bandwidth {
-    account_uuid = var.pf_account_uuid
-    speed = "1gps"
-    subscription_term = "1"
+    account_uuid      = var.pf_account_uuid
+    longhaul_type     = var.pf_vc_longhaul_type
+    speed             = var.pf_vc_speed
+    subscription_term = var.pf_vc_subterm
   }
 }
 ```

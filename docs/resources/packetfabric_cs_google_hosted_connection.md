@@ -13,29 +13,21 @@ A hosted cloud connection to your Google Cloud environment. For more information
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = "~> 0.0.1"
-    }
-  }
-}
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
+resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
+  provider                    = packetfabric
+  description                 = var.description
+  account_uuid                = var.pf_account_uuid
+  port                        = var.pf_port
+  speed                       = var.pf_cs_speed
+  google_pairing_key          = var.google_pairing_key
+  google_vlan_attachment_name = var.google_vlan_attachment_name
+  pop                         = var.pf_cs_pop
+  vlan                        = var.pf_cs_vlan
 }
 
-resource "packetfabric_cs_google_hosted_connection" "new" {
-  provider = packetfabric
-  description = "my-gcp-hosted-conn"
-  account_uuid = var.pf_account_uuid
-  port = "PF-AP-XYZ1-1234"
-  speed = "50Mbps"
-  googe_pairing_key = var.pf_gcp_pair_key
-  google_vlan_attachment_name = "rrv-nms-dev-1a2b-vl1-us-west1-1"
-  pop = "DAL1"
-  vlan = 43
+output "packetfabric_cs_google_hosted_connection" {
+  value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
+  sensitive = true
 }
 ```
 
