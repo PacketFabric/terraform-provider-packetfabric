@@ -42,6 +42,11 @@ BUG FIXES:
 * Address bugs bgp session/prefix deletion (#20)
 * packetfabric_cs_\<aws/google/azure>_hosted_marketplace_connection delete not working [#91]
 
+## 0.2.3 (September 1, 2022)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Regenerating documentation
 
 ## 0.2.2 (September 1, 2022)
 
