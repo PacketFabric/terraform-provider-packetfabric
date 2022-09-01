@@ -32,11 +32,16 @@ FEATURES:
 
 IMPROVEMENTS/ENHANCEMENTS:
 
-none
+* Update hosted/dedicated data sources (AWS/Azure/Google) (#23)
+* Remove deprecated attribute in Cloud Router resource (#40) 
+* Add Ability to filter on all data source (#63)
+* Handle errors for dedicated resources (AWS/Azure/Google) (#105)
 
 BUG FIXES:
 
-none
+* Address bugs bgp session/prefix deletion (#20)
+* packetfabric_cs_\<aws/google/azure>_hosted_marketplace_connection delete not working [#91]
+
 
 ## 0.2.2 (September 1, 2022)
 
@@ -58,7 +63,6 @@ BUG FIXES:
 * Security: RandomAlphaNumeric and CryptoRandomAlphaNumeric are not as random as they should be #1 [#108]
 * Resource packetfabric_port: remove disable port before deletion [#102]
 * Remove all hosted marketplace data sources (AWS/Azure/Google) [#97]
-* packetfabric_cs_\<aws/google/azure>_hosted_marketplace_connection delete not working [#91]
 * packetfabric_cs_aws_dedicated_connection data source does not exist [#72]
 
 ## 0.2.1 (August 30, 2022)
