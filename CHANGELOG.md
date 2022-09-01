@@ -1,4 +1,5 @@
 ## 0.3.0 (Unreleased)
+
 BREAKING CHANGES:
 
 none
@@ -31,9 +32,19 @@ FEATURES:
 
 IMPROVEMENTS/ENHANCEMENTS:
 
+none
+
 BUG FIXES:
 
+none
+
 ## 0.2.2 (September 1, 2022)
+
+BREAKING CHANGES:
+
+* data-source: [REMOVED] packetfabric_cs_aws_hosted_marketplace_connection (#97)
+* data-source: [REMOVED] packetfabric_cs_google_hosted_marketplace_connection (#97)
+* data-source: [REMOVED] packetfabric_cs_azure_marketplace_connection (#97)
 
 IMPROVEMENTS/ENHANCEMENTS:
 
@@ -51,8 +62,8 @@ BUG FIXES:
 * packetfabric_cs_aws_dedicated_connection data source does not exist [#72]
 
 ## 0.2.1 (August 30, 2022)
-BREAKING CHANGES:
 
+BREAKING CHANGES:
 * resource: [REMOVED] packetfabric_cloud_services_aws_create_backbone_dedicated_cr
 * resource: [REMOVED] packetfabric_cloud_services_aws_hosted_connections
 * resource: [REMOVED] packetfabric_cloud_services_aws_hosted_connection
@@ -62,18 +73,12 @@ BREAKING CHANGES:
 * resource: [REMOVED] packetfabric_cs_aws_hosted_marketplace_connection (#91)
 * resource: [REMOVED] packetfabric_cs_google_hosted_marketplace_connection (#91)
 * resource: [REMOVED] packetfabric_cs_azure_hosted_marketplace_connection (#91)
-* data-source: [REMOVED] packetfabric_cs_aws_hosted_marketplace_connection (#97)
-* data-source: [REMOVED] packetfabric_cs_google_hosted_marketplace_connection (#97)
-* data-source: [REMOVED] packetfabric_cs_azure_marketplace_connection (#97)
-
-
 * resource: packetfabric_interface [REPLACED BY] packetfabric_port
 * resource: packetfabric_cloud_services_aws_req_hosted_conn [REPLACED BY] packetfabric_cs_aws_hosted_connection
 * resource: packetfabric_cloud_services_aws_req_dedicated_con [REPLACED BY] packetfabric_cs_aws_dedicated_connection (#72)
 * resource: packetfabric_cloud_services_aws_provision_mkt [REPLACED BY] packetfabric_cs_aws_provision_marketplace (#72)
 * data-source: packetfabric_cloud_services_aws_connection_info [REPLACED BY] packetfabric_cs_aws_hosted_connection  (#72)
 * data-source: packetfabric_cloud_services_aws_dedicated_conn [REPLACED BY] packetfabric_cs_aws_dedicated_connection (#72)
-
 
 FEATURES:
 
@@ -105,8 +110,8 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Data Source aws_cloud_connections: cloud_settings should not be an array [#41]
 * aws_cloud_router_connection fix resources and examples documentation [#19]
 
-
 BUG FIXES:
+
 * resource & data source packetfabric_link_aggregation_group not working [#93]
 * packetfabric_cs_azure_provision_marketplace should be using vlan_private and vlan_microsoft [#92]
 * packetfabric_cs_aws_hosted_marketplace_connection resource: "zone" is not expected here. [#90]
@@ -139,7 +144,6 @@ BUG FIXES:
 * Invalid JSON region field mapping for Cloud Router [#12]
 * Resource and data source names do not follow Terraform naming best practices [#9]
 
-
 ## 0.1.0 (June 23, 2022)
 Initial Release
 
@@ -164,9 +168,3 @@ FEATURES:
 * data-source: packetfabric_cloud_services_aws_connection_info
 * data-source: packetfabric_cloud_services_aws_dedicated_conn 
 * data-source: packetfabric_aws_services_hosted_requested_mkt_conn
-
-
-
-
-
-
