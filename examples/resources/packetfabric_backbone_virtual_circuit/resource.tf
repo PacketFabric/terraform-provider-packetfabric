@@ -1,4 +1,3 @@
-# Create a PacketFabric interfaces
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
@@ -10,9 +9,6 @@ resource "packetfabric_port" "port_1" {
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
-}
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
 }
 
 resource "packetfabric_port" "port_2" {
@@ -27,11 +23,7 @@ resource "packetfabric_port" "port_2" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone2
 }
-output "packetfabric_port_2" {
-  value = packetfabric_port.port_2
-}
 
-# Create backbone Virtual Circuit
 resource "packetfabric_create_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
   description = var.description
