@@ -51,9 +51,6 @@ output "packetfabric_port_2" {
 data "packetfabric_billing" "port_1" {
   provider   = packetfabric
   circuit_id = packetfabric_port.port_1.id
-  depends_on = [
-    packetfabric_port.port_1
-  ]
 }
 output "packetfabric_billing_port_1" {
   value = data.packetfabric_billing.port_1
@@ -61,9 +58,6 @@ output "packetfabric_billing_port_1" {
 data "packetfabric_billing" "port_2" {
   provider   = packetfabric
   circuit_id = packetfabric_port.port_2.id
-  depends_on = [
-    packetfabric_port.port_2
-  ]
 }
 output "packetfabric_billing_port_2" {
   value = data.packetfabric_billing.port_2
