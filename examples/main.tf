@@ -464,29 +464,15 @@ output "packetfabric_port_1a" {
 #   regions      = var.pf_cr_regions
 # }
 
-# # From the PacketFabric side: Create a cloud router connection to Azure
-# resource "packetfabric_azure_cloud_router_connection" "crc_1" {
-#   provider          = packetfabric
-#   circuit_id        = cloud_router.cr.id
-#   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-#   account_uuid      = var.pf_account_uuid
-#   azure_service_key = var.azure_service_key
-#   speed             = var.pf_crc_speed
-#   maybe_nat         = false
-#   is_public         = false
-# }
-
-# # From the PacketFabric side: Create a cloud router connection to Google
-# resource "packetfabric_google_cloud_router_connection" "crc_2" {
-#   provider                    = packetfabric
-#   circuit_id                  = cloud_router.cr.id
-#   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-#   account_uuid                = var.pf_account_uuid
-#   google_pairing_key          = var.google_pairing_key
-#   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"
-#   pop                         = var.pf_crc_pop1
-#   zone                        = var.pf_crc_zone1
-#   speed                       = var.pf_crc_speed
-#   maybe_nat                   = var.pf_crc_maybe_nat
-#   is_public                   = var.pf_crc_is_public
+# resource "packetfabric_aws_cloud_router_connection" "crc_1" {
+#   provider       = packetfabric
+#   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   account_uuid   = var.pf_account_uuid
+#   aws_account_id = var.pf_aws_account_id
+#   pop            = var.pf_crc_pop1
+#   zone           = var.pf_crc_zone1
+#   speed          = var.pf_crc_speed
+#   maybe_nat      = var.pf_crc_maybe_nat
+#   is_public      = var.pf_crc_is_public
 # }
