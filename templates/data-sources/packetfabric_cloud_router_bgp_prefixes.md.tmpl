@@ -20,18 +20,15 @@ description: |-
 
 - `bgp_settings_uuid` (String) UUID of BGP settings for prefixes.
 
-### Optional
-
-- `bgp_prefixes` (Block List) (see [below for nested schema](#nestedblock--bgp_prefixes))
-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `bgp_prefixes` (Block List) (see [below for nested schema](#nestedblock--bgp_prefixes))
 
 <a id="nestedblock--bgp_prefixes"></a>
 ### Nested Schema for `bgp_prefixes`
 
-Optional:
+Read-Only:
 
 - `bgp_prefix_uuid` (String) The UUID of the instance.
 - `order` (Number) The Order of this Prefix agains the others.

@@ -457,7 +457,6 @@ output "packetfabric_port_1a" {
 # # From the PacketFabric side: Create a cloud router
 # resource "packetfabric_cloud_router" "cr" {
 #   provider     = packetfabric
-#   scope        = var.pf_cr_scope # Parameter deprecated
 #   asn          = var.pf_cr_asn
 #   name         = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid = var.pf_account_uuid

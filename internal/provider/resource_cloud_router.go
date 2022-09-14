@@ -27,15 +27,9 @@ func resourceCloudRouter() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scope": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Whether the cloud router is private or public. Deprecated.",
-			},
 			"asn": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "The ASN of the cloud router.\n\n\tThis can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.\n\n\tDefaults to 4556 if unspecified.",
 			},
 			"name": {
@@ -53,7 +47,7 @@ func resourceCloudRouter() *schema.Resource {
 			"regions": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "The regions in which the Cloud Router connections will be located.\n\t\tUse `[\"US\"]` for North America and `[\"UK\"]` for EMEA. For transatlantic, use `[\"US\",\"UK\"]`.",
+				Description: "The regions in which the Cloud Router connections will be located.\n\t\tUse `[\"US\"]` for North America and `[\"UK\"]` for EMEA. For transatlantic, use `[\"US\",\"UK\"]`.\n\n\tDefaults to US if unspecified.",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
@@ -89,7 +83,6 @@ func resourceCloudRouterCreate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -108,7 +101,6 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -135,7 +127,6 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 
-	_ = d.Set("scope", resp.Scope)
 	_ = d.Set("asn", resp.Asn)
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
@@ -161,9 +152,6 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	router := packetfabric.CloudRouter{}
-	if scope, ok := d.GetOk("scope"); ok {
-		router.Scope = scope.(string)
-	}
 	if asn, ok := d.GetOk("asn"); ok {
 		router.Asn = asn.(int)
 	}
