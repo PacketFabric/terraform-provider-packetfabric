@@ -369,7 +369,6 @@ resource "packetfabric_cloud_router" "cr" {
   asn          = var.pf_cr_asn
   capacity     = var.pf_cr_capacity
   regions      = var.pf_cr_regions
-  scope        = var.pf_cr_scope # Parameter deprecated
 }
 
 output "packetfabric_cloud_router" {
