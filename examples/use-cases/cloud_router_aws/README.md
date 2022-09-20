@@ -107,14 +107,8 @@ If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the 
 4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
-terraform state rm cloud_router_bgp_session.crbs_1
-terraform state rm cloud_router_bgp_session.crbs_2
-terraform state rm cloud_router_bgp_prefixes.crbp_1
-terraform state rm cloud_router_bgp_prefixes.crbp_2
 terraform destroy -var-file="secret.tfvars"
 ```
-
-**Note:** We are removing the Cloud Router BGP session and prefix resources from the terraform state as those will be deleted together with current Cloud Router Connection. See https://github.com/PacketFabric/terraform-provider-packetfabric/issues/20.
 
 ## Troubleshooting
 

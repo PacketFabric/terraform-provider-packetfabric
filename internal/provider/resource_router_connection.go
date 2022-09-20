@@ -199,7 +199,7 @@ func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceDa
 	}
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "Aws Router connection result",
+		Summary:  "AWS Router connection result",
 		Detail:   resp.Message,
 	})
 	d.SetId("")
