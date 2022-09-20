@@ -1,9 +1,5 @@
 ## 0.3.0 (Unreleased)
 
-BREAKING CHANGES:
-
-* Removed the scope attribute when creating a new Cloud Router (#40)
-
 FEATURES:
 
 * resource: packetfabric_azure_cloud_router_connection
@@ -32,6 +28,7 @@ FEATURES:
 
 IMPROVEMENTS/ENHANCEMENTS:
 
+* Removed the scope attribute when creating a new Cloud Router (#40)
 * Update hosted/dedicated data sources (AWS/Azure/Google) (#23)
 * Add Ability to filter on all data source (#63)
 * Handle errors for dedicated resources (AWS/Azure/Google) (#105)

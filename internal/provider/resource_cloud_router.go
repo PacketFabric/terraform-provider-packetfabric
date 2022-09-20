@@ -27,6 +27,12 @@ func resourceCloudRouter() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scope": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Whether the cloud router is private or public. Deprecated.",
+			},
 			"asn": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -83,6 +89,7 @@ func resourceCloudRouterCreate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -101,6 +108,7 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -127,6 +135,7 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 
+	_ = d.Set("scope", resp.Scope)
 	_ = d.Set("asn", resp.Asn)
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
@@ -152,6 +161,9 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	router := packetfabric.CloudRouter{}
+	if scope, ok := d.GetOk("scope"); ok {
+		router.Scope = scope.(string)
+	}
 	if asn, ok := d.GetOk("asn"); ok {
 		router.Asn = asn.(int)
 	}

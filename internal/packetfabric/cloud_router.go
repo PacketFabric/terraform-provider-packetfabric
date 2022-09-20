@@ -12,6 +12,7 @@ const errorMsg = "Please provide a valid Account UUID."
 // This struct represents a Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_create
 type CloudRouter struct {
+	Scope       string   `json:"scope"`
 	Asn         int      `json:"asn"`
 	Name        string   `json:"name"`
 	AccountUUID string   `json:"account_uuid"`
@@ -24,6 +25,7 @@ type CloudRouter struct {
 type CloudRouterResponse struct {
 	CircuitID   string   `json:"circuit_id"`
 	AccountUUID string   `json:"account_uuid"`
+	Scope       string   `json:"scope"`
 	Asn         int      `json:"asn"`
 	Name        string   `json:"name"`
 	Capacity    string   `json:"capacity"`
