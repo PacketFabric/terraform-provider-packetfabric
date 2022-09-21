@@ -378,6 +378,8 @@ output "packetfabric_cloud_router" {
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   provider       = packetfabric
+  # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
+  # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id     = packetfabric_cloud_router.cr.id
   account_uuid   = var.pf_account_uuid
@@ -497,6 +499,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   connection_id  = data.aws_dx_connection.current_1.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_aws_cloud_router_connection data source. 
+  # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to create the VIF in AWS
   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
