@@ -15,14 +15,12 @@ func dataSourceBgpSession() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"bgp_sessions": {
 				Type:     schema.TypeList,
-				Computed: true,
-				Optional: true,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bgp_settings_uuid": {
 							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Description: "The UUID of the instance.\n\t\tExample: 3d78949f-1396-4163-b0ca-3eba3592abcd",
 						},
 						"address_family": {
@@ -53,25 +51,25 @@ func dataSourceBgpSession() *schema.Resource {
 							Type:        schema.TypeInt,
 							Computed:    true,
 							Optional:    true,
-							Description: "The preference for this instance.",
+							Description: "The preference for this instance. Deprecated.",
 						},
 						"community": {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Optional:    true,
-							Description: "The BGP community for this instance.",
+							Description: "The BGP community for this instance. Deprecated.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Computed:    true,
 							Optional:    true,
-							Description: "The BGP prepend value for this instance.",
+							Description: "The BGP prepend value for this instance. Deprecated.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
 							Computed:    true,
 							Optional:    true,
-							Description: "The Multi-Exit Discriminator of this instance.",
+							Description: "The Multi-Exit Discriminator of this instance. Deprecated.",
 						},
 						"orlonger": {
 							Type:        schema.TypeBool,

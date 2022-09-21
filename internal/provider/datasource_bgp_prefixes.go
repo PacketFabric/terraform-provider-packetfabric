@@ -20,8 +20,7 @@ func dataSourceBgpPrefix() *schema.Resource {
 			},
 			"bgp_prefixes": {
 				Type:     schema.TypeList,
-				Computed: true,
-				Optional: true,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bgp_prefix_uuid": {
