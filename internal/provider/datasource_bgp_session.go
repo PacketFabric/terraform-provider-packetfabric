@@ -21,8 +21,8 @@ func dataSourceBgpSession() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"bgp_settings_uuid": {
 							Type:        schema.TypeString,
-							Computed: true,
-							Optional: true,
+							Computed:    true,
+							Optional:    true,
 							Description: "The UUID of the instance.\n\t\tExample: 3d78949f-1396-4163-b0ca-3eba3592abcd",
 						},
 						"address_family": {
