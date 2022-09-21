@@ -15,7 +15,8 @@ func dataSourceBgpSession() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"bgp_sessions": {
 				Type:     schema.TypeList,
-				Required: true,
+				Computed: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bgp_settings_uuid": {
