@@ -21,6 +21,10 @@
 
 **Impact**: AWS Hosted Cloud
 
+- [#26919](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter)
+
+**Impact**: AWS Hosted Cloud and Cloud Router
+
 - [#26461](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID
 
 **Impact**: AWS Hosted Cloud
