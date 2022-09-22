@@ -90,6 +90,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_provision_marketplace":          resourceAzureProvision(),
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
+			"packetfabric_cloud_router_google_connection":          resourceGoogleCloudRouterConn(),
+			"packetfabric_cloud_router_ipsec_connection":           resourceIPSecCloudRouteConn(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list

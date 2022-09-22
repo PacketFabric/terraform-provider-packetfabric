@@ -47,10 +47,10 @@ var _clConnectionCreateResp = AwsConnectionCreateResponse{
 	},
 }
 
-var _clConnUpdateExpectedResp = make([]AwsConnectionReadResponse, 0)
+var _clConnUpdateExpectedResp = make([]CloudRouterConnectionReadResponse, 0)
 
 func _buildConnUpdateExpectedResp() {
-	_clConnUpdateExpectedResp = append(_clConnUpdateExpectedResp, AwsConnectionReadResponse{
+	_clConnUpdateExpectedResp = append(_clConnUpdateExpectedResp, CloudRouterConnectionReadResponse{
 		PortType:                  "hosted",
 		ConnectionType:            "cloud_hosted",
 		PortCircuitID:             "PF-AE-1234",
@@ -108,7 +108,7 @@ func Test_ReadCloudRouterConnection(t *testing.T) {
 }
 
 func Test_UpdateCloudRouterConnection(t *testing.T) {
-	var expectedResp AwsConnectionReadResponse
+	var expectedResp CloudRouterConnectionReadResponse
 	payload := DescriptionUpdate{
 		Description: _cloudConnUpdateDesc,
 	}
@@ -123,7 +123,7 @@ func Test_GetCloudConnectionStatus(t *testing.T) {
 }
 
 func Test_ListAwsRouterConnections(t *testing.T) {
-	var expectedResp []AwsConnectionReadResponse
+	var expectedResp []CloudRouterConnectionReadResponse
 	_ = json.Unmarshal(_buildMockCloudRouterConnResps(), &expectedResp)
 	cTest.runFakeHttpServer(_callListAwsRouterConnections, nil, expectedResp, _buildMockCloudRouterConnResps(), "aws-cloud-router-conns", t)
 

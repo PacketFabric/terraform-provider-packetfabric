@@ -8,17 +8,22 @@ import (
 const awsConnectionURI = "/v2/services/cloud-routers/%s/connections/aws"
 const awsConnectionListURI = "/v2/services/cloud-routers/%s/connections"
 const awsConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/%s"
+const awsCloudConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/aws"
 const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/status"
+const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
+const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
+const oracleCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
-	AwsAccountID string `json:"aws_account_id"`
-	AccountUUID  string `json:"account_uuid"`
-	MaybeNat     bool   `json:"maybe_nat"`
-	Description  string `json:"description"`
-	Pop          string `json:"pop"`
-	Zone         string `json:"zone"`
-	IsPublic     bool   `json:"is_public"`
-	Speed        string `json:"speed"`
+	AwsAccountID           string `json:"aws_account_id,omitempty"`
+	AccountUUID            string `json:"account_uuid,omitempty"`
+	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	Description            string `json:"description,omitempty"`
+	Pop                    string `json:"pop,omitempty"`
+	Zone                   string `json:"zone,omitempty"`
+	IsPublic               bool   `json:"is_public,omitempty"`
+	Speed                  string `json:"speed,omitempty"`
+	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
 type AwsConnectionCreateResponse struct {
@@ -39,47 +44,47 @@ type AwsConnectionCreateResponse struct {
 	Components      AwsComponents `json:"components"`
 }
 
-type AwsConnectionReadResponse struct {
-	PortType                  string           `json:"port_type"`
-	PortCircuitID             string           `json:"port_circuit_id"`
-	PendingDelete             bool             `json:"pending_delete"`
-	State                     string           `json:"state"`
-	CloudCircuitID            string           `json:"cloud_circuit_id"`
-	Speed                     string           `json:"speed"`
-	Deleted                   bool             `json:"deleted"`
-	AccountUUID               string           `json:"account_uuid"`
-	ServiceClass              string           `json:"service_class"`
-	ServiceProvider           string           `json:"service_provider"`
-	ServiceType               string           `json:"service_type"`
-	Description               string           `json:"description"`
-	UUID                      string           `json:"uuid"`
-	CloudProviderConnectionID string           `json:"cloud_provider_connection_id"`
-	CloudSettings             AwsCloudSettings `json:"cloud_settings"`
-	NatCapable                bool             `json:"nat_capable"`
-	BgpState                  interface{}      `json:"bgp_state"`
-	CloudRouterCircuitID      string           `json:"cloud_router_circuit_id"`
-	ConnectionType            string           `json:"connection_type"`
-	UserUUID                  string           `json:"user_uuid"`
-	CustomerUUID              string           `json:"customer_uuid"`
-	TimeCreated               string           `json:"time_created"`
-	TimeUpdated               string           `json:"time_updated"`
-	CloudProvider             AwsCloudProvider `json:"cloud_provider"`
-	Pop                       string           `json:"pop"`
-	Site                      string           `json:"site"`
+type CloudRouterConnectionReadResponse struct {
+	PortType                  string           `json:"port_type,omitempty"`
+	PortCircuitID             string           `json:"port_circuit_id,omitempty"`
+	PendingDelete             bool             `json:"pending_delete,omitempty"`
+	State                     string           `json:"state,omitempty"`
+	CloudCircuitID            string           `json:"cloud_circuit_id,omitempty"`
+	Speed                     string           `json:"speed,omitempty"`
+	Deleted                   bool             `json:"deleted,omitempty"`
+	AccountUUID               string           `json:"account_uuid,omitempty"`
+	ServiceClass              string           `json:"service_class,omitempty"`
+	ServiceProvider           string           `json:"service_provider,omitempty"`
+	ServiceType               string           `json:"service_type,omitempty"`
+	Description               string           `json:"description,omitempty"`
+	UUID                      string           `json:"uuid,omitempty"`
+	CloudProviderConnectionID string           `json:"cloud_provider_connection_id,omitempty"`
+	CloudSettings             AwsCloudSettings `json:"cloud_settings,omitempty"`
+	NatCapable                bool             `json:"nat_capable,omitempty"`
+	BgpState                  interface{}      `json:"bgp_state,omitempty"`
+	CloudRouterCircuitID      string           `json:"cloud_router_circuit_id,omitempty"`
+	ConnectionType            string           `json:"connection_type,omitempty"`
+	UserUUID                  string           `json:"user_uuid,omitempty"`
+	CustomerUUID              string           `json:"customer_uuid,omitempty"`
+	TimeCreated               string           `json:"time_created,omitempty"`
+	TimeUpdated               string           `json:"time_updated,omitempty"`
+	CloudProvider             AwsCloudProvider `json:"cloud_provider,omitempty"`
+	Pop                       string           `json:"pop,omitempty"`
+	Site                      string           `json:"site,omitempty"`
 }
 type AwsCloudSettings struct {
-	VlanIDPf        int    `json:"vlan_id_pf"`
-	VlanIDCust      int    `json:"vlan_id_cust"`
-	AwsRegion       string `json:"aws_region"`
-	AwsHostedType   string `json:"aws_hosted_type"`
-	AwsConnectionID string `json:"aws_connection_id"`
-	AwsAccountID    string `json:"aws_account_id"`
-	PublicIP        string `json:"public_ip"`
-	NatPublicIP     string `json:"nat_public_ip"`
+	VlanIDPf        int    `json:"vlan_id_pf,omitempty"`
+	VlanIDCust      int    `json:"vlan_id_cust,omitempty"`
+	AwsRegion       string `json:"aws_region,omitempty"`
+	AwsHostedType   string `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID string `json:"aws_connection_id,omitempty"`
+	AwsAccountID    string `json:"aws_account_id,omitempty"`
+	PublicIP        string `json:"public_ip,omitempty"`
+	NatPublicIP     string `json:"nat_public_ip,omitempty"`
 }
 type AwsCloudProvider struct {
-	Pop  string `json:"pop"`
-	Site string `json:"site"`
+	Pop  string `json:"pop,omitempty"`
+	Site string `json:"site,omitempty"`
 }
 
 type AwsSettings struct {
@@ -107,6 +112,51 @@ type ConnectionDeleteResp struct {
 	Message string `json:"message"`
 }
 
+type IBMCloudRouterConn struct {
+	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	IbmAccountID           string `json:"ibm_account_id,omitempty"`
+	IbmBgpAsn              int    `json:"ibm_bgp_asn,omitempty"`
+	IbmBgpCerCidr          string `json:"ibm_bgp_cer_cidr,omitempty"`
+	IbmBgpIbmCidr          string `json:"ibm_bgp_ibm_cidr,omitempty"`
+	Description            string `json:"description,omitempty"`
+	AccountUUID            string `json:"account_uuid,omitempty"`
+	Pop                    string `json:"pop,omitempty"`
+	Zone                   string `json:"zone,omitempty"`
+	Speed                  string `json:"speed,omitempty"`
+	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+}
+
+type IPSecRouterConn struct {
+	Description                string `json:"description,omitempty"`
+	AccountUUID                string `json:"account_uuid,omitempty"`
+	Pop                        string `json:"pop,omitempty"`
+	Speed                      string `json:"speed,omitempty"`
+	IkeVersion                 int    `json:"ike_version,omitempty"`
+	Phase1AuthenticationMethod string `json:"phase1_authentication_method,omitempty"`
+	Phase1Group                string `json:"phase1_group,omitempty"`
+	Phase1EncryptionAlgo       string `json:"phase1_encryption_algo,omitempty"`
+	Phase1AuthenticationAlgo   string `json:"phase1_authentication_algo,omitempty"`
+	Phase1Lifetime             int    `json:"phase1_lifetime,omitempty"`
+	Phase2PfsGroup             string `json:"phase2_pfs_group,omitempty"`
+	Phase2EncryptionAlgo       string `json:"phase2_encryption_algo,omitempty"`
+	Phase2AuthenticationAlgo   string `json:"phase2_authentication_algo,omitempty"`
+	Phase2Lifetime             int    `json:"phase2_lifetime,omitempty"`
+	GatewayAddress             string `json:"gateway_address,omitempty"`
+	SharedKey                  string `json:"shared_key,omitempty"`
+	PublishedQuoteLineUUID     string `json:"published_quote_line_uuid,omitempty"`
+}
+
+type OracleCloudRouterConn struct {
+	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	VcOcid                 string `json:"vc_ocid,omitempty"`
+	Region                 string `json:"region,omitempty"`
+	Description            string `json:"description,omitempty"`
+	AccountUUID            string `json:"account_uuid,omitempty"`
+	Pop                    string `json:"pop,omitempty"`
+	Zone                   string `json:"zone,omitempty"`
+	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+}
+
 func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId string) (*AwsConnectionCreateResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionURI, circuitId)
 
@@ -118,10 +168,43 @@ func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId strin
 	return resp, err
 }
 
-func (c *PFClient) ReadAwsConnection(cID, connCid string) (*AwsConnectionReadResponse, error) {
+func (c *PFClient) CreateIBMCloudRouteConn(ibmRouter IBMCloudRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
+	formatedURI := fmt.Sprintf(ibmCloudRouterConnectionByCidURI, circuitID)
+
+	resp := &CloudRouterConnectionReadResponse{}
+	_, err := c.sendRequest(formatedURI, postMethod, ibmRouter, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
+
+func (c *PFClient) CreateIPSecCloudRouerConnection(iPSecRouter IPSecRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
+	formatedURI := fmt.Sprintf(ipsecCloudRouterConnectionByCidURI, circuitID)
+
+	resp := &CloudRouterConnectionReadResponse{}
+	_, err := c.sendRequest(formatedURI, postMethod, iPSecRouter, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
+
+func (c *PFClient) CreateOracleCloudRouerConnection(oracleRouter OracleCloudRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
+	formatedURI := fmt.Sprintf(oracleCloudRouterConnectionByCidURI, circuitID)
+
+	resp := &CloudRouterConnectionReadResponse{}
+	_, err := c.sendRequest(formatedURI, postMethod, oracleRouter, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
+
+func (c *PFClient) ReadAwsConnection(cID, connCid string) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
 
-	resp := &AwsConnectionReadResponse{}
+	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, resp)
 	if err != nil {
 		return nil, err
@@ -129,10 +212,10 @@ func (c *PFClient) ReadAwsConnection(cID, connCid string) (*AwsConnectionReadRes
 	return resp, nil
 }
 
-func (c *PFClient) UpdateAwsConnection(cID, connCid string, description DescriptionUpdate) (*AwsConnectionReadResponse, error) {
+func (c *PFClient) UpdateAwsConnection(cID, connCid string, description DescriptionUpdate) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
 
-	resp := &AwsConnectionReadResponse{}
+	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, patchMethod, description, resp)
 	if err != nil {
 		return nil, err
@@ -170,9 +253,9 @@ func (c *PFClient) GetCloudConnectionStatus(cID, connCID string) (*ServiceState,
 
 }
 
-func (c *PFClient) ListAwsRouterConnections(cID string) ([]AwsConnectionReadResponse, error) {
+func (c *PFClient) ListAwsRouterConnections(cID string) ([]CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionListURI, cID)
-	resp := make([]AwsConnectionReadResponse, 0)
+	resp := make([]CloudRouterConnectionReadResponse, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &resp)
 	if len(resp) == 0 {
 		return resp, nil
