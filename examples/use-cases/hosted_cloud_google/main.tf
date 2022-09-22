@@ -99,9 +99,9 @@ output "packetfabric_cs_google_hosted_connection" {
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
 
-# Vote for 11458 Expose bgpPeers from google_compute_router
+# Vote for
 # https://github.com/hashicorp/terraform-provider-google/issues/11458
-# Workaround: use https://github.com/terraform-google-modules/terraform-google-gcloud
+# https://github.com/hashicorp/terraform-provider-google/issues/12624
 
 data "google_compute_router" "router_1" {
   provider = google
