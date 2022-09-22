@@ -27,7 +27,7 @@ resource "packetfabric_port" "port_1a" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}-a"
+  description       = "${var.tag_name}-${random_pet.name.id}-a-test"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -475,4 +475,37 @@ output "packetfabric_port_1a" {
 #   speed          = var.pf_crc_speed
 #   maybe_nat      = var.pf_crc_maybe_nat
 #   is_public      = var.pf_crc_is_public
+# }
+
+# resource "packetfabric_google_cloud_router_connection" "crc_2" {
+#   provider                    = packetfabric
+#   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+#   circuit_id                  = packetfabric_cloud_router.cr.id
+#   account_uuid                = var.pf_account_uuid
+#   google_pairing_key          = var.pf_crc_google_pairing_key
+#   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
+#   pop                         = var.pf_crc_pop2
+#   speed                       = var.pf_crc_speed
+#   maybe_nat                   = var.pf_crc_maybe_nat
+# }
+
+# resource "packetfabric_ipsec_cloud_router_connection" "crc_3" {
+#   provider                     = packetfabric
+#   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
+#   circuit_id                   = packetfabric_cloud_router.cr.id
+#   account_uuid                 = var.pf_account_uuid
+#   pop                          = var.pf_crc_pop3
+#   speed                        = var.pf_crc_speed
+#   ike_version                  = var.pf_crc_ike_version
+#   phase1_authentication_method = var.pf_crc_phase1_authentication_method
+#   phase1_group                 = var.pf_crc_phase1_group
+#   phase1_encryption_algo       = var.pf_crc_phase1_encryption_algo
+#   phase1_authentication_algo   = var.pf_crc_phase1_authentication_algo
+#   phase1_lifetime              = var.pf_crc_phase1_lifetime
+#   phase2_pfs_group             = var.pf_crc_phase2_pfs_group
+#   phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
+#   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
+#   phase2_lifetime              = var.pf_crc_phase2_lifetime
+#   gateway_address              = var.pf_crc_gateway_address
+#   shared_key                   = var.pf_crc_shared_key
 # }
