@@ -41,6 +41,10 @@
 
 **Impact**: Google Hosted Cloud and Cloud Router
 
+- [#12624](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment 
+
+**Impact**: Google Hosted Cloud and Cloud Router
+
 - [#3978](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept
 
 **Impact**: IBM Hosted Cloud and Cloud Router

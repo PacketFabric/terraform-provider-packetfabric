@@ -13,7 +13,7 @@ variable "pf_api_key" {
 variable "pf_account_uuid" {
   type      = string
   default   = "secret"
-  sensitive = true
+  #sensitive = true
 }
 variable "pf_api_server" {
   type        = string
@@ -293,4 +293,69 @@ variable "pf_crc_maybe_nat" {
 variable "pf_crc_is_public" {
   type    = bool
   default = false
+}
+variable "pf_crc_pop2" {
+  type    = string
+  default = "LAX1"
+}
+variable "pf_crc_google_pairing_key" {
+  type    = string
+  default = "secret"
+}
+variable "pf_crc_google_vlan_attachment_name" {
+  type    = string
+  default = "interconnect"
+}
+variable "pf_crc_pop3" {
+  type    = string
+  default = "SF06"
+}
+# IPsec
+variable "pf_crc_ike_version" {
+  type    = number
+  default = 1
+}
+variable "pf_crc_phase1_authentication_method" {
+  type    = string
+  default = "pre-shared-key"
+}
+variable "pf_crc_phase1_group" {
+  type    = string
+  default = "group14"
+}
+variable "pf_crc_phase1_encryption_algo" {
+  type    = string
+  default = "aes-156-cbc"
+}
+variable "pf_crc_phase1_authentication_algo" {
+  type    = string
+  default = "sha-384"
+}
+variable "pf_crc_phase1_lifetime" {
+  type    = number
+  default = 10800
+}
+variable "pf_crc_phase2_pfs_group" {
+  type    = string
+  default = "group14"
+}
+variable "pf_crc_phase2_encryption_algo" {
+  type    = string
+  default = "3des-cbc"
+}
+variable "pf_crc_phase2_authentication_algo" {
+  type    = string
+  default = "hmac-sha-256-128"
+}
+variable "pf_crc_phase2_lifetime" {
+  type    = number
+  default = 28800
+}
+variable "pf_crc_gateway_address" {
+  type    = string
+  default = "127.0.0.1"
+}
+variable "pf_crc_shared_key" {
+  type    = string
+  default = "superCoolKey"
 }
