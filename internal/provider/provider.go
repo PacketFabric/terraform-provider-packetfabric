@@ -90,8 +90,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_provision_marketplace":          resourceAzureProvision(),
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
-			"packetfabric_cloud_router_google_connection":          resourceGoogleCloudRouterConn(),
-			"packetfabric_cloud_router_ipsec_connection":           resourceIPSecCloudRouteConn(),
+			"packetfabric_google_cloud_router_connection":          resourceGoogleCloudRouterConn(),
+			"packetfabric_ipsec_cloud_router_connection":           resourceIPSecCloudRouteConn(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -105,6 +105,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router":                     dataSourceCloudRouter(),
 			"packetfabric_cloud_router_bgp_prefixes":        dataSourceBgpPrefix(),
 			"packetfabric_aws_cloud_router_connection":      dataSourceCloudConn(),
+			"packetfabric_google_cloud_router_connection":      dataSourceCloudConn(),
+			"packetfabric_ipsec_cloud_router_connection":      dataSourceCloudConn(),
 			"packetfabric_cloud_router_bgp_session":         dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":         dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_aws_dedicated_connection_conn": datasourceDedicatedConn(),
