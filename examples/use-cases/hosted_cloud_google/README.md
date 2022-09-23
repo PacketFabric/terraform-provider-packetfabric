@@ -8,7 +8,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and G
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Google Partner Interconnect Process Overview](https://docs.packetfabric.com/cloud/google/hosted/process_overview/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
-- [HashiCorp Microsoft Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
+- [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 - [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
 - [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)

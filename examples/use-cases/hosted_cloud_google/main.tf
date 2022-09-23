@@ -6,7 +6,7 @@ terraform {
     }
     google = {
       source  = "hashicorp/google"
-      version = "4.30.0"
+      version = "4.37.0"
     }
   }
 }
@@ -52,7 +52,7 @@ resource "google_compute_router" "router_1" {
   network  = google_compute_network.vpc_1.id
   bgp {
     # You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
-    asn               = var.peer_asn
+    asn               = var.gcp_side_asn1
     advertise_mode    = "CUSTOM"
     advertised_groups = ["ALL_SUBNETS"]
   }

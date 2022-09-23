@@ -3,7 +3,7 @@
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the connection setup between 2 AWS regions using PacketFabric Cloud Router.
 
-![Deployment Diagram](./images/diagram.png)
+![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
 ## Useful links
 
@@ -30,7 +30,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
+- resource & data source **"packetfabric_aws_cloud_router_connection"**: Add AWS Direct Connect to the Cloud Router
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric

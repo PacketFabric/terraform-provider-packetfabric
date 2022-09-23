@@ -340,23 +340,23 @@ resource "aws_eip" "public_ip_2" {
 }
 
 # Private IPs of the demo Ubuntu instances
-output "ec2_private_ip_1" {
+output "aws_ec2_private_ip_1" {
   description = "Private ip address for EC2 instance for Region 1"
   value       = aws_instance.ec2_instance_1.private_ip
 }
 
-output "ec2_private_ip_2" {
+output "aws_ec2_private_ip_2" {
   description = "Private ip address for EC2 instance for Region 2"
   value       = aws_instance.ec2_instance_2.private_ip
 }
 
 # Public IPs of the demo Ubuntu instances
-output "ec2_public_ip_1" {
+output "aws_ec2_public_ip_1" {
   description = "Elastic ip address for EC2 instance for Region 1 (ssh user: ubuntu)"
   value       = aws_eip.public_ip_1.public_ip
 }
 
-output "ec2_public_ip_2" {
+output "aws_ec2_public_ip_2" {
   description = "Elastic ip address for EC2 instance for Region 2 (ssh user: ubuntu)"
   value       = aws_eip.public_ip_2.public_ip
 }
@@ -578,6 +578,10 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_1.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_1.bgp_auth_key
 }
+output "packetfabric_cloud_router_bgp_session_crbs_1" {
+  value = packetfabric_cloud_router_bgp_session.crbs_1
+}
+
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
@@ -596,7 +600,7 @@ data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
 }
-output "bgp_prefix_crbp_1" {
+output "packetfabric_bgp_prefix_crbp_1" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
 }
 
@@ -612,6 +616,10 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_2.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_2.bgp_auth_key
 }
+output "packetfabric_cloud_router_bgp_session_crbs_2" {
+  value = packetfabric_cloud_router_bgp_session.crbs_2
+}
+
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
@@ -630,6 +638,6 @@ data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
 }
-output "bgp_prefix_crbp_2" {
+output "packetfabric_bgp_prefix_crbp_2" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
 }
