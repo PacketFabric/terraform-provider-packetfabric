@@ -89,7 +89,7 @@ terraform destroy -var-file="secret.tfvars"
 
 ```
 ╷
-│ Error: Error when reading or editing InterconnectAttachment: googleapi: Error 400: The resource 'projects/prefab-setting-123456/regions/us-west1/interconnectAttachments/demo-pf-aws-master-cricket' is not ready, resourceNotReady
+│ Error: Error when reading or editing InterconnectAttachment: googleapi: Error 400: The resource 'projects/prefab-setting-123456/regions/us-west1/interconnectAttachments/demo-pf-gcp-vpn-master-cricket' is not ready, resourceNotReady
 │ 
 │ 
 ```
