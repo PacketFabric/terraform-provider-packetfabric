@@ -1,8 +1,7 @@
 # Use Case: PacketFabric Cloud Router with Google and a VPN Connection
 
-This use case shows an example on how to use the PacketFabric & Google Terraform providers 
-to automate the connection setup between Google Cloud Platform and a branch locations, on-premises users, 
-or remote data centers via a VPN connection using PacketFabric Cloud Router.
+This use case builds a PacketFabric Cloud Router VPN connection between Google Cloud Platform and a branch location, on-premises users, or a remote data center.
+Terraform providers used: PacketFabric and Google.
 
 ![Deployment Diagram](./images/diagram_cloud_router_google_vpn.png)
 

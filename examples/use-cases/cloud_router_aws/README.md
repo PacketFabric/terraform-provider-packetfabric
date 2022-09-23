@@ -1,7 +1,7 @@
 # Use Case: PacketFabric Cloud Router with AWS
 
-This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
-to automate the connection setup between 2 AWS regions using PacketFabric Cloud Router.
+This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
+Terraform providers used: PacketFabric and AWS.
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
