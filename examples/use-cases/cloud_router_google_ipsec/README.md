@@ -95,7 +95,7 @@ terraform destroy -var-file="secret.tfvars"
 ```
 
 This seems to be a problem with Google Terraform Provider, run again the terraform destroy command and the destroy will complete correctly the 2nd try.
-Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/12631) for this issue on GitHub.
+Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/12631) for this issue on GitHub.
 
 2. In case the gcloud_bgp_address fails, check the error, fix it and manually remove the state before re-running the terraform config.
 
