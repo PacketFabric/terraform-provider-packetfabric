@@ -11,8 +11,6 @@ the outbound Cross connect for those 2 ports.
 - [PacketFabric Ports Overview](https://docs.packetfabric.com/ports/)
 - [PacketFabric Cross Connects Overview](https://docs.packetfabric.com/xconnect/)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
-- [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
-- [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)
 
 ## Terraform resources deployed
 

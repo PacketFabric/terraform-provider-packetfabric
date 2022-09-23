@@ -13,8 +13,6 @@ or remote data centers via a VPN connection using PacketFabric Cloud Router.
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
-- [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
-- [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)
 
 ## Terraform resources deployed
 
