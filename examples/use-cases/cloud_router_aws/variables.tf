@@ -89,7 +89,7 @@ variable "pf_api_server" {
   default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
 }
-# PacketFabric Cloud-Router Parameter configurations
+# PacketFabric Cloud-Router
 variable "pf_cr_asn" {
   type     = number
   default  = 4556 # PacketFabric ASN
@@ -104,7 +104,7 @@ variable "pf_cr_regions" {
   default = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric Cloud-Router-Connections Parameter configuration:
+# PacketFabric Cloud Router Connections
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)
 # Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. 
@@ -138,7 +138,7 @@ variable "pf_crc_is_public" {
   default = false
 }
 
-# PacketFabric Cloud-Router-BGP-Session Parameter configuration:
+# PacketFabric Cloud Router BGP Session
 variable "pf_crbs_af" {
   type    = string
   default = "v4"

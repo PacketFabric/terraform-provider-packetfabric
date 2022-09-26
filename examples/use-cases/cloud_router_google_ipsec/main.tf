@@ -132,11 +132,6 @@ resource "google_compute_interconnect_attachment" "google_interconnect_1" {
   type          = "PARTNER"
   admin_enabled = true # From the Google side: Accept (automatically) the connection.
   router        = google_compute_router.google_router_1.id
-
-  # need to add explicite dependency to avoid issue with the destroy
-  depends_on = [
-    google_compute_network.vpc_1
-  ]
 }
 output "google_interconnect_1" {
   value = google_compute_interconnect_attachment.google_interconnect_1
@@ -179,29 +174,29 @@ resource "packetfabric_google_cloud_router_connection" "crc_1" {
 # Get the BGP Addresses using glcoud terraform module as a workaround
 module "gcloud_bgp_addresses" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source  = "terraform-google-modules/gcloud/google"
-  version = "~> 2.0"
+  source                   = "terraform-google-modules/gcloud/google"
+  version                  = "~> 2.0"
   service_account_key_file = var.gcp_credentials
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
-  create_cmd_entrypoint  = "${path.module}/gcloud_bgp_addresses.sh"
-  create_cmd_body        = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name}"
+  create_cmd_entrypoint = "${path.module}/gcloud_bgp_addresses.sh"
+  create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name}"
 
   module_depends_on = [
     packetfabric_google_cloud_router_connection.crc_1
   ]
 }
 data "local_file" "cloud_router_ip_address" {
-    filename = "${path.module}/cloud_router_ip_address.txt"
-    depends_on = [
-      module.gcloud_bgp_addresses
-    ]
+  filename = "${path.module}/cloud_router_ip_address.txt"
+  depends_on = [
+    module.gcloud_bgp_addresses
+  ]
 }
 data "local_file" "customer_router_ip_address" {
-    filename = "${path.module}/customer_router_ip_address.txt"
-    depends_on = [
-      module.gcloud_bgp_addresses
-    ]
+  filename = "${path.module}/customer_router_ip_address.txt"
+  depends_on = [
+    module.gcloud_bgp_addresses
+  ]
 }
 
 # From the PacketFabric side: Configure BGP
@@ -215,8 +210,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   orlonger       = var.pf_crbs_orlonger
   # remote_address = google_compute_interconnect_attachment.google_interconnect_1.cloud_router_ip_address    # Google side
   # l3_address     = google_compute_interconnect_attachment.google_interconnect_1.customer_router_ip_address # PF side
-  remote_address = data.local_file.cloud_router_ip_address.content     # Google side
-  l3_address     = data.local_file.customer_router_ip_address.content  # PF side
+  remote_address = data.local_file.cloud_router_ip_address.content    # Google side
+  l3_address     = data.local_file.customer_router_ip_address.content # PF side
 }
 output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
@@ -263,13 +258,13 @@ output "packetfabric_google_cloud_router_connection" {
 # Update BGP Peer in the BGP session's Google Cloud Router
 module "gcloud_bgp_peer_update" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source  = "terraform-google-modules/gcloud/google"
-  version = "~> 2.0"
+  source                   = "terraform-google-modules/gcloud/google"
+  version                  = "~> 2.0"
   service_account_key_file = var.gcp_credentials
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
-  create_cmd_entrypoint  = "${path.module}/gcloud_bgp_peer_update.sh"
-  create_cmd_body        = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name} ${var.pf_cr_asn}"
+  create_cmd_entrypoint = "${path.module}/gcloud_bgp_peer_update.sh"
+  create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name} ${var.pf_cr_asn}"
 
   module_depends_on = [
     packetfabric_google_cloud_router_connection.crc_1
@@ -280,61 +275,61 @@ module "gcloud_bgp_peer_update" {
 ###### VPN Connection
 ########################################
 
-resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
-  provider                     = packetfabric
-  description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  circuit_id                   = packetfabric_cloud_router.cr.id
-  account_uuid                 = var.pf_account_uuid
-  pop                          = var.pf_crc_pop2
-  speed                        = var.pf_crc_speed
-  ike_version                  = var.pf_crc_ike_version
-  phase1_authentication_method = var.pf_crc_phase1_authentication_method
-  phase1_group                 = var.pf_crc_phase1_group
-  phase1_encryption_algo       = var.pf_crc_phase1_encryption_algo
-  phase1_authentication_algo   = var.pf_crc_phase1_authentication_algo
-  phase1_lifetime              = var.pf_crc_phase1_lifetime
-  phase2_pfs_group             = var.pf_crc_phase2_pfs_group
-  phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
-  phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
-  phase2_lifetime              = var.pf_crc_phase2_lifetime
-  gateway_address              = var.pf_crc_gateway_address
-  shared_key                   = var.pf_crc_shared_key
-}
+# resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
+#   provider                     = packetfabric
+#   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+#   circuit_id                   = packetfabric_cloud_router.cr.id
+#   account_uuid                 = var.pf_account_uuid
+#   pop                          = var.pf_crc_pop2
+#   speed                        = var.pf_crc_speed
+#   ike_version                  = var.pf_crc_ike_version
+#   phase1_authentication_method = var.pf_crc_phase1_authentication_method
+#   phase1_group                 = var.pf_crc_phase1_group
+#   phase1_encryption_algo       = var.pf_crc_phase1_encryption_algo
+#   phase1_authentication_algo   = var.pf_crc_phase1_authentication_algo
+#   phase1_lifetime              = var.pf_crc_phase1_lifetime
+#   phase2_pfs_group             = var.pf_crc_phase2_pfs_group
+#   phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
+#   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
+#   phase2_lifetime              = var.pf_crc_phase2_lifetime
+#   gateway_address              = var.pf_crc_gateway_address
+#   shared_key                   = var.pf_crc_shared_key
+# }
 
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
-  provider       = packetfabric
-  circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_ipsec_cloud_router_connection.crc_2.id
-  address_family = var.pf_crbs_af
-  remote_asn     = var.vpn_side_asn2
-  orlonger       = var.pf_crbs_orlonger
-  remote_address = var.vpn_remote_address    # On-Prem side
-  l3_address     = var.vpn_l3_address        # PF side
-}
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
+# resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+#   provider       = packetfabric
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   connection_id  = packetfabric_ipsec_cloud_router_connection.crc_2.id
+#   address_family = var.pf_crbs_af
+#   remote_asn     = var.vpn_side_asn2
+#   orlonger       = var.pf_crbs_orlonger
+#   remote_address = var.vpn_remote_address # On-Prem side
+#   l3_address     = var.vpn_l3_address     # PF side
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_2" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# }
 
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-  prefixes {
-    prefix = var.subnet_cidr1
-    type   = "out" # Allowed Prefixes to Cloud
-    order  = 0
-  }
-  prefixes {
-    prefix = var.subnet_cidr2
-    type   = "in" # Allowed Prefixes from Cloud
-    order  = 0
-  }
-}
+# resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
+#   provider          = packetfabric
+#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
+#   prefixes {
+#     prefix = var.subnet_cidr1
+#     type   = "out" # Allowed Prefixes to Cloud
+#     order  = 0
+#   }
+#   prefixes {
+#     prefix = var.subnet_cidr2
+#     type   = "in" # Allowed Prefixes from Cloud
+#     order  = 0
+#   }
+# }
 
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-}
-output "packetfabric_bgp_prefix_crbp_2" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
-}
+# data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
+#   provider          = packetfabric
+#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
+# }
+# output "packetfabric_bgp_prefix_crbp_2" {
+#   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
+# }
 

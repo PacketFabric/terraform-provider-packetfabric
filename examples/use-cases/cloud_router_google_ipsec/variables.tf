@@ -5,7 +5,7 @@ variable "tag_name" {
 
 # GCP VARs
 variable "gcp_project_id" {
-  type        = string
+  type = string
   # sensitive   = true
   description = "Google Cloud project ID"
 }
@@ -54,7 +54,7 @@ variable "pf_api_server" {
   default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
 }
-# PacketFabric Cloud-Router Parameter configurations
+# PacketFabric Cloud-Router
 variable "pf_cr_asn" {
   type     = number
   default  = 4556 # PacketFabric ASN
@@ -76,10 +76,10 @@ variable "google_cloud_router_bgp_peer_name" {
   default = "auto-ia-bgp-demo-pf-aws-rel-5d2456c8e1b2fb4"
 }
 
-# PacketFabric Cloud-Router-Connections Parameter configuration:
+# PacketFabric Google Cloud Router Connections
 variable "pf_crc_pop1" {
   type    = string
-  default = "SEA3"
+  default = "LAX2"
 }
 variable "pf_crc_speed" {
   type    = string
@@ -90,7 +90,7 @@ variable "pf_crc_maybe_nat" {
   default = false
 }
 
-# PacketFabric Cloud-Router-BGP-Session Parameter configuration:
+# PacketFabric Cloud Router BGP Session
 variable "pf_crbs_af" {
   type    = string
   default = "v4"
@@ -112,8 +112,7 @@ variable "vpn_l3_address" {
   default = "169.254.51.2/29"
 }
 
-# PacketFabric IPsec Parameter configuration:
-# IPsec
+# PacketFabric IPsec Cloud Router Connections
 variable "vpn_side_asn2" {
   type        = number
   default     = 64534 # private (64512 to 65534)
@@ -170,7 +169,7 @@ variable "pf_crc_phase2_lifetime" {
 }
 variable "pf_crc_gateway_address" {
   type    = string
-  default = "76.191.25.20"
+  default = "127.0.0.1"
 }
 variable "pf_crc_shared_key" {
   type    = string

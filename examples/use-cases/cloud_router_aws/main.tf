@@ -405,14 +405,15 @@ resource "packetfabric_aws_cloud_router_connection" "crc_2" {
 
 # From the AWS side: Accept the connection
 # Wait at least 90s for the connection to show up in AWS
-resource "null_resource" "previous" {}
-resource "time_sleep" "wait_90_seconds" {
-  depends_on      = [null_resource.previous]
-  create_duration = "90s"
+resource "time_sleep" "wait_aws_connection" {
+  create_duration = "2m"
+  depends_on      = [
+    packetfabric_aws_cloud_router_connection.crc_1,
+    packetfabric_aws_cloud_router_connection.crc_2
+  ]
 }
-# This resource will create (at least) 90 seconds after null_resource.previous
-resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_90_seconds]
+resource "null_resource" "next_aws_connection" {
+  depends_on = [time_sleep.wait_aws_connection]
 }
 
 # Retrieve the Direct Connect connections in AWS
@@ -420,7 +421,7 @@ data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [
-    null_resource.next,
+    null_resource.next_aws_connection,
     packetfabric_aws_cloud_router_connection.crc_1
   ]
 }
@@ -428,7 +429,7 @@ data "aws_dx_connection" "current_2" {
   provider = aws.region2
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   depends_on = [
-    null_resource.next,
+    null_resource.next_aws_connection,
     packetfabric_aws_cloud_router_connection.crc_2
   ]
 }
@@ -438,6 +439,10 @@ output "aws_dx_connection_1" {
 output "aws_dx_connection_2" {
   value = data.aws_dx_connection.current_2
 }
+
+# Sometimes, it takes more than 10min for the connection to become available
+# Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
+# https://github.com/hashicorp/terraform-provider-aws/issues/26335
 
 resource "aws_dx_connection_confirmation" "confirmation_1" {
   provider      = aws
