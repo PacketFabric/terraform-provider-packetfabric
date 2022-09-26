@@ -47,7 +47,7 @@ output "packetfabric_port_2" {
 }
 
 # Create backbone Virtual Circuit
-resource "packetfabric_create_backbone_virtual_circuit" "vc1" {
+resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
   description = var.description
   epl         = false

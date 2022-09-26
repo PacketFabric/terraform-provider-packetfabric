@@ -116,7 +116,7 @@ output "packetfabric_port_1a" {
 # #######################################
 
 # # Create backbone Virtual Circuit
-# resource "packetfabric_create_backbone_virtual_circuit" "vc1" {
+# resource "packetfabric_backbone_virtual_circuit" "vc1" {
 #   provider    = packetfabric
 #   description = "${var.tag_name}-${random_pet.name.id}"
 #   epl         = false
