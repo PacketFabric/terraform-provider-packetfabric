@@ -24,7 +24,7 @@ resource "packetfabric_port" "port_2" {
   zone              = var.pf_port_avzone2
 }
 
-resource "packetfabric_create_backbone_virtual_circuit" "vc1" {
+resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
   description = var.description
   epl         = false
