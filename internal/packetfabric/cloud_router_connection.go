@@ -27,21 +27,21 @@ type AwsConnection struct {
 }
 
 type AwsConnectionCreateResponse struct {
-	PublicIP        string        `json:"public_ip"`
-	UUID            string        `json:"uuid"`
-	CustomerUUID    string        `json:"customer_uuid"`
-	UserUUID        string        `json:"user_uuid"`
-	ServiceProvider string        `json:"service_provider"`
-	PortType        string        `json:"port_type"`
-	Settings        AwsSettings   `json:"settings"`
-	CloudCircuitID  string        `json:"cloud_circuit_id"`
-	AccountUUID     string        `json:"account_uuid"`
-	ServiceClass    string        `json:"service_class"`
-	Description     string        `json:"description"`
-	State           string        `json:"state"`
-	Billing         AwsBilling    `json:"billing"`
-	Speed           string        `json:"speed"`
-	Components      AwsComponents `json:"components"`
+	PublicIP        string              `json:"public_ip"`
+	UUID            string              `json:"uuid"`
+	CustomerUUID    string              `json:"customer_uuid"`
+	UserUUID        string              `json:"user_uuid"`
+	ServiceProvider string              `json:"service_provider"`
+	PortType        string              `json:"port_type"`
+	Settings        CloudRouterSettings `json:"settings"`
+	CloudCircuitID  string              `json:"cloud_circuit_id"`
+	AccountUUID     string              `json:"account_uuid"`
+	ServiceClass    string              `json:"service_class"`
+	Description     string              `json:"description"`
+	State           string              `json:"state"`
+	Billing         AwsBilling          `json:"billing"`
+	Speed           string              `json:"speed"`
+	Components      AwsComponents       `json:"components"`
 }
 
 type CloudRouterConnectionReadResponse struct {
@@ -87,11 +87,31 @@ type AwsCloudProvider struct {
 	Site string `json:"site,omitempty"`
 }
 
-type AwsSettings struct {
-	AwsRegion       string `json:"aws_region"`
-	AwsHostedType   string `json:"aws_hosted_type"`
-	AwsConnectionID string `json:"aws_connection_id"`
-	AwsAccountID    string `json:"aws_account_id"`
+type CloudRouterSettings struct {
+	AwsRegion                string `json:"aws_region,omitempty"`
+	AwsHostedType            string `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID          string `json:"aws_connection_id,omitempty"`
+	AwsAccountID             string `json:"aws_account_id,omitempty"`
+	VlanIDPf                 int    `json:"vlan_id_pf,omitempty"`
+	VlanIDCust               int    `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust              int    `json:"svlan_id_cust,omitempty"`
+	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
+	VlanPrivate              int    `json:"vlan_private,omitempty"`
+	VlanMicrosoft            int    `json:"vlan_microsoft,omitempty"`
+	AzureServiceKey          string `json:"azure_service_key,omitempty"`
+	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
+	OracleRegion             string `json:"oracle_region,omitempty"`
+	VcOcid                   string `json:"vc_ocid,omitempty"`
+	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`
+	PortCompartmentOcid      string `json:"port_compartment_ocid,omitempty"`
+	AccountID                string `json:"account_id,omitempty"`
+	GatewayID                string `json:"gateway_id,omitempty"`
+	PortID                   string `json:"port_id,omitempty"`
+	Name                     string `json:"name,omitempty"`
+	BgpAsn                   int    `json:"bgp_asn,omitempty"`
+	BgpCerCidr               string `json:"bgp_cer_cidr,omitempty"`
+	BgpIbmCidr               string `json:"bgp_ibm_cidr,omitempty"`
 }
 
 type AwsBilling struct {

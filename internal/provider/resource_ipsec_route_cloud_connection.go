@@ -27,6 +27,12 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"circuit_id": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The circuit ID.",
+			},
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -40,7 +46,7 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				Description:  "The UUID of the contact that will be billed",
 			},
 			"pop": {
-				Type:         schema.TypeBool,
+				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired location for the new connection.",
@@ -114,13 +120,13 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 			"gateway_address": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.IsUUID,
+				ValidateFunc: validation.IsIPv4Address,
 				Description:  "The customer-side (remote) gateway address.",
 			},
 			"shared_key": {
 				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.IsUUID,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The pre-shared-key to use for authentication.",
 			},
 			"published_quote_line_uuid": {

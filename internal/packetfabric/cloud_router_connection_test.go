@@ -25,7 +25,7 @@ var _clConnectionCreateResp = AwsConnectionCreateResponse{
 	UserUUID:        _cloudConnUserUUID,
 	ServiceProvider: "aws",
 	PortType:        "hosted",
-	Settings: AwsSettings{
+	Settings: CloudRouterSettings{
 		AwsRegion:       "",
 		AwsHostedType:   "",
 		AwsConnectionID: "",
