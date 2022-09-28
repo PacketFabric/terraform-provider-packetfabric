@@ -1,8 +1,8 @@
 ## 0.3.0 (Unreleased)
 
-BREAKING CHANGES:
+BREAKING CHANGES:	
 
-none
+none	
 
 FEATURES:
 
@@ -32,8 +32,8 @@ FEATURES:
 
 IMPROVEMENTS/ENHANCEMENTS:
 
+* Removed the scope attribute when creating a new Cloud Router (#40)
 * Update hosted/dedicated data sources (AWS/Azure/Google) (#23)
-* Remove deprecated attribute in Cloud Router resource (#40) 
 * Add Ability to filter on all data source (#63)
 * Handle errors for dedicated resources (AWS/Azure/Google) (#105)
 

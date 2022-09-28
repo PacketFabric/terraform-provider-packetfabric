@@ -34,14 +34,14 @@ func resourceBgpSession() *schema.Resource {
 			},
 			"md5": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The MD5 value of the authenticated BGP sessions.",
+				Optional:    true,
+				Description: "The MD5 value of the authenticated BGP sessions. Required for AWS.",
 			},
 			"l3_address": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The L3 address of this instance. Not used for Azure connections.",
+				Description:  "The L3 address of this instance. Not used for Azure connections. Required for all other CSP.",
 			},
 			"primary_subnet": {
 				Type:        schema.TypeString,
@@ -60,8 +60,8 @@ func resourceBgpSession() *schema.Resource {
 			},
 			"remote_address": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The cloud-side router peer IP.",
+				Optional:    true,
+				Description: "The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.",
 			},
 			"remote_asn": {
 				Type:        schema.TypeInt,
@@ -70,32 +70,32 @@ func resourceBgpSession() *schema.Resource {
 			},
 			"multihop_ttl": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).",
 			},
 			"local_preference": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router.",
+				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. Deprecated.",
 			},
 			"med": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS.",
+				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.",
 			},
 			"community": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The BGP community for this instance.",
+				Description: "The BGP community for this instance. Deprecated.",
 			},
 			"as_prepend": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The BGP prepend value for this instance.",
+				Description: "The BGP prepend value for this instance. Deprecated.",
 			},
 			"orlonger": {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
 				Description: "Whether to use exact match or longer for all prefixes.",
 			},
 			"bfd_interval": {

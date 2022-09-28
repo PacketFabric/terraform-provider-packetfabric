@@ -1,6 +1,5 @@
 resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
   account_uuid = var.pf_account_uuid
