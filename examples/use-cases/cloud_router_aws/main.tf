@@ -375,6 +375,8 @@ output "packetfabric_cloud_router" {
   value = packetfabric_cloud_router.cr
 }
 
+## Check if cloud on-ramp location selected is correct (pop and zone)
+
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   provider       = packetfabric
@@ -404,7 +406,7 @@ resource "packetfabric_aws_cloud_router_connection" "crc_2" {
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 90s for the connection to show up in AWS
+# Wait for the connection to show up in AWS
 resource "time_sleep" "wait_aws_connection" {
   create_duration = "2m"
   depends_on      = [
@@ -447,10 +449,22 @@ output "aws_dx_connection_2" {
 resource "aws_dx_connection_confirmation" "confirmation_1" {
   provider      = aws
   connection_id = data.aws_dx_connection.current_1.id
+
+  lifecycle {
+    ignore_changes = [
+      connection_id
+    ]
+  }
 }
 resource "aws_dx_connection_confirmation" "confirmation_2" {
   provider      = aws.region2
   connection_id = data.aws_dx_connection.current_2.id
+
+  lifecycle {
+    ignore_changes = [
+      connection_id
+    ]
+  }
 }
 
 # From the AWS side: Create a gateway
@@ -512,9 +526,10 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   depends_on = [
     data.packetfabric_aws_cloud_router_connection.current
   ]
+
   lifecycle {
     ignore_changes = [
-      vlan
+      connection_id
     ]
   }
 }
@@ -529,9 +544,10 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   depends_on = [
     data.packetfabric_aws_cloud_router_connection.current
   ]
+
   lifecycle {
     ignore_changes = [
-      vlan
+      connection_id
     ]
   }
 }

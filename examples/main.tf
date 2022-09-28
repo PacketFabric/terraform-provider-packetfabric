@@ -162,12 +162,17 @@ output "packetfabric_port_1a" {
 #   val["pop"] => val }
 #   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
 #   pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
+#   
+#   pop_in_market = toset([for each in data.packetfabric_locations.locations_all.locations[*] : each.pop if each.market == "WDC"])
 # }
 # output "pf_port_site1" {
 #   value = local.pf_port_site1
 # }
 # output "pf_port_site2" {
 #   value = local.pf_port_site2
+# }
+# output "packetfabric_location_pop_in_market" {
+#   value = local.pop_in_market
 # }
 
 # # Create Cross Connect
