@@ -22,8 +22,9 @@ description: |-
 - `cloud_circuit_id` (String) The unique PF circuit ID for this connection
 		Example: PF-AP-LAX1-1002
 
-### Optional
+### Read-Only
 
+- `id` (String) The ID of this resource.
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
 - `cloud_provider_region` (String) Region short name.
@@ -45,12 +46,7 @@ description: |-
 		Enum: [ "50Mbps", "100Mbps", "200Mbps", "300Mbps", "400Mbps", "500Mbps", "1Gbps", "2Gbps", "5Gbps", "10Gbps" ]
 - `state` (String) The state of the connection.
 		Enum: [ "active", "deleting", "inactive", "pending", "requested" ]
-- `time_created` (String) Date and time of connection creation
-- `time_updated` (String) Date and time connection was last updated
+- `time_created` (String) Date and time of connection creation.
+- `time_updated` (String) Date and time connection was last updated.
 - `user_uuid` (String) The UUID for the user this connection belongs to.
-
-### Read-Only
-
-- `id` (String) The ID of this resource.
-
-
+- `uuid` (String) The UUID of this connection.

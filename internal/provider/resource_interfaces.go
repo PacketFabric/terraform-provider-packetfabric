@@ -35,7 +35,7 @@ func resourceInterfaces() *schema.Resource {
 			},
 			"autoneg": {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
 				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.",
 			},
 			"description": {
@@ -52,7 +52,7 @@ func resourceInterfaces() *schema.Resource {
 			},
 			"nni": {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
 				Description: "Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.\n\n\tBy default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.",
 			},
 			"pop": {
@@ -75,7 +75,7 @@ func resourceInterfaces() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Availability zone of the port.",
 			},

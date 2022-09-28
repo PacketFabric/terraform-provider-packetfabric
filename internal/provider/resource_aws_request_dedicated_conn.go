@@ -137,7 +137,7 @@ func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m in
 	if !ok {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
-			Summary:  "Aws Services Delete",
+			Summary:  "AWS Services Delete",
 			Detail:   cloudCidNotFoundDetailsMsg,
 		})
 		return diags

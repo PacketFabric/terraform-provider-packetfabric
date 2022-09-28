@@ -22,7 +22,7 @@ func dataSourceCloudRouter() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Optional:    true,
-							Description: "Whether the cloud router is private or public.",
+							Description: "Whether the cloud router is private or public. Deprecated.",
 						},
 						"asn": {
 							Type:        schema.TypeInt,

@@ -21,6 +21,10 @@
 
 **Impact**: AWS Hosted Cloud
 
+- [#26919](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter)
+
+**Impact**: AWS Hosted Cloud and Cloud Router
+
 - [#26461](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID
 
 **Impact**: AWS Hosted Cloud
@@ -34,6 +38,10 @@
 **Impact**: AWS Dedicated Cloud
 
 - [#11458](https://github.com/hashicorp/terraform-provider-google/issues/11458) Expose bgpPeers from google_compute_router
+
+**Impact**: Google Hosted Cloud and Cloud Router
+
+- [#12624](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment 
 
 **Impact**: Google Hosted Cloud and Cloud Router
 
