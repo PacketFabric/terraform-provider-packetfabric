@@ -63,8 +63,8 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				Description:  "The description of this connection.",
 			},
 			"pop": {
-				Type:        schema.TypeBool,
-				Optional:    true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "The desired location for the new connection.",
 			},
 			"speed": {
