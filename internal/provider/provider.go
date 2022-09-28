@@ -92,6 +92,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
 			"packetfabric_cloud_router_google_connection":          resourceGoogleCloudRouterConn(),
 			"packetfabric_cloud_router_ipsec_connection":           resourceIPSecCloudRouteConn(),
+			"packetfabric_ipsec_connection_update":                 resourceIPSecUpdate(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -119,6 +120,7 @@ func Provider() *schema.Provider {
 			"packetfabric_azr_cloud_router_connection":      dataSourceCloudConn(),
 			"packetfabric_cs_azure_hosted_connection":       dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_azure_dedicated_connection":    datasourceDedicatedConn(),
+			"packetfabric_ipsec":                            datasourceIPSec(),
 			"packetfabric_activitylog":                      datasourceActivityLog(),
 		},
 		ConfigureContextFunc: providerConfigure,

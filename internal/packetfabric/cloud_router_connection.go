@@ -12,6 +12,7 @@ const awsCloudConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/
 const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/status"
 const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
 const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
+const ipsecConnServiceByCidURI = "/v2/services/ipsec/%s"
 const oracleCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
@@ -177,6 +178,40 @@ type OracleCloudRouterConn struct {
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
+type IPSecConnUpdate struct {
+	CustomerGatewayAddress     string `json:"customer_gateway_address,omitempty"`
+	IkeVersion                 int    `json:"ike_version,omitempty"`
+	Phase1AuthenticationMethod string `json:"phase1_authentication_method,omitempty"`
+	Phase1Group                string `json:"phase1_group,omitempty"`
+	Phase1EncryptionAlgo       string `json:"phase1_encryption_algo,omitempty"`
+	Phase1AuthenticationAlgo   string `json:"phase1_authentication_algo,omitempty"`
+	Phase1Lifetime             int    `json:"phase1_lifetime,omitempty"`
+	Phase2PfsGroup             string `json:"phase2_pfs_group,omitempty"`
+	Phase2EncryptionAlgo       string `json:"phase2_encryption_algo,omitempty"`
+	Phase2AuthenticationAlgo   string `json:"phase2_authentication_algo,omitempty"`
+	Phase2Lifetime             int    `json:"phase2_lifetime,omitempty"`
+	PreSharedKey               string `json:"pre_shared_key,omitempty"`
+}
+
+type IPSecConnUpdateResponse struct {
+	CircuitID                  string `json:"circuit_id,omitempty"`
+	CustomerGatewayAddress     string `json:"customer_gateway_address,omitempty"`
+	LocalGatewayAddress        string `json:"local_gateway_address,omitempty"`
+	IkeVersion                 int    `json:"ike_version,omitempty"`
+	Phase1AuthenticationMethod string `json:"phase1_authentication_method,omitempty"`
+	Phase1Group                string `json:"phase1_group,omitempty"`
+	Phase1EncryptionAlgo       string `json:"phase1_encryption_algo,omitempty"`
+	Phase1AuthenticationAlgo   string `json:"phase1_authentication_algo,omitempty"`
+	Phase1Lifetime             int    `json:"phase1_lifetime,omitempty"`
+	Phase2PfsGroup             string `json:"phase2_pfs_group,omitempty"`
+	Phase2EncryptionAlgo       string `json:"phase2_encryption_algo,omitempty"`
+	Phase2AuthenticationAlgo   string `json:"phase2_authentication_algo,omitempty"`
+	Phase2Lifetime             int    `json:"phase2_lifetime,omitempty"`
+	PreSharedKey               string `json:"pre_shared_key,omitempty"`
+	TimeCreated                string `json:"time_created,omitempty"`
+	TimeUpdated                string `json:"time_updated,omitempty"`
+}
+
 func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId string) (*AwsConnectionCreateResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionURI, circuitId)
 
@@ -243,6 +278,17 @@ func (c *PFClient) UpdateAwsConnection(cID, connCid string, description Descript
 	return resp, nil
 }
 
+func (c *PFClient) UpdateIPSecConnection(cID string, ipSecUpdate IPSecConnUpdate) (*IPSecConnUpdateResponse, error) {
+	formatedURI := fmt.Sprintf(ipsecConnServiceByCidURI, cID)
+
+	resp := &IPSecConnUpdateResponse{}
+	_, err := c.sendRequest(formatedURI, patchMethod, ipSecUpdate, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *PFClient) DeleteAwsConnection(cID, connCid string) (*ConnectionDeleteResp, error) {
 	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
 	if cID == "" {
@@ -271,6 +317,16 @@ func (c *PFClient) GetCloudConnectionStatus(cID, connCID string) (*ServiceState,
 	}
 	return expectedResp, nil
 
+}
+
+func (c *PFClient) GetIpsecSpecificConn(cID string) (*IPSecConnUpdateResponse, error) {
+	formatedURI := fmt.Sprintf(ipsecConnServiceByCidURI, cID)
+	expectedResp := &IPSecConnUpdateResponse{}
+	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
 }
 
 func (c *PFClient) ListAwsRouterConnections(cID string) ([]CloudRouterConnectionReadResponse, error) {
