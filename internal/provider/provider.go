@@ -92,7 +92,6 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
 			"packetfabric_cloud_router_connection_ipsec":           resourceIPSecCloudRouteConn(),
-			"packetfabric_ipsec_cloud_router_connection_update":    resourceIPSecUpdate(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list

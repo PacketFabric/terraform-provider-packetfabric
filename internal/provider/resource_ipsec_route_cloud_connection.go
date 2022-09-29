@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -107,7 +108,7 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 			},
 			"phase2_authentication_algo": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringInSlice(iPSecPhase2AuthenticationAlgoOptions(), false),
 				Description:  "The phase 2 authentication algo.",
 			},
@@ -144,7 +145,10 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 	c.Ctx = ctx
 
 	var diags diag.Diagnostics
-	ipSecRouter := extractIPSecRouteConn(d)
+	ipSecRouter, err := extractIPSecRouteConn(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		resp, err := c.CreateIPSecCloudRouerConnection(ipSecRouter, cid.(string))
 		if err != nil {
@@ -189,16 +193,20 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
+
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		desc := d.Get("description")
-		descUpdate := packetfabric.DescriptionUpdate{
-			Description: desc.(string),
+		ipsecUpdated := extractIPSecUpdate(d)
+		_, err := c.UpdateIPSecConnection(cid.(string), ipsecUpdated)
+		if err != nil {
+			return diag.FromErr(err)
 		}
-		if _, err := c.UpdateAwsConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
-			diags = diag.FromErr(err)
-		}
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Circuit ID not present",
+			Detail:   "Please provide a valid Circuit ID.",
+		})
 	}
 	return diags
 }
@@ -227,7 +235,7 @@ func resourceIPSecCloudRouteConnDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func extractIPSecRouteConn(d *schema.ResourceData) packetfabric.IPSecRouterConn {
+func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn, error) {
 	iPSecRouter := packetfabric.IPSecRouterConn{}
 	if desc, ok := d.GetOk("description"); ok {
 		iPSecRouter.Description = desc.(string)
@@ -267,6 +275,8 @@ func extractIPSecRouteConn(d *schema.ResourceData) packetfabric.IPSecRouterConn 
 	}
 	if phaseTwoAuthAlgo, ok := d.GetOk("phase2_authentication_algo"); ok {
 		iPSecRouter.Phase2AuthenticationAlgo = phaseTwoAuthAlgo.(string)
+	} else {
+		return iPSecRouter, fmt.Errorf("The field 'phase2_authentication_algo' is required.")
 	}
 	if phaseTwoLifetime, ok := d.GetOk("phase2_lifetime"); ok {
 		iPSecRouter.Phase2Lifetime = phaseTwoLifetime.(int)
@@ -280,7 +290,48 @@ func extractIPSecRouteConn(d *schema.ResourceData) packetfabric.IPSecRouterConn 
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		iPSecRouter.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
-	return iPSecRouter
+	return iPSecRouter, nil
+}
+
+func extractIPSecUpdate(d *schema.ResourceData) packetfabric.IPSecConnUpdate {
+	ipsec := packetfabric.IPSecConnUpdate{}
+	if custGatewayAdd, ok := d.GetOk("gateway_address"); ok {
+		ipsec.CustomerGatewayAddress = custGatewayAdd.(string)
+	}
+	if ikeVersion, ok := d.GetOk("ike_version"); ok {
+		ipsec.IkeVersion = ikeVersion.(int)
+	}
+	if phaseOneAuthMethod, ok := d.GetOk("phase1_authentication_method"); ok {
+		ipsec.Phase1AuthenticationMethod = phaseOneAuthMethod.(string)
+	}
+	if phaseOneGroup, ok := d.GetOk("phase1_group"); ok {
+		ipsec.Phase1Group = phaseOneGroup.(string)
+	}
+	if phaseOneEncAlgo, ok := d.GetOk("phase1_encryption_algo"); ok {
+		ipsec.Phase1EncryptionAlgo = phaseOneEncAlgo.(string)
+	}
+	if phaseOneAuthAlgo, ok := d.GetOk("phase1_authentication_algo"); ok {
+		ipsec.Phase1AuthenticationAlgo = phaseOneAuthAlgo.(string)
+	}
+	if phaseOneLifetime, ok := d.GetOk("phase1_lifetime"); ok {
+		ipsec.Phase1Lifetime = phaseOneLifetime.(int)
+	}
+	if phaseTwoPfsGroup, ok := d.GetOk("phase2_pfs_group"); ok {
+		ipsec.Phase2PfsGroup = phaseTwoPfsGroup.(string)
+	}
+	if phaseTwoEncryptationAlgo, ok := d.GetOk("phase2_encryption_algo"); ok {
+		ipsec.Phase2EncryptionAlgo = phaseTwoEncryptationAlgo.(string)
+	}
+	if phaseTwoAuthAlgo, ok := d.GetOk("phase2_authentication_algo"); ok {
+		ipsec.Phase2AuthenticationAlgo = phaseTwoAuthAlgo.(string)
+	}
+	if phaseTwoLifetime, ok := d.GetOk("phase2_lifetime"); ok {
+		ipsec.Phase2Lifetime = phaseTwoLifetime.(int)
+	}
+	if preSharedKey, ok := d.GetOk("shared_key"); ok {
+		ipsec.PreSharedKey = preSharedKey.(string)
+	}
+	return ipsec
 }
 
 func iPSecSpeedOptions() []string {
