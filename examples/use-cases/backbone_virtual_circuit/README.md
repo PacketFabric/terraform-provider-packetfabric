@@ -19,7 +19,7 @@ the outbound Cross connect for those 2 ports.
 - data source **"packetfabric_billing"**: Get the billing details for those 2 ports
 - data source **"packetfabric_locations"**: Get PacketFabric available locations
 - resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect (You provide PacketFabric with an LOA/CFA authorizing us to make the connection)
-- resource **"packetfabric_create_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between the 2 ports
+- resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between the 2 ports
 
 
 ## Before You Begin
