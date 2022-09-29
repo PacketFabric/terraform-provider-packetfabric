@@ -603,6 +603,7 @@ output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
 }
 
+# Configure BGP Prefix is mandatory to setup the BGP session correctly
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
@@ -641,6 +642,7 @@ output "packetfabric_cloud_router_bgp_session_crbs_2" {
   value = packetfabric_cloud_router_bgp_session.crbs_2
 }
 
+# Configure BGP Prefix is mandatory to setup the BGP session correctly
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id

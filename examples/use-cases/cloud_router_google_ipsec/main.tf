@@ -6,7 +6,7 @@ terraform {
     }
     google = {
       source  = "hashicorp/google"
-      version = "4.37.0"
+      version = "4.38.0"
     }
   }
 }
@@ -208,8 +208,10 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.gcp_side_asn1
   orlonger       = var.pf_crbs_orlonger
-  # remote_address = google_compute_interconnect_attachment.google_interconnect_1.cloud_router_ip_address    # Google side
-  # l3_address     = google_compute_interconnect_attachment.google_interconnect_1.customer_router_ip_address # PF side
+  # when the google_compute_interconnect_attachment data source will exist, no need to use the gcloud terraform module
+  # https://github.com/hashicorp/terraform-provider-google/issues/12624
+  # remote_address = data.google_compute_interconnect_attachment.google_interconnect_1.cloud_router_ip_address    # Google side
+  # l3_address     = data.google_compute_interconnect_attachment.google_interconnect_1.customer_router_ip_address # PF side
   remote_address = data.local_file.cloud_router_ip_address.content    # Google side
   l3_address     = data.local_file.customer_router_ip_address.content # PF side
 }
@@ -217,6 +219,7 @@ output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
 }
 
+# Configure BGP Prefix is mandatory to setup the BGP session correctly
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
@@ -272,7 +275,7 @@ module "gcloud_bgp_peer_update" {
 }
 
 ########################################
-###### VPN Connection
+###### VPN Connection (IPsec)
 ########################################
 
 resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
@@ -282,6 +285,7 @@ resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
   account_uuid                 = var.pf_account_uuid
   pop                          = var.pf_crc_pop2
   speed                        = var.pf_crc_speed
+  gateway_address              = var.pf_crc_gateway_address
   ike_version                  = var.pf_crc_ike_version
   phase1_authentication_method = var.pf_crc_phase1_authentication_method
   phase1_group                 = var.pf_crc_phase1_group
@@ -292,7 +296,6 @@ resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
   phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
   phase2_lifetime              = var.pf_crc_phase2_lifetime
-  gateway_address              = var.pf_crc_gateway_address
   shared_key                   = var.pf_crc_shared_key
 }
 
@@ -310,6 +313,7 @@ output "packetfabric_cloud_router_bgp_session_crbs_2" {
   value = packetfabric_cloud_router_bgp_session.crbs_2
 }
 
+# Configure BGP Prefix is mandatory to setup the BGP session correctly
 resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
   provider          = packetfabric
   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id

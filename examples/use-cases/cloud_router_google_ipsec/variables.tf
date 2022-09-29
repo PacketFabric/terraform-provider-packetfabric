@@ -79,11 +79,11 @@ variable "google_cloud_router_bgp_peer_name" {
 # PacketFabric Google Cloud Router Connections
 variable "pf_crc_pop1" {
   type    = string
-  default = "LAX2"
+  default = "LAX1"
 }
 variable "pf_crc_speed" {
   type    = string
-  default = "100Mbps" # 50Mbps
+  default = "50Mbps" # 2Gbps
 }
 variable "pf_crc_maybe_nat" {
   type    = bool

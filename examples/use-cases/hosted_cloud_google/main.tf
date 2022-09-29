@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.2.1"
+      version = ">= 0.3.0"
     }
     google = {
       source  = "hashicorp/google"
-      version = "4.37.0"
+      version = "4.38.0"
     }
   }
 }
