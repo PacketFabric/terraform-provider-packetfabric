@@ -224,7 +224,7 @@ resource "aws_dx_connection" "current_1" {
 #   name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
 #   amazon_side_asn = var.amazon_side_asn1
 #   depends_on = [
-#     packetfabric_aws_cloud_router_connection.crc_1
+#     packetfabric_cloud_router_connection_aws.crc_1
 #   ]
 # }
 
@@ -238,7 +238,7 @@ resource "aws_dx_connection" "current_1" {
 #   address_family = "ipv4"
 #   bgp_asn        = var.customer_side_asn1
 #   depends_on = [
-#     data.packetfabric_aws_cloud_router_connection.current
+#     data.packetfabric_cloud_router_connection_aws.current
 #   ]
 # }
 

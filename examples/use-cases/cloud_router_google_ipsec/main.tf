@@ -152,7 +152,7 @@ output "packetfabric_cloud_router" {
 }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_google_cloud_router_connection" "crc_1" {
+resource "packetfabric_cloud_router_connection_google" "crc_1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id                  = packetfabric_cloud_router.cr.id
@@ -183,7 +183,7 @@ module "gcloud_bgp_addresses" {
   create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name}"
 
   module_depends_on = [
-    packetfabric_google_cloud_router_connection.crc_1
+    packetfabric_cloud_router_connection_google.crc_1
   ]
 }
 data "local_file" "cloud_router_ip_address" {
@@ -203,7 +203,7 @@ data "local_file" "customer_router_ip_address" {
 resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_google_cloud_router_connection.crc_1.id
+  connection_id  = packetfabric_cloud_router_connection_google.crc_1.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.gcp_side_asn1
@@ -242,7 +242,7 @@ output "packetfabric_bgp_prefix_crbp_1" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
 }
 
-data "packetfabric_google_cloud_router_connection" "current" {
+data "packetfabric_cloud_router_connection_google" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
@@ -250,8 +250,8 @@ data "packetfabric_google_cloud_router_connection" "current" {
     packetfabric_cloud_router_bgp_session.crbs_1
   ]
 }
-output "packetfabric_google_cloud_router_connection" {
-  value = data.packetfabric_google_cloud_router_connection.current
+output "packetfabric_cloud_router_connection_google" {
+  value = data.packetfabric_cloud_router_connection_google.current
 }
 
 # Because the BGP session is created automatically, the only way to update it is to use gcloud
@@ -270,7 +270,7 @@ module "gcloud_bgp_peer_update" {
   create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name} ${var.pf_cr_asn}"
 
   module_depends_on = [
-    packetfabric_google_cloud_router_connection.crc_1
+    packetfabric_cloud_router_connection_google.crc_1
   ]
 }
 
@@ -278,7 +278,7 @@ module "gcloud_bgp_peer_update" {
 ###### VPN Connection (IPsec)
 ########################################
 
-resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
+resource "packetfabric_cloud_router_connection_ipsec" "crc_2" {
   provider                     = packetfabric
   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id                   = packetfabric_cloud_router.cr.id
@@ -302,7 +302,7 @@ resource "packetfabric_ipsec_cloud_router_connection" "crc_2" {
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_ipsec_cloud_router_connection.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_ipsec.crc_2.id
   address_family = var.pf_crbs_af
   remote_asn     = var.vpn_side_asn2
   orlonger       = var.pf_crbs_orlonger

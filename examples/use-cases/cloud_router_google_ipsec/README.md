@@ -21,8 +21,8 @@ Terraform providers used: PacketFabric and Google.
 - resource & data source **"google_compute_router"**: Create a Google Cloud Router used for the Interconnect
 - resource **"google_compute_interconnect_attachment"**: Create a Google Interconnect
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_google_cloud_router_connection"**: Add a Google Partner Interconnect to the Cloud Router
-- resource & data source **"packetfabric_ipsec_cloud_router_connection"**: Add a VPN Connection to the Cloud Router
+- resource & data source **"packetfabric_cloud_router_connection_google"**: Add a Google Partner Interconnect to the Cloud Router
+- resource & data source **"packetfabric_cloud_router_connection_ipsec"**: Add a VPN Connection to the Cloud Router
 - module **"terraform-google-gcloud"**: Get the BGP Peer Addresses and set the PacketFabric Cloud Router ASN to the BGP settings in the Google Cloud Router
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
 - resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric

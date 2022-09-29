@@ -378,7 +378,7 @@ output "packetfabric_cloud_router" {
 ## Check if cloud on-ramp location selected is correct (pop and zone)
 
 # From the PacketFabric side: Create a cloud router connection to AWS
-resource "packetfabric_aws_cloud_router_connection" "crc_1" {
+resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   provider       = packetfabric
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
@@ -392,7 +392,7 @@ resource "packetfabric_aws_cloud_router_connection" "crc_1" {
   maybe_nat      = var.pf_crc_maybe_nat
   is_public      = var.pf_crc_is_public
 }
-resource "packetfabric_aws_cloud_router_connection" "crc_2" {
+resource "packetfabric_cloud_router_connection_aws" "crc_2" {
   provider       = packetfabric
   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id     = packetfabric_cloud_router.cr.id
@@ -410,8 +410,8 @@ resource "packetfabric_aws_cloud_router_connection" "crc_2" {
 resource "time_sleep" "wait_aws_connection" {
   create_duration = "2m"
   depends_on      = [
-    packetfabric_aws_cloud_router_connection.crc_1,
-    packetfabric_aws_cloud_router_connection.crc_2
+    packetfabric_cloud_router_connection_aws.crc_1,
+    packetfabric_cloud_router_connection_aws.crc_2
   ]
 }
 resource "null_resource" "next_aws_connection" {
@@ -424,7 +424,7 @@ data "aws_dx_connection" "current_1" {
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [
     null_resource.next_aws_connection,
-    packetfabric_aws_cloud_router_connection.crc_1
+    packetfabric_cloud_router_connection_aws.crc_1
   ]
 }
 data "aws_dx_connection" "current_2" {
@@ -432,7 +432,7 @@ data "aws_dx_connection" "current_2" {
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   depends_on = [
     null_resource.next_aws_connection,
-    packetfabric_aws_cloud_router_connection.crc_2
+    packetfabric_cloud_router_connection_aws.crc_2
   ]
 }
 output "aws_dx_connection_1" {
@@ -473,7 +473,7 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
   name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   amazon_side_asn = var.amazon_side_asn1
   depends_on = [
-    packetfabric_aws_cloud_router_connection.crc_1
+    packetfabric_cloud_router_connection_aws.crc_1
   ]
 }
 resource "aws_dx_gateway" "direct_connect_gw_2" {
@@ -481,12 +481,12 @@ resource "aws_dx_gateway" "direct_connect_gw_2" {
   name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   amazon_side_asn = var.amazon_side_asn2
   depends_on = [
-    packetfabric_aws_cloud_router_connection.crc_2
+    packetfabric_cloud_router_connection_aws.crc_2
   ]
 }
 
 # From the AWS side: Create and attach a VIF
-data "packetfabric_aws_cloud_router_connection" "current" {
+data "packetfabric_cloud_router_connection_aws" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
@@ -498,7 +498,7 @@ data "packetfabric_aws_cloud_router_connection" "current" {
 locals {
   # below may need to be updated
   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
-  cloud_connections = data.packetfabric_aws_cloud_router_connection.current.cloud_connections[*]
+  cloud_connections = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
@@ -510,21 +510,21 @@ locals {
 # output "cc2_vlan_id_pf" {
 #   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
 # }
-output "packetfabric_aws_cloud_router_connection" {
-  value = data.packetfabric_aws_cloud_router_connection.current.cloud_connections[*]
+output "packetfabric_cloud_router_connection_aws" {
+  value = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
 }
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider       = aws
   connection_id  = data.aws_dx_connection.current_1.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_aws_cloud_router_connection data source. 
+  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection_aws data source. 
   # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to create the VIF in AWS
   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.packetfabric_aws_cloud_router_connection.current
+    data.packetfabric_cloud_router_connection_aws.current
   ]
 
   lifecycle {
@@ -542,7 +542,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.packetfabric_aws_cloud_router_connection.current
+    data.packetfabric_cloud_router_connection_aws.current
   ]
 
   lifecycle {
@@ -590,7 +590,7 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
 resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_aws_cloud_router_connection.crc_1.id
+  connection_id  = packetfabric_cloud_router_connection_aws.crc_1.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn1
@@ -629,7 +629,7 @@ output "packetfabric_bgp_prefix_crbp_1" {
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_aws_cloud_router_connection.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_aws.crc_2.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn2

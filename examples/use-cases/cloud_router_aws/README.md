@@ -28,7 +28,7 @@ Terraform providers used: PacketFabric and AWS.
 - resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_aws_cloud_router_connection"**: Add AWS Direct Connect to the Cloud Router
+- resource & data source **"packetfabric_cloud_router_connection_aws"**: Add AWS Direct Connect to the Cloud Router
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
@@ -133,10 +133,10 @@ As a workaround, edit the `main.tf` and comment out the following resource:
 # }
 ```
 
-And comment out the dependency with `confirmation_2` in `packetfabric_aws_cloud_router_connection` data source: 
+And comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
-data "packetfabric_aws_cloud_router_connection" "current" {
+data "packetfabric_cloud_router_connection_aws" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 

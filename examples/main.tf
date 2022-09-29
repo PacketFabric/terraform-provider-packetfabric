@@ -469,7 +469,7 @@ output "packetfabric_port_1a" {
 #   regions      = var.pf_cr_regions
 # }
 
-# resource "packetfabric_aws_cloud_router_connection" "crc_1" {
+# resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
@@ -482,7 +482,7 @@ output "packetfabric_port_1a" {
 #   is_public      = var.pf_crc_is_public
 # }
 
-# resource "packetfabric_google_cloud_router_connection" "crc_2" {
+# resource "packetfabric_cloud_router_connection_google" "crc_2" {
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
@@ -494,7 +494,7 @@ output "packetfabric_port_1a" {
 #   maybe_nat                   = var.pf_crc_maybe_nat
 # }
 
-resource "packetfabric_ipsec_cloud_router_connection" "crc_3" {
+resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
   provider                     = packetfabric
   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
   circuit_id                   = packetfabric_cloud_router.cr.id
@@ -515,9 +515,9 @@ resource "packetfabric_ipsec_cloud_router_connection" "crc_3" {
   shared_key                   = var.pf_crc_shared_key
 }
 
-resource "packetfabric_ipsec_cloud_router_connection_update" "update_crc_3" {
+resource "packetfabric_cloud_router_connection_ipsec_update" "update_crc_3" {
   provider                     = packetfabric
-  circuit_id                   = packetfabric_ipsec_cloud_router_connection.crc_3.id
+  circuit_id                   = packetfabric_cloud_router_connection_ipsec.crc_3.id
   gateway_address              = var.pf_crc_gateway_address # may be customer_gateway_address
   ike_version                  = var.pf_crc_ike_version
   phase1_authentication_method = var.pf_crc_phase1_authentication_method
