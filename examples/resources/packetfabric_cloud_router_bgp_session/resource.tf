@@ -33,6 +33,25 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   md5            = var.pf_crbs_md5
 }
 
+resource "packetfabric_cloud_router_bgp_prefixes" "cr_bgp_prefix" {
+  provider          = packetfabric
+  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.cr_bgp1.id
+  prefixes {
+    prefix = var.pf_crbp_pfx00
+    type   = var.pf_crbp_pfx00_type
+    order  = var.pf_crbp_pfx00_order
+  }
+  prefixes {
+    prefix = var.pf_crbp_pfx01
+    type   = var.pf_crbp_pfx01_type
+    order  = var.pf_crbp_pfx01_order
+  }
+}
+
+output "packetfabric_cloud_router_bgp_prefixes" {
+  value = packetfabric_cloud_router_bgp_prefixes.cr_bgp_prefix
+}
+
 output "packetfabric_cloud_router_bgp_session" {
   value = packetfabric_cloud_router_bgp_session.cr_bgp1
 }
