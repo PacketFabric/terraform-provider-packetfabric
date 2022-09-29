@@ -208,8 +208,33 @@ type IPSecConnUpdateResponse struct {
 	Phase2AuthenticationAlgo   string `json:"phase2_authentication_algo,omitempty"`
 	Phase2Lifetime             int    `json:"phase2_lifetime,omitempty"`
 	PreSharedKey               string `json:"pre_shared_key,omitempty"`
+	Deleted                    bool   `json:"deleted,omitempty"`
 	TimeCreated                string `json:"time_created,omitempty"`
 	TimeUpdated                string `json:"time_updated,omitempty"`
+}
+
+type IPSecCloudRouterCreateResp struct {
+	VcCircuitID                string `json:"vc_circuit_id,omitempty"`
+	CircuitID                  string `json:"circuit_id,omitempty"`
+	CustomerGatewayAddress     string `json:"customer_gateway_address,omitempty"`
+	LocalGatewayAddress        string `json:"local_gateway_address,omitempty"`
+	IkeVersion                 int    `json:"ike_version,omitempty"`
+	Phase1AuthenticationMethod string `json:"phase1_authentication_method,omitempty"`
+	Phase1Group                string `json:"phase1_group,omitempty"`
+	Phase1EncryptionAlgo       string `json:"phase1_encryption_algo,omitempty"`
+	Phase1AuthenticationAlgo   string `json:"phase1_authentication_algo,omitempty"`
+	Phase1Lifetime             int    `json:"phase1_lifetime,omitempty"`
+	Phase2PfsGroup             string `json:"phase2_pfs_group,omitempty"`
+	Phase2EncryptionAlgo       string `json:"phase2_encryption_algo,omitempty"`
+	Phase2AuthenticationAlgo   string `json:"phase2_authentication_algo,omitempty"`
+	Phase2Lifetime             int    `json:"phase2_lifetime,omitempty"`
+	PreSharedKey               string `json:"pre_shared_key,omitempty"`
+	TimeCreated                string `json:"time_created,omitempty"`
+	TimeUpdated                string `json:"time_updated,omitempty"`
+	Description                string `json:"description,omitempty"`
+	AccountUUID                string `json:"account_uuid,omitempty"`
+	Pop                        string `json:"pop,omitempty"`
+	Speed                      string `json:"speed,omitempty"`
 }
 
 func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId string) (*AwsConnectionCreateResponse, error) {
@@ -234,10 +259,10 @@ func (c *PFClient) CreateIBMCloudRouteConn(ibmRouter IBMCloudRouterConn, circuit
 	return resp, err
 }
 
-func (c *PFClient) CreateIPSecCloudRouerConnection(iPSecRouter IPSecRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
+func (c *PFClient) CreateIPSecCloudRouerConnection(iPSecRouter IPSecRouterConn, circuitID string) (*IPSecCloudRouterCreateResp, error) {
 	formatedURI := fmt.Sprintf(ipsecCloudRouterConnectionByCidURI, circuitID)
 
-	resp := &CloudRouterConnectionReadResponse{}
+	resp := &IPSecCloudRouterCreateResp{}
 	_, err := c.sendRequest(formatedURI, postMethod, iPSecRouter, resp)
 	if err != nil {
 		return nil, err
