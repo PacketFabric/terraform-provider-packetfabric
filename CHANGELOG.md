@@ -1,4 +1,4 @@
-## 0.3.0 (Unreleased)
+## 0.3.1 (Unreleased)
 
 BREAKING CHANGES:	
 
@@ -6,12 +6,10 @@ none
 
 FEATURES:
 
-* resource: packetfabric_azure_cloud_router_connection
-* resource: packetfabric_google_cloud_router_connection
-* resource: packetfabric_port_cloud_router_connection
-* resource: packetfabric_ipsec_cloud_router_connection
-* resource: packetfabric_oracle_cloud_router_connection
-* resource: packetfabric_ibm_cloud_router_connection
+* resource: packetfabric_cloud_router_connection_azure
+* resource: packetfabric_cloud_router_connection_port
+* resource: packetfabric_cloud_router_connection_oracle
+* resource: packetfabric_cloud_router_connection_ibm
 * resource: packetfabric_cs_oracle_hosted_connection
 * resource: packetfabric_cs_oracle_hosted_marketplace_connection
 * resource: packetfabric_cs_oracle_provision_marketplace
@@ -19,12 +17,10 @@ FEATURES:
 * resource: packetfabric_point_to_point
 * resource: packetfabric_documents
 * data-source: packetfabric_backbone_virtual_circuit (#60) 
-* data-source: packetfabric_azure_cloud_router_connection
-* data-source: packetfabric_google_cloud_router_connection
-* data-source: packetfabric_port_cloud_router_connection
-* data-source: packetfabric_ipsec_cloud_router_connection
-* data-source: packetfabric_oracle_cloud_router_connection
-* data-source: packetfabric_ibm_cloud_router_connection
+* data-source: packetfabric_cloud_router_connection_azure
+* data-source: packetfabric_cloud_router_connection_port
+* data-source: packetfabric_cloud_router_connection_oracle
+* data-source: packetfabric_cloud_router_connection_ibm
 * data-source: packetfabric_cs_oracle_hosted_connection
 * data-source: packetfabric_cs_ibm_hosted_connection
 * data-source: packetfabric_point_to_point
@@ -32,15 +28,36 @@ FEATURES:
 
 IMPROVEMENTS/ENHANCEMENTS:
 
-* Removed the scope attribute when creating a new Cloud Router (#40)
-* Update hosted/dedicated data sources (AWS/Azure/Google) (#23)
-* Add Ability to filter on all data source (#63)
+none
+
+BUG FIXES:
+
+* prefixes object attribute missing from the packetfabric_cloud_router_bgp_session resource (#138)
+* Support deletion of hosted marketplace connection (AWS/Azure/Google) (#91)
 * Handle errors for dedicated resources (AWS/Azure/Google) (#105)
+
+## 0.3.0 (September 30, 2022)
+
+BREAKING CHANGES:	
+
+* resource: [RENAMED] packetfabric_cloud_router_connection_aws
+* data-source: [RENAMED] packetfabric_cloud_router_connection_aws
+
+FEATURES:
+
+* resource: packetfabric_cloud_router_connection_google
+* resource: packetfabric_cloud_router_connection_ipsec
+* data-source: packetfabric_cloud_router_connection_google
+* data-source: packetfabric_cloud_router_connection_ipsec
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Removed the scope attribute when creating a new Cloud Router (#40)
 
 BUG FIXES:
 
 * Address bugs bgp session/prefix deletion (#20)
-* packetfabric_cs_\<aws/google/azure>_hosted_marketplace_connection delete not working [#91]
+* Urgent: packetfabric_cloud_router_bgp_prefixes skip delete when destroy applied (#140)
 
 ## 0.2.3 (September 1, 2022)
 
