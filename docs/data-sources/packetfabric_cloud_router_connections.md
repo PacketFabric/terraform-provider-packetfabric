@@ -27,7 +27,7 @@ output "packetfabric_cloud_router_connections" {
 
 ### Required
 
-- `circuit_id` (String)
+- `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 
 ### Read-Only
 
@@ -105,5 +105,6 @@ Read-Only:
 - `vlan_id_pf` (Number)
 - `vlan_microsoft` (Number)
 - `vlan_private` (Number)
+
 
 

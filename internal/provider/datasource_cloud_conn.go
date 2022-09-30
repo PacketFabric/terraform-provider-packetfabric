@@ -16,6 +16,7 @@ func dataSourceCloudConn() *schema.Resource {
 			"circuit_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"cloud_connections": {
 				Type:     schema.TypeList,
