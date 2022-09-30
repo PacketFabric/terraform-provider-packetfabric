@@ -45,6 +45,14 @@
 
 **Impact**: Google Hosted Cloud and Cloud Router
 
+- [#12630](https://github.com/hashicorp/terraform-provider-google/issues/12630) New google_compute_router_peer_asn_update resource for Partner Interconnect
+
+**Impact**: Google Hosted Cloud and Cloud Router
+
+- [#12631](https://github.com/hashicorp/terraform-provider-google/issues/12631) google_compute_interconnect_attachment  Error 400: The resource is not ready
+
+**Impact**: Google Hosted Cloud and Cloud Router
+
 - [#3978](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept
 
 **Impact**: IBM Hosted Cloud and Cloud Router

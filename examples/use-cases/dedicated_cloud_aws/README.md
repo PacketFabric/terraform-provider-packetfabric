@@ -12,8 +12,6 @@ to automate the creation of a Dedicated Cloud Connection between PacketFabric an
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
-- [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
-- [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)
 
 ## Terraform resources deployed
 

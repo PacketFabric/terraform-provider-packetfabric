@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.2.1"
+      version = ">= 0.3.0"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "4.23.0"
+      version = ">= 4.23.0"
     }
   }
 }
@@ -185,8 +185,8 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 # # output "cc2_vlan_id_pf" {
 # #   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
 # # }
-# output "packetfabric_aws_cloud_router_connection" {
-#   value = data.packetfabric_aws_cloud_router_connection.current.cloud_connections[*]
+# output "packetfabric_cloud_router_connection_aws" {
+#   value = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
 # }
 
 # resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {

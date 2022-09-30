@@ -1,9 +1,9 @@
 # Use Case: PacketFabric Cloud Router with AWS
 
-This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
-to automate the connection setup between 2 AWS regions using PacketFabric Cloud Router.
+This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
+Terraform providers used: PacketFabric and AWS.
 
-![Deployment Diagram](./images/diagram.png)
+![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
 ## Useful links
 
@@ -12,8 +12,6 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
-- [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
-- [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions?in=terraform/automation)
 
 ## Terraform resources deployed
 
@@ -30,7 +28,7 @@ to automate the connection setup between 2 AWS regions using PacketFabric Cloud 
 - resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_aws_cloud_router_connection"**: Create Cloud Router Connection to the 2 AWS regions (and PacketFabric Dedicated Port in the future)
+- resource & data source **"packetfabric_cloud_router_connection_aws"**: Add AWS Direct Connect to the Cloud Router
 - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
@@ -135,10 +133,10 @@ As a workaround, edit the `main.tf` and comment out the following resource:
 # }
 ```
 
-And comment out the dependency with `confirmation_2` in `packetfabric_aws_cloud_router_connection` data source: 
+And comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
-data "packetfabric_aws_cloud_router_connection" "current" {
+data "packetfabric_cloud_router_connection_aws" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
