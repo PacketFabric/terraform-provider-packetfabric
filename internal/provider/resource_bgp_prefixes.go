@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
@@ -115,8 +116,42 @@ func resourceBgpPrefixesDelete(ctx context.Context, d *schema.ResourceData, m in
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	diags := make(diag.Diagnostics, 0)
-	d.SetId("")
-	// Skipping the BGP Prefix delete behavior due to the following issue: #140
+	var bgpSettingsUUID string
+	if settingsUUID, ok := d.GetOk("bgp_settings_uuid"); !ok {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "There's no `bgp_settings_uuid`",
+			Detail:   "There's no `bgp_settings_uuid` created yet, please make sure the terraform plan was applyed.",
+		})
+		return diags
+	} else {
+		bgpSettingsUUID = settingsUUID.(string)
+	}
+	currentPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID)
+	if err != nil || len(currentPrefixes) <= 0 {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "There are not BGP Prefixes",
+			Detail:   fmt.Sprintf("There are no BGP prefixes created for %s. Please make sure the terraform plan was applyed.", bgpSettingsUUID),
+		})
+		return diags
+	}
+	prefixUUIDs := make([]string, 0)
+	for _, prefix := range currentPrefixes {
+		prefixUUIDs = append(prefixUUIDs, prefix.BgpPrefixUUID)
+	}
+	if _, err := c.DeleteBgpPrefixes(prefixUUIDs, bgpSettingsUUID); err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Prefixes cannot be deleted",
+			Detail:   err.Error(),
+		})
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Prefixes deleted with success.",
+		})
+	}
 	return diags
 }
 
