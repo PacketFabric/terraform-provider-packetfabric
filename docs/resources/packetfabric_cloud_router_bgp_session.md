@@ -12,12 +12,13 @@ The BGP session information for a cloud router connection.
 
 For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
 
+->**Note:** When creating a BGP session, ensure you are also creating the associated prefixes (the `packetfabric_cloud_router_bgp_prefixes` resource).
+
 ## Example Usage
 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
   account_uuid = var.pf_account_uuid
@@ -25,7 +26,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions      = var.pf_cr_regions
 }
 
-resource "packetfabric_aws_cloud_router_connection" "crc1" {
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   account_uuid   = var.pf_account_uuid
@@ -41,7 +42,7 @@ resource "packetfabric_aws_cloud_router_connection" "crc1" {
 resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
-  connection_id  = packetfabric_aws_cloud_router_connection.crc1.id
+  connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.pf_crbs_rasn
@@ -49,6 +50,25 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   remote_address = var.pf_crbs_remoteaddr
   l3_address     = var.pf_crbs_l3addr
   md5            = var.pf_crbs_md5
+}
+
+resource "packetfabric_cloud_router_bgp_prefixes" "cr_bgp_prefix" {
+  provider          = packetfabric
+  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.cr_bgp1.id
+  prefixes {
+    prefix = var.pf_crbp_pfx00
+    type   = var.pf_crbp_pfx00_type
+    order  = var.pf_crbp_pfx00_order
+  }
+  prefixes {
+    prefix = var.pf_crbp_pfx01
+    type   = var.pf_crbp_pfx01_type
+    order  = var.pf_crbp_pfx01_order
+  }
+}
+
+output "packetfabric_cloud_router_bgp_prefixes" {
+  value = packetfabric_cloud_router_bgp_prefixes.cr_bgp_prefix
 }
 
 output "packetfabric_cloud_router_bgp_session" {
@@ -66,26 +86,25 @@ output "packetfabric_cloud_router_bgp_session" {
 	Enum: "v4" "v6"
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `connection_id` (String) The circuit ID of the connection associated with the BGP session. This starts with "PF-L3-CON-".
-- `l3_address` (String) The L3 address of this instance. Not used for Azure connections.
-- `md5` (String) The MD5 value of the authenticated BGP sessions.
-- `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
-- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
-- `remote_address` (String) The cloud-side router peer IP.
 - `remote_asn` (Number) The cloud-side ASN.
 
 ### Optional
 
-- `as_prepend` (Number) The BGP prepend value for this instance.
+- `as_prepend` (Number) The BGP prepend value for this instance. Deprecated.
 - `bfd_interval` (Number) If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.
 
 	Available range is 3 through 30000.
 - `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
 
 	Available range is 2 through 16.
-- `community` (Number) The BGP community for this instance.
+- `community` (Number) The BGP community for this instance. Deprecated.
 - `disabled` (Boolean) Whether this BGP session is disabled. Default is false.
-- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router.
-- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS.
+- `l3_address` (String) The L3 address of this instance. Not used for Azure connections. Required for all other CSP.
+- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. Deprecated.
+- `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
+- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.
+- `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
+- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
 - `pool_prefixes` (List of String) If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.
 
 	Example: 10.0.0.0/32
@@ -93,6 +112,7 @@ output "packetfabric_cloud_router_bgp_session" {
 
 	Example: 10.0.0.0/24
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.
+- `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
 - `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating an Azure cloud router connection.
 
 ### Read-Only

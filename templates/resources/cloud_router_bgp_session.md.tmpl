@@ -12,6 +12,8 @@ The BGP session information for a cloud router connection.
 
 For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
 
+->**Note:** When creating a BGP session, ensure you are also creating the associated prefixes (the `packetfabric_cloud_router_bgp_prefixes` resource).
+
 ## Example Usage
 
 {{tffile "examples/resources/packetfabric_cloud_router_bgp_session/resource.tf"}}

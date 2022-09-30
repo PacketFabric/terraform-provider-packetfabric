@@ -15,7 +15,6 @@ The allowed prefixes for a BGP session. For more information, see [the PacketFab
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
   account_uuid = var.pf_account_uuid
@@ -23,7 +22,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions      = var.pf_cr_regions
 }
 
-resource "packetfabric_aws_cloud_router_connection" "crc1" {
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   account_uuid   = var.pf_account_uuid
@@ -39,7 +38,7 @@ resource "packetfabric_aws_cloud_router_connection" "crc1" {
 resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
-  connection_id  = packetfabric_aws_cloud_router_connection.crc1.id
+  connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.pf_crbs_rasn
@@ -75,10 +74,7 @@ output "packetfabric_cloud_router_bgp_prefixes" {
 ### Required
 
 - `bgp_settings_uuid` (String) UUID of the BGP session for which you are fetching or setting prefixes.
-
-### Optional
-
-- `prefixes` (Block Set) The list of prefixes to be created. (see [below for nested schema](#nestedblock--prefixes))
+- `prefixes` (Block Set, Min: 1) The list of prefixes to be created. (see [below for nested schema](#nestedblock--prefixes))
 
 ### Read-Only
 

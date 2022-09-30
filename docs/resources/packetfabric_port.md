@@ -36,14 +36,10 @@ output "packetfabric_port_1" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed.
-- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
 - `description` (String) A brief description of the port.
 - `media` (String) Optic media type.
 
 	Enum: ["LX" "EX" "ZX" "LR" "ER" "ER DWDM" "ZR" "ZR DWDM" "LR4" "ER4" "CWDM4" "LR4" "ER4 Lite"]
-- `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
-
-	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.
 - `pop` (String) Point of presence in which the port should be located.
 - `speed` (String) Speed of the port.
 
@@ -51,11 +47,15 @@ output "packetfabric_port_1" {
 - `subscription_term` (Number) Duration of the subscription in months
 
 	Enum ["1" "12" "24" "36"]
-- `zone` (String) Availability zone of the port.
 
 ### Optional
 
+- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
+- `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
+
+	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
+- `zone` (String) Availability zone of the port.
 
 ### Read-Only
 

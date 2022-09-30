@@ -113,7 +113,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations":                        dataSourceLocations(),
 			"packetfabric_link_aggregation_group":           datasourceLinkAggregationGroups(),
 			"packetfabric_outbound_cross_connect":           dataSourceOutboundCrossConnect(),
-			"packetfabric_google_cloud_router_connection":   dataSourceCloudConn(),
+			"packetfabric_cloud_router_connection_google":   dataSourceCloudConn(),
 			"packetfabric_cs_google_hosted_connection":      dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_google_dedicated_connection":   datasourceDedicatedConn(),
 			"packetfabric_cs_azure_hosted_connection":       dataSourceCloudServicesConnInfo(),
