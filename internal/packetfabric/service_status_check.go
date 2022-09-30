@@ -65,3 +65,26 @@ func (c *PFClient) CheckServiceStatus(ch chan bool, err error, fn func() (*Servi
 		}
 	}
 }
+
+func (c *PFClient) CheckIPSecStatus(ch chan bool, err error, fn func() (*ServiceState, error)) {
+	ticker := time.NewTicker(5 * time.Second)
+	var count int
+	for range ticker.C {
+		count = count + 1
+		state, serviceErr := fn()
+		if serviceErr != nil && count == 0 {
+			err = serviceErr
+			ch <- false
+		}
+		if state != nil {
+			if state.Status.Current.State == "BGP_NOT_CREATED" {
+				ticker.Stop()
+				ch <- true
+			}
+		}
+		if serviceErr != nil && count > 0 {
+			ticker.Stop()
+			ch <- true
+		}
+	}
+}
