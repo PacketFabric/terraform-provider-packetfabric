@@ -347,6 +347,6 @@ data "packetfabric_cloud_router_connections" "all_crc" {
     packetfabric_cloud_router_bgp_session.crbs_2
   ]
 }
-output "packetfabric_cloud_router_connection_google" {
-  value = data.packetfabric_cloud_router_connection.all_crc
+output "packetfabric_cloud_router_connections" {
+  value = data.packetfabric_cloud_router_connections.all_crc
 }

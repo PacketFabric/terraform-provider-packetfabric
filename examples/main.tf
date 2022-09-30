@@ -516,6 +516,6 @@ output "packetfabric_port_1a" {
 #   provider   = packetfabric
 #   circuit_id = packetfabric_cloud_router.cr.id
 # }
-# output "packetfabric_cloud_router_connection" {
-#   value = data.packetfabric_cloud_router_connection.all_crc
+# output "packetfabric_cloud_router_connections" {
+#   value = data.packetfabric_cloud_router_connections.all_crc
 # }
