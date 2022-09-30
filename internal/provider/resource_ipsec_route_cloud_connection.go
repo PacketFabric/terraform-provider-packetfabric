@@ -195,18 +195,10 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 	c.Ctx = ctx
 
 	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		ipsecUpdated := extractIPSecUpdate(d)
-		_, err := c.UpdateIPSecConnection(cid.(string), ipsecUpdated)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	} else {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Circuit ID not present",
-			Detail:   "Please provide a valid Circuit ID.",
-		})
+	ipsecUpdated := extractIPSecUpdate(d)
+	_, err := c.UpdateIPSecConnection(d.Id(), ipsecUpdated)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	return diags
 }
