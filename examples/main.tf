@@ -511,3 +511,11 @@ output "packetfabric_port_1a" {
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
 #   shared_key                   = var.pf_crc_shared_key
 # }
+
+# data "packetfabric_cloud_router_connections" "all_crc" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_cloud_router.cr.id
+# }
+# output "packetfabric_cloud_router_connection" {
+#   value = data.packetfabric_cloud_router_connection.all_crc
+# }

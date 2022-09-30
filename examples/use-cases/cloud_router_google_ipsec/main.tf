@@ -242,18 +242,6 @@ output "packetfabric_bgp_prefix_crbp_1" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
 }
 
-data "packetfabric_cloud_router_connection_google" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  depends_on = [
-    packetfabric_cloud_router_bgp_session.crbs_1
-  ]
-}
-output "packetfabric_cloud_router_connection_google" {
-  value = data.packetfabric_cloud_router_connection_google.current
-}
-
 # Because the BGP session is created automatically, the only way to update it is to use gcloud
 # To avoid using this workaround, vote for:
 # https://github.com/hashicorp/terraform-provider-google/issues/12630
@@ -338,3 +326,27 @@ output "packetfabric_bgp_prefix_crbp_2" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
 }
 
+data "packetfabric_cloud_router_connection_ipsec" "current" {
+  provider   = packetfabric
+  circuit_id = packetfabric_cloud_router_connection_ipsec.crc_2.id
+
+  depends_on = [
+    packetfabric_cloud_router_bgp_session.crbs_2
+  ]
+}
+output "packetfabric_cloud_router_connection_ipsec" {
+  value = data.packetfabric_cloud_router_connection_ipsec.current
+}
+
+data "packetfabric_cloud_router_connections" "all_crc" {
+  provider   = packetfabric
+  circuit_id = packetfabric_cloud_router.cr.id
+
+  depends_on = [
+    packetfabric_cloud_router_bgp_session.crbs_1,
+    packetfabric_cloud_router_bgp_session.crbs_2
+  ]
+}
+output "packetfabric_cloud_router_connection_google" {
+  value = data.packetfabric_cloud_router_connection.all_crc
+}

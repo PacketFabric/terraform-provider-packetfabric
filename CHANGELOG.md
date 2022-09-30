@@ -1,53 +1,14 @@
-## 0.3.1 (Unreleased)
-
-BREAKING CHANGES:	
-
-none	
-
-FEATURES:
-
-* resource: packetfabric_cloud_router_connection_azure
-* resource: packetfabric_cloud_router_connection_port
-* resource: packetfabric_cloud_router_connection_oracle
-* resource: packetfabric_cloud_router_connection_ibm
-* resource: packetfabric_cs_oracle_hosted_connection
-* resource: packetfabric_cs_oracle_hosted_marketplace_connection
-* resource: packetfabric_cs_oracle_provision_marketplace
-* resource: packetfabric_cs_ibm_hosted_connection
-* resource: packetfabric_point_to_point
-* resource: packetfabric_documents
-* data-source: packetfabric_backbone_virtual_circuit (#60) 
-* data-source: packetfabric_cloud_router_connection_azure
-* data-source: packetfabric_cloud_router_connection_port
-* data-source: packetfabric_cloud_router_connection_oracle
-* data-source: packetfabric_cloud_router_connection_ibm
-* data-source: packetfabric_cs_oracle_hosted_connection
-* data-source: packetfabric_cs_ibm_hosted_connection
-* data-source: packetfabric_point_to_point
-* data-source: packetfabric_documents
-
-IMPROVEMENTS/ENHANCEMENTS:
-
-none
-
-BUG FIXES:
-
-* prefixes object attribute missing from the packetfabric_cloud_router_bgp_session resource (#138)
-* Support deletion of hosted marketplace connection (AWS/Azure/Google) (#91)
-* Handle errors for dedicated resources (AWS/Azure/Google) (#105)
-
 ## 0.3.0 (September 30, 2022)
 
 BREAKING CHANGES:	
 
-* resource: [RENAMED] packetfabric_cloud_router_connection_aws
-* data-source: [RENAMED] packetfabric_cloud_router_connection_aws
+* resource: [RENAMED] packetfabric_cloud_router_connection_aws (was packetfabric_aws_cloud_router_connection)
+* data-source: [RENAMED] packetfabric_cloud_router_connections (was packetfabric_aws_cloud_router_connection)
 
 FEATURES:
 
 * resource: packetfabric_cloud_router_connection_google
 * resource: packetfabric_cloud_router_connection_ipsec
-* data-source: packetfabric_cloud_router_connection_google
 * data-source: packetfabric_cloud_router_connection_ipsec
 
 IMPROVEMENTS/ENHANCEMENTS:

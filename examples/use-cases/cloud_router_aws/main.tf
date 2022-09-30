@@ -486,7 +486,7 @@ resource "aws_dx_gateway" "direct_connect_gw_2" {
 }
 
 # From the AWS side: Create and attach a VIF
-data "packetfabric_cloud_router_connection_aws" "current" {
+data "packetfabric_cloud_router_connections" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
@@ -498,7 +498,7 @@ data "packetfabric_cloud_router_connection_aws" "current" {
 locals {
   # below may need to be updated
   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
-  cloud_connections = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
+  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
@@ -511,7 +511,7 @@ locals {
 #   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
 # }
 output "packetfabric_cloud_router_connection_aws" {
-  value = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
+  value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
 }
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider       = aws
@@ -524,7 +524,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.packetfabric_cloud_router_connection_aws.current
+    data.packetfabric_cloud_router_connections.current
   ]
 
   lifecycle {
@@ -542,7 +542,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
   depends_on = [
-    data.packetfabric_cloud_router_connection_aws.current
+    data.packetfabric_cloud_router_connections.current
   ]
 
   lifecycle {
