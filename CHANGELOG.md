@@ -41,7 +41,7 @@ BUG FIXES:
 BREAKING CHANGES:	
 
 * resource: [RENAMED] packetfabric_cloud_router_connection_aws
-* data-source: [RENAMED] packetfabric_cloud_router_connection_aws
+* data-source: [RENAMED] packetfabric_cloud_router_connections
 
 FEATURES:
 
