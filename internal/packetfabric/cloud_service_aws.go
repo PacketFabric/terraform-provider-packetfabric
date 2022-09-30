@@ -163,28 +163,28 @@ type CloudServiceConnCreateResp struct {
 	Billing                 Billing     `json:"billing,omitempty"`
 	Components              Components  `json:"components,omitempty"`
 	IsCloudRouterConnection bool        `json:"is_cloud_router_connection,omitempty"`
-	AzurePortCategory       string      `json:"azure_port_category,ommitempty"`
+	AzurePortCategory       string      `json:"azure_port_category,omitempty"`
 	Speed                   string      `json:"speed,omitempty"`
 }
 type Settings struct {
 	VlanIDPf                    int         `json:"vlan_id_pf,omitempty"`
 	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
 	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIdPrivate               int         `json:"vlan_id_private,ommitempty"`
-	VlanIdMicrosoft             int         `json:"vlan_id_microsoft,ommitempty"`
-	VcIdPrivate                 int         `json:"vc_id_private,ommitempty"`
-	SvlanIdCustomer             interface{} `json:"svlan_id_customer,ommitempty"`
-	AzureServiceKey             string      `json:"azure_service_key,ommitempty"`
-	AzureServiceTag             int         `json:"azure_service_tag,ommitempty"`
-	GooglePairingKey            string      `json:"google_pairing_key,ommitempty"`
-	Google_vlan_attachment_name string      `json:"google_vlan_attchment_name,ommitempty"`
+	VlanIdPrivate               int         `json:"vlan_id_private,omitempty"`
+	VlanIdMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
+	VcIdPrivate                 int         `json:"vc_id_private,omitempty"`
+	SvlanIdCustomer             interface{} `json:"svlan_id_customer,omitempty"`
+	AzureServiceKey             string      `json:"azure_service_key,omitempty"`
+	AzureServiceTag             int         `json:"azure_service_tag,omitempty"`
+	GooglePairingKey            string      `json:"google_pairing_key,omitempty"`
+	Google_vlan_attachment_name string      `json:"google_vlan_attchment_name,omitempty"`
 	AwsRegion                   string      `json:"aws_region,omitempty"`
 	AwsHostedType               string      `json:"aws_hosted_type,omitempty"`
 	AwsConnectionID             string      `json:"aws_connection_id,omitempty"`
 	AwsAccountID                string      `json:"aws_account_id,omitempty"`
-	ZoneDest                    string      `json:"zone_dest,ommitempty"`
-	Autoneg                     bool        `json:"autoneg,ommitempty"`
-	Encapsulation               string      `json:"encapsulation,ommitempty"`
+	ZoneDest                    string      `json:"zone_dest,omitempty"`
+	Autoneg                     bool        `json:"autoneg,omitempty"`
+	Encapsulation               string      `json:"encapsulation,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -193,8 +193,8 @@ type Billing struct {
 }
 type Components struct {
 	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
-	VcIdMicrosoft        int    `json:"vc_id_microsoft,ommitempty"`
-	VcIdPrivate          int    `json:"vc_id_private,ommitempty"`
+	VcIdMicrosoft        int    `json:"vc_id_microsoft,omitempty"`
+	VcIdPrivate          int    `json:"vc_id_private,omitempty"`
 }
 
 type DedicatedConnResp struct {
@@ -226,8 +226,9 @@ type AwsCloudServiceProvider struct {
 }
 
 type CloudProvider struct {
-	Pop    string `json:"pop"`
-	Region string `json:"region"`
+	Pop    string `json:"pop,omitempty"`
+	Region string `json:"region,omitempty"`
+	Site   string `json:"site,omitempty"`
 }
 
 type AwsCloudServiceSettings struct {

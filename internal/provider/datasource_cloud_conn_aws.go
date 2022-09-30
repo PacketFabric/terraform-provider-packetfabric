@@ -228,7 +228,7 @@ func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenCloudConn(conns *[]packetfabric.AwsConnectionReadResponse) []interface{} {
+func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {

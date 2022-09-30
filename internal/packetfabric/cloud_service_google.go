@@ -1,8 +1,11 @@
 package packetfabric
 
+import "fmt"
+
 const serviceGoogleMktConnReqURI = "/v2/services/third-party/hosted/google"
 const serviceGoogleHostedConnURI = "/v2/services/cloud/hosted/google"
 const serviceGoogleDedicatedConnURI = "/v2/services/cloud/dedicated/google"
+const servicesGoogleCloudRouterConnURI = "/v2.1/services/cloud-routers/%s/connections/google"
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/post_google_marketplace_cloud
 type GoogleMktCloudConn struct {
@@ -15,6 +18,17 @@ type GoogleMktCloudConn struct {
 	Pop                      string `json:"pop,omitempty"`
 	Speed                    string `json:"speed,omitempty"`
 	ServiceUUID              string `json:"service_uuid,omitempty"`
+}
+
+type GoogleCloudRouterConn struct {
+	AccountUUID              string `json:"account_uuid,omitempty"`
+	MaybeNat                 bool   `json:"maybe_nat,omitempty"`
+	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
+	Description              string `json:"description,omitempty"`
+	Pop                      string `json:"pop,omitempty"`
+	Speed                    string `json:"speed,omitempty"`
+	PublishedQuoteLineUUID   string `json:"published_quote_line_uuid,omitempty"`
 }
 
 type GoogleMktCloudConnCreateResp struct {
@@ -65,6 +79,16 @@ type GoogleReqDedicatedConn struct {
 func (c *PFClient) CreateRequestHostedGoogleMktConn(googleConn GoogleMktCloudConn) (*GoogleMktCloudConnCreateResp, error) {
 	expectedResp := &GoogleMktCloudConnCreateResp{}
 	_, err := c.sendRequest(serviceGoogleMktConnReqURI, postMethod, googleConn, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
+}
+
+func (c *PFClient) CreateGoogleCloudRouterConn(googleConn GoogleCloudRouterConn, cID string) (*CloudRouterConnectionReadResponse, error) {
+	formatedURI := fmt.Sprintf(servicesGoogleCloudRouterConnURI, cID)
+	expectedResp := &CloudRouterConnectionReadResponse{}
+	_, err := c.sendRequest(formatedURI, postMethod, googleConn, expectedResp)
 	if err != nil {
 		return nil, err
 	}
