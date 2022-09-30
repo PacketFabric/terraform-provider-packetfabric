@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.2.1"
+      version = ">= 0.3.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.14.0"
+      version = ">= 3.14.0"
     }
   }
 }

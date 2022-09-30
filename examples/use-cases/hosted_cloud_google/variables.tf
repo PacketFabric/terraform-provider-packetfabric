@@ -38,7 +38,7 @@ variable "pf_cs_vlan1" {
 # GCP VARs
 variable "gcp_project_id" {
   type        = string
-  sensitive   = true
+  # sensitive   = true
   description = "Google Cloud project ID"
 }
 
@@ -62,9 +62,9 @@ variable "subnet_cidr1" {
   description = "CIDR for the subnet"
   default     = "10.5.1.0/24"
 }
-
-# BGP peering
-variable "peer_asn" {
-  type    = number
-  default = 16550
+# You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
+variable "gcp_side_asn1" {
+  type        = number
+  default     = 16550
+  description = "Google Cloud ASN"
 }

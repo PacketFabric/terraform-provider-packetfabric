@@ -35,7 +35,7 @@ output "packetfabric_cloud_router_bgp_session" {
 <a id="nestedblock--bgp_sessions"></a>
 ### Nested Schema for `bgp_sessions`
 
-Optional:
+Read-Only:
 
 - `address_family` (String) Whether this instance is IPv4 or IPv6.
 		Enum: "v4" "v6"

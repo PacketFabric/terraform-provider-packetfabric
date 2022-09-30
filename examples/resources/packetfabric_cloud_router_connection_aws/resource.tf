@@ -7,7 +7,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions      = var.pf_cr_regions
 }
 
-resource "packetfabric_aws_cloud_router_connection" "crc1" {
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   account_uuid   = var.pf_account_uuid
@@ -25,5 +25,5 @@ output "packetfabric_cloud_router" {
 }
 
 output "packetfabric_cloud_router_conn" {
-  value = packetfabric_aws_cloud_router_connection.crc1
+  value = packetfabric_cloud_router_connection_aws.crc1
 }

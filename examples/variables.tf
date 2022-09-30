@@ -310,6 +310,7 @@ variable "pf_crc_pop3" {
   type    = string
   default = "SF06"
 }
+
 # IPsec
 variable "pf_crc_ike_version" {
   type    = number
@@ -325,7 +326,7 @@ variable "pf_crc_phase1_group" {
 }
 variable "pf_crc_phase1_encryption_algo" {
   type    = string
-  default = "aes-156-cbc"
+  default = "3des-cbc"
 }
 variable "pf_crc_phase1_authentication_algo" {
   type    = string

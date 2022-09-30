@@ -15,7 +15,6 @@ A connection from your cloud router to your AWS environment. For more informatio
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
   account_uuid = var.pf_account_uuid
@@ -23,7 +22,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions      = var.pf_cr_regions
 }
 
-resource "packetfabric_aws_cloud_router_connection" "crc1" {
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   account_uuid   = var.pf_account_uuid
@@ -41,7 +40,7 @@ output "packetfabric_cloud_router" {
 }
 
 output "packetfabric_cloud_router_conn" {
-  value = packetfabric_aws_cloud_router_connection.crc1
+  value = packetfabric_cloud_router_connection_aws.crc1
 }
 ```
 
@@ -54,8 +53,6 @@ output "packetfabric_cloud_router_conn" {
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
-- `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.
-- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection.
 - `pop` (String) The POP in which you want to provision the connection.
 - `speed` (String) The desired speed of the new connection.
 
@@ -63,6 +60,12 @@ output "packetfabric_cloud_router_conn" {
 
 ### Optional
 
+- `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.
+
+	Defaults to false if unspecified.
+- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection.
+
+	Defaults to false if unspecified.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired AWS availability zone of the new connection.
 

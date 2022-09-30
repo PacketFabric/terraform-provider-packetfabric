@@ -32,8 +32,8 @@ output "packetfabric_billing_port_1" {
 
 ### Read-Only
 
-- `billings` (List of Object) (see [below for nested schema](#nestedatt--billings))
 - `id` (String) The ID of this resource.
+- `billings` (List of Object) (see [below for nested schema](#nestedatt--billings))
 
 <a id="nestedatt--billings"></a>
 ### Nested Schema for `billings`

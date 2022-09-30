@@ -18,7 +18,6 @@ For more information, see the [PacketFabric Cloud Router documentation](https://
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
-  scope        = var.pf_cr_scope
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
   account_uuid = var.pf_account_uuid
@@ -37,11 +36,6 @@ output "packetfabric_cloud_router" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed.
-- `asn` (Number) The ASN of the cloud router.
-
-	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.
-
-	Defaults to 4556 if unspecified.
 - `capacity` (String) The cloud router capacity.
 
 	Enum: "100Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps" ">100Gbps"
@@ -49,9 +43,16 @@ output "packetfabric_cloud_router" {
 
 ### Optional
 
+- `asn` (Number) The ASN of the cloud router.
+
+	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.
+
+	Defaults to 4556 if unspecified.
 - `circuit_id` (String)
 - `regions` (List of String) The regions in which the Cloud Router connections will be located.
 		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
+
+	Defaults to US if unspecified.
 - `scope` (String) Whether the cloud router is private or public. Deprecated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

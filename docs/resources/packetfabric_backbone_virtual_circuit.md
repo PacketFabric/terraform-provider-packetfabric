@@ -13,7 +13,6 @@ A virtual circuit between two ports in the PacketFabric network. For more inform
 ## Example Usage
 
 ```terraform
-# Create a PacketFabric interfaces
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
@@ -25,9 +24,6 @@ resource "packetfabric_port" "port_1" {
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
-}
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
 }
 
 resource "packetfabric_port" "port_2" {
@@ -42,11 +38,7 @@ resource "packetfabric_port" "port_2" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone2
 }
-output "packetfabric_port_2" {
-  value = packetfabric_port.port_2
-}
 
-# Create backbone Virtual Circuit
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
   description = var.description
@@ -102,18 +94,15 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 Required:
 
 - `account_uuid` (String) The UUID for the billing account that should be billed.
+- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
+
+	Enum ["dedicated" "usage" "hourly"]
 - `speed` (String) The desired speed of the new connection. Only applicable if `longhaul_type` is "dedicated" or "hourly".
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps"]
 - `subscription_term` (Number) The billing term, in months, for this connection. Only applicable if `longhaul_type` is "dedicated."
 
 	Enum: ["1", "12", "24", "36"]
-
-Optional:
-
-- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
-
-	Enum ["dedicated" "usage" "hourly"]
 
 
 <a id="nestedblock--interface_a"></a>

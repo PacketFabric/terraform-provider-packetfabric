@@ -5,6 +5,7 @@ import "fmt"
 const azureBackboneURI = "/v2/services/backbone"
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
+const azureExpressRouteConnURI = "/v2.1/services/cloud-routers/%s/connections/azure"
 const azureExpressRouteDedicatedURI = "/v2/services/cloud/dedicated/azure"
 
 type AzureBackboneCreateResp struct {
@@ -134,6 +135,16 @@ type AzureExpressRoute struct {
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 }
 
+type AzureExpressRouteConn struct {
+	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	AzureServiceKey        string `json:"azure_service_key,omitempty"`
+	AccountUUID            string `json:"account_uuid,omitempty"`
+	Description            string `json:"description,omitempty"`
+	Speed                  string `json:"speed,omitempty"`
+	IsPublic               bool   `json:"is_public,omitempty"`
+	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+}
+
 type AzureBilling struct {
 	AccountUUID string `json:"account_uuid,omitempty"`
 }
@@ -174,6 +185,16 @@ func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*
 func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*CloudServiceConnCreateResp, error) {
 	expressRouteResp := &CloudServiceConnCreateResp{}
 	formatedURI := fmt.Sprintf(azureExpressRouteURI)
+	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
+	if err != nil {
+		return nil, err
+	}
+	return expressRouteResp, nil
+}
+
+func (c *PFClient) CreateAzureExpressRouteConn(azureExpressRoute AzureExpressRouteConn, cid string) (*CloudRouterConnectionReadResponse, error) {
+	expressRouteResp := &CloudRouterConnectionReadResponse{}
+	formatedURI := fmt.Sprintf(azureExpressRouteConnURI, cid)
 	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
 	if err != nil {
 		return nil, err

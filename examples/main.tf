@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.2.1"
+      version = ">= 0.3.0"
       # for local dev version
       # source  = "terraform.local/PacketFabric/packetfabric"
       # version = "~> 0.0.0"
@@ -162,12 +162,17 @@ output "packetfabric_port_1a" {
 #   val["pop"] => val }
 #   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
 #   pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
+#   
+#   pop_in_market = toset([for each in data.packetfabric_locations.locations_all.locations[*] : each.pop if each.market == "WDC"])
 # }
 # output "pf_port_site1" {
 #   value = local.pf_port_site1
 # }
 # output "pf_port_site2" {
 #   value = local.pf_port_site2
+# }
+# output "packetfabric_location_pop_in_market" {
+#   value = local.pop_in_market
 # }
 
 # # Create Cross Connect
@@ -207,9 +212,6 @@ output "packetfabric_port_1a" {
 
 # data "packetfabric_activitylog" "current" {
 #   provider = packetfabric
-#   filter {
-#     user = "romain.jouhannet@packetfabric.com"
-#   }
 # }
 # output "my-activity-logs" {
 #   value = data.packetfabric_activitylog.current
@@ -464,7 +466,7 @@ output "packetfabric_port_1a" {
 #   regions      = var.pf_cr_regions
 # }
 
-# resource "packetfabric_aws_cloud_router_connection" "crc_1" {
+# resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
@@ -477,7 +479,7 @@ output "packetfabric_port_1a" {
 #   is_public      = var.pf_crc_is_public
 # }
 
-# resource "packetfabric_google_cloud_router_connection" "crc_2" {
+# resource "packetfabric_cloud_router_connection_google" "crc_2" {
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
@@ -489,13 +491,14 @@ output "packetfabric_port_1a" {
 #   maybe_nat                   = var.pf_crc_maybe_nat
 # }
 
-# resource "packetfabric_ipsec_cloud_router_connection" "crc_3" {
+# resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
 #   provider                     = packetfabric
 #   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
 #   circuit_id                   = packetfabric_cloud_router.cr.id
 #   account_uuid                 = var.pf_account_uuid
 #   pop                          = var.pf_crc_pop3
 #   speed                        = var.pf_crc_speed
+#   gateway_address              = var.pf_crc_gateway_address
 #   ike_version                  = var.pf_crc_ike_version
 #   phase1_authentication_method = var.pf_crc_phase1_authentication_method
 #   phase1_group                 = var.pf_crc_phase1_group
@@ -506,6 +509,5 @@ output "packetfabric_port_1a" {
 #   phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
 #   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
-#   gateway_address              = var.pf_crc_gateway_address
 #   shared_key                   = var.pf_crc_shared_key
 # }
