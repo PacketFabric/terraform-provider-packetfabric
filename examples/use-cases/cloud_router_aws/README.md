@@ -136,7 +136,7 @@ As a workaround, edit the `main.tf` and comment out the following resource:
 And comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
-data "packetfabric_cloud_router_connection_aws" "current" {
+data "packetfabric_cloud_router_connections" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
