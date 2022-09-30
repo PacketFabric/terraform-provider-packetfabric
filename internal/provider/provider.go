@@ -95,7 +95,7 @@ func Provider() *schema.Provider {
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
-		// packetfabric_cloud_router_connection_aws - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_connections
+		// packetfabric_cloud_router_connections - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_connections
 		// packetfabric_cloud_router_bgp_session - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
 		// packetfabric_cs_aws_hosted_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connection
 		// packetfabric_cs_aws_dedicated_connection_conn - https://docs.packetfabric.com/api/v2/redoc/#operation/get_connections_dedicated_list
@@ -104,7 +104,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"packetfabric_cloud_router":                     dataSourceCloudRouter(),
 			"packetfabric_cloud_router_bgp_prefixes":        dataSourceBgpPrefix(),
-			"packetfabric_cloud_router_connection_aws":      dataSourceCloudConn(),
+			"packetfabric_cloud_router_connections":         dataSourceCloudConn(),
 			"packetfabric_cloud_router_bgp_session":         dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":         dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_aws_dedicated_connection_conn": datasourceDedicatedConn(),
