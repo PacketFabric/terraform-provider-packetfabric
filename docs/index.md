@@ -8,7 +8,7 @@ description: Terraform provider for PacketFabric Carrier-Class Cloud Connectivit
 
 # PacketFabric Provider
 
-
+You can use the PacketFabric Terraform provider to create and manage PacketFabric services. 
 
 ## Example Usage
 
@@ -40,3 +40,4 @@ provider "packetfabric" {
 - `password` (String, Sensitive)
 - `token` (String, Sensitive) Packet Fabric Cloud API access token. Example TF files input TF_VAR_pf_api_key shell environment variable
 - `username` (String, Sensitive)
+

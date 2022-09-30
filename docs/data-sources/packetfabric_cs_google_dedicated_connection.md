@@ -27,8 +27,8 @@ output "packetfabric_cs_google_dedicated_connection" {
 
 ### Read-Only
 
-- `dedicated_connections` (List of Object) (see [below for nested schema](#nestedatt--dedicated_connections))
 - `id` (String) The ID of this resource.
+- `dedicated_connections` (List of Object) (see [below for nested schema](#nestedatt--dedicated_connections))
 
 <a id="nestedatt--dedicated_connections"></a>
 ### Nested Schema for `dedicated_connections`

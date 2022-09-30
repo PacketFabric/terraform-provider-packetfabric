@@ -26,8 +26,8 @@ output "packetfabric_cloud_router" {
 
 ### Read-Only
 
-- `cloud_routers` (List of Object) (see [below for nested schema](#nestedatt--cloud_routers))
 - `id` (String) The ID of this resource.
+- `cloud_routers` (List of Object) (see [below for nested schema](#nestedatt--cloud_routers))
 
 <a id="nestedatt--cloud_routers"></a>
 ### Nested Schema for `cloud_routers`
@@ -38,7 +38,6 @@ Read-Only:
 - `capacity` (String)
 - `name` (String)
 - `regions` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_routers--regions))
-- `scope` (String)
 - `time_created` (String)
 - `time_updated` (String)
 
