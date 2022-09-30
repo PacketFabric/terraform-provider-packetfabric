@@ -504,12 +504,12 @@ locals {
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
   cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
 }
-# output "cc1_vlan_id_pf" {
-#   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-# }
-# output "cc2_vlan_id_pf" {
-#   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
-# }
+output "cc1_vlan_id_pf" {
+  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
+}
+output "cc2_vlan_id_pf" {
+  value = one(local.cc2.cloud_settings[*].vlan_id_pf)
+}
 output "packetfabric_cloud_router_connection_aws" {
   value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
 }
@@ -663,4 +663,17 @@ data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
 }
 output "packetfabric_bgp_prefix_crbp_2" {
   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
+}
+
+data "packetfabric_cloud_router_connections" "all_crc" {
+  provider   = packetfabric
+  circuit_id = packetfabric_cloud_router.cr.id
+
+  depends_on = [
+    packetfabric_cloud_router_bgp_session.crbs_1,
+    packetfabric_cloud_router_bgp_session.crbs_2
+  ]
+}
+output "packetfabric_cloud_router_connections" {
+  value = data.packetfabric_cloud_router_connections.all_crc
 }

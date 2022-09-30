@@ -111,11 +111,11 @@ variable "pf_cr_regions" {
 # Example: AWS region us-west-1 is the closest to PacketFabric pop LAX1.
 variable "pf_crc_pop1" {
   type    = string
-  default = "LAX1" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
+  default = "SF06" # aws_region1=us-west-1 when using pf_crc_pop1=LAX1
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "c" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
+  default = "b" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
 }
 variable "pf_crc_pop2" {
   type    = string
@@ -127,7 +127,7 @@ variable "pf_crc_zone2" {
 }
 variable "pf_crc_speed" {
   type    = string
-  default = "100Mbps" # 50Mbps
+  default = "50Mbps" # 1Gbps
 }
 variable "pf_crc_maybe_nat" {
   type    = bool
