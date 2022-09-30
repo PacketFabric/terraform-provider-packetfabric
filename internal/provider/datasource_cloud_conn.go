@@ -126,6 +126,74 @@ func dataSourceCloudConn() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
+									"google_pairing_key": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"google_vlan_attachment_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"vlan_private": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"vlan_microsoft": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"azure_service_key": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"azure_service_tag": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"oracle_region": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"vc_ocid": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"port_cross_connect_ocid": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"port_compartment_ocid": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"account_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"gateway_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"port_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"bgp_asn": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"bgp_cer_cidr": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"bgp_ibm_cidr": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
 									"public_ip": {
 										Type:     schema.TypeString,
 										Computed: true,
@@ -276,7 +344,7 @@ func flattenCloudProvider(provider *packetfabric.AwsCloudProvider) []interface{}
 	return flattens
 }
 
-func flattenCloudSettings(setts *packetfabric.AwsCloudSettings) []interface{} {
+func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 	flattens := make([]interface{}, 0)
 	if setts != nil {
 		flatten := make(map[string]interface{})
@@ -286,6 +354,25 @@ func flattenCloudSettings(setts *packetfabric.AwsCloudSettings) []interface{} {
 		flatten["aws_hosted_type"] = setts.AwsHostedType
 		flatten["aws_connection_id"] = setts.AwsConnectionID
 		flatten["aws_account_id"] = setts.AwsAccountID
+		flatten["public_ip"] = setts.PublicIP
+		flatten["nat_public_ip"] = setts.NatPublicIP
+		flatten["google_pairing_key"] = setts.GooglePairingKey
+		flatten["google_vlan_attachment_name"] = setts.GoogleVlanAttachmentName
+		flatten["vlan_private"] = setts.VlanPrivate
+		flatten["vlan_microsoft"] = setts.VlanMicrosoft
+		flatten["azure_service_key"] = setts.AzureServiceKey
+		flatten["azure_service_tag"] = setts.AzureServiceTag
+		flatten["oracle_region"] = setts.OracleRegion
+		flatten["vc_ocid"] = setts.VcOcid
+		flatten["port_cross_connect_ocid"] = setts.PortCrossConnectOcid
+		flatten["port_compartment_ocid"] = setts.PortCompartmentOcid
+		flatten["account_id"] = setts.AccountID
+		flatten["gateway_id"] = setts.GatewayID
+		flatten["port_id"] = setts.PortID
+		flatten["name"] = setts.Name
+		flatten["bgp_asn"] = setts.BgpAsn
+		flatten["bgp_cer_cidr"] = setts.BgpCerCidr
+		flatten["bgp_ibm_cidr"] = setts.BgpIbmCidr
 		flatten["public_ip"] = setts.PublicIP
 		flatten["nat_public_ip"] = setts.NatPublicIP
 		flattens = append(flattens, flatten)
