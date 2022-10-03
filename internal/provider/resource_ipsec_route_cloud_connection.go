@@ -110,7 +110,7 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice(iPSecPhase2AuthenticationAlgoOptions(), false),
-				Description:  "The authentication algorithm to use during phase 2.\n\n\tEnum: \"hmac-md5-96\" \"hmac-sha-256-128\" \"hmac-sha1-96\" ",
+				Description:  "The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. \n\n\tEnum: \"hmac-md5-96\" \"hmac-sha-256-128\" \"hmac-sha1-96\" ",
 			},
 			"phase2_lifetime": {
 				Type:         schema.TypeInt,
@@ -120,7 +120,7 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 			},
 			"gateway_address": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ValidateFunc: validation.IsIPv4Address,
 				Description:  "The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you.",
 			},
