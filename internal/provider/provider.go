@@ -98,6 +98,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_oracle_hosted_mkt_connection":         resourceOracleMktCloudConn(),
 			"packetfabric_cloud_router_connection_ipsec":           resourceIPSecCloudRouteConn(),
 			"packetfabric_ix_vc_service":                           resourceIxVC(),
+			"packetfabric_cloud_router_attach_customer_owned_port": resourceCustomerOwnedPortConn(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
