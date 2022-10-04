@@ -185,6 +185,10 @@ type Settings struct {
 	ZoneDest                    string      `json:"zone_dest,omitempty"`
 	Autoneg                     bool        `json:"autoneg,omitempty"`
 	Encapsulation               string      `json:"encapsulation,omitempty"`
+	OracleRegion                string      `json:"oracle_region,omitempty"`
+	VcOcid                      string      `json:"vc_ocid,omitempty"`
+	PortCrossConnectOcid        string      `json:"port_cross_connect_ocid,omitempty"`
+	PortCompartmentOcid         string      `json:"port_compartment_ocid,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
