@@ -72,6 +72,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"packetfabric_cloud_router":                            resourceCloudRouter(),
 			"packetfabric_cloud_router_connection_aws":             resourceRouterConnectionAws(),
+			"packetfabric_cloud_router_connection_oracle":          resourceOracleCloudRouteConn(),
 			"packetfabric_cloud_router_bgp_session":                resourceBgpSession(),
 			"packetfabric_cloud_router_bgp_prefixes":               resourceBgpPrefixes(),
 			"packetfabric_backbone_virtual_circuit":                resourceAwsVcBackbone(),
@@ -87,11 +88,16 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_google_hosted_connection":             resourceGoogleRequestHostConn(),
 			"packetfabric_cs_google_dedicated_connection":          resourceGoogleDedicatedConn(),
 			"packetfabric_cloud_router_connection_google":          resourceGoogleCloudRouterConn(),
+			"packetfabric_cloud_router_connection_azure":           resourceAzureExpressRouteConn(),
+			"packetfabric_cloud_router_connection_ibm":             resourceIBMCloudRouteConn(),
 			"packetfabric_cs_azure_hosted_marketplace_connection":  resourceAzureHostedMktConn(),
 			"packetfabric_cs_azure_provision_marketplace":          resourceAzureProvision(),
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
+			"packetfabric_cs_oracle_hosted_connection":             resourceOracleHostedConn(),
+			"packetfabric_cs_oracle_hosted_mkt_connection":         resourceOracleMktCloudConn(),
 			"packetfabric_cloud_router_connection_ipsec":           resourceIPSecCloudRouteConn(),
+			"packetfabric_ix_vc_service":                           resourceIxVC(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -120,6 +126,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_dedicated_connection":    datasourceDedicatedConn(),
 			"packetfabric_cloud_router_connection_ipsec":    datasourceIPSec(),
 			"packetfabric_activitylog":                      datasourceActivityLog(),
+			"packetfabric_virtual_circuit_request":          dataSrouceVcRequests(),
+			"packetfabric_backbone_service":                 datasourceBackboneServices(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
