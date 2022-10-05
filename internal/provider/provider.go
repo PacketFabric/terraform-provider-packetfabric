@@ -95,10 +95,11 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
 			"packetfabric_cs_oracle_hosted_connection":             resourceOracleHostedConn(),
-			"packetfabric_cs_oracle_hosted_mkt_connection":         resourceOracleMktCloudConn(),
+			"packetfabric_cs_oracle_hosted_marketplace_connection": resourceOracleMktCloudConn(),
 			"packetfabric_cloud_router_connection_ipsec":           resourceIPSecCloudRouteConn(),
-			"packetfabric_ix_vc_service":                           resourceIxVC(),
+			"packetfabric_ix_virtual_circuit_marketplace":          resourceIxVC(),
 			"packetfabric_cloud_router_attach_customer_owned_port": resourceCustomerOwnedPortConn(),
+			"packetfabric_point_to_point":                          resourcePointToPoint(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -125,6 +126,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_google_dedicated_connection":   datasourceDedicatedConn(),
 			"packetfabric_cs_azure_hosted_connection":       dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_azure_dedicated_connection":    datasourceDedicatedConn(),
+			"packetfabric_cs_oracle_hosted_connection":      dataSourceCloudServicesConnInfo(),
 			"packetfabric_cloud_router_connection_ipsec":    datasourceIPSec(),
 			"packetfabric_activitylog":                      datasourceActivityLog(),
 			"packetfabric_virtual_circuit_request":          dataSrouceVcRequests(),
