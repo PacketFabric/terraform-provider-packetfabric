@@ -97,6 +97,8 @@ type Interfaces struct {
 	IsPtp              bool   `json:"is_ptp"`
 	TimeCreated        string `json:"time_created"`
 	TimeUpdated        string `json:"time_updated"`
+	CustomerSiteCode   string `json:"customer_site_code,omitempty"`
+	CustomerSiteName   string `json:"customer_site_name,omitempty"`
 }
 
 type HostedAwsConnection struct {
@@ -194,6 +196,7 @@ type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
 	SubscriptionTerm int    `json:"subscription_term,omitempty"`
 	Speed            string `json:"speed,omitempty"`
+	ContractedSpeed  string `json:"contracted_speed,omitempty"`
 }
 type Components struct {
 	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
