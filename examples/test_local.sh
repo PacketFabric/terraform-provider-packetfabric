@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=">= 0.3.1"
+version=">= 0.3.2"
 
 echo
 ls -l */*state* */.*lock* */.terraform */secret.tfvars */secret.json
