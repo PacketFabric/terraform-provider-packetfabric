@@ -27,7 +27,7 @@ if [[ $1 = "prod" ]]; then
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./provider/provider.tf
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./main.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/main.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./provider.tf
+  sed -i '' -e "s#~> 0.0.0#$version#g" ./provider/provider.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./main.tf
   sed -i '' -e "s#117.109.121.202#127.0.0.1#g" ./use-cases/*/variables.tf
 fi
