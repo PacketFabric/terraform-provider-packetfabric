@@ -13,6 +13,7 @@ import (
 const awsProvider = "aws"
 const azureProvider = "azure"
 const googleProvider = "google"
+const oracleProvider = "oracle"
 
 func resourceProvision() map[string]*schema.Schema {
 	return map[string]*schema.Schema{

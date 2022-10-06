@@ -77,26 +77,26 @@ type MktConnProvisionResp struct {
 }
 
 type Interfaces struct {
-	PortCircuitID      string `json:"port_circuit_id"`
-	Pop                string `json:"pop"`
-	Site               string `json:"site"`
-	SiteName           string `json:"site_name"`
-	Speed              string `json:"speed"`
-	Media              string `json:"media"`
-	Zone               string `json:"zone"`
-	Description        string `json:"description"`
-	Vlan               int    `json:"vlan"`
-	Untagged           bool   `json:"untagged"`
-	ProvisioningStatus string `json:"provisioning_status"`
-	AdminStatus        string `json:"admin_status"`
-	OperationalStatus  string `json:"operational_status"`
-	CustomerUUID       string `json:"customer_uuid"`
-	CustomerName       string `json:"customer_name"`
-	Region             string `json:"region"`
-	IsCloud            bool   `json:"is_cloud"`
-	IsPtp              bool   `json:"is_ptp"`
-	TimeCreated        string `json:"time_created"`
-	TimeUpdated        string `json:"time_updated"`
+	PortCircuitID      string `json:"port_circuit_id,omitempty"`
+	Pop                string `json:"pop,omitempty"`
+	Site               string `json:"site,omitempty"`
+	SiteName           string `json:"site_name,omitempty"`
+	Speed              string `json:"speed,omitempty"`
+	Media              string `json:"media,omitempty"`
+	Zone               string `json:"zone,omitempty"`
+	Description        string `json:"description,omitempty"`
+	Vlan               int    `json:"vlan,omitempty"`
+	Untagged           bool   `json:"untagged,omitempty"`
+	ProvisioningStatus string `json:"provisioning_status,omitempty"`
+	AdminStatus        string `json:"admin_status,omitempty"`
+	OperationalStatus  string `json:"operational_status,omitempty"`
+	CustomerUUID       string `json:"customer_uuid,omitempty"`
+	CustomerName       string `json:"customer_name,omitempty"`
+	Region             string `json:"region,omitempty"`
+	IsCloud            bool   `json:"is_cloud,omitempty"`
+	IsPtp              bool   `json:"is_ptp,omitempty"`
+	TimeCreated        string `json:"time_created,omitempty"`
+	TimeUpdated        string `json:"time_updated,omitempty"`
 	CustomerSiteCode   string `json:"customer_site_code,omitempty"`
 	CustomerSiteName   string `json:"customer_site_name,omitempty"`
 }
