@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.1"
+      version = ">= 0.3.2"
     }
   }
 }
@@ -453,7 +453,6 @@ output "packetfabric_port_1a" {
 # ##### CLOUD ROUTER
 # #######################################
 
-# # From the PacketFabric side: Create a cloud router
 # resource "packetfabric_cloud_router" "cr" {
 #   provider     = packetfabric
 #   asn          = var.pf_cr_asn
@@ -507,6 +506,17 @@ output "packetfabric_port_1a" {
 #   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
 #   shared_key                   = var.pf_crc_shared_key
+# }
+
+# resource "packetfabric_cloud_router_connection_azure" "crc_4" {
+#   provider          = packetfabric
+#   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+#   circuit_id        = packetfabric_cloud_router.cr.id
+#   account_uuid      = var.pf_account_uuid
+#   azure_service_key = var.pf_crc_azure_service_key
+#   speed             = var.pf_crc_speed
+#   maybe_nat         = var.pf_crc_maybe_nat
+#   is_public         = var.pf_crc_is_public
 # }
 
 # data "packetfabric_cloud_router_connections" "all_crc" {

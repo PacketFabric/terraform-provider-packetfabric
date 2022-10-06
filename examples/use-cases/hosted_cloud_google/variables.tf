@@ -37,7 +37,7 @@ variable "pf_cs_vlan1" {
 
 # GCP VARs
 variable "gcp_project_id" {
-  type        = string
+  type = string
   # sensitive   = true
   description = "Google Cloud project ID"
 }
