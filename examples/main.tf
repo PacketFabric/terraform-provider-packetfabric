@@ -2,10 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.0"
-      # for local dev version
-      # source  = "terraform.local/PacketFabric/packetfabric"
-      # version = "~> 0.0.0"
+      version = ">= 0.3.1"
     }
   }
 }
