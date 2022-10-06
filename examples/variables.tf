@@ -11,8 +11,8 @@ variable "pf_api_key" {
   sensitive   = true
 }
 variable "pf_account_uuid" {
-  type      = string
-  default   = "secret"
+  type    = string
+  default = "secret"
   #sensitive = true
 }
 variable "pf_api_server" {
@@ -299,16 +299,22 @@ variable "pf_crc_pop2" {
   default = "LAX1"
 }
 variable "pf_crc_google_pairing_key" {
-  type    = string
-  default = "secret"
+  type      = string
+  default   = "secret"
+  sensitive = true
 }
 variable "pf_crc_google_vlan_attachment_name" {
   type    = string
-  default = "interconnect"
+  default = "vlan_attachement_name"
 }
 variable "pf_crc_pop3" {
   type    = string
   default = "SFO6"
+}
+variable "pf_crc_azure_service_key" {
+  type      = string
+  default   = "secret"
+  sensitive = true
 }
 
 # IPsec
@@ -357,6 +363,7 @@ variable "pf_crc_gateway_address" {
   default = "127.0.0.1"
 }
 variable "pf_crc_shared_key" {
-  type    = string
-  default = "superCoolKey"
+  type      = string
+  default   = "superCoolKey"
+  sensitive = true
 }
