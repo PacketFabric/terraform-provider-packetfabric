@@ -1,3 +1,9 @@
+## 0.3.1 (October 6, 2022)
+
+BUG FIXES:
+
+* Resource packetfabric_cloud_router_connection_aws does not correctly recognize state when refreshing plans (#149)
+
 ## 0.3.0 (September 30, 2022)
 
 BREAKING CHANGES:	
