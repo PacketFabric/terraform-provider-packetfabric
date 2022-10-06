@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.1"
+      version = ">= 0.3.2"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -379,7 +379,7 @@ output "packetfabric_cloud_router" {
 
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_cloud_router_connection_aws" "crc_1" {
-  provider       = packetfabric
+  provider = packetfabric
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
@@ -409,7 +409,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_2" {
 # Wait for the connection to show up in AWS
 resource "time_sleep" "wait_aws_connection" {
   create_duration = "2m"
-  depends_on      = [
+  depends_on = [
     packetfabric_cloud_router_connection_aws.crc_1,
     packetfabric_cloud_router_connection_aws.crc_2
   ]
@@ -514,10 +514,10 @@ output "packetfabric_cloud_router_connection_aws" {
   value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
 }
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-  provider       = aws
-  connection_id  = data.aws_dx_connection.current_1.id
-  dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  provider      = aws
+  connection_id = data.aws_dx_connection.current_1.id
+  dx_gateway_id = aws_dx_gateway.direct_connect_gw_1.id
+  name          = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection_aws data source. 
   # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to create the VIF in AWS
   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
