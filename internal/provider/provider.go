@@ -134,7 +134,7 @@ func Provider() *schema.Provider {
 			"packetfabric_activitylog":                      datasourceActivityLog(),
 			"packetfabric_marketplace_requests":             dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":                 datasourceBackboneServices(),
-			"packet_fabric_point_to_point":                  datasourcePointToPoint(),
+			"packetfabric_point_to_point":                   datasourcePointToPoint(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
