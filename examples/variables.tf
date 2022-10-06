@@ -280,7 +280,7 @@ variable "pf_crc_speed" {
 }
 variable "pf_crc_pop1" {
   type    = string
-  default = "PDX2" # PDX2/a LAX1/c SF06/a LON1/a
+  default = "PDX2" # PDX2/a LAX1/c SFO6/a LON1/a
 }
 variable "pf_crc_zone1" {
   type    = string
@@ -308,7 +308,7 @@ variable "pf_crc_google_vlan_attachment_name" {
 }
 variable "pf_crc_pop3" {
   type    = string
-  default = "SF06"
+  default = "SFO6"
 }
 
 # IPsec
