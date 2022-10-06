@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSrouceVcRequests() *schema.Resource {
+func dataSourceVcRequests() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceVCRequests,
 		Schema: map[string]*schema.Schema{
