@@ -20,6 +20,10 @@ type Interface struct {
 	Media            string `json:"media,omitempty"`
 	Zone             string `json:"zone,omitempty"`
 	Description      string `json:"description,omitempty"`
+	PortCircuitID    string `json:"port_circuit_id,omitempty"`
+	Vlan             int    `json:"vlan,omitempty"`
+	Svlan            int    `json:"svlan,omitempty"`
+	Untagged         bool   `json:"untagged,omitempty"`
 }
 
 type InterfaceCreateResp struct {

@@ -10,12 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceIxVC() *schema.Resource {
+func resourceThirdPartyVirtualCircuit() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceIxVCCreate,
-		ReadContext:   resourceIxVCRead,
-		UpdateContext: resourceIxVCUpdate,
-		DeleteContext: resourceIXVCDelete,
+		CreateContext: resourceThirdPartyVirtualCircuitCreate,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
+		UpdateContext: resourceThirdPartyVirtualCircuitUpdate,
+		DeleteContext: resourceThirdPartyVirtualCircuitDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Update: schema.DefaultTimeout(10 * time.Minute),
@@ -28,24 +28,22 @@ func resourceIxVC() *schema.Resource {
 				Computed: true,
 			},
 			"routing_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The routing ID of the customer to whom this VC will be connected.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The routing ID of the customer to whom this VC will be connected.",
 			},
 			"market": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The market that the VC will be requested in.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The market that the VC will be requested in.",
 			},
 			"description": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The description of the Internet Exchange VC.",
-			},
-			"asn": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "The ASN.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The description of the third-party VC.",
 			},
 			"rate_limit_in": {
 				Type:        schema.TypeInt,
@@ -111,124 +109,101 @@ func resourceIxVC() *schema.Resource {
 					},
 				},
 			},
+			"service_uuid": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "UUID of the marketplace service being requested.",
+			},
 			"aggregate_capacity_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "ID of the aggregate capacity container from which to substract this VC's speed.",
+				Description: "The circuit ID of the aggregate capacity container.",
 			},
 		},
 	}
 }
 
-func resourceIxVCCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	ixVC := extractIXVC(d)
-	resp, err := c.CreateIXVirtualCircuit(ixVC)
-	if err != nil {
+	thidPartyVC := extractThirdPartyVC(d)
+	if resp, err := c.CreateThirdPartyVC(thidPartyVC); err != nil {
 		return diag.FromErr(err)
-	}
-	d.SetId(resp.VcCircuitID)
-	return diags
-}
-
-func resourceIxVCUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	vcCID := d.Id()
-	serviceSets := extractServiceSettings(d)
-	if _, err := c.UpdateServiceSettings(vcCID, serviceSets); err != nil {
-		return diag.FromErr(err)
+	} else {
+		d.SetId(resp.VcCircuitID)
 	}
 	return diags
 }
 
-func resourceIxVCRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcCID := d.Id()
-	if _, err := c.GetBackboneByVcCID(vcCID); err != nil {
+	if _, err := c.GetBackboneByVcCID(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 
-func resourceIXVCDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceThirdPartyVirtualCircuitUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcCID := d.Id()
-	if _, err := c.DeleteBackbone(vcCID); err != nil {
+	settings := extractServiceSettings(d)
+	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 
-func extractIXVC(d *schema.ResourceData) packetfabric.IxVirtualCircuit {
-	ixVC := packetfabric.IxVirtualCircuit{}
+func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	if _, err := c.DeleteService(d.Id()); err != nil {
+		return diag.FromErr(err)
+	}
+	return diags
+}
+
+func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
+	thidPartyVC := packetfabric.ThirdPartyVC{}
 	if routingID, ok := d.GetOk("routing_id"); ok {
-		ixVC.RoutingID = routingID.(string)
+		thidPartyVC.RoutingID = routingID.(string)
 	}
 	if market, ok := d.GetOk("market"); ok {
-		ixVC.Market = market.(string)
+		thidPartyVC.Market = market.(string)
 	}
 	if description, ok := d.GetOk("description"); ok {
-		ixVC.Description = description.(string)
-	}
-	if asn, ok := d.GetOk("asn"); ok {
-		ixVC.Asn = asn.(int)
+		thidPartyVC.Description = description.(string)
 	}
 	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
-		ixVC.RateLimitIn = rateLimitIn.(int)
+		thidPartyVC.RateLimitIn = rateLimitIn.(int)
 	}
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
-		ixVC.RateLimitOut = rateLimitOut.(int)
+		thidPartyVC.RateLimitOut = rateLimitOut.(int)
 	}
-	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
-		ixVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
+	if bandwidth, ok := d.GetOk("bandwidth"); ok {
+		thidPartyVC.Bandwidth = extractBandwidth(bandwidth.(map[string]interface{}))
 	}
-	for _, interf := range d.Get("interface").(*schema.Set).List() {
-		ixVC.Interface = extractIXVcInterface(interf.(map[string]interface{}))
+	if interf, ok := d.GetOk("interface"); ok {
+		thidPartyVC.Interface = extractThirdPartyInterf(interf.(map[string]interface{}))
 	}
-	if aggCapID, ok := d.GetOk("aggregate_capacity_id"); ok {
-		ixVC.AggregateCapacityID = aggCapID.(string)
+	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
+		thidPartyVC.ServiceUUID = serviceUUID.(string)
 	}
-	return ixVC
+	if aggregateCap, ok := d.GetOk("aggregate_capacity_id"); ok {
+		thidPartyVC.AggregateCapacityID = aggregateCap.(string)
+	}
+	return thidPartyVC
 }
 
-func extractIXVcInterface(interf map[string]interface{}) packetfabric.Interfaces {
-	vxInterf := packetfabric.Interfaces{}
-	vxInterf.PortCircuitID = interf["port_circuit_id"].(string)
-	vxInterf.Vlan = interf["vlan"].(int)
-	vxInterf.Untagged = interf["untagged"].(bool)
-	return vxInterf
-}
-
-func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettingsUpdate {
-	settUpdate := packetfabric.ServiceSettingsUpdate{}
-	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
-		settUpdate.RateLimitIn = rateLimitIn.(int)
-	}
-	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
-		settUpdate.RateLimitOut = rateLimitOut.(int)
-	}
-	if description, ok := d.GetOk("description"); ok {
-		settUpdate.Description = description.(string)
-	}
-	for _, interf := range d.Get("interfaces").(*schema.Set).List() {
-		settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
-	}
-	return settUpdate
-}
-
-func ixVcSpeedOptions() []string {
-	return []string{
-		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
-		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
-		"5Gbps", "10Gbps", "20Gbps", "30Gbps",
-		"40Gbps", "50Gbps", "60Gbps", "80Gbps",
-		"100Gbps"}
+func extractThirdPartyInterf(interf map[string]interface{}) packetfabric.Interface {
+	interfResp := packetfabric.Interface{}
+	interfResp.PortCircuitID = interf["port_circuit_id"].(string)
+	interfResp.Vlan = interf["vlan"].(int)
+	interfResp.Svlan = interf["svlan"].(int)
+	interfResp.Untagged = interf["untagged"].(bool)
+	return interfResp
 }

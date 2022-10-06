@@ -10,9 +10,11 @@ const backboneURI = "/v2/services/backbone"
 const backboneByVCCIDURI = "/v2/services/%s"
 const cloudConnDeleteURI = "/v2/services/cloud/%s"
 const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
+const speedBurstURI = "/v2/services/%s/burst"
 const vcRequestsURI = "/v2/services/requests"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
+const thirdPartyVCURI = "/v2/services/third-party"
 
 type Backbone struct {
 	Description  string              `json:"description"`
@@ -30,29 +32,22 @@ type BackBoneInterface struct {
 }
 
 type IxVirtualCircuit struct {
-	RoutingID           string      `json:"routing_id,omitempty"`
-	Market              string      `json:"market,omitempty"`
-	Description         string      `json:"description,omitempty"`
-	Asn                 int         `json:"asn,omitempty"`
-	RateLimitIn         int         `json:"rate_limit_in,omitempty"`
-	RateLimitOut        int         `json:"rate_limit_out,omitempty"`
-	Bandwidth           Bandwidth   `json:"bandwidth,omitempty"`
-	Interface           VxInterface `json:"interface,omitempty"`
-	AggregateCapacityID string      `json:"aggregate_capacity_id,omitempty"`
-}
-
-type VxInterface struct {
-	PortCircuitID string `json:"port_circuit_id,omitempty"`
-	Vlan          int    `json:"vlan,omitempty"`
-	Svlan         int    `json:"svlan,omitempty"`
-	Untagged      bool   `json:"untagged,omitempty"`
+	RoutingID           string     `json:"routing_id,omitempty"`
+	Market              string     `json:"market,omitempty"`
+	Description         string     `json:"description,omitempty"`
+	Asn                 int        `json:"asn,omitempty"`
+	RateLimitIn         int        `json:"rate_limit_in,omitempty"`
+	RateLimitOut        int        `json:"rate_limit_out,omitempty"`
+	Bandwidth           Bandwidth  `json:"bandwidth,omitempty"`
+	Interface           Interfaces `json:"interface,omitempty"`
+	AggregateCapacityID string     `json:"aggregate_capacity_id,omitempty"`
 }
 
 type ServiceSettingsUpdate struct {
-	RateLimitIn  int           `json:"rate_limit_in,omitempty"`
-	RateLimitOut int           `json:"rate_limit_out,omitempty"`
-	Description  string        `json:"description,omitempty"`
-	Interfaces   []VxInterface `json:"interfaces,omitempty"`
+	RateLimitIn  int          `json:"rate_limit_in,omitempty"`
+	RateLimitOut int          `json:"rate_limit_out,omitempty"`
+	Description  string       `json:"description,omitempty"`
+	Interfaces   []Interfaces `json:"interfaces,omitempty"`
 }
 
 type BackboneResp struct {
@@ -189,6 +184,22 @@ type VcRequest struct {
 	TimeUpdated         string       `json:"time_updated,omitempty"`
 }
 
+type ThirdPartyVC struct {
+	RoutingID           string    `json:"routing_id,omitempty"`
+	Market              string    `json:"market,omitempty"`
+	Description         string    `json:"description,omitempty"`
+	RateLimitIn         int       `json:"rate_limit_in,omitempty"`
+	RateLimitOut        int       `json:"rate_limit_out,omitempty"`
+	Bandwidth           Bandwidth `json:"bandwidth,omitempty"`
+	Interface           Interface `json:"interface,omitempty"`
+	ServiceUUID         string    `json:"service_uuid,omitempty"`
+	AggregateCapacityID string    `json:"aggregate_capacity_id,omitempty"`
+}
+
+type ServiceMessage struct {
+	Message string `json:"message"`
+}
+
 func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 	backboneResp := &BackboneResp{}
 	_, err := c.sendRequest(backboneURI, postMethod, backbone, backboneResp)
@@ -205,6 +216,28 @@ func (c *PFClient) CreateIXVirtualCircuit(ixVc IxVirtualCircuit) (*VcRequest, er
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+// https://docs.packetfabric.com/api/v2/redoc/#tag/Services/operation/post_service_third_party
+func (c *PFClient) CreateThirdPartyVC(thirdPartyVC ThirdPartyVC) (*VcRequest, error) {
+	expectedResp := &VcRequest{}
+	if _, err := c.sendRequest(thirdPartyVCURI, postMethod, thirdPartyVC, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+// https://docs.packetfabric.com/api/v2/redoc/#tag/Services/operation/post_service_burst
+func (c *PFClient) AddSpeedBurstToCircuit(vcCID, speed string) (*PortMessageResp, error) {
+	expectedMsg := &PortMessageResp{}
+	formatedURI := fmt.Sprintf(speedBurstURI, vcCID)
+	type SpeedBurst struct {
+		Speed string `json:"speed"`
+	}
+	if _, err := c.sendRequest(formatedURI, postMethod, SpeedBurst{Speed: speed}, expectedMsg); err != nil {
+		return nil, err
+	}
+	return expectedMsg, nil
 }
 
 func (c *PFClient) GetBackboneByVcCID(vcCID string) (*BackboneResp, error) {
@@ -275,6 +308,25 @@ func (c *PFClient) DeleteBackbone(vcCircuitID string) (*BackboneDeleteResp, erro
 
 func (c *PFClient) DeleteCloudConn(vcCircuitID string) (*BackboneDeleteResp, error) {
 	return c._deleteService(vcCircuitID, cloudConnDeleteURI)
+}
+
+func (c *PFClient) DeleteService(vcCircuitID string) (*ServiceMessage, error) {
+	formatedURI := fmt.Sprintf(backboneByVCCIDURI, vcCircuitID)
+	expectedResp := &ServiceMessage{}
+	if _, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+// https://docs.packetfabric.com/api/v2/redoc/#tag/Services/operation/delete_service_burst
+func (c *PFClient) DeleteSpeedBurst(vcCID string) (*PortMessageResp, error) {
+	formatedURI := fmt.Sprintf(speedBurstURI, vcCID)
+	expectedResp := &PortMessageResp{}
+	if _, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
 }
 
 func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteResp, error) {
