@@ -36,7 +36,7 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 			"maybe_nat": {
 				Type:         schema.TypeBool,
 				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
+				Default:      false,
 				Description:  "Whether or not this connection is intended for NAT later.",
 			},
 			"vc_ocid": {
@@ -48,7 +48,7 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 			"region": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"us-ashburn-1", "us-phoenix-1"}, false),
+				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The Oracle region for this connection.",
 			},
 			"description": {
@@ -60,7 +60,7 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
+				ValidateFunc: validation.IsUUID,
 				Description:  "Circuit ID of the target cloud router.",
 			},
 			"pop": {
