@@ -46,6 +46,11 @@ func datasourceBackboneServices() *schema.Resource {
 						Computed:    true,
 						Description: "The service mode.",
 					},
+					"connected": {
+						Type:        schema.TypeBool,
+						Computed:    true,
+						Description: "Current connection status.",
+					},
 					"bandwidth": {
 						Type:        schema.TypeSet,
 						Optional:    true,
@@ -278,8 +283,10 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []int
 			flatten["zone"] = interf.Zone
 			flatten["description"] = interf.Description
 			flatten["vlan"] = interf.Vlan
-			flatten["untegged"] = interf.Untagged
+			flatten["untagged"] = interf.Untagged
 			flatten["provisioning_status"] = interf.ProvisioningStatus
+			flatten["admin_status"] = interf.AdminStatus
+			flatten["operational_status"] = interf.OperationalStatus			
 			flatten["customer_uuid"] = interf.CustomerUUID
 			flatten["customer_name"] = interf.CustomerName
 			flatten["region"] = interf.Region

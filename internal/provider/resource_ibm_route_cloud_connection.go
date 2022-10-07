@@ -30,7 +30,7 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"maybe_nat": {
 				Type:         schema.TypeBool,
 				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
+				Default:      false,
 				Description:  "Circuit ID of the target cloud router.",
 			},
 			"circuit_id": {
@@ -38,6 +38,12 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router.",
+			},
+			"account_uuid": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.IsUUID,
+				Description:  "The UUID for the billing account that should be billed.",
 			},
 			"ibm_account_id": {
 				Type:         schema.TypeString,
@@ -68,6 +74,30 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The description of this connection. Will be shown as name field in IBM portal.",
+			},
+			"pop": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The POP in which you want to provision the connection.",
+			},
+			"speed": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice(speedOptions(), true),
+				Description:  "The peed of the new connection.\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
+			},
+			"zone": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The desired zone of the new connection.",
+			},
+			"published_quote_line_uuid": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.IsUUID,
+				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
 	}

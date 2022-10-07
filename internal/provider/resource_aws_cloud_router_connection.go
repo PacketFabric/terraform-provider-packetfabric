@@ -45,6 +45,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection.\n\n\tDefaults to false if unspecified.",
 			},
 			"description": {
@@ -65,6 +66,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.\n\n\tDefaults to false if unspecified.",
 			},
 			"speed": {

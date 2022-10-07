@@ -36,8 +36,8 @@ func resourceOracleHostedConn() *schema.Resource {
 			"region": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"us-ashburn-1", "us-phoenix-1"}, true),
-				Description:  "The description of this connection.",
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The Oracle region for this connection.",
 			},
 			"description": {
 				Type:         schema.TypeString,
