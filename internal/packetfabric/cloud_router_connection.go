@@ -84,10 +84,11 @@ type CloudSettings struct {
 	AwsConnectionID          string `json:"aws_connection_id,omitempty"`
 	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
 	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
-	VlanPrivate              int    `json:"vlan_private,omitempty"`
-	VlanMicrosoft            int    `json:"vlan_microsoft,omitempty"`
+	VlanPrivate              int    `json:"vlan_id_private,omitempty"`
+	VlanMicrosoft            int    `json:"vlan_id_microsoft,omitempty"`
 	AzureServiceKey          string `json:"azure_service_key,omitempty"`
 	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
+	AzureConnectionType      string `json:"azure_connection_type,omitempty"`
 	OracleRegion             string `json:"oracle_region,omitempty"`
 	VcOcid                   string `json:"vc_ocid,omitempty"`
 	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`
