@@ -49,6 +49,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Optional:    true,
 				Description: "The desired vlan to use on the customer-owned port.",
 			},
+			"untagged": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether or not the customer port is untagged. Do not specify a VLAN if this is to be an untagged connection.",
+			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
