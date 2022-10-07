@@ -111,6 +111,10 @@ func dataSourceCloudConn() *schema.Resource {
 										Type:     schema.TypeInt,
 										Computed: true,
 									},
+									"svlan_id_cust": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
 									"aws_region": {
 										Type:     schema.TypeString,
 										Computed: true,
@@ -135,11 +139,11 @@ func dataSourceCloudConn() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"vlan_private": {
+									"vlan_id_private": {
 										Type:     schema.TypeInt,
 										Computed: true,
 									},
-									"vlan_microsoft": {
+									"vlan_id_microsoft": {
 										Type:     schema.TypeInt,
 										Computed: true,
 									},
@@ -149,6 +153,10 @@ func dataSourceCloudConn() *schema.Resource {
 									},
 									"azure_service_tag": {
 										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"azure_connection_type": {
+										Type:     schema.TypeString,
 										Computed: true,
 									},
 									"oracle_region": {
@@ -351,6 +359,7 @@ func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 		flatten := make(map[string]interface{})
 		flatten["vlan_id_pf"] = setts.VlanIDPf
 		flatten["vlan_id_cust"] = setts.VlanIDCust
+		flatten["svlan_id_cust"] = setts.SvlanIDCust
 		flatten["aws_region"] = setts.AwsRegion
 		flatten["aws_hosted_type"] = setts.AwsHostedType
 		flatten["aws_connection_id"] = setts.AwsConnectionID
@@ -359,10 +368,11 @@ func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 		flatten["nat_public_ip"] = setts.NatPublicIP
 		flatten["google_pairing_key"] = setts.GooglePairingKey
 		flatten["google_vlan_attachment_name"] = setts.GoogleVlanAttachmentName
-		flatten["vlan_private"] = setts.VlanPrivate
-		flatten["vlan_microsoft"] = setts.VlanMicrosoft
+		flatten["vlan_id_private"] = setts.VlanPrivate
+		flatten["vlan_id_microsoft"] = setts.VlanMicrosoft
 		flatten["azure_service_key"] = setts.AzureServiceKey
 		flatten["azure_service_tag"] = setts.AzureServiceTag
+		flatten["azure_connection_type"] = setts.AzureConnectionType
 		flatten["oracle_region"] = setts.OracleRegion
 		flatten["vc_ocid"] = setts.VcOcid
 		flatten["port_cross_connect_ocid"] = setts.PortCrossConnectOcid
