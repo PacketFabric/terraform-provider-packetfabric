@@ -36,6 +36,7 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Whether or not this connection is intended for NAT later.",
 			},
 			"azure_service_key": {
@@ -65,6 +66,7 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Whether or not PacketFabric should allocate an IP address for the user.",
 			},
 			"published_quote_line_uuid": {

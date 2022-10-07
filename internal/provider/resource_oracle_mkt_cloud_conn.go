@@ -59,8 +59,8 @@ func resourceOracleMktCloudConn() *schema.Resource {
 			"region": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"us-ashburn-1", "us-phoenix-1"}, true),
-				Description:  "The Oracle region for this connection. ",
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The Oracle region for this connection.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
