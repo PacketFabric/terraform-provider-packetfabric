@@ -12,11 +12,11 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
   description     = var.pf_crc_description
   circuit_id      = packetfabric_cloud_router.cr1.id
   account_uuid    = var.pf_account_uuid
-  port_circuit_id = var.port_circuit_id
-  vlan            = var.vlan
-  untagged        = var.untagged
-  speed           = var.pf_crspeedc_zone
-  is_public       = var.is_public
+  port_circuit_id = var.pf_crc_port_circuit_id
+  vlan            = var.pf_crc_vlan
+  untagged        = var.pf_crc_untagged
+  speed           = var.pf_crc_speed
+  is_public       = var.pf_crc_is_public
   maybe_nat       = var.pf_crc_maybe_nat
 }
 
