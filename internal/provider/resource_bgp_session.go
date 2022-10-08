@@ -274,6 +274,16 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	} else {
 		sessionToDisable.L3Address = l3Address.(string)
 	}
+	if primarySubnet, ok := d.GetOk("primary_subnet"); !ok {
+		return diag.Errorf("please provide a valid primary_subnet")
+	} else {
+		sessionToDisable.PrimarySubnet = primarySubnet.(string)
+	}
+	if secondarySubnet, ok := d.GetOk("secondary_subnet"); !ok {
+		return diag.Errorf("please provide a valid secondary_subnet")
+	} else {
+		sessionToDisable.SecondarySubnet = secondarySubnet.(string)
+	}
 	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
 	sessionToDisable.Disabled = true
 	sessionToDisable.Prefixes = make([]packetfabric.BgpSessionResponse, 0)
@@ -297,6 +307,12 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	bgpSession := packetfabric.BgpSession{}
 	if l3Address, ok := d.GetOk("l3_address"); ok {
 		bgpSession.L3Address = l3Address.(string)
+	}
+	if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+		bgpSession.PrimarySubnet = primarySubnet.(string)
+	}
+	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+		bgpSession.SecondarySubnet = secondarySubnet.(string)
 	}
 	if addressFamily, ok := d.GetOk("address_family"); ok {
 		bgpSession.AddressFamily = addressFamily.(string)
