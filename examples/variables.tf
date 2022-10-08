@@ -223,7 +223,7 @@ variable "oracle_vc_ocid" {
   default   = "ocid1.virtualcircuit.oc1.iad.aaaaaaaa7fvcq4rff7yz4ey3p7wu3lenezvl34757c2cxh7jigxbjc7bgzjq"
 }
 variable "oracle_region" {
-  default   = "us-sanjose-1"
+  default = "us-sanjose-1"
 }
 
 # Markeptlace

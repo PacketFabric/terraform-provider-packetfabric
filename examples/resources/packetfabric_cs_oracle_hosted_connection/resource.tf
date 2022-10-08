@@ -12,6 +12,6 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 }
 
 output "packetfabric_cs_oracle_hosted_connection" {
-  value = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
+  value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
   sensitive = true
 }
