@@ -136,25 +136,25 @@ variable "pf_crc_is_public" {
 # South Central US (Dallas)
 # Las Vegas
 # The pop is defined on the Azure side
-variable "peering_location_1" {
+variable "azure_peering_location_1" {
   type        = string
   description = "Azure Peering Location"
-  default     = "New York" # Denver Test
+  default     = "New York"
 }
-variable "bandwidth_in_mbps" {
+variable "azure_bandwidth_in_mbps" {
   type        = string
   description = "Azure Bandwidth"
   default     = 50 # must match pf_crc_speed
 }
-variable "service_provider_name" {
+variable "azure_service_provider_name" {
   type    = string
-  default = "PacketFabric" # Packet Fabric Test
+  default = "PacketFabric"
 }
-variable "sku_tier" {
+variable "azure_sku_tier" {
   type    = string
   default = "Standard" # Standard or Premium
 }
-variable "sku_family" {
+variable "azure_sku_family" {
   type    = string
   default = "MeteredData"
 }

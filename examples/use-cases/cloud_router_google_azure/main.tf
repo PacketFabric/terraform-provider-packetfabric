@@ -171,12 +171,12 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
   name                  = "${var.tag_name}-${random_pet.name.id}"
   resource_group_name   = azurerm_resource_group.resource_group_1.name
   location              = azurerm_resource_group.resource_group_1.location
-  peering_location      = var.peering_location_1
-  service_provider_name = var.service_provider_name
-  bandwidth_in_mbps     = var.bandwidth_in_mbps
+  peering_location      = var.azure_peering_location_1
+  service_provider_name = var.azure_service_provider_name
+  bandwidth_in_mbps     = var.azure_bandwidth_in_mbps
   sku {
-    tier   = var.sku_tier
-    family = var.sku_family
+    tier   = var.azure_sku_tier
+    family = var.azure_sku_family
   }
   tags = {
     environment = "${var.tag_name}-${random_pet.name.id}"
@@ -187,7 +187,7 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   provider = packetfabric
   # using Azure Peering location for the name but removing the spaces with a regex
-  description       = "${var.tag_name}-${random_pet.name.id}-${replace(var.peering_location_1, "/\\s+/", "")}-primary"
+  description       = "${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"
   circuit_id        = packetfabric_cloud_router.cr.id
   account_uuid      = var.pf_account_uuid
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
@@ -211,7 +211,7 @@ locals {
   cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
-  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${replace(var.peering_location_1, "/\\s+/", "")}-primary"]
+  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"]
 }
 output "cc1_vlan_private" {
   value = one(local.cc1.cloud_settings[*].vlan_id_private)
