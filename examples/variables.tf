@@ -94,6 +94,49 @@ variable "pf_vc_subterm" {
   type    = number
   default = 1 # default 1 month
 }
+# Backbone Virtual Circuit Speed Burst
+variable "pf_vc_circuit_id" {
+  type    = string
+  default = "PF-BC-RNO-CHI-1729807-PF"
+}
+variable "pf_vc_speed_burst" {
+  type    = string
+  default = "400Mbps"
+}
+
+# Point to Point
+variable "pf_ptp_speed" {
+  type    = string
+  default = "1Gbps" # 1Gbps 10Gbps 40Gbps 100Gbps
+}
+variable "pf_ptp_subterm" {
+  type    = number
+  default = 1 # default 1 month
+}
+variable "pf_ptp_autoneg" {
+  type    = bool
+  default = false
+}
+variable "pf_ptp_media" {
+  type    = string
+  default = "LX"
+}
+variable "pf_ptp_pop1" {
+  type    = string
+  default = "SEA1"
+}
+variable "pf_ptp_zone1" {
+  type    = string
+  default = "C" # A
+}
+variable "pf_ptp_pop2" {
+  type    = string
+  default = "CHI1"
+}
+variable "pf_ptp_zone2" {
+  type    = string
+  default = "A"
+}
 
 ########################################
 ###### HOSTED CLOUD CONNECTIONS
@@ -160,6 +203,27 @@ variable "pf_cs_speed2" {
 variable "pf_cs_vlan2" {
   type    = number
   default = 107
+}
+
+# Oracle Hosted Connection
+variable "pf_cs_pop6" {
+  type    = string
+  default = "SFO6"
+}
+variable "pf_cs_zone6" {
+  type    = string
+  default = "C"
+}
+variable "pf_cs_vlan6" {
+  type    = number
+  default = 107
+}
+variable "oracle_vc_ocid" {
+  sensitive = true
+  default   = "ocid1.virtualcircuit.oc1.iad.aaaaaaaa7fvcq4rff7yz4ey3p7wu3lenezvl34757c2cxh7jigxbjc7bgzjq"
+}
+variable "oracle_region" {
+  default   = "us-sanjose-1"
 }
 
 # Markeptlace
@@ -317,7 +381,7 @@ variable "pf_crc_azure_service_key" {
   sensitive = true
 }
 
-# IPsec
+# Cloud Router Connection IPsec
 variable "pf_crc_ike_version" {
   type    = number
   default = 1
@@ -366,4 +430,14 @@ variable "pf_crc_shared_key" {
   type      = string
   default   = "superCoolKey"
   sensitive = true
+}
+
+# Cloud Router Connection Port
+variable "pf_crc_port_circuit_id" {
+  type    = string
+  default = "PF-AP-WDC1-1726464"
+}
+variable "pf_crc_vlan" {
+  type    = number
+  default = 170
 }
