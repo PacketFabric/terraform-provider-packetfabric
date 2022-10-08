@@ -3,12 +3,15 @@
 version=">= 0.3.2"
 
 echo
+ls -l */*/*state* */*/.*lock* */*/.terraform */*/secret.tfvars */*/secret.json
 ls -l */*state* */.*lock* */.terraform */secret.tfvars */secret.json
 ls -l *state* .*lock* .terraform secret.tfvars secret.json
 
 if [[ $1 = "cleanup" ]]; then
-    echo -e "\nDelete */*state* */.*lock* */.terraform */secret.tfvars */secret.json"
+    echo -e "\nDelete */*/*state* */*/.*lock* */*/.terraform */*/secret.tfvars */*/secret.json"
+    echo -e "Delete */*state* */.*lock* */.terraform */secret.tfvars */secret.json"
     echo -e "Delete *state* .*lock* .terraform secret.tfvars secret.json"
+    rm -fr */*/*state* */*/.*lock* */*/.terraform */*/secret.tfvars */*/secret.json
     rm -fr */*state* */.*lock* */.terraform */secret.tfvars */secret.json
     rm -fr *state* .*lock* .terraform secret.tfvars secret.json
 fi
