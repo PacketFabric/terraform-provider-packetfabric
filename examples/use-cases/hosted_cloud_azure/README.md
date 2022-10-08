@@ -25,7 +25,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resources **"azurerm_public_ip"** and **"azurerm_virtual_network_gateway"**: Create a virtual network gateway for ExpressRoute
 - resource **"azurerm_virtual_network_gateway_connection"**: Link a virtual network gateway to the ExpressRoute circuit
 
-**Estimated time:**  ~5 min for Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
+**Estimated time:** ~5 min for Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
 
 ## Before You Begin
 
