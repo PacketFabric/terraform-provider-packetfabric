@@ -89,6 +89,9 @@ find . -name secret.json -type f
 find . -name cloud_router_ip_address.txt -type f
 find . -name customer_router_ip_address.txt -type f
 
+echo -e "\nEmpty files:"
+find . -empty
+
 echo -e "\nPacketFabric Terraform Provider Remote version set to \"$version\""
 
 echo -e "\nOptions:"
