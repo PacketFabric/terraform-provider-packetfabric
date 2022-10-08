@@ -1,9 +1,9 @@
-# Use Case: PacketFabric Cloud Router with Google and a VPN Connection
+# Use Case: PacketFabric Cloud Router with Google and Azure
 
-This use case builds a PacketFabric Cloud Router between Google Cloud Platform and a branch location, on-premises users, or a remote data center.
-Terraform providers used: PacketFabric VPN connection and Google.
+This use case builds a PacketFabric Cloud Router between Google Cloud Platform and Microsoft Azure CLoud.
+Terraform providers used: PacketFabric, Azure and Google.
 
-![Deployment Diagram](./images/diagram_cloud_router_google_vpn.png)
+![Deployment Diagram](./images/diagram_cloud_router_google_azure.png)
 
 ## Useful links
 
@@ -11,6 +11,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - [PacketFabric Cloud Router Docs](https://docs.packetfabric.com/cr/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
+- [HashiCorp Microsoft Azure Terraform Provider](https://registry.terraform.io/providers/hashicorp/azurerm)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Terraform resources deployed
@@ -20,14 +21,22 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - resource **"google_compute_subnetwork"**: Create a subnet in the VPC
 - resource & data source **"google_compute_router"**: Create a Google Cloud Router used for the Interconnect
 - resource **"google_compute_interconnect_attachment"**: Create a Google Interconnect
+- resource **"azurerm_resource_group"**: Create a resource group in Azure
+- resource **"azurerm_virtual_network"**: Create a Virtual Network (VNet)
+- resource **"azurerm_subnet"**: Create subnets for Virtual Network Gateway and VNet
+- resource **"packetfabric_cs_azure_hosted_connection"**: Create a Azure Hosted Cloud Connection
+- resource & data source **"azurerm_express_route_circuit"**: Create an ExpressRoute circuit
+- resource **"azurerm_express_route_circuit_peering"**: Configure peering
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
 - resource & data source **"packetfabric_cloud_router_connection_google"**: Add a Google Partner Interconnect to the Cloud Router
-- resource & data source **"packetfabric_cloud_router_connection_ipsec"**: Add a VPN Connection to the Cloud Router
+- resource & data source **"packetfabric_cloud_router_connection_azure"**: Add a AzureExpress Connection to the Cloud Router
 - module **"terraform-google-gcloud"**: Get the BGP Peer Addresses and set the PacketFabric Cloud Router ASN to the BGP settings in the Google Cloud Router
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
 - resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
+- resources **"azurerm_public_ip"** and **"azurerm_virtual_network_gateway"**: Create a virtual network gateway for ExpressRoute
+- resource **"azurerm_virtual_network_gateway_connection"**: Link a virtual network gateway to the ExpressRoute circuit
 
-**Estimated time:** ~5 min for Google & PacketFabric resources
+**Estimated time:** ~10 min for Google, Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
 
 **Note**: Because the BGP session is created automatically, we use gcloud terraform module to retreive the BGP addresses and set the PacketFabric Cloud Router ASN in the BGP settings in the Google Cloud Router. Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/11458), [vote](https://github.com/hashicorp/terraform-provider-google/issues/12624) and [vote](https://github.com/hashicorp/terraform-provider-google/issues/12630) for these issues on GitHub.
 
@@ -36,6 +45,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
 - Don't have an Google Account? [Get Started](https://cloud.google.com/free)
+- Don't have an Azure Account? [Get Started](https://azure.microsoft.com/en-us/free/)
 
 ## Prerequisites
 
@@ -49,7 +59,7 @@ Make sure you have installed all of the following prerequisites on your machine:
 Make sure you have the following items available:
 
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [IPsec information for the Site-to-Site VPN](https://docs.packetfabric.com/cr/vpn/)
+- [Microsoft Azure Credentials](https://docs.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash)
 - [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
@@ -107,6 +117,7 @@ Example Google Interconnect (VLAN attachment) in Google Cloud Console:
 
 ![VLAN attachment in Google Cloud Console](./images/google_interconnect.png)
 
-Example Google Cloud Router in Google Cloud Console:
+Example an Azure ExpressRoute in Azure:
 
-![VLAN attachment in Google Cloud Console](./images/google_cloud_router.png)
+![Azure ExpressRoute](./images/azure_express_route.png)
+
