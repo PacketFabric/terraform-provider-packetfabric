@@ -26,6 +26,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The UUID of the contact that will be billed.",
 			},
+			"circuit_id": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
+			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
