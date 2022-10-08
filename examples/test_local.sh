@@ -1,5 +1,7 @@
 #!/bin/bash
 
+version=">= 0.3.2"
+
 if [[ $1 = "cleanup" ]]; then
     echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt"
     find . -name ".terraform" -type d -exec rm -rf "{}" \;
@@ -83,7 +85,6 @@ find . -name secret.json -type f
 find . -name cloud_router_ip_address.txt -type f
 find . -name customer_router_ip_address.txt -type f
 
-version=">= 0.3.2"
 echo -e "\nPacketFabric Terraform Provider Remote version set to \"$version\""
 
 echo -e "\nOptions:"
@@ -91,4 +92,4 @@ echo -e "\t./$(basename $0) [cleanup]: delete files to cleanup"
 echo -e "\t./$(basename $0) [local]: switch to locally built PacketFabric provider"
 echo -e "\t./$(basename $0) [remote]: switch to PacketFabric provider on the Terraform registry (using \"$version\")"
 echo -e "\t./$(basename $0) [dev]: switch to PacketFabric dev endpoint and variables"
-echo -e "\t./$(basename $0) [prod]: switch to PacketFabric prod endpoint and variables"
+echo -e "\t./$(basename $0) [prod]: switch to PacketFabric prod endpoint and variables\n"
