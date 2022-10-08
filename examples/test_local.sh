@@ -64,7 +64,7 @@ if [[ $1 = "prod" ]]; then
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./variables.tf
 fi
 
-echo -e "\nCheck provider setting in examples:"
+echo -e "\nCheck provider settings in examples:"
 echo
 grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/main.tf
 echo
@@ -73,6 +73,10 @@ echo
 grep -A 1 "PacketFabric/packetfabric" ./provider/provider.tf
 echo
 grep -A 1 "PacketFabric/packetfabric" ./main.tf
+echo
+echo -e "\nNumber of variables with api.packetfabric.com: $(grep "api.packetfabric.com" ./use-cases/*/variables.tf | wc -l)"
+echo -e "Number of variables with api.dev.packetfabric.net: $(grep "api.dev.packetfabric.net" ./use-cases/*/variables.tf | wc -l)"
+
 echo
 
 echo -e "\nFiles to cleanup:"
