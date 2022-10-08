@@ -23,6 +23,8 @@ const _bgpPublicIP = "185.161.1.152/31"
 var _bgpSession = BgpSession{
 	Md5:             "$9$oeJZjqmTn9Af5RhylMW-VwgJDHqfFnCZU.5QFAt",
 	L3Address:       "10.0.0.1/30",
+	PrimarySubnet:   "10.1.0.0/30",
+	SecondarySubnet: "10.2.0.0/30",
 	AddressFamily:   "v4",
 	RemoteAddress:   "10.0.0.1",
 	RemoteAsn:       4556,
