@@ -11,6 +11,6 @@ resource "packetfabric_cs_oracle_hosted_marketplace_connection" "cs_conn1_market
 }
 
 output "packetfabric_cs_oracle_hosted_marketplace_connection" {
-  value = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
+  value     = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
   sensitive = true
 }
