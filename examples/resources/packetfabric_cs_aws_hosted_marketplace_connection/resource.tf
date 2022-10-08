@@ -1,4 +1,4 @@
-resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_conn1" {
+resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
   provider       = packetfabric
   description    = var.description
   account_uuid   = var.pf_account_uuid
@@ -11,5 +11,5 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_con
 }
 
 output "packetfabric_cs_aws_hosted_marketplace_connection" {
-  value = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1
+  value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws
 }
