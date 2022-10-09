@@ -18,10 +18,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
   is_public         = var.pf_crc_is_public
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
 output "packetfabric_cloud_router_connection_azure" {
   value = packetfabric_cloud_router_connection_azure.crc4
 }
