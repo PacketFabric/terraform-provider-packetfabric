@@ -1,6 +1,6 @@
 resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
   provider          = packetfabric
-  description       = var.description
+  description       = var.pf_description
   account_uuid      = var.pf_account_uuid
   azure_service_key = var.azure_service_key
   port              = var.pf_port

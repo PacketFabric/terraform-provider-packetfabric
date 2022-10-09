@@ -372,14 +372,65 @@ resource "random_pet" "name" {}
 # ##### MARKETPLACE
 # #######################################
 
+# # Create a VC Marketplace Connection 
+# resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   routing_id  = var.pf_routing_id
+#   market      = var.pf_market
+#   interface {
+#     port_circuit_id = packetfabric_port.port_1a.id
+#     untagged        = false
+#     vlan            = var.pf_vc_vlan1
+#   }
+#   bandwidth {
+#     account_uuid      = var.pf_account_uuid
+#     longhaul_type     = var.pf_vc_longhaul_type
+#     speed             = var.pf_vc_speed
+#     subscription_term = var.pf_vc_subterm
+#   }
+# }
+
+# output "packetfabric_backbone_virtual_circuit_marketplace" {
+#   value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
+# }
+
+### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
+
+# # Create an IX Marketplace Connection 
+# resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   routing_id  = var.pf_routing_id_ix
+#   market      = var.pf_market_ix
+#   asn         = var.pf_asn_ix
+#   interface {
+#     port_circuit_id = packetfabric_port.port_1a.id
+#     untagged        = false
+#     vlan            = var.pf_vc_vlan1
+#   }
+#   bandwidth {
+#     account_uuid      = var.pf_account_uuid
+#     longhaul_type     = var.pf_vc_longhaul_type
+#     speed             = var.pf_vc_speed
+#     subscription_term = var.pf_vc_subterm
+#   }
+# }
+
+# output "packetfabric_ix_virtual_circuit_marketplace" {
+#   value = packetfabric_ix_virtual_circuit_marketplace.ix_marketplace_conn1
+# }
+
+### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
+
 # # Create a AWS Hosted Marketplace Connection 
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
-#   routing_id     = var.routing_id
-#   market         = var.market
+#   routing_id     = var.pf_routing_id
+#   market         = var.pf_market
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
 #   zone           = var.pf_cs_zone2
@@ -392,7 +443,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_provision_marketplace" "accept_request_aws" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.port_circuit_id_marketplace
+#   port_circuit_id = var.pf_port_circuit_id_marketplace
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
 #   vlan            = var.pf_cs_vlan2
 # }
@@ -403,8 +454,8 @@ resource "random_pet" "name" {}
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.azure_service_key
-#   routing_id        = var.routing_id
-#   market            = var.market
+#   routing_id        = var.pf_routing_id
+#   market            = var.pf_market
 #   speed             = var.pf_cs_speed1 # will be deprecated
 # }
 
@@ -416,7 +467,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_azure_provision_marketplace" "accept_request_azure" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.port_circuit_id_marketplace
+#   port_circuit_id = var.pf_port_circuit_id_marketplace
 #   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
 #   vlan_private    = var.pf_cs_vlan_private
 #   vlan_microsoft  = var.pf_cs_vlan_microsoft
@@ -427,8 +478,8 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid                = var.pf_account_uuid
-#   routing_id                  = var.routing_id
-#   market                      = var.market
+#   routing_id                  = var.pf_routing_id
+#   market                      = var.pf_market
 #   speed                       = var.pf_cs_speed1
 #   google_pairing_key          = var.google_pairing_key
 #   google_vlan_attachment_name = var.google_vlan_attachment_name
@@ -445,7 +496,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_google_provision_marketplace" "accept_request_google" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.port_circuit_id_marketplace
+#   port_circuit_id = var.pf_port_circuit_id_marketplace
 #   vc_request_uuid = packetfabric_cs_google_hosted_marketplace_connection.cs_conn1_marketplace_google.id
 #   vlan            = var.pf_cs_vlan2
 # }
@@ -457,8 +508,8 @@ resource "random_pet" "name" {}
 #   account_uuid = var.pf_account_uuid
 #   vc_ocid      = var.oracle_vc_ocid
 #   region       = var.oracle_region
-#   routing_id   = var.routing_id
-#   market       = var.market
+#   routing_id   = var.pf_routing_id
+#   market       = var.pf_market
 #   pop          = var.pf_cs_pop6
 # }
 
@@ -470,7 +521,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_oracle_hosted_marketplace_connection" "accept_request_oracle" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.port_circuit_id_marketplace
+#   port_circuit_id = var.pf_port_circuit_id_marketplace
 #   vc_request_uuid = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle.id
 #   vlan            = var.pf_cs_vlan2
 # }

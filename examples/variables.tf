@@ -227,17 +227,30 @@ variable "oracle_region" {
 }
 
 # Markeptlace
-variable "routing_id" {
+variable "pf_routing_id" {
   type    = string
   default = "PDB-ROJ-9Y0K" # DEMO B
 }
-variable "market" {
+variable "pf_market" {
   type    = string
   default = "ATL" # DEMO B
 }
-variable "port_circuit_id_marketplace" {
+variable "pf_routing_id_ix" {
+  type    = string
+  default = "PIE-LV3-N3M5"
+}
+variable "pf_market_ix" {
+  type    = string
+  default = "PHL"
+}
+variable "pf_port_circuit_id_marketplace" {
   type    = string
   default = "PF-AP-ATL1-1744189" # DEMO B in the market
+}
+variable "pf_asn_ix" {
+  type     = number
+  default  = 64545
+  nullable = false
 }
 
 ########################################
