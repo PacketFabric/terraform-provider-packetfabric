@@ -19,10 +19,6 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
   maybe_nat                   = var.pf_crc_maybe_nat
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
 output "packetfabric_cloud_router_connection_google" {
   value = packetfabric_cloud_router_connection_google.crc2
 }

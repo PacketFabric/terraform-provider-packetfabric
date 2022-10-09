@@ -20,10 +20,6 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
   maybe_nat       = var.pf_crc_maybe_nat
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
 output "packetfabric_cloud_router_connection_port" {
   value = packetfabric_cloud_router_connection_port.crc7
 }

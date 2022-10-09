@@ -454,3 +454,48 @@ variable "pf_crc_vlan" {
   type    = number
   default = 170
 }
+
+# Cloud Router Connection IBM
+variable "pf_crc_pop4" {
+  type    = string
+  default = "SFO1"
+}
+variable "pf_crc_zone4" {
+  type    = string
+  default = "c"
+}
+variable "pf_crc_speed" {
+  type    = string
+  default = "50Mbps" # must match bandwidth_in_mbps
+}
+variable "pf_crc_ibm_bgp_asn" {
+  type    = number
+  default = 64536 # private (64512 to 65534)
+}
+variable "pf_crc_ibm_bgp_cer_cidr" {
+  type    = string
+  default = "169.254.248.41/30"
+}
+variable "pf_crc_ibm_bgp_ibm_cidr" {
+  type    = string
+  default = "169.254.248.42/30"
+}
+
+# Cloud Router Connection Oracle
+variable "pf_crc_pop5" {
+  type    = string
+  default = "WDC02"
+}
+variable "pf_crc_zone5" {
+  type    = string
+  default = "c"
+}
+variable "pf_crc_oracle_region" {
+  type    = string
+  default     = "us-sanjose-1"
+  description = "Oracle Cloud region"
+}
+variable "pf_crc_oracle_vc_ocid" {
+  type    = string
+  default = "ocid1.virtualcircuit.oc1.iad.aaaaaaaa7fvcq4rff7yz4ey3p7wu3lenezvl34757c2cxh7jigxbjc7bgzjq"
+}

@@ -666,12 +666,39 @@ resource "random_pet" "name" {}
 #   is_public         = var.pf_crc_is_public
 # }
 
+# resource "packetfabric_cloud_router_connection_ibm" "crc_5" {
+#   provider         = packetfabric
+#   description      = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
+#   circuit_id       = packetfabric_cloud_router.cr.id
+#   account_uuid     = var.pf_account_uuid
+#   ibm_account_id   = var.pf_crc_ibm_account_id
+#   ibm_bgp_asn      = var.pf_crc_ibm_bgp_asn
+#   ibm_bgp_cer_cidr = var.pf_crc_ibm_bgp_cer_cidr
+#   ibm_bgp_ibm_cidr = var.pf_crc_ibm_bgp_ibm_cidr
+#   pop              = var.pf_crc_pop4
+#   zone             = var.pf_crc_zone4
+#   maybe_nat        = var.pf_crc_maybe_nat
+#   speed            = var.pf_crc_speed
+# }
+
+# resource "packetfabric_cloud_router_connection_oracle" "crc_6" {
+#   provider     = packetfabric
+#   description  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop5}"
+#   circuit_id   = packetfabric_cloud_router.cr.id
+#   account_uuid = var.pf_account_uuid
+#   region       = var.pf_crc_oracle_region
+#   vc_ocid      = var.pf_crc_oracle_vc_ocid
+#   pop          = var.pf_crc_pop5
+#   zone         = var.pf_crc_zone5
+#   maybe_nat    = var.pf_crc_maybe_nat
+# }
+
 # resource "packetfabric_cloud_router_connection_port" "crc_7" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
 #   circuit_id      = packetfabric_cloud_router.cr.id
 #   account_uuid    = var.pf_account_uuid
-#   port_circuit_id = var.pf_crc_port_circuit_id
+#   port_circuit_id = packetfabric_port.port_1a.id
 #   vlan            = var.pf_crc_vlan
 #   speed           = var.pf_crc_speed
 #   is_public       = var.pf_crc_is_public

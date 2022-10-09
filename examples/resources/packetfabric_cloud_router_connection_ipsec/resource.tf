@@ -28,10 +28,6 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
   shared_key                   = var.pf_crc_shared_key
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
 output "packetfabric_cloud_router_connection_ipsec" {
   value = packetfabric_cloud_router_connection_ipsec.crc3
 }
