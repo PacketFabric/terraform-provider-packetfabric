@@ -22,10 +22,6 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   speed            = var.pf_crc_speed
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
 output "packetfabric_cloud_router_connection_ibm" {
   value = packetfabric_cloud_router_connection_ibm.crc5
 }
