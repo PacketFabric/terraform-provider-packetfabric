@@ -2,7 +2,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -15,7 +15,7 @@ resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop2
@@ -26,7 +26,7 @@ resource "packetfabric_port" "port_2" {
 
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
-  description = var.description
+  description = var.pf_description
   epl         = false
   interface_a {
     port_circuit_id = packetfabric_port.port_1.id
