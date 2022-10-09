@@ -2,7 +2,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -13,10 +13,10 @@ resource "packetfabric_port" "port_1" {
 
 resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
   provider    = packetfabric
-  description = var.description
-  routing_id  = var.routing_id
-  market      = var.market
-  asn         = var.asn
+  description = var.pf_description
+  routing_id  = var.pf_routing_id
+  market      = var.pf_market
+  asn         = var.pf_asn_ix
   interface {
     port_circuit_id = packetfabric_port.port_1.id
     untagged        = false
