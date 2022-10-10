@@ -346,8 +346,8 @@ resource "random_pet" "name" {}
 #   provider     = packetfabric
 #   description  = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid = var.pf_account_uuid
-#   vc_ocid      = var.oracle_vc_ocid
-#   region       = var.oracle_region
+#   vc_ocid      = var.pf_cs_oracle_vc_ocid
+#   region       = var.pf_cs_oracle_region
 #   port         = var.pf_demo_port # packetfabric_port.port_1a.id
 #   pop          = var.pf_cs_pop6
 #   zone         = var.pf_cs_zone6
@@ -355,7 +355,7 @@ resource "random_pet" "name" {}
 # }
 
 # output "packetfabric_cs_oracle_hosted_connection" {
-#   value = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
+#   value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
 #   sensitive = true
 # }
 
@@ -506,8 +506,8 @@ resource "random_pet" "name" {}
 #   provider     = packetfabric
 #   description  = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid = var.pf_account_uuid
-#   vc_ocid      = var.oracle_vc_ocid
-#   region       = var.oracle_region
+#   vc_ocid      = var.pf_cs_oracle_vc_ocid
+#   region       = var.pf_cs_oracle_region
 #   routing_id   = var.pf_routing_id
 #   market       = var.pf_market
 #   pop          = var.pf_cs_pop6
