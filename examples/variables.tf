@@ -150,7 +150,7 @@ variable "pf_demo_port" {
 # Azure Hosted Connection
 variable "azure_service_key" {
   sensitive = true
-  default   = "123456-abcdef-123456-abcdef-123456"
+  default   = "secret"
 }
 variable "pf_cs_src_svlan" {
   type    = number
@@ -168,11 +168,11 @@ variable "pf_cs_vlan_microsoft" {
 # GCP Hosted Connection
 variable "google_pairing_key" {
   sensitive = true
-  default   = "123456-abcdef-123456-abcdef-123456/us-west1/any"
+  default   = "secret"
 }
 variable "google_vlan_attachment_name" {
   sensitive = true
-  default   = "demo-darling-albacore"
+  default   = "vlan_attachment_name"
 }
 variable "pf_cs_pop1" {
   type    = string
@@ -211,41 +211,44 @@ variable "pf_cs_pop6" {
   default = "SFO6"
 }
 variable "pf_cs_zone6" {
-  type    = string
+  type = string
   default = "C"
 }
 variable "pf_cs_vlan6" {
   type    = number
   default = 107
 }
-variable "oracle_vc_ocid" {
-  sensitive = true
-  default   = "ocid1.virtualcircuit.oc1.iad.aaaaaaaa7fvcq4rff7yz4ey3p7wu3lenezvl34757c2cxh7jigxbjc7bgzjq"
+variable "pf_cs_oracle_region" {
+  type        = string
+  default     = "us-ashburn-1"
+  description = "Oracle Cloud region"
 }
-variable "oracle_region" {
-  default = "us-sanjose-1"
+variable "pf_cs_oracle_vc_ocid" {
+  type = string
+  default   = "secret"
+  sensitive = true
 }
 
 # Markeptlace
 variable "pf_routing_id" {
   type    = string
-  default = "PDB-ROJ-9Y0K" # DEMO B
+  default = "PDB-ROJ-9Y0K"
 }
 variable "pf_market" {
   type    = string
-  default = "ATL" # DEMO B
+  default = "ATL"
 }
 variable "pf_routing_id_ix" {
   type    = string
-  default = "PIE-LV3-N3M5"
+  default = "PDB-ROJ-9Y0K"
 }
 variable "pf_market_ix" {
   type    = string
-  default = "PHL"
+  default = "ATL"
 }
 variable "pf_port_circuit_id_marketplace" {
   type    = string
-  default = "PF-AP-ATL1-1744189" # DEMO B in the market
+  default = "PF-AP-WDC1-1726464"
 }
 variable "pf_asn_ix" {
   type     = number
@@ -357,7 +360,7 @@ variable "pf_crc_speed" {
 }
 variable "pf_crc_pop1" {
   type    = string
-  default = "PDX2" # PDX2/a LAX1/c SFO6/a LON1/a
+  default = "PDX2"
 }
 variable "pf_crc_zone1" {
   type    = string
@@ -464,10 +467,6 @@ variable "pf_crc_zone4" {
   type    = string
   default = "c"
 }
-variable "pf_crc_speed" {
-  type    = string
-  default = "50Mbps" # must match bandwidth_in_mbps
-}
 variable "pf_crc_ibm_bgp_asn" {
   type    = number
   default = 64536 # private (64512 to 65534)
@@ -491,11 +490,12 @@ variable "pf_crc_zone5" {
   default = "c"
 }
 variable "pf_crc_oracle_region" {
-  type    = string
-  default     = "us-sanjose-1"
+  type        = string
+  default     = "us-ashburn-1"
   description = "Oracle Cloud region"
 }
 variable "pf_crc_oracle_vc_ocid" {
-  type    = string
-  default = "ocid1.virtualcircuit.oc1.iad.aaaaaaaa7fvcq4rff7yz4ey3p7wu3lenezvl34757c2cxh7jigxbjc7bgzjq"
+  type      = string
+  default   = "secret"
+  sensitive = true
 }
