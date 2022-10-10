@@ -46,10 +46,16 @@ if [[ $1 = "dev" ]]; then
   sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./variables.tf
   sed -i '' -e "s#SFO1#LAB1#g" ./use-cases/*/variables.tf
   sed -i '' -e "s#SFO1#LAB1#g" ./variables.tf
+  sed -i '' -e "s#SFO6#LAB6#g" ./variables.tf
   sed -i '' -e "s#New York#Denver Test#g" ./use-cases/*/variables.tf
   sed -i '' -e "s#New York#Denver Test#g" ./variables.tf
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./use-cases/*/variables.tf
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./variables.tf
+  sed -i '' -e "s#PF-AP-WDC1-1726464#PF-AP-LAB5-2756010#g" ./variables.tf
+  sed -i '' -e "s#PDB-ROJ-9Y0K#ROM-57Z-XA0R#g" ./variables.tf
+  sed -i '' -e "s#ATL#LON#g" ./variables.tf
+  sed -i '' -e 's#default = "A"#default = "Y"#g' ./variables.tf
+  PF-AP-ATL1-1744189
 fi
 
 if [[ $1 = "prod" ]]; then
@@ -58,10 +64,15 @@ if [[ $1 = "prod" ]]; then
   sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./variables.tf
   sed -i '' -e "s#LAB1#SFO1#g" ./use-cases/*/variables.tf
   sed -i '' -e "s#LAB1#SFO1#g" ./variables.tf
+  sed -i '' -e "s#LAB6#SFO6#g" ./variables.tf
   sed -i '' -e "s#Denver Test#New York#g" ./use-cases/*/variables.tf
   sed -i '' -e "s#Denver Test#New York#g" ./variables.tf
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./use-cases/*/variables.tf
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./variables.tf
+  sed -i '' -e "s#PF-AP-LAB5-2756010#PF-AP-WDC1-1726464#g" ./variables.tf
+  sed -i '' -e "s#ROM-57Z-XA0R#PDB-ROJ-9Y0K#g" ./variables.tf
+  sed -i '' -e "s#LON#ATL#g" ./variables.tf
+  sed -i '' -e 's#default = "Y"#default = "A"#g' ./variables.tf
 fi
 
 echo -e "\nCheck provider settings in examples:"
