@@ -1,6 +1,8 @@
 ## General VARs
 variable "tag_name" {
-  default = "demo-pf-aws"
+  type        = string
+  description = "Used to name all resources created in this example"
+  default     = "demo-pf-aws"
 }
 
 ## PacketFabic VARs
@@ -10,12 +12,14 @@ variable "pf_api_key" {
   sensitive   = true
 }
 variable "pf_account_uuid" {
-  type = string
+  type        = string
+  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
+  sensitive   = true
 }
 variable "pf_api_server" {
   type        = string
-  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
+  default     = "https://api.packetfabric.com"
 }
 # AWS Dedicated Connection
 variable "pf_cs_pop1" {

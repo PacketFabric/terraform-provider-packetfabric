@@ -1,6 +1,8 @@
 ## General VARs
 variable "tag_name" {
-  default = "demo-pf-google"
+  type        = string
+  description = "Used to name all resources created in this example"
+  default     = "demo-pf-google"
 }
 
 ## PacketFabic VARs
@@ -10,12 +12,14 @@ variable "pf_api_key" {
   sensitive   = true
 }
 variable "pf_account_uuid" {
-  type = string
+  type        = string
+  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
+  sensitive   = true
 }
 variable "pf_api_server" {
   type        = string
-  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
+  default     = "https://api.packetfabric.com"
 }
 # GCP Hosted Connection
 variable "pf_port_circuit_id" {
@@ -44,7 +48,7 @@ variable "gcp_project_id" {
 
 variable "gcp_credentials" {
   type        = string
-  description = "Google Cloud service account credentials"
+  description = "Google Cloud service account credentials (path to GCP json file)"
 }
 # https://cloud.google.com/compute/docs/regions-zones
 variable "gcp_region1" {
