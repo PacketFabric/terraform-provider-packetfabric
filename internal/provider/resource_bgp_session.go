@@ -269,11 +269,12 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 		d.SetId("")
 		return diags
 	}
-	if l3Address, ok := d.GetOk("l3_address"); !ok {
+
+	l3Address, ok := d.GetOk("l3_address")
+	if !ok {
 		return diag.Errorf("please provide a valid l3_address")
-	} else {
-		sessionToDisable.L3Address = l3Address.(string)
 	}
+	sessionToDisable.L3Address = l3Address.(string)
 	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
 	sessionToDisable.Disabled = true
 	sessionToDisable.Prefixes = make([]packetfabric.BgpSessionResponse, 0)

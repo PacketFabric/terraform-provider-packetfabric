@@ -13,11 +13,8 @@ const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
 const cloudServicesURI = "/v2/services/cloud/%s"
 const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
-const cloudConnectionInstStatusURI = "/v2/services/cloud/connections/%s/status"
-const cloudConnectionInstStatusOptsURI = "/v2/services/cloud/connections/%s/upgrade/options"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
-const cloudConnectionCurrentCustomersHostedURI = "v2/services/cloud/connections/hosted"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
 
 type ServiceAws struct {
@@ -173,13 +170,13 @@ type Settings struct {
 	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
 	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
 	VlanIdPrivate               int         `json:"vlan_id_private,omitempty"`
-	VlanIdMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
-	VcIdPrivate                 int         `json:"vc_id_private,omitempty"`
-	SvlanIdCustomer             interface{} `json:"svlan_id_customer,omitempty"`
+	VlanIDMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
+	VcIDPrivate                 int         `json:"vc_id_private,omitempty"`
+	SvlanIDCustomer             interface{} `json:"svlan_id_customer,omitempty"`
 	AzureServiceKey             string      `json:"azure_service_key,omitempty"`
 	AzureServiceTag             int         `json:"azure_service_tag,omitempty"`
 	GooglePairingKey            string      `json:"google_pairing_key,omitempty"`
-	Google_vlan_attachment_name string      `json:"google_vlan_attchment_name,omitempty"`
+	GoogleVlanAttachmentName	string      `json:"google_vlan_attchment_name,omitempty"`
 	AwsRegion                   string      `json:"aws_region,omitempty"`
 	AwsHostedType               string      `json:"aws_hosted_type,omitempty"`
 	AwsConnectionID             string      `json:"aws_connection_id,omitempty"`
@@ -200,8 +197,8 @@ type Billing struct {
 }
 type Components struct {
 	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
-	VcIdMicrosoft        int    `json:"vc_id_microsoft,omitempty"`
-	VcIdPrivate          int    `json:"vc_id_private,omitempty"`
+	VcIDMicrosoft        int    `json:"vc_id_microsoft,omitempty"`
+	VcIDPrivate          int    `json:"vc_id_private,omitempty"`
 }
 
 type DedicatedConnResp struct {
