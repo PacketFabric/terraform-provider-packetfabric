@@ -123,10 +123,6 @@ func _callGetCloudServiceStatus(payload interface{}) (interface{}, error) {
 	return cTest.GetCloudServiceStatus(_cloudCircuitID)
 }
 
-func _callDeleteCloudService(payload interface{}) (interface{}, error) {
-	return nil, cTest.DeleteCloudService(payload.(string))
-}
-
 // PAYLOADS
 
 func _buildFakeCreateAwsHostedMkt() []byte {
@@ -218,12 +214,6 @@ func _buildFakeGetHostedCloudConnRequestsSent() []byte {
 		  "time_updated": "2016-01-11T08:30:00+00:00"
 		}
 	  ]`, _vcRequestUUID, _vcCircuitID, _customerUUID, _customerUUID, _accountUUID))
-}
-
-func _buildFakeUpdateAwsServiceConn() []byte {
-	return []byte(fmt.Sprintf(`{
-		"description": "%s"
-	  }`, _awsServiceConnDesc))
 }
 
 // RESPONSES

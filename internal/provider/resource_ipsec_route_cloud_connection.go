@@ -351,11 +351,6 @@ func iPSecPhase1AuthenticationAlgoOptions() []string {
 		"md5", "sha-256", "sha-384", "sha1"}
 }
 
-func iPSecPhase2PfsGroup() []string {
-	return []string{
-		"md5", "sha-256", "sha-384", "sha1"}
-}
-
 func iPSecPhase2EncryptionAlgoOptions() []string {
 	return []string{
 		"3des-cbc", "aes-128-cbc", "aes-128-gcm", "aes-192-cbc", "aes-256-cbc", "aes-192-gcm",
