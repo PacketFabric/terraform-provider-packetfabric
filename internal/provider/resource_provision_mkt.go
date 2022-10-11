@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-const awsProvider = "aws"
 const azureProvider = "azure"
 const googleProvider = "google"
 const oracleProvider = "oracle"

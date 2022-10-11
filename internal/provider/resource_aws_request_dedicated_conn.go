@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const cloudCidNotFoundSummaryMsg = "cloud_circuit_id not created yet"
 const cloudCidNotFoundDetailsMsg = "Please wait few minutes then run: terraform refresh"
 
 func resourceAwsReqDedicatedConn() *schema.Resource {
