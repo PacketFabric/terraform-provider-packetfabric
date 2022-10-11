@@ -123,16 +123,16 @@ func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 	var autoneg bool
 	var portCID, description string
-	if autonegData, ok := d.GetOk("autoneg"); !ok {
+	autonegData, ok := d.GetOk("autoneg") 
+	if !ok {
 		return diag.Errorf("autoneg is a required field")
-	} else {
-		autoneg = autonegData.(bool)
 	}
-	if portCIDData, ok := d.GetOk("id"); !ok {
+	autoneg = autonegData.(bool)
+	portCIDData, ok := d.GetOk("id")
+	if !ok {
 		return diag.Errorf("port circuit ID is a required field")
-	} else {
-		portCID = portCIDData.(string)
 	}
+	portCID = portCIDData.(string)
 	if descriptionData, ok := d.GetOk("description"); !ok {
 		return diag.Errorf("description is a required field")
 	} else {

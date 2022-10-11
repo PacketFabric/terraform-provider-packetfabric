@@ -60,11 +60,11 @@ func dataSourceBgpPrefixRead(ctx context.Context, d *schema.ResourceData, m inte
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	var bgpSettingsUUID string
-	if settingsUUID, ok := d.GetOk("bgp_settings_uuid"); !ok {
+	settingsUUID, ok := d.GetOk("bgp_settings_uuid")
+	if !ok {
 		return diag.Errorf("please provide a valid BGP Settings UUID")
-	} else {
-		bgpSettingsUUID = settingsUUID.(string)
 	}
+	bgpSettingsUUID = settingsUUID.(string)
 	prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID)
 	if err != nil {
 		return diag.FromErr(err)
