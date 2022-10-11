@@ -93,11 +93,12 @@ func resourceBgpPrefixesRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	bgpSettingsUUID = settingsUUID.(string)
 	var diags diag.Diagnostics
-	if prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID); len(prefixes) <= 0 && err != nil {
+	prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID)
+	if len(prefixes) <= 0 && err != nil {
 		return diag.FromErr(err)
-	} else {
-		_ = d.Set("prefixes", _flattenPrefixes(prefixes))
 	}
+	_ = d.Set("prefixes", _flattenPrefixes(prefixes))
+	
 	return diags
 }
 
