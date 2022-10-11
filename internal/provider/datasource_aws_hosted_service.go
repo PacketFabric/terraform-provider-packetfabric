@@ -4,29 +4,6 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 )
 
-func flattenHostedServiceRequests(services *[]packetfabric.AwsHostedMktResp) []interface{} {
-	if services != nil {
-		flattens := make([]interface{}, len(*services), len(*services))
-		for i, service := range *services {
-			flatten := make(map[string]interface{})
-			flatten["vc_request_uuid"] = service.VcRequestUUID
-			flatten["from_customer"] = flattenFromCustomer(&service.FromCustomer)
-			flatten["to_customer"] = flattenToCustomer(&service.ToCustomer)
-			flatten["text"] = service.Text
-			flatten["status"] = service.Status
-			flatten["vc_mode"] = service.VcMode
-			flatten["request_type"] = service.RequestType
-			flatten["bandwidth"] = flattenBandwidth(&service.Bandwidth)
-			flatten["time_created"] = service.TimeCreated
-			flatten["time_updated"] = service.TimeUpdated
-			flatten["allow_untagged_z"] = service.AllowUntaggedZ
-			flattens[i] = flatten
-		}
-		return flattens
-	}
-	return make([]interface{}, 0)
-}
-
 func flattenFromCustomer(fromCust *packetfabric.FromCustomer) []interface{} {
 	flattens := make([]interface{}, 0)
 	if fromCust != nil {
