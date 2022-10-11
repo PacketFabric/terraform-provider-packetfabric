@@ -8,7 +8,6 @@ import (
 const awsConnectionURI = "/v2/services/cloud-routers/%s/connections/aws"
 const awsConnectionListURI = "/v2/services/cloud-routers/%s/connections"
 const awsConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/%s"
-const awsCloudConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/aws"
 const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/status"
 const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
 const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
