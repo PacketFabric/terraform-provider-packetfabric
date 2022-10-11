@@ -128,11 +128,12 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	thidPartyVC := extractThirdPartyVC(d)
-	if resp, err := c.CreateThirdPartyVC(thidPartyVC); err != nil {
+	resp, err := c.CreateThirdPartyVC(thidPartyVC)
+	if err != nil {
 		return diag.FromErr(err)
-	} else {
-		d.SetId(resp.VcCircuitID)
 	}
+	d.SetId(resp.VcCircuitID)
+	
 	return diags
 }
 
