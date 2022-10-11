@@ -219,12 +219,12 @@ func datasourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if ptps, err := c.GetPointToPointInfos(); err != nil {
+	ptps, err := c.GetPointToPointInfos()
+	if err != nil {
 		return diag.FromErr(err)
-	} else {
-		if err := d.Set("point_to_points", flattenPointToPoints(&ptps)); err != nil {
-			return diag.FromErr(err)
-		}
+	}
+	if err := d.Set("point_to_points", flattenPointToPoints(&ptps)); err != nil {
+		return diag.FromErr(err)
 	}
 	return diags
 }
