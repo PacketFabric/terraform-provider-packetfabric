@@ -219,42 +219,6 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 	  }`, description, _cloudConnUUID))
 }
 
-func _buildMockCloudRouterConnUpdateResp(description string) []byte {
-	return []byte(fmt.Sprintf(`[
-		{
-		  "port_type": "hosted",
-		  "connection_type": "cloud_hosted",
-		  "port_circuit_id": "PF-AE-1234",
-		  "pending_delete": true,
-		  "deleted": true,
-		  "speed": "1Gbps",
-		  "state": "Requested",
-		  "cloud_circuit_id": "PF-AP-LAX1-1002",
-		  "account_uuid": "%s",
-		  "service_class": "metro",
-		  "service_provider": "aws",
-		  "service_type": "cr_connection",
-		  "description": "%s",
-		  "uuid": "%s",
-		  "cloud_provider_connection_id": "dxcon-fgadaaa1",
-		  "cloud_settings": {},
-		  "user_uuid": "%s",
-		  "customer_uuid": "%s",
-		  "time_created": "%s",
-		  "time_updated": "%s",
-		  "cloud_provider": {
-			"pop": "LAX1",
-			"site": "us-west-1"
-		  },
-		  "pop": "LAX1",
-		  "site": "us-west-1",
-		  "bgp_state": "string",
-		  "cloud_router_circuit_id": "PF-L3-CUST-2001",
-		  "nat_capable": true
-		}
-	  ]`, _awsAccountUUID, description, _cloudConnUUID, _cloudConnUserUUID, _cloudConnCustomerUUID, _createdTime, _updatedTime))
-}
-
 func buildMockCloudRouterReadResp(description string) []byte {
 	return []byte(`{
 		"port_type": "hosted",

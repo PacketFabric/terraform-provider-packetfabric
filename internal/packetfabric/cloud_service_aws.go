@@ -169,7 +169,7 @@ type Settings struct {
 	VlanIDPf                    int         `json:"vlan_id_pf,omitempty"`
 	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
 	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIdPrivate               int         `json:"vlan_id_private,omitempty"`
+	VlanIDPrivate               int         `json:"vlan_id_private,omitempty"`
 	VlanIDMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
 	VcIDPrivate                 int         `json:"vc_id_private,omitempty"`
 	SvlanIDCustomer             interface{} `json:"svlan_id_customer,omitempty"`
