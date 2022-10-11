@@ -1,6 +1,8 @@
 ## General VARs
 variable "tag_name" {
-  default = "demo"
+  type        = string
+  description = "Used to name all resources created in this example"
+  default     = "demo"
 }
 
 ## PacketFabic VARs
@@ -17,8 +19,8 @@ variable "pf_account_uuid" {
 }
 variable "pf_api_server" {
   type        = string
-  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
+  default     = "https://api.packetfabric.com"
 }
 
 ########################################
@@ -211,7 +213,7 @@ variable "pf_cs_pop6" {
   default = "SFO6"
 }
 variable "pf_cs_zone6" {
-  type = string
+  type    = string
   default = "C"
 }
 variable "pf_cs_vlan6" {
@@ -224,7 +226,7 @@ variable "pf_cs_oracle_region" {
   description = "Oracle Cloud region"
 }
 variable "pf_cs_oracle_vc_ocid" {
-  type = string
+  type      = string
   default   = "secret"
   sensitive = true
 }
@@ -338,45 +340,53 @@ variable "pf_cs_subterm" {
 ###### CLOUD ROUTER
 ########################################
 variable "pf_cr_asn" {
-  type     = number
-  default  = 4556 # PacketFabric ASN
-  nullable = false
+  type        = number
+  description = "The ASN of the cloud router"
+  default     = 4556 # PacketFabric ASN
+  nullable    = false
 }
 variable "pf_cr_capacity" {
-  type    = string
-  default = "1Gbps" # 2Gbps
+  type        = string
+  description = "The cloud router capacity"
+  default     = "1Gbps" # 2Gbps
 }
 variable "pf_cr_regions" {
-  type    = list(string)
-  default = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
+  type        = list(string)
+  description = "The regions in which the Cloud Router connections will be located."
+  default     = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
 variable "pf_aws_account_id" {
   type    = string
   default = "123456789"
 }
 variable "pf_crc_speed" {
-  type    = string
-  default = "50Mbps"
+  type        = string
+  description = "The speed of the new connection"
+  default     = "50Mbps"
 }
 variable "pf_crc_pop1" {
-  type    = string
-  default = "PDX2"
+  type        = string
+  description = "The POP in which you want to provision the connection"
+  default     = "PDX2"
 }
 variable "pf_crc_zone1" {
   type    = string
   default = "a"
 }
 variable "pf_crc_maybe_nat" {
-  type    = bool
-  default = false
+  type        = bool
+  description = "Set this to true if you intend to use NAT on this connection"
+  default     = false
 }
 variable "pf_crc_is_public" {
-  type    = bool
-  default = false
+  type        = bool
+  description = "Whether PacketFabric should allocate a public IP address for this connection"
+  default     = false
 }
 variable "pf_crc_pop2" {
-  type    = string
-  default = "LAX1"
+  type        = string
+  description = "The POP in which you want to provision the connection"
+  default     = "LAX1"
 }
 variable "pf_crc_google_pairing_key" {
   type      = string
@@ -399,53 +409,65 @@ variable "pf_crc_azure_service_key" {
 
 # Cloud Router Connection IPsec
 variable "pf_crc_ike_version" {
-  type    = number
-  default = 1
+  type        = number
+  description = "The Internet Key Exchange (IKE) version supported by your device"
+  default     = 1
 }
 variable "pf_crc_phase1_authentication_method" {
-  type    = string
-  default = "pre-shared-key"
+  type        = string
+  description = "The authentication method to use during phase 1"
+  default     = "pre-shared-key"
 }
 variable "pf_crc_phase1_group" {
-  type    = string
-  default = "group14"
+  type        = string
+  description = "Phase 1 is when the VPN peers are authenticated and we establish security associations"
+  default     = "group14"
 }
 variable "pf_crc_phase1_encryption_algo" {
-  type    = string
-  default = "3des-cbc"
+  type        = string
+  description = "The encryption algorithm to use during phase 1"
+  default     = "3des-cbc"
 }
 variable "pf_crc_phase1_authentication_algo" {
-  type    = string
-  default = "sha-384"
+  type        = string
+  description = "The authentication algorithm to use during phase 1"
+  default     = "sha-384"
 }
 variable "pf_crc_phase1_lifetime" {
-  type    = number
-  default = 10800
+  type        = number
+  description = "The time in seconds before a tunnel will need to re-authenticate"
+  default     = 10800
 }
 variable "pf_crc_phase2_pfs_group" {
-  type    = string
-  default = "group14"
+  type        = string
+  description = "Phase 2 is when SAs are further established to protect and encrypt IP traffic within the tunnel"
+  default     = "group14"
 }
 variable "pf_crc_phase2_encryption_algo" {
-  type    = string
-  default = "3des-cbc"
+  type        = string
+  description = "The encryption algorithm to use during phase 2"
+  default     = "3des-cbc"
 }
 variable "pf_crc_phase2_authentication_algo" {
-  type    = string
-  default = "hmac-sha-256-128"
+  type        = string
+  description = "The authentication algorithm to use during phase 2"
+  default     = "hmac-sha-256-128"
 }
 variable "pf_crc_phase2_lifetime" {
-  type    = number
-  default = 28800
+  type        = number
+  description = "The time in seconds before phase 2 expires and needs to reauthenticate"
+  default     = 28800
 }
 variable "pf_crc_gateway_address" {
-  type    = string
-  default = "127.0.0.1"
+  type        = string
+  description = "The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you."
+  default     = "127.0.0.1"
 }
 variable "pf_crc_shared_key" {
-  type      = string
-  default   = "superCoolKey"
-  sensitive = true
+  type        = string
+  description = "The pre-shared-key to use for authentication."
+  default     = "superCoolKey"
+  sensitive   = true
 }
 
 # Cloud Router Connection Port
