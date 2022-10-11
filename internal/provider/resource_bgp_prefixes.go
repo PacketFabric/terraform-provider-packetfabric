@@ -87,11 +87,11 @@ func resourceBgpPrefixesRead(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var bgpSettingsUUID string
-	if settingsUUID, ok := d.GetOk("bgp_settings_uuid"); !ok {
+	settingsUUID, ok := d.GetOk("bgp_settings_uuid")
+	if !ok {
 		return diag.Errorf("please provide a valid BGP Settings UUID")
-	} else {
-		bgpSettingsUUID = settingsUUID.(string)
 	}
+	bgpSettingsUUID = settingsUUID.(string)
 	var diags diag.Diagnostics
 	if prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID); len(prefixes) <= 0 && err != nil {
 		return diag.FromErr(err)
