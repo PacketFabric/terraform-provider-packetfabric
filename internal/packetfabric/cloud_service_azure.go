@@ -2,7 +2,6 @@ package packetfabric
 
 import "fmt"
 
-const azureBackboneURI = "/v2/services/backbone"
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
 const azureExpressRouteConnURI = "/v2.1/services/cloud-routers/%s/connections/azure"

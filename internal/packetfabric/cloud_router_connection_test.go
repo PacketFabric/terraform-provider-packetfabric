@@ -18,35 +18,6 @@ const _cloudConnBillingUUID = "a2115890-ed02-4795-a6dd-c485bec3529c"
 const _awsAccountID = "723804547887"
 const _accountUUID = "847548f7-9cde-4fe5-8751-32ff19825b7e"
 
-var _clConnectionCreateResp = AwsConnectionCreateResponse{
-	PublicIP:        "",
-	UUID:            _cloudConnUUID,
-	CustomerUUID:    _cloudConnCustomerUUID,
-	UserUUID:        _cloudConnUserUUID,
-	ServiceProvider: "aws",
-	PortType:        "hosted",
-	Settings: CloudRouterSettings{
-		AwsRegion:       "",
-		AwsHostedType:   "",
-		AwsConnectionID: "",
-		AwsAccountID:    "",
-	},
-	CloudCircuitID: _cloudCircuitID,
-	AccountUUID:    _cloudConnBillingUUID,
-	ServiceClass:   "metro",
-	Description:    _cloudConnDesc,
-	State:          "Requested",
-	Billing: AwsBilling{
-		AccountUUID:      "",
-		SubscriptionTerm: 0,
-	},
-	Speed: "1Gbps",
-	Components: AwsComponents{
-		IfdPortCircuitIDCust: "",
-		IfdPortCircuitIDPf:   "",
-	},
-}
-
 var _clConnUpdateExpectedResp = make([]CloudRouterConnectionReadResponse, 0)
 
 func _buildConnUpdateExpectedResp() {
