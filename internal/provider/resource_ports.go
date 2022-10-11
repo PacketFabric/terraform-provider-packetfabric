@@ -133,11 +133,11 @@ func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.Errorf("port circuit ID is a required field")
 	}
 	portCID = portCIDData.(string)
-	if descriptionData, ok := d.GetOk("description"); !ok {
+	descriptionData, ok := d.GetOk("description")
+	if !ok {
 		return diag.Errorf("description is a required field")
-	} else {
-		description = descriptionData.(string)
 	}
+	description = descriptionData.(string)
 	_, err := c.UpdatePort(autoneg, portCID, description)
 	if err != nil {
 		return diag.FromErr(err)
@@ -150,11 +150,11 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	var portCID string
-	if portCIDData, ok := d.GetOk("id"); !ok {
+	portCIDData, ok := d.GetOk("id")
+	if !ok {
 		return diag.Errorf("please provide a valid Port Circuit ID")
-	} else {
-		portCID = portCIDData.(string)
 	}
+	portCID = portCIDData.(string)
 	resp, err := c.DeletePort(portCID)
 	time.Sleep(30 * time.Second)
 	if err != nil {
