@@ -50,11 +50,13 @@ variable "pf_api_key" {
   type        = string
   description = "PacketFabric platform API access key"
   sensitive   = true
+  default     = "secret"
 }
 variable "pf_account_uuid" {
   type        = string
   description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
   sensitive   = true
+  default     = "secret"
 }
 variable "pf_api_server" {
   type        = string
