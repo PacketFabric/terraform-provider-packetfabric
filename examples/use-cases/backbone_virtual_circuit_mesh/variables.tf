@@ -30,7 +30,7 @@ variable "pf_vc_longhaul_type" {
 }
 variable "pf_vc_speed" {
   type    = string
-  default = "10Gbps"
+  default = "10Gbps" # 1Gbps
 }
 variable "pf_vc_subterm" {
   type    = number
@@ -40,7 +40,7 @@ variable "pf_vc_subterm" {
 variable "pf_port1" {
   type        = string
   description = "Port OpenColo-Santa Clara (SFO13)"
-  default     = "PF-AP-SFO13-1748214" # port to update
+  default     = "PF-AP-SFO13-1748214"
 }
 variable "pf_port2" {
   type        = string
@@ -74,57 +74,57 @@ variable "pf_vc_vlan1" {
 }
 variable "pf_vc_vlan2" {
   type    = number
-  default = 100
+  default = 102
 }
 variable "pf_vc_vlan3" {
   type    = number
-  default = 101
+  default = 103
 }
 variable "pf_vc_vlan4" {
   type    = number
-  default = 102
+  default = 104
 }
 variable "pf_vc_vlan5" {
   type    = number
-  default = 103
+  default = 105
 }
 variable "pf_vc_vlan6" {
   type    = number
-  default = 104
+  default = 106
 }
 variable "pf_vc_vlan7" {
   type    = number
-  default = 105
+  default = 107
 }
 variable "pf_vc_vlan8" {
   type    = number
-  default = 106
+  default = 108
 }
 variable "pf_vc_vlan9" {
   type    = number
-  default = 107
+  default = 109
 }
 variable "pf_vc_vlan10" {
   type    = number
-  default = 108
+  default = 110
 }
 variable "pf_vc_vlan11" {
   type    = number
-  default = 109
+  default = 111
 }
 variable "pf_vc_vlan12" {
   type    = number
-  default = 110
+  default = 112
 }
 variable "pf_vc_vlan13" {
   type    = number
-  default = 111
+  default = 113
 }
 variable "pf_vc_vlan14" {
   type    = number
-  default = 112
+  default = 114
 }
 variable "pf_vc_vlan15" {
   type    = number
-  default = 113
+  default = 115
 }
