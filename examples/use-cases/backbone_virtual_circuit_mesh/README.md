@@ -3,6 +3,8 @@
 This use case shows an example on how to use the PacketFabric Terraform provider 
 to automate the creation of a mesh of Backbone Virtual Circuit between the 6 ports.
 
+![Deployment Diagram](./images/diagram_mesh.png)
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
