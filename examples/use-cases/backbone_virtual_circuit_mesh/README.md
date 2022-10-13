@@ -14,6 +14,7 @@ to automate the creation of a mesh of Backbone Virtual Circuit between the 6 por
 ## Terraform resources deployed
 
 - resource **"random_pet"**: Get a random pet name (use to name objects created)
+- resource **"time_sleep"**: Wait few seconds after each VC creation
 - resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between the 6 ports
 
 

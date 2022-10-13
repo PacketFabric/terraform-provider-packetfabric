@@ -18,7 +18,7 @@ resource "random_pet" "name" {}
 # var.pf_port2 - var.pf_port3 - VLAN 5
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc1"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port2
@@ -36,12 +36,24 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+}
+
+resource "time_sleep" "wait_vc1" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc1
+  ]
+}
+resource "null_resource" "next_vc1" {
+  depends_on = [
+    time_sleep.wait_vc1
+  ]
 }
 
 # var.pf_port1 - var.pf_port2
 resource "packetfabric_backbone_virtual_circuit" "vc2" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc2"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port1
@@ -59,12 +71,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc2" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc1
+  ]
+}
+
+resource "time_sleep" "wait_vc2" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc2
+  ]
+}
+resource "null_resource" "next_vc2" {
+  depends_on = [
+    time_sleep.wait_vc2
+  ]
 }
 
 # var.pf_port1 - var.pf_port5
 resource "packetfabric_backbone_virtual_circuit" "vc3" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc3"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port1
@@ -82,13 +109,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc3" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc2
+  ]
 }
 
+resource "time_sleep" "wait_vc3" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc3
+  ]
+}
+resource "null_resource" "next_vc3" {
+  depends_on = [
+    time_sleep.wait_vc3
+  ]
+}
 
 # var.pf_port1 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc4" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc4"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port1
@@ -106,13 +147,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc4" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc3
+  ]
 }
 
+resource "time_sleep" "wait_vc4" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc4
+  ]
+}
+resource "null_resource" "next_vc4" {
+  depends_on = [
+    time_sleep.wait_vc4
+  ]
+}
 
 # var.pf_port1 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc5" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc5"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port1
@@ -130,12 +185,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc5" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc4
+  ]
+}
+
+resource "time_sleep" "wait_vc5" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc5
+  ]
+}
+resource "null_resource" "next_vc5" {
+  depends_on = [
+    time_sleep.wait_vc5
+  ]
 }
 
 # var.pf_port1 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc6" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc6"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port1
@@ -153,12 +223,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc6" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc5
+  ]
+}
+
+resource "time_sleep" "wait_vc6" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc6
+  ]
+}
+resource "null_resource" "next_vc6" {
+  depends_on = [
+    time_sleep.wait_vc6
+  ]
 }
 
 # var.pf_port2 - var.pf_port5
 resource "packetfabric_backbone_virtual_circuit" "vc7" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc7"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port2
@@ -176,12 +261,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc7" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc6
+  ]
+}
+
+resource "time_sleep" "wait_vc7" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc7
+  ]
+}
+resource "null_resource" "next_vc7" {
+  depends_on = [
+    time_sleep.wait_vc7
+  ]
 }
 
 # var.pf_port2 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc8" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc8"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port2
@@ -199,12 +299,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc8" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc7
+  ]
+}
+
+resource "time_sleep" "wait_vc8" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc8
+  ]
+}
+resource "null_resource" "next_vc8" {
+  depends_on = [
+    time_sleep.wait_vc8
+  ]
 }
 
 # var.pf_port2 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc9" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc9"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port2
@@ -222,12 +337,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc9" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc8
+  ]
+}
+
+resource "time_sleep" "wait_vc9" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc9
+  ]
+}
+resource "null_resource" "next_vc9" {
+  depends_on = [
+    time_sleep.wait_vc9
+  ]
 }
 
 # var.pf_port5 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc10" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc10"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port5
@@ -245,12 +375,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc10" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc9
+  ]
+}
+
+resource "time_sleep" "wait_vc10" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc10
+  ]
+}
+resource "null_resource" "next_vc10" {
+  depends_on = [
+    time_sleep.wait_vc10
+  ]
 }
 
 # var.pf_port5 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc11" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc11"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port5
@@ -268,12 +413,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc11" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc10
+  ]
+}
+
+resource "time_sleep" "wait_vc11" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc11
+  ]
+}
+resource "null_resource" "next_vc11" {
+  depends_on = [
+    time_sleep.wait_vc11
+  ]
 }
 
 # var.pf_port5 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc12" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc12"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port5
@@ -291,12 +451,26 @@ resource "packetfabric_backbone_virtual_circuit" "vc12" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc11
+  ]
 }
 
+resource "time_sleep" "wait_vc12" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc12
+  ]
+}
+resource "null_resource" "next_vc12" {
+  depends_on = [
+    time_sleep.wait_vc12
+  ]
+}
 # var.pf_port4 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc13" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc13"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port4
@@ -314,12 +488,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc13" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc12
+  ]
+}
+
+resource "time_sleep" "wait_vc13" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc13
+  ]
+}
+resource "null_resource" "next_vc13" {
+  depends_on = [
+    time_sleep.wait_vc13
+  ]
 }
 
 # var.pf_port4 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc14" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc14"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port4
@@ -337,12 +526,27 @@ resource "packetfabric_backbone_virtual_circuit" "vc14" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc13
+  ]
+}
+
+resource "time_sleep" "wait_vc14" {
+  create_duration = "3s"
+  depends_on = [
+    packetfabric_backbone_virtual_circuit.vc14
+  ]
+}
+resource "null_resource" "next_vc14" {
+  depends_on = [
+    time_sleep.wait_vc14
+  ]
 }
 
 # var.pf_port6 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc15" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.tag_name}-${random_pet.name.id}-vc15"
   epl         = false
   interface_a {
     port_circuit_id = var.pf_port6
@@ -360,4 +564,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc15" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+  depends_on = [
+    null_resource.next_vc14
+  ]
 }

@@ -23,7 +23,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resource **"aws_route_table"**: Create route table for the VPCs
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
 - resource & data source **"packetfabric_cs_aws_hosted_connection"**: Create a AWS Hosted Cloud Connection 
-- resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
+- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 <!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
