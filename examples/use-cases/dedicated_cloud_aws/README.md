@@ -26,7 +26,7 @@ to automate the creation of a Dedicated Cloud Connection between PacketFabric an
 <!--  - data source **"packetfabric_locations"**: Get PacketFabric available locations -->
 <!--  - data source **"aws_dx_locations"**: Get AWS available locations -->
 <!--  - resource & data source **"aws_dx_connection"**: Create a Direct Connect Connection in AWS -->
-<!--  - resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side -->
+<!--  - resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side -->
 <!--  - resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect using AWS LOA -->
 <!--  - resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between a port and the AWS Dedicated Cloud interface  -->
 <!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
