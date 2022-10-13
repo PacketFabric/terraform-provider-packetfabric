@@ -30,7 +30,7 @@ variable "pf_vc_longhaul_type" {
 }
 variable "pf_vc_speed" {
   type    = string
-  default = "10Gbps" # 1Gbps
+  default = "1Gbps"
 }
 variable "pf_vc_subterm" {
   type    = number
