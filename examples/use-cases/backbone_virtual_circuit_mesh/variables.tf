@@ -70,7 +70,7 @@ variable "pf_port6" {
 
 variable "pf_vc_vlan1" {
   type    = number
-  default = 5
+  default = 101
 }
 variable "pf_vc_vlan2" {
   type    = number
