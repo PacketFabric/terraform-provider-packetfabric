@@ -1,6 +1,7 @@
 # List of PacketFabric Use Cases
 
-- [backbone_virtual_circuit](./backbone_virtual_circuit): create ports and virtual circuit(s)
+- [backbone_virtual_circuit](./backbone_virtual_circuit): create ports and virtual circuit
+- [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh): create a mesh between virtual circuits
 - [cloud_router_aws](./cloud_router_aws): connect 2 AWS region using a Cloud Router
 - [cloud_router_google_ipsec](./cloud_router_google_ipsec): connect GCP and a branch location, on-premises users, or a remote data center using a Cloud Router
 - [cloud_router_google_azure](./cloud_router_google_azure): connect GCP and Azure Clouds using a Cloud Router

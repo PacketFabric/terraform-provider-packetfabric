@@ -6,7 +6,7 @@
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables.
+1. Create the file ``secret.tfvars`` and update each variables as needed.
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

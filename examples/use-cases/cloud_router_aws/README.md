@@ -29,7 +29,7 @@ Terraform providers used: PacketFabric and AWS.
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
 - resource & data source **"packetfabric_cloud_router_connection_aws"**: Add AWS Direct Connect to the Cloud Router
-- resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
+- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
@@ -66,7 +66,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables.
+1. Create the file ``secret.tfvars`` and update each variables as needed.
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

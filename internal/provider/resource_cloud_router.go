@@ -31,7 +31,8 @@ func resourceCloudRouter() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Whether the cloud router is private or public. Deprecated.",
+				Description:  "Whether the cloud router is private or public.",
+				Deprecated:   "Deprecated. Remove this attribute's configuration as it is no longer used, and the attribute will be removed in the next major version of the provider.",
 			},
 			"asn": {
 				Type:        schema.TypeInt,
