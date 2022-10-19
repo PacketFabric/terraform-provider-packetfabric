@@ -7,6 +7,16 @@ google_compute_router_name=$3
 
 GCLOUD_LOCATION=$(command -v gcloud)
 echo "Using gcloud from $GCLOUD_LOCATION"
+
+if ! command -v gcloud --version &> /dev/null
+then
+    echo "gcloud --version could not be found"
+    # dummy values to avoid errors in terraform
+    echo "127.0.0.1/29" > cloud_router_ip_address.txt
+    echo "127.0.0.2/29" >  customer_router_ip_address.txt
+    exit
+fi
+
 gcloud --version
 
 # Remove old files

@@ -57,6 +57,10 @@
 
 **Impact**: Google Hosted Cloud and Cloud Router
 
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform/27360)](https://github.com/hashicorp/terraform/issues/27360) Add support for lifecycle meta-argument in modules
+
+**Impact**: Google Cloud Router
+
 - [![Issues](https://img.shields.io/github/issues/detail/state/IBM-Cloud/terraform-provider-ibm/3978)](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept
 
 **Impact**: IBM Hosted Cloud and Cloud Router

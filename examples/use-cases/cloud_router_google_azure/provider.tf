@@ -36,3 +36,6 @@ provider "azurerm" {
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
 }
+
+# create random name to use to name objects
+resource "random_pet" "name" {}
