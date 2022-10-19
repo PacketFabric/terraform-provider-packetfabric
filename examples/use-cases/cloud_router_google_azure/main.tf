@@ -89,6 +89,9 @@ module "gcloud_bgp_addresses" {
   module_depends_on = [
     packetfabric_cloud_router_connection_google.crc_1
   ]
+
+  # When "gcloud_bin_abs_path" changes, it should not trigger a replacement
+  # https://github.com/hashicorp/terraform/issues/27360
 }
 data "local_file" "cloud_router_ip_address" {
   filename = "${path.module}/cloud_router_ip_address.txt"
@@ -118,6 +121,15 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   # l3_address     = data.google_compute_interconnect_attachment.google_interconnect_1.customer_router_ip_address # PF side
   remote_address = data.local_file.cloud_router_ip_address.content    # Google side
   l3_address     = data.local_file.customer_router_ip_address.content # PF side
+
+  # # workaround until we can use lifecycle into Terraform gcloud Module
+  # # https://github.com/hashicorp/terraform/issues/27360
+  # lifecycle {
+  #   ignore_changes = [
+  #     remote_address,
+  #     l3_address
+  #   ]
+  # }
 }
 output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
@@ -173,6 +185,9 @@ module "gcloud_bgp_peer_update" {
   module_depends_on = [
     packetfabric_cloud_router_connection_google.crc_1
   ]
+
+  # When "gcloud_bin_abs_path" changes, it should not trigger a replacement
+  # https://github.com/hashicorp/terraform/issues/27360
 }
 
 ###################################################
