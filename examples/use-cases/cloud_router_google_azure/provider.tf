@@ -22,8 +22,9 @@ provider "packetfabric" {
 
 # Make sure you enabled Compute Engine API
 provider "google" {
-  project     = var.gcp_project_id
-  credentials = file(var.gcp_credentials)
+  project = var.gcp_project_id
+  # https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#credentials-1
+  credentials = file(var.gcp_credentials_path) # or use environment variable called GOOGLE_CREDENTIALS
   region      = var.gcp_region1
   zone        = var.gcp_zone1
 }
