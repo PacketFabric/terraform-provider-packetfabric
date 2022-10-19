@@ -76,13 +76,23 @@ resource "packetfabric_cloud_router_connection_google" "crc_1" {
 # Get the BGP Addresses using glcoud terraform module as a workaround
 module "gcloud_bgp_addresses" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source                   = "terraform-google-modules/gcloud/google"
-  version                  = "~> 2.0"
-  service_account_key_file = var.gcp_credentials
+  source  = "terraform-google-modules/gcloud/google"
+  version = "~> 2.0"
+
+  # when running locally with gcloud already installed
+  service_account_key_file = var.GOOGLE_CREDENTIALS
+  skip_download            = true
+  # when running in a CI/CD pipeline without glcoud installed
+  # use_tf_google_credentials_env_var = true
+  # skip_download                     = false
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
   create_cmd_entrypoint = "${path.module}/gcloud_bgp_addresses.sh"
   create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name}"
+
+  # no destroy needed
+  destroy_cmd_entrypoint = "echo"
+  destroy_cmd_body       = "skip"
 
   module_depends_on = [
     packetfabric_cloud_router_connection_google.crc_1
@@ -151,13 +161,22 @@ output "packetfabric_bgp_prefix_crbp_1" {
 # Update BGP Peer in the BGP session's Google Cloud Router
 module "gcloud_bgp_peer_update" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source                   = "terraform-google-modules/gcloud/google"
-  version                  = "~> 2.0"
-  service_account_key_file = var.gcp_credentials
+  source  = "terraform-google-modules/gcloud/google"
+  version = "~> 2.0"
+  # when running locally with gcloud already installed
+  service_account_key_file = var.GOOGLE_CREDENTIALS
+  skip_download            = true
+  # when running in a CI/CD pipeline without glcoud installed
+  # use_tf_google_credentials_env_var = true
+  # skip_download                     = false
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
   create_cmd_entrypoint = "${path.module}/gcloud_bgp_peer_update.sh"
   create_cmd_body       = "${var.gcp_project_id} ${var.gcp_region1} ${google_compute_router.google_router_1.name} ${var.pf_cr_asn}"
+
+  # no destroy needed
+  destroy_cmd_entrypoint = "echo"
+  destroy_cmd_body       = "skip"
 
   module_depends_on = [
     packetfabric_cloud_router_connection_google.crc_1
