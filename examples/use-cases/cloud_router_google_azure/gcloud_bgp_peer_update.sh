@@ -9,6 +9,12 @@ google_compute_router_asn=$4
 GCLOUD_LOCATION=$(command -v gcloud)
 echo "Using gcloud from $GCLOUD_LOCATION"
 
+if ! command -v gcloud --version &> /dev/null
+then
+    echo "gcloud --version could not be found"
+    exit
+fi
+
 gcloud --version
 
 echo "running gcloud compute routers describe $google_compute_router_name --project=$project --region=$region --format=json"
