@@ -24,6 +24,3 @@ provider "google" {
   region      = var.gcp_region1
   zone        = var.gcp_zone1
 }
-
-# create random name to use to name objects
-resource "random_pet" "name" {}
