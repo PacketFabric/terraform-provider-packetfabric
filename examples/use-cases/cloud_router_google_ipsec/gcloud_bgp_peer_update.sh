@@ -1,5 +1,5 @@
-#!/bin/sh
-# set -x
+#!/bin/bash
+set -x
 
 project=$1
 region=$2
