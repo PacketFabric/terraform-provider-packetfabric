@@ -36,6 +36,3 @@ provider "aws" {
   region     = var.aws_region2
   alias      = "region2"
 }
-
-# Create random name to use to name objects
-resource "random_pet" "name" {}
