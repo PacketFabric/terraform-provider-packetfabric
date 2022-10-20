@@ -40,38 +40,5 @@
 #   ]
 # }
 
-# # Define the route tables
-# resource "aws_route_table" "route_table_1" {
-#   provider = aws
-#   vpc_id   = aws_vpc.vpc_1.id
-#   # internet gw
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.gw_1.id
-#   }
-#   # transit gw
-#   route {
-#     cidr_block = var.vpc_cidr2
-#     transit_gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
-#   }
-#   tags = {
-#     Name = "${var.tag_name}-${random_pet.name.id}"
-#   }
-# }
-# resource "aws_route_table" "route_table_2" {
-#   provider = aws.region2
-#   vpc_id   = aws_vpc.vpc_2.id
-#   # internet gw
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.gw_2.id
-#   }
-#   # transit gw
-#   route {
-#     cidr_block = var.vpc_cidr1
-#     transit_gateway_id = aws_ec2_transit_gateway.transit_gw_2.id
-#   }
-#   tags = {
-#     Name = "${var.tag_name}-${random_pet.name.id}"
-#   }
-# }
+# The transit gateway to VPC attachment will propogate the route from the TGW to 
+# the DX gateway all the way to the VPC and the subnets
