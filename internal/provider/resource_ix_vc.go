@@ -111,10 +111,10 @@ func resourceIxVC() *schema.Resource {
 					},
 				},
 			},
-			"aggregate_capacity_id": {
+			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "ID of the aggregate capacity container from which to substract this VC's speed.",
+				Description: "ID of the flex bandwidth container from which to substract this VC's speed.",
 			},
 		},
 	}
@@ -193,8 +193,8 @@ func extractIXVC(d *schema.ResourceData) packetfabric.IxVirtualCircuit {
 	for _, interf := range d.Get("interface").(*schema.Set).List() {
 		ixVC.Interface = extractIXVcInterface(interf.(map[string]interface{}))
 	}
-	if aggCapID, ok := d.GetOk("aggregate_capacity_id"); ok {
-		ixVC.AggregateCapacityID = aggCapID.(string)
+	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
+		ixVC.FlexBandwidthID = flexBandID.(string)
 	}
 	return ixVC
 }
