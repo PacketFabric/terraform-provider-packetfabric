@@ -171,10 +171,10 @@ func dataSourceVcRequests() *schema.Resource {
 							Computed:    true,
 							Description: "If true, the accepting customer can choose to make this VC untagged. This will only be False if there is only one logical interface on the requesting customer's port and that single logical interface is untagged.",
 						},
-						"aggregate_capacity_id": {
+						"flex_bandwidth_id": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The aggregate capacity ID.",
+							Description: "The flex bandwidth ID.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
@@ -225,7 +225,7 @@ func flattenVCRequests(requests *[]packetfabric.VcRequest) []interface{} {
 			flatten["rate_limit_out"] = request.RateLimitOut
 			flatten["service_name"] = request.ServiceName
 			flatten["allow_untagged_z"] = request.AllowUntaggedZ
-			flatten["aggregate_capacity_id"] = request.AggregateCapacityID
+			flatten["flex_bandwidth_id"] = request.FlexBandwidthID
 			flatten["time_created"] = request.TimeCreated
 			flatten["time_updated"] = request.TimeUpdated
 			flattens[i] = flatten

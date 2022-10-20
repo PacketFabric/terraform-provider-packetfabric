@@ -40,7 +40,7 @@ type IxVirtualCircuit struct {
 	RateLimitOut        int        `json:"rate_limit_out,omitempty"`
 	Bandwidth           Bandwidth  `json:"bandwidth,omitempty"`
 	Interface           Interfaces `json:"interface,omitempty"`
-	AggregateCapacityID string     `json:"aggregate_capacity_id,omitempty"`
+	FlexBandwidthID		string     `json:"flex_bandwidth_id,omitempty"`
 }
 
 type ServiceSettingsUpdate struct {
@@ -130,7 +130,7 @@ type Services struct {
 	Description         string             `json:"description,omitempty"`
 	TimeCreated         string             `json:"time_created,omitempty"`
 	TimeUpdated         string             `json:"time_updated,omitempty"`
-	AggregateCapacityID interface{}        `json:"aggregate_capacity_id,omitempty"`
+	FlexBandwidthID     interface{}        `json:"flex_bandwidth_id,omitempty"`
 	AccountUUID         string             `json:"account_uuid,omitempty"`
 	RateLimitIn         int                `json:"rate_limit_in,omitempty"`
 	RateLimitOut        int                `json:"rate_limit_out,omitempty"`
@@ -179,7 +179,7 @@ type VcRequest struct {
 	RateLimitOut        int          `json:"rate_limit_out,omitempty"`
 	ServiceName         string       `json:"service_name,omitempty"`
 	AllowUntaggedZ      bool         `json:"allow_untagged_z,omitempty"`
-	AggregateCapacityID string       `json:"aggregate_capacity_id,omitempty"`
+	FlexBandwidthID 	string       `json:"flex_bandwidth_id,omitempty"`
 	TimeCreated         string       `json:"time_created,omitempty"`
 	TimeUpdated         string       `json:"time_updated,omitempty"`
 }
@@ -193,7 +193,7 @@ type ThirdPartyVC struct {
 	Bandwidth           Bandwidth `json:"bandwidth,omitempty"`
 	Interface           Interface `json:"interface,omitempty"`
 	ServiceUUID         string    `json:"service_uuid,omitempty"`
-	AggregateCapacityID string    `json:"aggregate_capacity_id,omitempty"`
+	FlexBandwidthID     string    `json:"flex_bandwidth_id,omitempty"`
 }
 
 type ServiceMessage struct {

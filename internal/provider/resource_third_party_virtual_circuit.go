@@ -114,10 +114,10 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 				Optional:    true,
 				Description: "UUID of the marketplace service being requested.",
 			},
-			"aggregate_capacity_id": {
+			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The circuit ID of the aggregate capacity container.",
+				Description: "The circuit ID of the flex bandwidth container.",
 			},
 		},
 	}
@@ -194,8 +194,8 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
 		thidPartyVC.ServiceUUID = serviceUUID.(string)
 	}
-	if aggregateCap, ok := d.GetOk("aggregate_capacity_id"); ok {
-		thidPartyVC.AggregateCapacityID = aggregateCap.(string)
+	if flexBandwith, ok := d.GetOk("flex_bandwidth_id"); ok {
+		thidPartyVC.FlexBandwidthID = flexBandwith.(string)
 	}
 	return thidPartyVC
 }
