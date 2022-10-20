@@ -15,11 +15,17 @@ Terraform providers used: PacketFabric and AWS.
 
 ## Terraform resources deployed
 
+This example uses AWS Private Gateway, if you want to see an example with AWS Transit Gatway, 
+comment the code in `aws_private_gateway.tf` and `aws_dx_private_vif.tf` and comment out 
+the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf`.
+
 - resource **"random_pet"**: Get a random pet name (use to name objects created)
 - resource **"aws_vpc"**: Create VPC in 2 AWS regions
 - resource **"aws_subnet"**: Create subnet in VPCs
 - resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
-- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (or Private VIF - Virtual Interface)
+- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (used with Private VIF - Virtual Interface)
+- resource **"aws_ec2_transit_gateway"**: Create Virtual Transit Gateway (used with Transit VIF - Virtual Interface) (**code commented**)
+- resource **"aws_ec2_transit_gateway_vpc_attachment"**: Attached the Virtual Transit Gateway to a VPC (**code commented**)
 - resource **"aws_route_table"**: Create route table for the VPCs
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
 - resource **"aws_security_group"**: Create Security groups for future EC2 instances
@@ -34,7 +40,8 @@ Terraform providers used: PacketFabric and AWS.
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
 - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
-- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
+- resource **"aws_dx_transit_virtual_interface"**: Create Direct Connect Transit Virtual interfaces (**code commented**)
+- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with s Virtual Private Gateway or Virtual Transit Gateway
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
 - resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
