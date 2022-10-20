@@ -45,6 +45,27 @@ resource "packetfabric_cloud_router_connection_google" "crc_1" {
   maybe_nat                   = var.pf_crc_maybe_nat
 }
 
+# # Verify Terraform gcloud module works in your environment
+# module "gcloud_version" {
+#   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
+#   source  = "terraform-google-modules/gcloud/google"
+#   version = "~> 2.0"
+#   # when running locally with gcloud already installed
+#   service_account_key_file = var.GOOGLE_CREDENTIALS
+#   skip_download            = true
+#   # when running in a CI/CD pipeline without glcoud installed
+#   # use_tf_google_credentials_env_var = true
+#   # skip_download                     = false
+
+#   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
+#   create_cmd_entrypoint = "gcloud"
+#   create_cmd_body       = "version"
+
+#   # no destroy needed
+#   destroy_cmd_entrypoint = "echo"
+#   destroy_cmd_body       = "skip"
+# }
+
 # From both sides: Configure BGP.
 
 # Because the BGP session is created automatically, the only way to get the BGP Addresses it is to use gcloud
