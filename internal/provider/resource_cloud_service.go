@@ -30,7 +30,7 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 	fn := func() (*packetfabric.ServiceState, error) {
 		return c.GetCloudServiceStatus(cloudCID.(string))
 	}
-	go c.CheckServiceStatus(deleteOkCh, err, fn)
+	go c.CheckServiceStatus(deleteOkCh, fn)
 	if !<-deleteOkCh {
 		return diag.FromErr(err)
 	}

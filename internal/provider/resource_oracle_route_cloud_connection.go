@@ -34,10 +34,10 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Description:  "Circuit ID of the target cloud router.",
 			},
 			"maybe_nat": {
-				Type:         schema.TypeBool,
-				Optional:     true,
-				Default:      false,
-				Description:  "Whether or not this connection is intended for NAT later.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether or not this connection is intended for NAT later.",
 			},
 			"vc_ocid": {
 				Type:         schema.TypeString,
@@ -101,7 +101,7 @@ func resourceOracleCloudRouteConnCreate(ctx context.Context, d *schema.ResourceD
 		fn := func() (*packetfabric.ServiceState, error) {
 			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
 		}
-		go c.CheckServiceStatus(createOkCh, err, fn)
+		go c.CheckServiceStatus(createOkCh, fn)
 		if !<-createOkCh {
 			return diag.FromErr(err)
 		}

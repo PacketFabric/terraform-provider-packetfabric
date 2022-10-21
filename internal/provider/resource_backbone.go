@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -117,6 +118,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	var diags diag.Diagnostics
 	awsBack := extractBack(d)
 	resp, err := fn(awsBack)
+	// Adding sleep time to avoid concurrent overlay.
+	time.Sleep(10 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -220,8 +223,12 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 	if longhaulType != nil {
 		bandwidth.LonghaulType = longhaulType.(string)
 	}
-	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
-	bandwidth.Speed = bw["speed"].(string)
+	if subsTerm := bw["subscription_term"]; subsTerm != nil {
+		bandwidth.SubscriptionTerm = subsTerm.(int)
+	}
+	if speed := bw["speed"]; speed != nil {
+		bandwidth.Speed = speed.(string)
+	}
 	return bandwidth
 }
 

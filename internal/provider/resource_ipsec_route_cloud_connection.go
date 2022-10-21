@@ -159,7 +159,7 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 		fn := func() (*packetfabric.ServiceState, error) {
 			return c.GetCloudConnectionStatus(cid.(string), resp.VcCircuitID)
 		}
-		go c.CheckIPSecStatus(createOkCh, err, fn)
+		go c.CheckIPSecStatus(createOkCh, fn)
 		if !<-createOkCh {
 			return diag.FromErr(err)
 		}
