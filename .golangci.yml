@@ -1,91 +1,16 @@
-linters-settings:
-  funlen:
-    lines: 100
-    statements: 150
-  goconst:
-    min-occurrences: 5
-  gocyclo:
-    min-complexity: 20
-  golint:
-    min-confidence: 0
-  govet:
-    check-shadowing: true
-    enable-all: true
-    disable:
-      - fieldalignment
-  lll:
-    line-length: 80
-    tab-width: 4
-  maligned:
-    suggest-new: true
-  misspell:
-    locale: US
-
 linters:
   disable-all: true
   enable:
-    - asciicheck
-    - bodyclose
-    - deadcode
-    - depguard
-    - dupl
-    - durationcheck
+    - gofmt
     - errcheck
-    - errorlint
-    - exhaustive
-    - exportloopref
-    - funlen
-    - gochecknoinits
-    - goconst
-    - gocritic
-    - gocyclo
-    - godot
-    - gofumpt
-    - goimports
-    - goprintffuncname
-    - gosec
     - gosimple
     - govet
-    - importas
     - ineffassign
-    - lll
-    - misspell
-    - nakedret
-    - nilerr
-    - noctx
-    - nolintlint
-    - prealloc
-    - predeclared
-    - revive
-    - rowserrcheck
-    - sqlclosecheck
     - staticcheck
-    - structcheck
-    - tparallel
     - typecheck
-    - unconvert
-    - unparam
     - unused
-    - varcheck
-    - wastedassign
-    - whitespace
-
-issues:
-  exclude:
-    - Using the variable on range scope `tt` in function literal
-    - Using the variable on range scope `tc` in function literal
-  exclude-rules:
-    - path: "_test\\.go"
-      linters:
-        - funlen
-        - dupl
-        - goconst
-    - source: "^//go:generate "
-      linters:
-        - lll
-    - source: "`json:"
-      linters:
-        - lll
+    - godot
+    - unused
 
 run:
   timeout: 2m
