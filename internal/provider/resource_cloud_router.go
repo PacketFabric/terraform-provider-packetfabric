@@ -174,7 +174,7 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 			fn := func() (*packetfabric.ServiceState, error) {
 				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
 			}
-			go c.CheckServiceStatus(deleteOk, err, fn)
+			go c.CheckServiceStatus(deleteOk, fn)
 			if !<-deleteOk {
 				return diag.FromErr(err)
 			}

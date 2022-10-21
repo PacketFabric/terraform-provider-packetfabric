@@ -28,10 +28,10 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Computed: true,
 			},
 			"maybe_nat": {
-				Type:         schema.TypeBool,
-				Optional:     true,
-				Default:      false,
-				Description:  "Circuit ID of the target cloud router.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Circuit ID of the target cloud router.",
 			},
 			"circuit_id": {
 				Type:         schema.TypeString,
@@ -119,7 +119,7 @@ func resourceIBMCloudRouteConnCreate(ctx context.Context, d *schema.ResourceData
 		fn := func() (*packetfabric.ServiceState, error) {
 			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
 		}
-		go c.CheckServiceStatus(createOkCh, err, fn)
+		go c.CheckServiceStatus(createOkCh, fn)
 		if !<-createOkCh {
 			return diag.FromErr(err)
 		}

@@ -100,7 +100,7 @@ func resourceGoogleCloudRouterConnCreate(ctx context.Context, d *schema.Resource
 		fn := func() (*packetfabric.ServiceState, error) {
 			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
 		}
-		go c.CheckServiceStatus(createOkCh, err, fn)
+		go c.CheckServiceStatus(createOkCh, fn)
 		if !<-createOkCh {
 			return diag.FromErr(err)
 		}

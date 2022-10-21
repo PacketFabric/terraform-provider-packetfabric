@@ -183,8 +183,7 @@ func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*
 
 func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*CloudServiceConnCreateResp, error) {
 	expressRouteResp := &CloudServiceConnCreateResp{}
-	formatedURI := fmt.Sprintf(azureExpressRouteURI)
-	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
+	_, err := c.sendRequest(azureExpressRouteURI, postMethod, azureExpressRoute, expressRouteResp)
 	if err != nil {
 		return nil, err
 	}

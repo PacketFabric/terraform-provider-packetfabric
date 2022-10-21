@@ -63,8 +63,8 @@ func init() {
 func Test_CreateBgpSession(t *testing.T) {
 	expectedPayload := BgpSession{}
 	expectedResp := BgpSessionCreateResp{}
-	json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload)
-	json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp)
+	_ = json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload)
+	_ = json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateBgpSession, expectedPayload, expectedResp, _buildBgpSessionCreateResp(), "bgp-session-create", t)
 }
 

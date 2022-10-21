@@ -39,14 +39,13 @@ type Status struct {
 	LastWorkflow LastWorkflow `json:"last_workflow"`
 }
 
-func (c *PFClient) CheckServiceStatus(ch chan bool, err error, fn func() (*ServiceState, error)) {
+func (c *PFClient) CheckServiceStatus(ch chan bool, fn func() (*ServiceState, error)) {
 	ticker := time.NewTicker(5 * time.Second)
 	var count int
 	for range ticker.C {
 		count = count + 1
 		state, serviceErr := fn()
 		if serviceErr != nil && count == 0 {
-			err = serviceErr
 			ch <- false
 		}
 		if state != nil {
@@ -66,14 +65,13 @@ func (c *PFClient) CheckServiceStatus(ch chan bool, err error, fn func() (*Servi
 	}
 }
 
-func (c *PFClient) CheckIPSecStatus(ch chan bool, err error, fn func() (*ServiceState, error)) {
+func (c *PFClient) CheckIPSecStatus(ch chan bool, fn func() (*ServiceState, error)) {
 	ticker := time.NewTicker(5 * time.Second)
 	var count int
 	for range ticker.C {
 		count = count + 1
 		state, serviceErr := fn()
 		if serviceErr != nil && count == 0 {
-			err = serviceErr
 			ch <- false
 		}
 		if state != nil {
