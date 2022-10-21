@@ -59,9 +59,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc2" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc1
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc1
+  # ]
 }
 
 # var.pf_port1 - var.pf_port5
@@ -85,9 +85,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc3" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc2
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc2
+  # ]
 }
 
 # var.pf_port1 - var.pf_port4
@@ -111,9 +111,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc4" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc3
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc3
+  # ]
 }
 
 # var.pf_port1 - var.pf_port6
@@ -137,9 +137,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc5" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc4
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc4
+  # ]
 }
 
 # var.pf_port1 - var.pf_port3
@@ -163,9 +163,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc6" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc5
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc5
+  # ]
 }
 
 # var.pf_port2 - var.pf_port5
@@ -189,9 +189,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc7" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc6
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc6
+  # ]
 }
 
 # var.pf_port2 - var.pf_port4
@@ -215,9 +215,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc8" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc7
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc7
+  # ]
 }
 
 # var.pf_port2 - var.pf_port6
@@ -241,9 +241,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc9" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc8
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc8
+  # ]
 }
 
 # var.pf_port5 - var.pf_port4
@@ -267,9 +267,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc10" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc9
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc9
+  # ]
 }
 
 # var.pf_port5 - var.pf_port6
@@ -293,9 +293,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc11" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc10
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc10
+  # ]
 }
 
 # var.pf_port5 - var.pf_port3
@@ -319,9 +319,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc12" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc11
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc11
+  # ]
 }
 
 # var.pf_port4 - var.pf_port6
@@ -345,9 +345,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc13" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc12
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc12
+  # ]
 }
 
 # var.pf_port4 - var.pf_port3
@@ -371,9 +371,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc14" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc13
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc13
+  # ]
 }
 
 # var.pf_port6 - var.pf_port3
@@ -397,7 +397,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc15" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
-  depends_on = [
-    packetfabric_backbone_virtual_circuit.vc14
-  ]
+  # depends_on = [
+  #   packetfabric_backbone_virtual_circuit.vc14
+  # ]
 }
