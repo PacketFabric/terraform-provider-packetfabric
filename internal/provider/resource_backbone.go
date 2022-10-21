@@ -220,8 +220,12 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 	if longhaulType != nil {
 		bandwidth.LonghaulType = longhaulType.(string)
 	}
-	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
-	bandwidth.Speed = bw["speed"].(string)
+	if subsTerm := bw["subscription_term"]; subsTerm != nil {
+		bandwidth.SubscriptionTerm = subsTerm.(int)
+	}
+	if speed := bw["speed"]; speed != nil {
+		bandwidth.Speed = speed.(string)
+	}
 	return bandwidth
 }
 
