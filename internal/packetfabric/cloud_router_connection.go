@@ -351,7 +351,7 @@ func (c *PFClient) DeleteAwsConnection(cID, connCid string) (*ConnectionDeleteRe
 		return nil, err
 	}
 	// Upon requested on issue #157
-	time.Sleep(30 * time.Second)
+	time.Sleep(20 * time.Second)
 	return expectedResp, nil
 }
 
