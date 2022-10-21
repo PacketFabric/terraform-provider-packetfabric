@@ -7,7 +7,6 @@ linters:
     - staticcheck # bugs, metalinter
     - typecheck # bugs
     - ineffassign # unused
-    - unused # unused
     # - godot # style, comment
     # - gosimple # style
     # - gofmt # format
