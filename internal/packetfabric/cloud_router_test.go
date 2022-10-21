@@ -69,7 +69,7 @@ func Test_ReadCloudRouter(t *testing.T) {
 
 func Test_ListCloudRouters(t *testing.T) {
 	var expectedResp []CloudRouterResponse
-	json.Unmarshal(_buildMockCloudRouterResps(), &expectedResp)
+	_ = json.Unmarshal(_buildMockCloudRouterResps(), &expectedResp)
 	cTest.runFakeHttpServer(_callListCloudRouters, nil, expectedResp, _buildMockCloudRouterResps(), "list-cloud-routers", t)
 }
 

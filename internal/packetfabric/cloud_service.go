@@ -32,15 +32,15 @@ type BackBoneInterface struct {
 }
 
 type IxVirtualCircuit struct {
-	RoutingID           string     `json:"routing_id,omitempty"`
-	Market              string     `json:"market,omitempty"`
-	Description         string     `json:"description,omitempty"`
-	Asn                 int        `json:"asn,omitempty"`
-	RateLimitIn         int        `json:"rate_limit_in,omitempty"`
-	RateLimitOut        int        `json:"rate_limit_out,omitempty"`
-	Bandwidth           Bandwidth  `json:"bandwidth,omitempty"`
-	Interface           Interfaces `json:"interface,omitempty"`
-	FlexBandwidthID		string     `json:"flex_bandwidth_id,omitempty"`
+	RoutingID       string     `json:"routing_id,omitempty"`
+	Market          string     `json:"market,omitempty"`
+	Description     string     `json:"description,omitempty"`
+	Asn             int        `json:"asn,omitempty"`
+	RateLimitIn     int        `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int        `json:"rate_limit_out,omitempty"`
+	Bandwidth       Bandwidth  `json:"bandwidth,omitempty"`
+	Interface       Interfaces `json:"interface,omitempty"`
+	FlexBandwidthID string     `json:"flex_bandwidth_id,omitempty"`
 }
 
 type ServiceSettingsUpdate struct {
@@ -120,22 +120,22 @@ type BackboneDeleteResp struct {
 }
 
 type Services struct {
-	VcCircuitID         string             `json:"vc_circuit_id,omitempty"`
-	State               string             `json:"state,omitempty"`
-	ServiceType         string             `json:"service_type,omitempty"`
-	ServiceClass        string             `json:"service_class,omitempty"`
-	Mode                string             `json:"mode,omitempty"`
-	Connected           bool               `json:"connected,omitempty"`
-	Bandwidth           ServiceBandwidth   `json:"bandwidth,omitempty"`
-	Description         string             `json:"description,omitempty"`
-	TimeCreated         string             `json:"time_created,omitempty"`
-	TimeUpdated         string             `json:"time_updated,omitempty"`
-	FlexBandwidthID     interface{}        `json:"flex_bandwidth_id,omitempty"`
-	AccountUUID         string             `json:"account_uuid,omitempty"`
-	RateLimitIn         int                `json:"rate_limit_in,omitempty"`
-	RateLimitOut        int                `json:"rate_limit_out,omitempty"`
-	CustomerUUID        string             `json:"customer_uuid,omitempty"`
-	Interfaces          []ServiceInterface `json:"interfaces,omitempty"`
+	VcCircuitID     string             `json:"vc_circuit_id,omitempty"`
+	State           string             `json:"state,omitempty"`
+	ServiceType     string             `json:"service_type,omitempty"`
+	ServiceClass    string             `json:"service_class,omitempty"`
+	Mode            string             `json:"mode,omitempty"`
+	Connected       bool               `json:"connected,omitempty"`
+	Bandwidth       ServiceBandwidth   `json:"bandwidth,omitempty"`
+	Description     string             `json:"description,omitempty"`
+	TimeCreated     string             `json:"time_created,omitempty"`
+	TimeUpdated     string             `json:"time_updated,omitempty"`
+	FlexBandwidthID interface{}        `json:"flex_bandwidth_id,omitempty"`
+	AccountUUID     string             `json:"account_uuid,omitempty"`
+	RateLimitIn     int                `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int                `json:"rate_limit_out,omitempty"`
+	CustomerUUID    string             `json:"customer_uuid,omitempty"`
+	Interfaces      []ServiceInterface `json:"interfaces,omitempty"`
 }
 type ServiceBandwidth struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -167,33 +167,33 @@ type ServiceInterface struct {
 }
 
 type VcRequest struct {
-	VcRequestUUID       string       `json:"vc_request_uuid,omitempty"`
-	VcCircuitID         string       `json:"vc_circuit_id,omitempty"`
-	FromCustomer        FromCustomer `json:"from_customer,omitempty"`
-	ToCustomer          ToCustomer   `json:"to_customer,omitempty"`
-	Status              string       `json:"status,omitempty"`
-	RequestType         string       `json:"request_type,omitempty"`
-	Text                string       `json:"text,omitempty"`
-	Bandwidth           Bandwidth    `json:"bandwidth,omitempty"`
-	RateLimitIn         int          `json:"rate_limit_in,omitempty"`
-	RateLimitOut        int          `json:"rate_limit_out,omitempty"`
-	ServiceName         string       `json:"service_name,omitempty"`
-	AllowUntaggedZ      bool         `json:"allow_untagged_z,omitempty"`
-	FlexBandwidthID 	string       `json:"flex_bandwidth_id,omitempty"`
-	TimeCreated         string       `json:"time_created,omitempty"`
-	TimeUpdated         string       `json:"time_updated,omitempty"`
+	VcRequestUUID   string       `json:"vc_request_uuid,omitempty"`
+	VcCircuitID     string       `json:"vc_circuit_id,omitempty"`
+	FromCustomer    FromCustomer `json:"from_customer,omitempty"`
+	ToCustomer      ToCustomer   `json:"to_customer,omitempty"`
+	Status          string       `json:"status,omitempty"`
+	RequestType     string       `json:"request_type,omitempty"`
+	Text            string       `json:"text,omitempty"`
+	Bandwidth       Bandwidth    `json:"bandwidth,omitempty"`
+	RateLimitIn     int          `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int          `json:"rate_limit_out,omitempty"`
+	ServiceName     string       `json:"service_name,omitempty"`
+	AllowUntaggedZ  bool         `json:"allow_untagged_z,omitempty"`
+	FlexBandwidthID string       `json:"flex_bandwidth_id,omitempty"`
+	TimeCreated     string       `json:"time_created,omitempty"`
+	TimeUpdated     string       `json:"time_updated,omitempty"`
 }
 
 type ThirdPartyVC struct {
-	RoutingID           string    `json:"routing_id,omitempty"`
-	Market              string    `json:"market,omitempty"`
-	Description         string    `json:"description,omitempty"`
-	RateLimitIn         int       `json:"rate_limit_in,omitempty"`
-	RateLimitOut        int       `json:"rate_limit_out,omitempty"`
-	Bandwidth           Bandwidth `json:"bandwidth,omitempty"`
-	Interface           Interface `json:"interface,omitempty"`
-	ServiceUUID         string    `json:"service_uuid,omitempty"`
-	FlexBandwidthID     string    `json:"flex_bandwidth_id,omitempty"`
+	RoutingID       string    `json:"routing_id,omitempty"`
+	Market          string    `json:"market,omitempty"`
+	Description     string    `json:"description,omitempty"`
+	RateLimitIn     int       `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int       `json:"rate_limit_out,omitempty"`
+	Bandwidth       Bandwidth `json:"bandwidth,omitempty"`
+	Interface       Interface `json:"interface,omitempty"`
+	ServiceUUID     string    `json:"service_uuid,omitempty"`
+	FlexBandwidthID string    `json:"flex_bandwidth_id,omitempty"`
 }
 
 type ServiceMessage struct {
@@ -349,7 +349,7 @@ func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteR
 	fn := func() (*ServiceState, error) {
 		return c.GetAwsBackboneState(vcCircuitID)
 	}
-	go c.CheckServiceStatus(deleteOk, err, fn)
+	go c.CheckServiceStatus(deleteOk, fn)
 	if !<-deleteOk {
 		return nil, err
 	}
