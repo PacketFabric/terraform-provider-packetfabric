@@ -52,28 +52,31 @@ func datasourceBackboneServices() *schema.Resource {
 						Description: "Current connection status.",
 					},
 					"bandwidth": {
-						Type:        schema.TypeSet,
-						Optional:    true,
-						Description: "",
+						Type:     schema.TypeList,
+						Computed: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"account_uuid": {
 									Type:        schema.TypeString,
+									Computed:    true,
 									Optional:    true,
 									Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
 								},
 								"longhaul_type": {
 									Type:        schema.TypeString,
+									Computed:    true,
 									Optional:    true,
 									Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum: [\"dedicated\" \"usage\" \"hourly\"]",
 								},
 								"subscription_term": {
 									Type:        schema.TypeInt,
+									Computed:    true,
 									Optional:    true,
 									Description: "Subscription term in months. Not applicable for hourly billing.\n\t\tEnum: [\"1\" \"12\" \"24\" \"36\"]",
 								},
 								"speed": {
 									Type:        schema.TypeString,
+									Computed:    true,
 									Optional:    true,
 									Description: "The desired speed of the new connection.\n\t\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
 								},
@@ -286,7 +289,7 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []int
 			flatten["untagged"] = interf.Untagged
 			flatten["provisioning_status"] = interf.ProvisioningStatus
 			flatten["admin_status"] = interf.AdminStatus
-			flatten["operational_status"] = interf.OperationalStatus			
+			flatten["operational_status"] = interf.OperationalStatus
 			flatten["customer_uuid"] = interf.CustomerUUID
 			flatten["customer_name"] = interf.CustomerName
 			flatten["region"] = interf.Region
