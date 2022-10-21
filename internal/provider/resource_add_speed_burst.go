@@ -51,6 +51,8 @@ func resourceAddSpeedBurstCreate(ctx context.Context, d *schema.ResourceData, m 
 		if speed, ok := d.GetOk("speed"); ok {
 			if _, err := c.AddSpeedBurstToCircuit(vcCID.(string), speed.(string)); err != nil {
 				return diag.FromErr(err)
+			} else {
+				d.SetId(vcCID.(string))
 			}
 		}
 	}
