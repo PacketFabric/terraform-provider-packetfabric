@@ -123,7 +123,7 @@ func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 	var autoneg bool
 	var portCID, description string
-	autonegData, ok := d.GetOk("autoneg") 
+	autonegData, ok := d.GetOk("autoneg")
 	if !ok {
 		return diag.Errorf("autoneg is a required field")
 	}
@@ -169,9 +169,8 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func extractInterface(d *schema.ResourceData) packetfabric.Interface {
-	return packetfabric.Interface{
+	interf := packetfabric.Interface{
 		AccountUUID:      d.Get("account_uuid").(string),
-		Autoneg:          d.Get("autoneg").(bool),
 		Description:      d.Get("description").(string),
 		Media:            d.Get("media").(string),
 		Nni:              d.Get("nni").(bool),
@@ -180,4 +179,8 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 		SubscriptionTerm: d.Get("subscription_term").(int),
 		Zone:             d.Get("zone").(string),
 	}
+	if autoneg, ok := d.GetOk("autoneg"); ok {
+		interf.Autoneg = autoneg.(bool)
+	}
+	return interf
 }
