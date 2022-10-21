@@ -204,27 +204,7 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceIPSecCloudRouteConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteAwsConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			deleteOk := make(chan bool)
-			defer close(deleteOk)
-			fn := func() (*packetfabric.ServiceState, error) {
-				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
-			}
-			go c.CheckServiceStatus(deleteOk, err, fn)
-			if !<-deleteOk {
-				return diag.FromErr(err)
-			}
-			d.SetId("")
-		}
-	}
-	return diags
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn, error) {
