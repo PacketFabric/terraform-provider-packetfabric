@@ -60,7 +60,7 @@ func Test_GetCloudConnInfo(t *testing.T) {
 }
 
 func Test_GetCurrentCustomersHosted(t *testing.T) {
-	var expectedResp []CloudConnCurrentCustomers
+	var expectedResp []HostedConnResp
 	_ = json.Unmarshal(_buildFakeGetCurrentCustomersHostedResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callGetCurrentCustomersHosted, nil, expectedResp, _buildFakeGetCurrentCustomersHostedResp(), "test-get-current-customers-hosted", t)
 }
@@ -368,27 +368,29 @@ func _buildFakeGetCloudConnInfoResp() []byte {
 }
 
 func _buildFakeGetCurrentCustomersHostedResp() []byte {
-	return []byte(fmt.Sprintf(`[
+	return []byte(`[
 		{
-		  "is_cloud_router_connection": true,
-		  "cloud_circuit_id": "%s",
-		  "customer_uuid": "%s",
-		  "user_uuid": "%s",
-		  "state": "active",
+		  "customer_uuid": "e7eefd45-cb13-4c62-b229-e5bbc1362123",
+		  "user_uuid": "7c4d2d7d-8620-4fb3-967a-4a621082cf1f",
 		  "service_provider": "aws",
-		  "service_class": "longhaul",
 		  "port_type": "hosted",
-		  "speed": "1Gbps",
-		  "description": "%s",
+		  "time_updated": "2019-08-24T14:15:22Z",
+		  "time_created": "2019-08-24T14:15:22Z",
+		  "cloud_circuit_id": "PF-AP-LAX1-1002",
 		  "cloud_provider": {
 			"pop": "LAX1",
 			"region": "us-west-1"
 		  },
-		  "time_created": "2019-08-24T14:15:22Z",
-		  "time_updated": "2019-08-24T14:15:22Z",
+		  "service_class": "longhaul",
+		  "description": "AWS Service Connection",
+		  "state": "active",
+		  "is_cloud_router_connection": true,
+		  "speed": "1Gbps",
 		  "interfaces": [
 			{
-			  "port_circuit_id": "%s",
+			  "time_created": "2020-09-10T14:11:50.075143Z",
+			  "time_updated": "2020-09-10T14:11:50.075143Z",
+			  "port_circuit_id": "PF-AP-LAX1-1002",
 			  "pop": "LAS1",
 			  "site": "SW-LAS1",
 			  "site_name": "Switch Las Vegas 7",
@@ -397,21 +399,16 @@ func _buildFakeGetCurrentCustomersHostedResp() []byte {
 			  "zone": "A",
 			  "description": "User provided description",
 			  "vlan": 6,
-			  "untagged": false,
 			  "provisioning_status": "provisioning",
 			  "admin_status": "string",
 			  "operational_status": "string",
-			  "customer_uuid": "%s",
 			  "customer_name": "string",
-			  "region": "US",
-			  "is_cloud": false,
-			  "is_ptp": false,
-			  "time_created": "2020-09-10T14:11:50.075143Z",
-			  "time_updated": "2020-09-10T14:11:50.075143Z"
+			  "customer_uuid": "e7eefd45-cb13-4c62-b229-e5bbc1362123",
+			  "region": "US"
 			}
 		  ]
 		}
-	  ]`, _cloudCircuitID, _customerUUID, _userUUID, _awsServiceConnDesc, _portCircuitID, _customerUUID))
+	  ]`)
 }
 
 func _buildFakeGetCurrentCustomersDedicatedResp() []byte {
