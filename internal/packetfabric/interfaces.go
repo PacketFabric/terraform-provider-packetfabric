@@ -129,7 +129,7 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	fn := func() (*ServiceState, error) {
 		return c.GetPortStatus(expectedResp.PortCircuitID)
 	}
-	go c.CheckServiceStatus(createOk, err, fn)
+	go c.CheckServiceStatus(createOk, fn)
 	if !<-createOk {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	fn := func() (*ServiceState, error) {
 		return c.GetPortStatus(portCID)
 	}
-	go c.CheckServiceStatus(deleteOk, err, fn)
+	go c.CheckServiceStatus(deleteOk, fn)
 	if !<-deleteOk {
 		return nil, err
 	}

@@ -99,7 +99,7 @@ func resourceRouterConnectionAwsCreate(ctx context.Context, d *schema.ResourceDa
 	fn := func() (*packetfabric.ServiceState, error) {
 		return c.GetCloudConnectionStatus(cID.(string), conn.CloudCircuitID)
 	}
-	go c.CheckServiceStatus(createOkCh, err, fn)
+	go c.CheckServiceStatus(createOkCh, fn)
 	if !<-createOkCh {
 		return diag.FromErr(err)
 	}
@@ -192,7 +192,7 @@ func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceDa
 	fn := func() (*packetfabric.ServiceState, error) {
 		return c.GetCloudConnectionStatus(cID.(string), connCID)
 	}
-	go c.CheckServiceStatus(deleteOkCh, err, fn)
+	go c.CheckServiceStatus(deleteOkCh, fn)
 	if !<-deleteOkCh {
 		return diag.FromErr(err)
 	}
