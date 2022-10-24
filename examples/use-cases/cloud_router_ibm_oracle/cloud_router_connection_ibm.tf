@@ -35,15 +35,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   orlonger       = var.pf_crbs_orlonger
   remote_address = "TBD" # IBM side
   l3_address     = "TBD" # PF side
-}
-output "packetfabric_cloud_router_bgp_session_crbs_1" {
-  value = packetfabric_cloud_router_bgp_session.crbs_1
-}
-
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
   prefixes {
     prefix = var.oracle_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -55,10 +46,6 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
     order  = 0
   }
 }
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
-}
-output "packetfabric_bgp_prefix_crbp_1" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
+output "packetfabric_cloud_router_bgp_session_crbs_1" {
+  value = packetfabric_cloud_router_bgp_session.crbs_1
 }
