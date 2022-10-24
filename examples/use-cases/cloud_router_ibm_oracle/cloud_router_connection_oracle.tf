@@ -1,5 +1,6 @@
 # From the Oracle side: Create a dynamic routing gateway
 resource "oci_core_drg" "dyn_routing_gw_1" {
+  provider       = oci
   compartment_id = oci_identity_compartment.compartment_1.id
   display_name   = "${var.tag_name}-${random_pet.name.id}"
 }
@@ -9,6 +10,7 @@ output "oci_core_drg" {
 }
 
 data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
+  provider       = oci
   compartment_id = oci_identity_compartment.compartment_1.id
   filter {
     name   = "provider_name"
@@ -22,6 +24,7 @@ output "oci_core_fast_connect_provider_services" {
 
 # From the Oracle side: Create a FastConnect connection 
 resource "oci_core_virtual_circuit" "fast_connect_1" {
+  provider             = oci
   compartment_id       = oci_identity_compartment.compartment_1.id
   display_name         = "${var.tag_name}-${random_pet.name.id}"
   region               = var.oracle_region1
@@ -70,7 +73,7 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.oracle_secondary_peer_address_prefix # Oracle side
-  l3_address     = var.oracle_primary_peer_address_prefix # PF side
+  l3_address     = var.oracle_primary_peer_address_prefix   # PF side
   prefixes {
     prefix = var.ibm_vpc_cidr1
     type   = "out" # Allowed Prefixes to Cloud
