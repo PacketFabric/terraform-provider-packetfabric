@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-const _backboneDesc = "Packet Fabric AWS Backbone"
+const _backboneDesc = "PacketFabric Backbone VC"
 const _portCircuitIDOne = "PF-AP-SAC1-1000"
 const _portCircuitIDTwo = "PF-AP-LAS1-2000"
 

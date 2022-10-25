@@ -8,12 +8,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAwsVcBackbone() *schema.Resource {
+func resourceVcBackbone() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceAwsBackboneCreate,
-		UpdateContext: resourceAwsBackboneUpdate,
-		ReadContext:   resourceAwsBackboneRead,
-		DeleteContext: resourceAwsBackboneDelete,
+		CreateContext: resourceVCBackboneCreate,
+		UpdateContext: resourceVCBackboneUpdate,
+		ReadContext:   resourceVCBackboneRead,
+		DeleteContext: resourceVCBackboneDelete,
 		Schema:        resourceBackbone(),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -21,22 +21,22 @@ func resourceAwsVcBackbone() *schema.Resource {
 	}
 }
 
-func resourceAwsBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceVCBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceBackboneCreate(ctx, d, m, c.CreateBackbone)
 }
 
-func resourceAwsBackboneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceVCBackboneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
-func resourceAwsBackboneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceVCBackboneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
 }
 
-func resourceAwsBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceVCBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceBackboneDelete(ctx, d, m, c.DeleteBackbone)
 }
