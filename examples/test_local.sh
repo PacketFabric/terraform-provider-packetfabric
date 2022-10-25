@@ -25,6 +25,7 @@ if [[ $1 = "local" ]]; then
   sed -i '' -e "s#$version#~> 0.0.0#g" ./provider/provider.tf
   sed -i '' -e "s#$version#~> 0.0.0#g" ./main.tf
   sed -i '' -e "s#127.0.0.1#117.109.121.202#g" ./use-cases/*/variables.tf
+  sed -i '' -e "s#127.0.0.1#117.109.121.202#g" ./variables.tf
 fi
 
 if [[ $1 = "remote" ]]; then
@@ -38,6 +39,7 @@ if [[ $1 = "remote" ]]; then
   sed -i '' -e "s#~> 0.0.0#$version#g" ./provider/provider.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./main.tf
   sed -i '' -e "s#117.109.121.202#127.0.0.1#g" ./use-cases/*/variables.tf
+  sed -i '' -e "s#117.109.121.202#127.0.0.1#g" ./variables.tf
 fi
 
 if [[ $1 = "dev" ]]; then

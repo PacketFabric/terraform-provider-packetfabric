@@ -9,13 +9,15 @@ resource "ibm_is_vpc" "vpc_1" {
 }
 
 resource "ibm_is_vpc_address_prefix" "vpc_prefix_1" {
-  name = "${var.tag_name}-${random_pet.name.id}"
-  zone = var.ibm_region1_zone1
-  vpc  = ibm_is_vpc.vpc_1.id
-  cidr = var.ibm_vpc_cidr1
+  provider = ibm
+  name     = "${var.tag_name}-${random_pet.name.id}"
+  zone     = var.ibm_region1_zone1
+  vpc      = ibm_is_vpc.vpc_1.id
+  cidr     = var.ibm_vpc_cidr1
 }
 
 resource "ibm_is_subnet" "subnet_1" {
+  provider        = ibm
   name            = "${var.tag_name}-${random_pet.name.id}"
   resource_group  = ibm_resource_group.resource_group_1.id
   vpc             = ibm_is_vpc.vpc_1.id
@@ -28,17 +30,10 @@ resource "ibm_is_subnet" "subnet_1" {
 }
 
 data "ibm_is_subnet" "subnet_1" {
+  provider   = ibm
   identifier = ibm_is_subnet.subnet_1.id
 }
 
 output "ibm_is_subnet" {
   value = data.ibm_is_subnet.subnet_1
 }
-
-# data "ibm_dl_gateway" "direct_link_gw" {
-#     name = "${var.tag_name}-${random_pet.name.id}"
-# }
-
-# output "ibm_dl_gateway" {
-#   value = data.ibm_dl_gateway.direct_link_gw
-# }
