@@ -106,11 +106,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	portCID, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid Port Circuit ID")
-	}
-	_, err := c.GetPortByCID(portCID.(string))
+	_, err := c.GetPortByCID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -119,11 +115,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	portCIDData, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("port circuit ID is a required field")
-	}
-	_, err := _extractUpdateFn(portCIDData.(string), d, m)
+	_, err := _extractUpdateFn(d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -134,13 +126,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	var portCID string
-	portCIDData, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid Port Circuit ID")
-	}
-	portCID = portCIDData.(string)
-	resp, err := c.DeletePort(portCID)
+	resp, err := c.DeletePort(d.Id())
 	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
@@ -170,21 +156,21 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 	return interf
 }
 
-func _extractUpdateFn(portCID string, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
+func _extractUpdateFn(d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
 	c := m.(*packetfabric.PFClient)
 	// Update if payload contains Autoneg and Description
 	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
 		if desc, descOk := d.GetOk("description"); descOk {
-			resp, err = c.UpdatePort(autoneg.(bool), portCID, desc.(string))
+			resp, err = c.UpdatePort(autoneg.(bool), d.Id(), desc.(string))
 		} else {
 			// Update if payload contains Autoneg only
-			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), portCID)
+			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), d.Id())
 		}
 	}
 	// Update if payload contains Description only
 	if desc, descOk := d.GetOk("description"); descOk {
 		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
-			resp, err = c.UpdatePortDescriptionOnly(desc.(string), portCID)
+			resp, err = c.UpdatePortDescriptionOnly(d.Id(), desc.(string))
 		}
 	}
 	return
