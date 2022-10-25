@@ -118,27 +118,12 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
 	var diags diag.Diagnostics
-	var autoneg bool
-	var portCID, description string
-	autonegData, ok := d.GetOk("autoneg")
-	if !ok {
-		return diag.Errorf("autoneg is a required field")
-	}
-	autoneg = autonegData.(bool)
 	portCIDData, ok := d.GetOk("id")
 	if !ok {
 		return diag.Errorf("port circuit ID is a required field")
 	}
-	portCID = portCIDData.(string)
-	descriptionData, ok := d.GetOk("description")
-	if !ok {
-		return diag.Errorf("description is a required field")
-	}
-	description = descriptionData.(string)
-	_, err := c.UpdatePort(autoneg, portCID, description)
+	_, err := _extractUpdateFn(portCIDData.(string), d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -183,4 +168,24 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 		interf.Autoneg = autoneg.(bool)
 	}
 	return interf
+}
+
+func _extractUpdateFn(portCID string, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
+	c := m.(*packetfabric.PFClient)
+	// Update if payload contains Autoneg and Description
+	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
+		if desc, descOk := d.GetOk("description"); descOk {
+			resp, err = c.UpdatePort(autoneg.(bool), portCID, desc.(string))
+		} else {
+			// Update if payload contains Autoneg only
+			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), portCID)
+		}
+	}
+	// Update if payload contains Description only
+	if desc, descOk := d.GetOk("description"); descOk {
+		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
+			resp, err = c.UpdatePortDescriptionOnly(desc.(string), portCID)
+		}
+	}
+	return
 }

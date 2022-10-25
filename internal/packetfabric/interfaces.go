@@ -206,6 +206,38 @@ func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*Inter
 	return expectedResp, nil
 }
 
+func (c *PFClient) UpdatePortAutoNegOnly(autoNeg bool, portCID string) (*InterfaceReadResp, error) {
+	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
+	expectedResp := &InterfaceReadResp{}
+	type PortUpdate struct {
+		Autoneg bool `json:"autoneg"`
+	}
+	portUpdate := PortUpdate{
+		Autoneg: autoNeg,
+	}
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) UpdatePortDescriptionOnly(portCID, description string) (*InterfaceReadResp, error) {
+	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
+	expectedResp := &InterfaceReadResp{}
+	type PortUpdate struct {
+		Description string `json:"description"`
+	}
+	portUpdate := PortUpdate{
+		Description: description,
+	}
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
 	expectedResp := &PortMessageResp{}
