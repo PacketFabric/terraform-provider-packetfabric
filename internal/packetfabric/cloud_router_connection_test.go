@@ -100,7 +100,7 @@ func Test_ListAwsRouterConnections(t *testing.T) {
 
 }
 
-func Test_DeleteAwsConnection(t *testing.T) {
+func Test_DeleteCloudRouterConnection(t *testing.T) {
 	var expectedResp ConnectionDeleteResp
 	_ = json.Unmarshal(_buildConnDeleteResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callDeleteAwsConn, nil, expectedResp, _buildConnDeleteResp(), "test-delete-aws-connection", t)
@@ -123,11 +123,11 @@ func _callListAwsRouterConnections(payload interface{}) (interface{}, error) {
 }
 
 func _callUpdateAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.UpdateAwsConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
+	return cTest.UpdateCloudRouterConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
 }
 
 func _callDeleteAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.DeleteAwsConnection(_circuitIdMock, _cloudConnCid)
+	return cTest.DeleteCloudRouterConnection(_circuitIdMock, _cloudConnCid)
 }
 
 func _buildMockCloudRouterConnectionCreate() []byte {

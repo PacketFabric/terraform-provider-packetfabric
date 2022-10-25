@@ -104,12 +104,11 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCustomerOwnedPortConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceCloudRouterConnUpdate(ctx, d, m)
 }
 
 func resourceCustomerOwnedPortConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceCloudSourceDelete(ctx, d, m, "Customer Owned Port attach Service Delete")
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort {
