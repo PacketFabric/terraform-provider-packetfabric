@@ -115,7 +115,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	_, err := _extractUpdateFn(d, m)
+	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -156,8 +156,9 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 	return interf
 }
 
-func _extractUpdateFn(d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
+func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
 	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
 	// Update if payload contains Autoneg and Description
 	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
 		if desc, descOk := d.GetOk("description"); descOk {
