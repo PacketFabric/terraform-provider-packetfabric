@@ -6,17 +6,16 @@ import (
 	"testing"
 )
 
-const _awsBackboneDesc = "Packet Fabric AWS Backbone"
-const _awsAccountUUID = "847548f7-9cde-4fe5-8751-32ff19825b7e"
-const _awsPortCircuitIDOne = "PF-AP-SAC1-1000"
-const _awsPortCircuitIDTwo = "PF-AP-LAS1-2000"
+const _backboneDesc = "PacketFabric Backbone VC"
+const _portCircuitIDOne = "PF-AP-SAC1-1000"
+const _portCircuitIDTwo = "PF-AP-LAS1-2000"
 
 func Test_CreateBackbone(t *testing.T) {
 	expectedPayload := Backbone{}
 	expectedResp := BackboneResp{}
-	_ = json.Unmarshal(_buildCreateBackbonePayload(_awsBackboneDesc), &expectedPayload)
-	_ = json.Unmarshal(_buildCreateBackBoneResp(_awsBackboneDesc, _awsAccountID), &expectedResp)
-	cTest.runFakeHttpServer(_callCreateBackbone, expectedPayload, expectedResp, _buildCreateBackBoneResp(_awsBackboneDesc, _awsAccountID), "aws-backbone-create", t)
+	_ = json.Unmarshal(_buildCreateBackbonePayload(_backboneDesc), &expectedPayload)
+	_ = json.Unmarshal(_buildCreateBackBoneResp(_backboneDesc, _awsAccountID), &expectedResp)
+	cTest.runFakeHttpServer(_callCreateBackbone, expectedPayload, expectedResp, _buildCreateBackBoneResp(_backboneDesc, _awsAccountID), "backbone-create", t)
 }
 
 func _callCreateBackbone(payload interface{}) (interface{}, error) {
@@ -47,10 +46,10 @@ func _buildCreateBackbonePayload(description string) []byte {
 		"rate_limit_in": 1000,
 		"rate_limit_out": 1000,
 		"epl": false
-	  }`, description, _awsAccountUUID, _awsPortCircuitIDOne, _awsPortCircuitIDTwo))
+	  }`, description, _accountUUID, _portCircuitIDOne, _portCircuitIDTwo))
 }
 
-func _buildCreateBackBoneResp(description, awsAccountID string) []byte {
+func _buildCreateBackBoneResp(description, accountID string) []byte {
 	return []byte(fmt.Sprintf(`{
 		"description": "%s",
 		"bandwidth": {
@@ -74,5 +73,5 @@ func _buildCreateBackBoneResp(description, awsAccountID string) []byte {
 		"rate_limit_in": 1000,
 		"rate_limit_out": 1000,
 		"epl": false
-	  }`, description, _awsAccountUUID, _awsPortCircuitIDOne, _awsPortCircuitIDTwo))
+	  }`, description, _accountUUID, _portCircuitIDOne, _portCircuitIDTwo))
 }

@@ -82,15 +82,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   orlonger         = var.pf_crbs_orlonger
   primary_subnet   = var.azure_primary_peer_address_prefix
   secondary_subnet = var.azure_secondary_peer_address_prefix
-}
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
-
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
   prefixes {
     prefix = var.gcp_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -102,13 +93,8 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
     order  = 0
   }
 }
-
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-}
-output "packetfabric_bgp_prefix_crbp_2" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
+output "packetfabric_cloud_router_bgp_session_crbs_2" {
+  value = packetfabric_cloud_router_bgp_session.crbs_2
 }
 
 # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
@@ -118,10 +104,12 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   allocation_method   = "Dynamic"
+  sku                 = "Standard"
   tags = {
     environment = "${var.tag_name}-${random_pet.name.id}"
   }
 }
+
 # Please be aware that provisioning a Virtual Network Gateway takes a long time (between 30 minutes and 1 hour)
 # Deletion can take up to 15 minutes
 resource "azurerm_virtual_network_gateway" "vng_1" {
@@ -140,6 +128,9 @@ resource "azurerm_virtual_network_gateway" "vng_1" {
   tags = {
     environment = "${var.tag_name}-${random_pet.name.id}"
   }
+  depends_on = [
+    azurerm_public_ip.public_ip_vng_1
+  ]
 }
 
 # From the Microsoft side: Link a virtual network gateway to the ExpressRoute circuit.
