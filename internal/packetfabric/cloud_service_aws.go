@@ -2,6 +2,7 @@ package packetfabric
 
 import (
 	"fmt"
+	"time"
 )
 
 const serviceAwsURI = "/v2/services/third-party/hosted/aws"
@@ -166,28 +167,28 @@ type CloudServiceConnCreateResp struct {
 	Speed                   string      `json:"speed,omitempty"`
 }
 type Settings struct {
-	VlanIDPf                    int         `json:"vlan_id_pf,omitempty"`
-	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
-	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIDPrivate               int         `json:"vlan_id_private,omitempty"`
-	VlanIDMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
-	VcIDPrivate                 int         `json:"vc_id_private,omitempty"`
-	SvlanIDCustomer             interface{} `json:"svlan_id_customer,omitempty"`
-	AzureServiceKey             string      `json:"azure_service_key,omitempty"`
-	AzureServiceTag             int         `json:"azure_service_tag,omitempty"`
-	GooglePairingKey            string      `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName	string      `json:"google_vlan_attchment_name,omitempty"`
-	AwsRegion                   string      `json:"aws_region,omitempty"`
-	AwsHostedType               string      `json:"aws_hosted_type,omitempty"`
-	AwsConnectionID             string      `json:"aws_connection_id,omitempty"`
-	AwsAccountID                string      `json:"aws_account_id,omitempty"`
-	ZoneDest                    string      `json:"zone_dest,omitempty"`
-	Autoneg                     bool        `json:"autoneg,omitempty"`
-	Encapsulation               string      `json:"encapsulation,omitempty"`
-	OracleRegion                string      `json:"oracle_region,omitempty"`
-	VcOcid                      string      `json:"vc_ocid,omitempty"`
-	PortCrossConnectOcid        string      `json:"port_cross_connect_ocid,omitempty"`
-	PortCompartmentOcid         string      `json:"port_compartment_ocid,omitempty"`
+	VlanIDPf                 int         `json:"vlan_id_pf,omitempty"`
+	VlanIDCust               int         `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust              interface{} `json:"svlan_id_cust,omitempty"`
+	VlanIDPrivate            int         `json:"vlan_id_private,omitempty"`
+	VlanIDMicrosoft          int         `json:"vlan_id_microsoft,omitempty"`
+	VcIDPrivate              int         `json:"vc_id_private,omitempty"`
+	SvlanIDCustomer          interface{} `json:"svlan_id_customer,omitempty"`
+	AzureServiceKey          string      `json:"azure_service_key,omitempty"`
+	AzureServiceTag          int         `json:"azure_service_tag,omitempty"`
+	GooglePairingKey         string      `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string      `json:"google_vlan_attchment_name,omitempty"`
+	AwsRegion                string      `json:"aws_region,omitempty"`
+	AwsHostedType            string      `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID          string      `json:"aws_connection_id,omitempty"`
+	AwsAccountID             string      `json:"aws_account_id,omitempty"`
+	ZoneDest                 string      `json:"zone_dest,omitempty"`
+	Autoneg                  bool        `json:"autoneg,omitempty"`
+	Encapsulation            string      `json:"encapsulation,omitempty"`
+	OracleRegion             string      `json:"oracle_region,omitempty"`
+	VcOcid                   string      `json:"vc_ocid,omitempty"`
+	PortCrossConnectOcid     string      `json:"port_cross_connect_ocid,omitempty"`
+	PortCompartmentOcid      string      `json:"port_compartment_ocid,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -383,6 +384,8 @@ func (c *PFClient) GetCurrentCustomersDedicated() ([]DedicatedConnResp, error) {
 func (c *PFClient) DeleteCloudService(cloudCID string) error {
 	formatedURI := fmt.Sprintf(cloudServicesURI, cloudCID)
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, nil)
+	// Upon requested on issue #157
+	time.Sleep(20 * time.Second)
 	if err != nil {
 		return err
 	}
