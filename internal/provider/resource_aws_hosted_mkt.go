@@ -49,7 +49,7 @@ func resourceAwsHostedMkt() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description: "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
+				Description:  "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
 			},
 			"aws_account_id": {
 				Type:         schema.TypeString,
@@ -110,7 +110,7 @@ func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	err := c.DeleteRequestedHostedMktService(vcRequestUUID.(string))
+	err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
