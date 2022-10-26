@@ -133,7 +133,7 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.VcCircuitID)
-	
+
 	return diags
 }
 
@@ -185,8 +185,8 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
 		thidPartyVC.RateLimitOut = rateLimitOut.(int)
 	}
-	if bandwidth, ok := d.GetOk("bandwidth"); ok {
-		thidPartyVC.Bandwidth = extractBandwidth(bandwidth.(map[string]interface{}))
+	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
+		thidPartyVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
 	if interf, ok := d.GetOk("interface"); ok {
 		thidPartyVC.Interface = extractThirdPartyInterf(interf.(map[string]interface{}))
