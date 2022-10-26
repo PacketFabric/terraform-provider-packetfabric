@@ -142,7 +142,7 @@ func resourceOracleCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceD
 		descUpdate := packetfabric.DescriptionUpdate{
 			Description: desc.(string),
 		}
-		if _, err := c.UpdateAwsConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
+		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
 			diags = diag.FromErr(err)
 		}
 	}

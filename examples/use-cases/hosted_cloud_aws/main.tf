@@ -6,7 +6,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.35.0"
+      version = ">= 4.37.0"
     }
   }
 }
@@ -152,7 +152,7 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
   ]
 }
 
-# # From the AWS side: Create and attach a VIF
+# From the AWS side: Create and attach a VIF
 data "aws_dx_gateway" "direct_connect_gw_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}"
@@ -175,12 +175,16 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   ]
 }
 
+ # provider version >= 4.37.0
+data "aws_dx_router_configuration" "router_config" {
+  provider               = aws
+  virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
+  router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+}
+
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
-
-# Vote for 26432 New aws_dx_virtual_interface_router_configuration data source #26432
-# https://github.com/hashicorp/terraform-provider-aws/issues/26432
 
 # # From the AWS side: Associate Virtual Private GW to Direct Connect GW
 # resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {

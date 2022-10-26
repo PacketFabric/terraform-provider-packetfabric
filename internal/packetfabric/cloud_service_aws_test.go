@@ -177,7 +177,7 @@ func _buildFakeCreateDedicadedAWSConn() []byte {
 		"speed": "1Gbps",
 		"should_create_lag": true,
 		"loa": "SSBhbSBhIFBERg=="
-	  }`, _awsAccountUUID, _awsServiceConnDesc))
+	  }`, _accountUUID, _awsServiceConnDesc))
 }
 
 func _buildFakeGetHostedCloudConnRequestsSent() []byte {

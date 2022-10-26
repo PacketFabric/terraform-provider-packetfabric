@@ -8,6 +8,7 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceRouterConnectionAws() *schema.Resource {
@@ -73,6 +74,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The desired speed of the new connection.\n\n\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
+			},
+			"published_quote_line_uuid": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.IsUUID,
+				Description:  "UUID of the published quote line which this connection should be associated.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -167,7 +174,7 @@ func resourceRouterConnectionAwsUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	connCid := d.Get("id").(string)
 	description := d.Get("description").(string)
-	_, err := c.UpdateAwsConnection(cID.(string), connCid, packetfabric.DescriptionUpdate{Description: description})
+	_, err := c.UpdateCloudRouterConnection(cID.(string), connCid, packetfabric.DescriptionUpdate{Description: description})
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -183,7 +190,7 @@ func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
 	connCID := d.Get("id").(string)
-	resp, err := c.DeleteAwsConnection(cID.(string), connCID)
+	resp, err := c.DeleteCloudRouterConnection(cID.(string), connCID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -207,13 +214,14 @@ func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceDa
 
 func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 	return packetfabric.AwsConnection{
-		AwsAccountID: d.Get("aws_account_id").(string),
-		AccountUUID:  d.Get("account_uuid").(string),
-		MaybeNat:     d.Get("maybe_nat").(bool),
-		Description:  d.Get("description").(string),
-		Pop:          d.Get("pop").(string),
-		Zone:         d.Get("zone").(string),
-		IsPublic:     d.Get("is_public").(bool),
-		Speed:        d.Get("speed").(string),
+		AwsAccountID:           d.Get("aws_account_id").(string),
+		AccountUUID:            d.Get("account_uuid").(string),
+		MaybeNat:               d.Get("maybe_nat").(bool),
+		Description:            d.Get("description").(string),
+		Pop:                    d.Get("pop").(string),
+		Zone:                   d.Get("zone").(string),
+		IsPublic:               d.Get("is_public").(bool),
+		Speed:                  d.Get("speed").(string),
+		PublishedQuoteLineUUID: d.Get("published_quote_line_uuid").(string),
 	}
 }
