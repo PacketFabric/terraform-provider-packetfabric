@@ -258,7 +258,37 @@ func dataSourceCloudConn() *schema.Resource {
 						"bgp_state": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc.",
+							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc. Deprecated",
+						},
+						"bgp_state_list": {
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Optional:    true,
+							Description: "A list of bgp sessions attached to the connection and their states.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bgp_settings_uuid": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The UUID of the BGP Session",
+									},
+									"bgp_state": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc.",
+									},
+								},
+							},
+						},
+						"cloud_router_name": {
+							Type: 		 schema.TypeString,
+							Optional:    true,
+							Description: "The name of the cloud router this connection is associated with.\n\t\tExample: Sample CR"
+						},
+						"cloud_router_asn": {
+							Type: 		 schema.TypeInt,
+							Optional: 	 true,
+							Description: "The asn of the cloud router this connection is associated with.\n\t\tExample: 4556"
 						},
 						"cloud_router_circuit_id": {
 							Type:        schema.TypeString,
@@ -325,6 +355,9 @@ func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) [
 			flatten["cloud_provider"] = flattenCloudProvider(&conn.CloudProvider)
 			flatten["pop"] = conn.Pop
 			flatten["site"] = conn.Site
+			flatten["bgp_state_list"] = flattenBgpStateList(&conn.BgpStateList)
+			flatten["cloud_router_name"] = conn.CloudRouterName
+			flatten["cloud_router_asn"] = conn.CloudRouterASN
 			flatten["cloud_router_circuit_id"] = conn.CloudRouterCircuitID
 			flatten["nat_capable"] = conn.NatCapable
 			flattens[i] = flatten
@@ -343,6 +376,21 @@ func flattenCloudProvider(provider *packetfabric.AwsCloudProvider) []interface{}
 		flattens = append(flattens, flatten)
 	}
 	return flattens
+}
+
+func flattenBgpStateList(bgp_state_list *[]packetfabric.BgpStateObj) []interface{} {
+	if bgp_state_list != nil {
+		flattens := make([]interface{}, len(*bgp_state_list), len(*bgp_state_list))
+
+		for i, bgp_state_obj := range *bgp_state_list {
+			flatten := make(map[string]interface{})
+			flatten["bgp_settings_uuid"] = bgp_state_obj.BgpSettingsUUID
+			flatten["bgp_state"] = bgp_state_obj.BgpState
+			flattens[i] = flatten
+		}
+		return flattens
+	}
+	return make([]interface{}, 0)
 }
 
 func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
