@@ -12,6 +12,7 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_con
 
 resource "packetfabric_marketplace_reject_request" "reject_request_aws" {
   provider        = packetfabric
+  delete_reason   = "testing"
   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1.id
 }
 
