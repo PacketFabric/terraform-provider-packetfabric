@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 const awsConnectionURI = "/v2/services/cloud-routers/%s/connections/aws"
@@ -349,6 +350,8 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 	if err != nil {
 		return nil, err
 	}
+	// Upon requested on issue #157
+	time.Sleep(20 * time.Second)
 	return expectedResp, nil
 }
 
