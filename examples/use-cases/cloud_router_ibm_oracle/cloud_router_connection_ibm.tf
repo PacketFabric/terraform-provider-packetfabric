@@ -18,11 +18,14 @@ resource "packetfabric_cloud_router_connection_ibm" "crc_1" {
 # Vote for 3978 New resource to accept a direct link creation request: ibm_dl_gateway_accept
 # https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978
 
-# From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
+data "ibm_dl_gateway" "direct_link_gw" {
+  provider = ibm
+  name     = "${var.tag_name}-${random_pet.name.id}"
+}
 
-
-# From the IBM side: Set up VRF
-
+output "ibm_dl_gateway" {
+  value = data.ibm_dl_gateway.direct_link_gw
+}
 
 # From the PacketFabric side: Configure BGP
 resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
@@ -33,17 +36,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.ibm_bgp_asn
   orlonger       = var.pf_crbs_orlonger
-  remote_address = "TBD" # IBM side
-  l3_address     = "TBD" # PF side
-}
-output "packetfabric_cloud_router_bgp_session_crbs_1" {
-  value = packetfabric_cloud_router_bgp_session.crbs_1
-}
-
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
+  remote_address = data.ibm_dl_gateway.direct_link_gw.bgp_base_cidr # IBM side
+  l3_address     = data.ibm_dl_gateway.direct_link_gw.bgp_cer_cidr  # PF side
   prefixes {
     prefix = var.oracle_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -55,10 +49,18 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
     order  = 0
   }
 }
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
+output "packetfabric_cloud_router_bgp_session_crbs_1" {
+  value = packetfabric_cloud_router_bgp_session.crbs_1
 }
-output "packetfabric_bgp_prefix_crbp_1" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
+
+# From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
+resource "ibm_dl_virtual_connection" "dl_gateway_vc" {
+  provider   = ibm
+  gateway    = data.ibm_dl_gateway.direct_link_gw.id
+  name       = "${var.tag_name}-${random_pet.name.id}"
+  type       = "vpc"
+  network_id = ibm_is_vpc.vpc_1.id
 }
+
+# From the IBM side: Set up VRF
+# TBD

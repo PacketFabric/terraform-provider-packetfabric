@@ -38,7 +38,6 @@ resource "packetfabric_cloud_router_connection_google" "crc_1" {
   maybe_nat                   = var.pf_crc_maybe_nat
 }
 
-
 # # Verify Terraform gcloud module works in your environment
 # module "gcloud_version" {
 #   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
@@ -73,7 +72,7 @@ module "gcloud_bgp_addresses" {
   source  = "terraform-google-modules/gcloud/google"
   version = "~> 2.0"
   # when running locally with gcloud already installed
-  service_account_key_file = var.GOOGLE_CREDENTIALS
+  service_account_key_file = var.gcp_credentials_path
   skip_download            = true
   # when running in a CI/CD pipeline without glcoud installed
   # use_tf_google_credentials_env_var = true
@@ -122,6 +121,16 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   # l3_address     = data.google_compute_interconnect_attachment.google_interconnect_1.customer_router_ip_address # PF side
   remote_address = data.local_file.cloud_router_ip_address.content    # Google side
   l3_address     = data.local_file.customer_router_ip_address.content # PF side
+  prefixes {
+    prefix = var.azure_vnet_cidr1
+    type   = "out" # Allowed Prefixes to Cloud
+    order  = 0
+  }
+  prefixes {
+    prefix = var.gcp_subnet_cidr1
+    type   = "in" # Allowed Prefixes from Cloud
+    order  = 0
+  }
 
   # # workaround until we can use lifecycle into Terraform gcloud Module
   # # https://github.com/hashicorp/terraform/issues/27360
@@ -136,29 +145,6 @@ output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
 }
 
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
-  prefixes {
-    prefix = var.azure_vnet_cidr1
-    type   = "out" # Allowed Prefixes to Cloud
-    order  = 0
-  }
-  prefixes {
-    prefix = var.gcp_subnet_cidr1
-    type   = "in" # Allowed Prefixes from Cloud
-    order  = 0
-  }
-}
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
-}
-output "packetfabric_bgp_prefix_crbp_1" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
-}
-
 # Because the BGP session is created automatically, the only way to update it is to use gcloud
 # To avoid using this workaround, vote for:
 # https://github.com/hashicorp/terraform-provider-google/issues/12630
@@ -169,7 +155,7 @@ module "gcloud_bgp_peer_update" {
   source  = "terraform-google-modules/gcloud/google"
   version = "~> 2.0"
   # when running locally with gcloud already installed
-  service_account_key_file = var.GOOGLE_CREDENTIALS
+  service_account_key_file = var.gcp_credentials_path
   skip_download            = true
   # when running in a CI/CD pipeline without glcoud installed
   # use_tf_google_credentials_env_var = true

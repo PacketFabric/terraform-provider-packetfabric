@@ -655,6 +655,33 @@ resource "random_pet" "name" {}
 #   shared_key                   = var.pf_crc_shared_key
 # }
 
+
+# resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
+#   provider       = packetfabric
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_3.id
+#   address_family = var.pf_crbs_af
+#   multihop_ttl   = var.pf_crbs_mhttl
+#   remote_asn     = var.vpn_side_asn3
+#   orlonger       = var.pf_crbs_orlonger
+#   remote_address = var.vpn_remote_address # On-Prem side
+#   l3_address     = var.vpn_l3_address     # PF side
+#   prefixes {
+#     prefix = "0.0.0.0/0"
+#     type   = "out" # Allowed Prefixes to Cloud
+#     order  = 0
+#   }
+#   prefixes {
+#     prefix = "0.0.0.0/0"
+#     type   = "in" # Allowed Prefixes from Cloud
+#     order  = 0
+#   }
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_3" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_3
+# }
+
+
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"

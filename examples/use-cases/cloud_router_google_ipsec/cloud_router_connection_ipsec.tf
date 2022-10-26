@@ -29,15 +29,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.vpn_remote_address # On-Prem side
   l3_address     = var.vpn_l3_address     # PF side
-}
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
-
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
   prefixes {
     prefix = var.google_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -49,11 +40,6 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
     order  = 0
   }
 }
-
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-}
-output "packetfabric_bgp_prefix_crbp_2" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
+output "packetfabric_cloud_router_bgp_session_crbs_2" {
+  value = packetfabric_cloud_router_bgp_session.crbs_2
 }

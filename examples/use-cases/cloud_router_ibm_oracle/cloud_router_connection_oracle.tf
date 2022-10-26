@@ -1,5 +1,6 @@
 # From the Oracle side: Create a dynamic routing gateway
 resource "oci_core_drg" "dyn_routing_gw_1" {
+  provider       = oci
   compartment_id = oci_identity_compartment.compartment_1.id
   display_name   = "${var.tag_name}-${random_pet.name.id}"
 }
@@ -9,6 +10,7 @@ output "oci_core_drg" {
 }
 
 data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
+  provider       = oci
   compartment_id = oci_identity_compartment.compartment_1.id
   filter {
     name   = "provider_name"
@@ -22,6 +24,7 @@ output "oci_core_fast_connect_provider_services" {
 
 # From the Oracle side: Create a FastConnect connection 
 resource "oci_core_virtual_circuit" "fast_connect_1" {
+  provider             = oci
   compartment_id       = oci_identity_compartment.compartment_1.id
   display_name         = "${var.tag_name}-${random_pet.name.id}"
   region               = var.oracle_region1
@@ -60,36 +63,7 @@ resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
   maybe_nat    = var.pf_crc_maybe_nat
 }
 
-# Get the VLAN ID from PacketFabric
-data "packetfabric_cloud_router_connections" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  depends_on = [
-    packetfabric_cloud_router_connection_oracle.crc_2
-  ]
-}
-locals {
-  # below may need to be updated
-  # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
-  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-  helper_map = { for val in local.cloud_connections :
-  val["description"] => val }
-  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
-  cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
-}
-output "cc1_vlan_id_pf" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-output "cc2_vlan_id_pf" {
-  value = one(local.cc2.cloud_settings[*].vlan_id_pf)
-}
-output "packetfabric_cloud_router_connection_oracle" {
-  value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-}
-
 # From the PacketFabric side: Configure BGP
-
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
@@ -98,17 +72,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
-  remote_address = "TBD" # Oracle side
-  l3_address     = "TBD" # PF side
-}
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
-
-# Configure BGP Prefix is mandatory to setup the BGP session correctly
-resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
+  remote_address = var.oracle_secondary_peer_address_prefix # Oracle side
+  l3_address     = var.oracle_primary_peer_address_prefix   # PF side
   prefixes {
     prefix = var.ibm_vpc_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -120,11 +85,6 @@ resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
     order  = 0
   }
 }
-
-data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-}
-output "packetfabric_bgp_prefix_crbp_2" {
-  value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
+output "packetfabric_cloud_router_bgp_session_crbs_2" {
+  value = packetfabric_cloud_router_bgp_session.crbs_2
 }
