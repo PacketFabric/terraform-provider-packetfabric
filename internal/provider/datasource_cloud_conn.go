@@ -291,12 +291,12 @@ func dataSourceCloudConn() *schema.Resource {
 						"cloud_router_name": {
 							Type: 		 schema.TypeString,
 							Optional:    true,
-							Description: "The name of the cloud router this connection is associated with.\n\t\tExample: Sample CR"
+							Description: "The name of the cloud router this connection is associated with.\n\t\tExample: Sample CR",
 						},
 						"cloud_router_asn": {
 							Type: 		 schema.TypeInt,
 							Optional: 	 true,
-							Description: "The asn of the cloud router this connection is associated with.\n\t\tExample: 4556"
+							Description: "The asn of the cloud router this connection is associated with.\n\t\tExample: 4556",
 						},
 						"cloud_router_circuit_id": {
 							Type:        schema.TypeString,
