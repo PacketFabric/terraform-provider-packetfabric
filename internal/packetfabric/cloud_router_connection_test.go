@@ -232,50 +232,6 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 	  }`, description, _cloudConnUUID))
 }
 
-func _buildMockCloudRouterConnUpdateResp(description string) []byte {
-	return []byte(fmt.Sprintf(`[
-		{
-		  "port_type": "hosted",
-		  "connection_type": "cloud_hosted",
-		  "port_circuit_id": "PF-AE-1234",
-		  "pending_delete": true,
-		  "deleted": true,
-		  "speed": "1Gbps",
-		  "state": "Requested",
-		  "cloud_circuit_id": "PF-AP-LAX1-1002",
-		  "account_uuid": "%s",
-		  "service_class": "metro",
-		  "service_provider": "aws",
-		  "service_type": "cr_connection",
-		  "description": "%s",
-		  "uuid": "%s",
-		  "cloud_provider_connection_id": "dxcon-fgadaaa1",
-		  "cloud_settings": {},
-		  "user_uuid": "%s",
-		  "customer_uuid": "%s",
-		  "time_created": "%s",
-		  "time_updated": "%s",
-		  "cloud_provider": {
-			"pop": "LAX1",
-			"site": "us-west-1"
-		  },
-		  "pop": "LAX1",
-		  "site": "us-west-1",
-		  "bgp_state": "string",
-		  "bgp_state_list": [
-            {
-			        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
-			        "bgp_state": "string"
-		        }
-          ],
-		  "cloud_router_name": "Sample CR",
-		  "cloud_router_asn": 4556,
-		  "cloud_router_circuit_id": "PF-L3-CUST-2001",
-		  "nat_capable": true
-		}
-	  ]`, _awsAccountUUID, description, _cloudConnUUID, _cloudConnUserUUID, _cloudConnCustomerUUID, _createdTime, _updatedTime))
-}
-
 func buildMockCloudRouterReadResp(description string) []byte {
 	return []byte(`{
 		"port_type": "hosted",
@@ -286,12 +242,12 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"speed": "1Gbps",
 		"state": "Requested",
 		"cloud_circuit_id": "PF-AP-LAX1-1002",
-		"account_uuid": "a2115890-ed02-4795-a6dd-c485bec3529c",
+		"account_uuid": "%s",
 		"service_class": "metro",
 		"service_provider": "aws",
 		"service_type": "cr_connection",
-		"description": "Updated Cloud Router Connection",
-		"uuid": "095be615-a8ad-4c33-8e9c-c7612fbf6c9f",
+		"description": "%s",
+		"uuid": "%s",
 		"cloud_provider_connection_id": "dxcon-fgadaaa1",
 		"cloud_settings": {
 		  "aws_region": "",
@@ -299,10 +255,10 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		  "aws_connection_id": "",
 		  "aws_account_id": ""
 		},
-		"user_uuid": "7c4d2d7d-8620-4fb3-967a-4a621082cf1f",
-		"customer_uuid": "e7eefd45-cb13-4c62-b229-e5bbc1362123",
-		"time_created": "2019-08-24T14:15:22Z",
-		"time_updated": "2019-08-24T14:15:22Z",
+		"user_uuid": "%s",
+		"customer_uuid": "%s",
+		"time_created": "%s",
+		"time_updated": "%s",
 		"cloud_provider": {
 		  "pop": "",
 		  "region": ""
