@@ -8,7 +8,7 @@ import (
 
 const awsConnectionURI = "/v2/services/cloud-routers/%s/connections/aws"
 const awsConnectionListURI = "/v2/services/cloud-routers/%s/connections"
-const awsConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/%s"
+const cloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/%s"
 const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/status"
 const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
 const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
@@ -302,7 +302,7 @@ func (c *PFClient) CreateOracleCloudRouerConnection(oracleRouter OracleCloudRout
 }
 
 func (c *PFClient) ReadAwsConnection(cID, connCid string) (*CloudRouterConnectionReadResponse, error) {
-	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
+	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 
 	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, resp)
@@ -312,8 +312,8 @@ func (c *PFClient) ReadAwsConnection(cID, connCid string) (*CloudRouterConnectio
 	return resp, nil
 }
 
-func (c *PFClient) UpdateAwsConnection(cID, connCid string, description DescriptionUpdate) (*CloudRouterConnectionReadResponse, error) {
-	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
+func (c *PFClient) UpdateCloudRouterConnection(cID, connCid string, description DescriptionUpdate) (*CloudRouterConnectionReadResponse, error) {
+	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 
 	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, patchMethod, description, resp)
@@ -334,8 +334,8 @@ func (c *PFClient) UpdateIPSecConnection(cID string, ipSecUpdate IPSecConnUpdate
 	return resp, nil
 }
 
-func (c *PFClient) DeleteAwsConnection(cID, connCid string) (*ConnectionDeleteResp, error) {
-	formatedURI := fmt.Sprintf(awsConnectionByCidURI, cID, connCid)
+func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*ConnectionDeleteResp, error) {
+	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 	if cID == "" {
 		return nil, errors.New(errorMsg)
 	}

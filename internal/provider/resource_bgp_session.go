@@ -114,8 +114,8 @@ func resourceBgpSession() *schema.Resource {
 				Description: "Whether this BGP session is disabled. Default is false.",
 			},
 			"pre_nat_sources": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:        schema.TypeList,
+				Optional:    true,
 				Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,
@@ -123,12 +123,59 @@ func resourceBgpSession() *schema.Resource {
 				},
 			},
 			"pool_prefixes": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:        schema.TypeList,
+				Optional:    true,
 				Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,
 					Description: "IP prefix using CIDR format.",
+				},
+			},
+			"prefixes": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "The list of BGP prefixes",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"prefix": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The actual IP Prefix of this instance.",
+						},
+						"match_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
+							Description:  "The match type of this prefix.",
+						},
+						"as_prepend": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The BGP prepend value of this prefix.",
+						},
+						"med": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The MED of this prefix.",
+						},
+						"local_preference": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The local_preference of this prefix.",
+						},
+						"type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
+							Description:  "Whether this prefix is in or out.",
+						},
+						"order": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The order of this prefix against the others.",
+						},
+					},
 				},
 			},
 		},
@@ -341,5 +388,25 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
+	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
+}
+
+func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPrefix {
+	if prefixes, ok := d.GetOk("prefixes"); ok {
+		sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
+		for _, pref := range prefixes.(*schema.Set).List() {
+			sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
+				Prefix:          pref.(map[string]interface{})["prefix"].(string),
+				MatchType:       pref.(map[string]interface{})["match_type"].(string),
+				AsPrepend:       pref.(map[string]interface{})["as_prepend"].(int),
+				Med:             pref.(map[string]interface{})["med"].(int),
+				LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
+				Type:            pref.(map[string]interface{})["type"].(string),
+				Order:           pref.(map[string]interface{})["order"].(int),
+			})
+		}
+		return sessionPrefixes
+	}
+	return make([]packetfabric.BgpPrefix, 0)
 }

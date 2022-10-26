@@ -127,7 +127,7 @@ func resourceAzureExpressRouteConnUpdate(ctx context.Context, d *schema.Resource
 		descUpdate := packetfabric.DescriptionUpdate{
 			Description: desc.(string),
 		}
-		if _, err := c.UpdateAwsConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
+		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
 			diags = diag.FromErr(err)
 		}
 	}
@@ -140,7 +140,7 @@ func resourceAzureExpressRouteConnDelete(ctx context.Context, d *schema.Resource
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteAwsConnection(cid.(string), cloudConnCID.(string)); err != nil {
+		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
 			diags = diag.FromErr(err)
 		} else {
 			d.SetId("")

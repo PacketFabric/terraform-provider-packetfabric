@@ -30,7 +30,7 @@ variable "pf_api_server" {
 # Ports
 variable "pf_port_media" {
   type    = string
-  default = "LR" # LX
+  default = "LX" # LR
 }
 variable "pf_port_pop1" {
   type    = string
@@ -38,7 +38,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A" # A
+  default = "B" # A, B
 }
 variable "pf_port_pop2" {
   type    = string
@@ -58,7 +58,7 @@ variable "pf_port_autoneg" {
 }
 variable "pf_port_speed" {
   type    = string
-  default = "10Gbps" # 100Mbps, 10Gbps, 5Gbps
+  default = "1Gbps" # 100Mbps, 10Gbps, 5Gbps
 }
 variable "pf_port_nni" {
   type    = bool
@@ -468,6 +468,38 @@ variable "pf_crc_shared_key" {
   description = "The pre-shared-key to use for authentication."
   default     = "superCoolKey"
   sensitive   = true
+}
+# Cloud Router BGP Session IPsec
+variable "pf_crbs_af" {
+  type        = string
+  description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
+  default     = "v4"
+}
+variable "pf_crbs_mhttl" {
+  type        = number
+  description = "The TTL of this session. The default is 1."
+  default     = 1
+}
+variable "pf_crbs_orlonger" {
+  type        = bool
+  description = "Whether to use exact match or longer for all prefixes"
+  default     = true # Allow longer prefixes
+}
+
+variable "vpn_side_asn3" {
+  type        = number
+  default     = 64534 # private (64512 to 65534)
+  description = "VPN Side ASN"
+}
+variable "vpn_remote_address" {
+  type        = string
+  description = "The cloud-side router peer IP."
+  default     = "169.254.51.1/29"
+}
+variable "vpn_l3_address" {
+  type        = string
+  description = "The L3 address of this instance."
+  default     = "169.254.51.2/29"
 }
 
 # Cloud Router Connection Port

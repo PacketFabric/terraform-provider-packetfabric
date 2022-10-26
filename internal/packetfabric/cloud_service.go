@@ -347,7 +347,7 @@ func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteR
 	deleteOk := make(chan bool)
 	defer close(deleteOk)
 	fn := func() (*ServiceState, error) {
-		return c.GetAwsBackboneState(vcCircuitID)
+		return c.GetBackboneState(vcCircuitID)
 	}
 	go c.CheckServiceStatus(deleteOk, fn)
 	if !<-deleteOk {
