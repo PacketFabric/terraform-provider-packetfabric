@@ -73,13 +73,13 @@ func _buildConnUpdateExpectedResp() {
 		Pop:                       "LAX1",
 		Site:                      "us-west-1",
 		BgpState:                  "string",
-		BgpStateList: 			   []BgpStateObj{
+		BgpStateList: []BgpStateObj{
 			{BgpSettingsUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b", BgpState: "string"},
-		}
-		CloudRouterName: 		   "Sample CR",
-		CloudRouterASN:			   4556,
-		CloudRouterCircuitID:      "PF-L3-CUST-2001",
-		NatCapable:                true,
+		},
+		CloudRouterName:      "Sample CR",
+		CloudRouterASN:       4556,
+		CloudRouterCircuitID: "PF-L3-CUST-2001",
+		NatCapable:           true,
 	})
 }
 
