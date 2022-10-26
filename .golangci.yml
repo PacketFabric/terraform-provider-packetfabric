@@ -1,16 +1,15 @@
 linters:
   disable-all: true
+  # https://golangci-lint.run/usage/linters/
   enable:
-    - gofmt
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - typecheck
-    - unused
-    - godot
-    - unused
+    - errcheck # bugs, error
+    - govet # bugs, metalinter 
+    - staticcheck # bugs, metalinter
+    - typecheck # bugs
+    - ineffassign # unused
+    # - godot # style, comment
+    # - gosimple # style
+    # - gofmt # format
 
 run:
   timeout: 2m

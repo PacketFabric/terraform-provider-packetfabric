@@ -18,35 +18,6 @@ const _cloudConnBillingUUID = "a2115890-ed02-4795-a6dd-c485bec3529c"
 const _awsAccountID = "723804547887"
 const _accountUUID = "847548f7-9cde-4fe5-8751-32ff19825b7e"
 
-var _clConnectionCreateResp = AwsConnectionCreateResponse{
-	PublicIP:        "",
-	UUID:            _cloudConnUUID,
-	CustomerUUID:    _cloudConnCustomerUUID,
-	UserUUID:        _cloudConnUserUUID,
-	ServiceProvider: "aws",
-	PortType:        "hosted",
-	Settings: CloudRouterSettings{
-		AwsRegion:       "",
-		AwsHostedType:   "",
-		AwsConnectionID: "",
-		AwsAccountID:    "",
-	},
-	CloudCircuitID: _cloudCircuitID,
-	AccountUUID:    _cloudConnBillingUUID,
-	ServiceClass:   "metro",
-	Description:    _cloudConnDesc,
-	State:          "Requested",
-	Billing: AwsBilling{
-		AccountUUID:      "",
-		SubscriptionTerm: 0,
-	},
-	Speed: "1Gbps",
-	Components: AwsComponents{
-		IfdPortCircuitIDCust: "",
-		IfdPortCircuitIDPf:   "",
-	},
-}
-
 var _clConnUpdateExpectedResp = make([]CloudRouterConnectionReadResponse, 0)
 
 func _buildConnUpdateExpectedResp() {
@@ -134,7 +105,7 @@ func Test_ListAwsRouterConnections(t *testing.T) {
 
 }
 
-func Test_DeleteAwsConnection(t *testing.T) {
+func Test_DeleteCloudRouterConnection(t *testing.T) {
 	var expectedResp ConnectionDeleteResp
 	_ = json.Unmarshal(_buildConnDeleteResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callDeleteAwsConn, nil, expectedResp, _buildConnDeleteResp(), "test-delete-aws-connection", t)
@@ -157,11 +128,11 @@ func _callListAwsRouterConnections(payload interface{}) (interface{}, error) {
 }
 
 func _callUpdateAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.UpdateAwsConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
+	return cTest.UpdateCloudRouterConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
 }
 
 func _callDeleteAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.DeleteAwsConnection(_circuitIdMock, _cloudConnCid)
+	return cTest.DeleteCloudRouterConnection(_circuitIdMock, _cloudConnCid)
 }
 
 func _buildMockCloudRouterConnectionCreate() []byte {
@@ -293,9 +264,9 @@ func _buildMockCloudRouterConnUpdateResp(description string) []byte {
 		  "bgp_state": "string",
 		  "bgp_state_list": [
             {
-			  "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
-			  "bgp_state": "string"
-		    }
+			        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+			        "bgp_state": "string"
+		        }
           ],
 		  "cloud_router_name": "Sample CR",
 		  "cloud_router_asn": 4556,
@@ -341,9 +312,9 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"bgp_state": "string",
 		"bgp_state_list": [
           {
-		    "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
-			"bgp_state": "string"
-		  }
+		        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+		      	"bgp_state": "string"
+		      }
         ],
 		"cloud_router_name": "Sample CR",
 		"cloud_router_asn": 4556,

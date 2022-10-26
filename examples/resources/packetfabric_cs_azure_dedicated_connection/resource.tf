@@ -1,7 +1,7 @@
 resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azure" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
-  description       = var.description
+  description       = var.pf_description
   zone              = var.pf_cs_zone
   pop               = var.pf_cs_pop
   subscription_term = var.pf_cs_subterm

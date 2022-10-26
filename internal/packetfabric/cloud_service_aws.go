@@ -2,6 +2,7 @@ package packetfabric
 
 import (
 	"fmt"
+	"time"
 )
 
 const serviceAwsURI = "/v2/services/third-party/hosted/aws"
@@ -13,11 +14,8 @@ const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
 const cloudServicesURI = "/v2/services/cloud/%s"
 const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
-const cloudConnectionInstStatusURI = "/v2/services/cloud/connections/%s/status"
-const cloudConnectionInstStatusOptsURI = "/v2/services/cloud/connections/%s/upgrade/options"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
-const cloudConnectionCurrentCustomersHostedURI = "v2/services/cloud/connections/hosted"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
 
 type ServiceAws struct {
@@ -77,26 +75,28 @@ type MktConnProvisionResp struct {
 }
 
 type Interfaces struct {
-	PortCircuitID      string `json:"port_circuit_id"`
-	Pop                string `json:"pop"`
-	Site               string `json:"site"`
-	SiteName           string `json:"site_name"`
-	Speed              string `json:"speed"`
-	Media              string `json:"media"`
-	Zone               string `json:"zone"`
-	Description        string `json:"description"`
-	Vlan               int    `json:"vlan"`
-	Untagged           bool   `json:"untagged"`
-	ProvisioningStatus string `json:"provisioning_status"`
-	AdminStatus        string `json:"admin_status"`
-	OperationalStatus  string `json:"operational_status"`
-	CustomerUUID       string `json:"customer_uuid"`
-	CustomerName       string `json:"customer_name"`
-	Region             string `json:"region"`
-	IsCloud            bool   `json:"is_cloud"`
-	IsPtp              bool   `json:"is_ptp"`
-	TimeCreated        string `json:"time_created"`
-	TimeUpdated        string `json:"time_updated"`
+	PortCircuitID      string `json:"port_circuit_id,omitempty"`
+	Pop                string `json:"pop,omitempty"`
+	Site               string `json:"site,omitempty"`
+	SiteName           string `json:"site_name,omitempty"`
+	Speed              string `json:"speed,omitempty"`
+	Media              string `json:"media,omitempty"`
+	Zone               string `json:"zone,omitempty"`
+	Description        string `json:"description,omitempty"`
+	Vlan               int    `json:"vlan,omitempty"`
+	Untagged           bool   `json:"untagged,omitempty"`
+	ProvisioningStatus string `json:"provisioning_status,omitempty"`
+	AdminStatus        string `json:"admin_status,omitempty"`
+	OperationalStatus  string `json:"operational_status,omitempty"`
+	CustomerUUID       string `json:"customer_uuid,omitempty"`
+	CustomerName       string `json:"customer_name,omitempty"`
+	Region             string `json:"region,omitempty"`
+	IsCloud            bool   `json:"is_cloud,omitempty"`
+	IsPtp              bool   `json:"is_ptp,omitempty"`
+	TimeCreated        string `json:"time_created,omitempty"`
+	TimeUpdated        string `json:"time_updated,omitempty"`
+	CustomerSiteCode   string `json:"customer_site_code,omitempty"`
+	CustomerSiteName   string `json:"customer_site_name,omitempty"`
 }
 
 type HostedAwsConnection struct {
@@ -167,34 +167,39 @@ type CloudServiceConnCreateResp struct {
 	Speed                   string      `json:"speed,omitempty"`
 }
 type Settings struct {
-	VlanIDPf                    int         `json:"vlan_id_pf,omitempty"`
-	VlanIDCust                  int         `json:"vlan_id_cust,omitempty"`
-	SvlanIDCust                 interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIdPrivate               int         `json:"vlan_id_private,omitempty"`
-	VlanIdMicrosoft             int         `json:"vlan_id_microsoft,omitempty"`
-	VcIdPrivate                 int         `json:"vc_id_private,omitempty"`
-	SvlanIdCustomer             interface{} `json:"svlan_id_customer,omitempty"`
-	AzureServiceKey             string      `json:"azure_service_key,omitempty"`
-	AzureServiceTag             int         `json:"azure_service_tag,omitempty"`
-	GooglePairingKey            string      `json:"google_pairing_key,omitempty"`
-	Google_vlan_attachment_name string      `json:"google_vlan_attchment_name,omitempty"`
-	AwsRegion                   string      `json:"aws_region,omitempty"`
-	AwsHostedType               string      `json:"aws_hosted_type,omitempty"`
-	AwsConnectionID             string      `json:"aws_connection_id,omitempty"`
-	AwsAccountID                string      `json:"aws_account_id,omitempty"`
-	ZoneDest                    string      `json:"zone_dest,omitempty"`
-	Autoneg                     bool        `json:"autoneg,omitempty"`
-	Encapsulation               string      `json:"encapsulation,omitempty"`
+	VlanIDPf                 int         `json:"vlan_id_pf,omitempty"`
+	VlanIDCust               int         `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust              interface{} `json:"svlan_id_cust,omitempty"`
+	VlanIDPrivate            int         `json:"vlan_id_private,omitempty"`
+	VlanIDMicrosoft          int         `json:"vlan_id_microsoft,omitempty"`
+	VcIDPrivate              int         `json:"vc_id_private,omitempty"`
+	SvlanIDCustomer          interface{} `json:"svlan_id_customer,omitempty"`
+	AzureServiceKey          string      `json:"azure_service_key,omitempty"`
+	AzureServiceTag          int         `json:"azure_service_tag,omitempty"`
+	GooglePairingKey         string      `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string      `json:"google_vlan_attchment_name,omitempty"`
+	AwsRegion                string      `json:"aws_region,omitempty"`
+	AwsHostedType            string      `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID          string      `json:"aws_connection_id,omitempty"`
+	AwsAccountID             string      `json:"aws_account_id,omitempty"`
+	ZoneDest                 string      `json:"zone_dest,omitempty"`
+	Autoneg                  bool        `json:"autoneg,omitempty"`
+	Encapsulation            string      `json:"encapsulation,omitempty"`
+	OracleRegion             string      `json:"oracle_region,omitempty"`
+	VcOcid                   string      `json:"vc_ocid,omitempty"`
+	PortCrossConnectOcid     string      `json:"port_cross_connect_ocid,omitempty"`
+	PortCompartmentOcid      string      `json:"port_compartment_ocid,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
 	SubscriptionTerm int    `json:"subscription_term,omitempty"`
 	Speed            string `json:"speed,omitempty"`
+	ContractedSpeed  string `json:"contracted_speed,omitempty"`
 }
 type Components struct {
 	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
-	VcIdMicrosoft        int    `json:"vc_id_microsoft,omitempty"`
-	VcIdPrivate          int    `json:"vc_id_private,omitempty"`
+	VcIDMicrosoft        int    `json:"vc_id_microsoft,omitempty"`
+	VcIDPrivate          int    `json:"vc_id_private,omitempty"`
 }
 
 type DedicatedConnResp struct {
@@ -379,6 +384,8 @@ func (c *PFClient) GetCurrentCustomersDedicated() ([]DedicatedConnResp, error) {
 func (c *PFClient) DeleteCloudService(cloudCID string) error {
 	formatedURI := fmt.Sprintf(cloudServicesURI, cloudCID)
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, nil)
+	// Upon requested on issue #157
+	time.Sleep(20 * time.Second)
 	if err != nil {
 		return err
 	}

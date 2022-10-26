@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const cloudCidNotFoundSummaryMsg = "cloud_circuit_id not created yet"
 const cloudCidNotFoundDetailsMsg = "Please wait few minutes then run: terraform refresh"
 
 func resourceAwsReqDedicatedConn() *schema.Resource {
@@ -130,32 +129,7 @@ func resourceAwsReqDedicatedConnUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	cloudCID, ok := d.GetOk("id")
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "AWS Services Delete",
-			Detail:   cloudCidNotFoundDetailsMsg,
-		})
-		return diags
-	}
-	err := c.DeleteCloudService(cloudCID.(string))
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	deleteOkCh := make(chan bool)
-	defer close(deleteOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudServiceStatus(cloudCID.(string))
-	}
-	go c.CheckServiceStatus(deleteOkCh, err, fn)
-	if !<-deleteOkCh {
-		return diag.FromErr(err)
-	}
-	return diags
+	return resourceCloudSourceDelete(ctx, d, m, "AWS Service Delete")
 }
 
 func extractDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn {
@@ -170,6 +144,6 @@ func extractDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn 
 		AutoNeg:          d.Get("autoneg").(bool),
 		Speed:            d.Get("speed").(string),
 		ShouldCreateLag:  d.Get("should_create_lag").(bool),
-		Loa:              d.Get("loa").(interface{}),
+		Loa:              d.Get("loa"),
 	}
 }

@@ -64,16 +64,16 @@ func resourceBgpPrefixesCreate(ctx context.Context, d *schema.ResourceData, m in
 	c.Ctx = ctx
 	var bgpSessionUUID string
 	var bgpPrefixes []packetfabric.BgpPrefix
-	if sessionUUID, ok := d.GetOk("bgp_settings_uuid"); !ok {
+	sessionUUID, ok := d.GetOk("bgp_settings_uuid")
+	if !ok {
 		return diag.Errorf("please provide a valid BGP Session UUID")
-	} else {
-		bgpSessionUUID = sessionUUID.(string)
 	}
-	if prefixes := extractBgpSessionPrefixes(d); len(prefixes) <= 0 {
+	bgpSessionUUID = sessionUUID.(string)
+	prefixes := extractBgpSessionPrefixes(d)
+	if len(prefixes) <= 0 {
 		return diag.Errorf("please provide a valid list of prefixes")
-	} else {
-		bgpPrefixes = prefixes
 	}
+	bgpPrefixes = prefixes
 	var diags diag.Diagnostics
 	resp, err := c.CreateBgpSessionPrefixes(bgpPrefixes, bgpSessionUUID)
 	if err != nil || resp == nil {
@@ -87,17 +87,18 @@ func resourceBgpPrefixesRead(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var bgpSettingsUUID string
-	if settingsUUID, ok := d.GetOk("bgp_settings_uuid"); !ok {
+	settingsUUID, ok := d.GetOk("bgp_settings_uuid")
+	if !ok {
 		return diag.Errorf("please provide a valid BGP Settings UUID")
-	} else {
-		bgpSettingsUUID = settingsUUID.(string)
 	}
+	bgpSettingsUUID = settingsUUID.(string)
 	var diags diag.Diagnostics
-	if prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID); len(prefixes) <= 0 && err != nil {
+	prefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID)
+	if len(prefixes) <= 0 && err != nil {
 		return diag.FromErr(err)
-	} else {
-		_ = d.Set("prefixes", _flattenPrefixes(prefixes))
 	}
+	_ = d.Set("prefixes", _flattenPrefixes(prefixes))
+	
 	return diags
 }
 

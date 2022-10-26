@@ -7,7 +7,6 @@ import (
 )
 
 const _bgpPrefixUUID = "3d78949f-1396-4163-b0ca-3eba3592efef"
-const _bgpPrefix = "10.0.0.1/32"
 const _bgpSettingsUUID = "da53d96c-7783-4a6f-a171-a289bbf6763b"
 const _bgpRemoteAddress = "10.0.0.1"
 const _cID = "PF-L3-CUST-1730653"
@@ -19,50 +18,6 @@ const _bgpPrefixInUUID = "434ab7c4-7e55-423c-a897-8a40b6ccf215"
 const _bgpPrefixOutUUID = "ffc86e74-8c03-49ea-bf87-f3919d7c9d0a"
 const _bgpL3Prefix = "10.0.0.1/30"
 const _bgpPublicIP = "185.161.1.152/31"
-
-var _bgpSession = BgpSession{
-	Md5:             "$9$oeJZjqmTn9Af5RhylMW-VwgJDHqfFnCZU.5QFAt",
-	L3Address:       "10.0.0.1/30",
-	AddressFamily:   "v4",
-	RemoteAddress:   "10.0.0.1",
-	RemoteAsn:       4556,
-	MultihopTTL:     1,
-	LocalPreference: 1,
-	Med:             1,
-	Community:       1,
-	AsPrepend:       1,
-	Orlonger:        true,
-	BfdInterval:     300,
-	BfdMultiplier:   3,
-	Disabled:        false,
-}
-
-var _bgpCreateResp = BgpSessionCreateResp{
-	Md5:             _bgpMd5,
-	BgpSettingsUUID: _bgpPrefixUUID,
-	RemoteAddress:   _bgpRemoteAddress,
-	AddressFamily:   "v4",
-	RemoteAsn:       _bgpRemoteAsn,
-	MultihopTTL:     1,
-	LocalPreference: 1,
-	Med:             1,
-	Community:       "1",
-	AsPrepend:       1,
-	Orlonger:        true,
-	BfdInterval:     300,
-	BfdMultiplier:   3,
-	Disabled:        false,
-	BgpState:        "connecting",
-	Nat: struct {
-		PreNatSources []string "json:\"pre_nat_sources\""
-		PoolPrefixes  []string "json:\"pool_prefixes\""
-	}{
-		PreNatSources: []string{"10.0.0.0/24"},
-		PoolPrefixes:  []string{"10.0.0.0/32"},
-	},
-	TimeCreated: _createdTime,
-	TimeUpdated: _updatedTime,
-}
 
 var _bgpPrefixOut = "10.0.0.2/32"
 var _bgpPrefixIn = "10.0.0.1/32"
@@ -108,8 +63,8 @@ func init() {
 func Test_CreateBgpSession(t *testing.T) {
 	expectedPayload := BgpSession{}
 	expectedResp := BgpSessionCreateResp{}
-	json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload)
-	json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp)
+	_ = json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload)
+	_ = json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateBgpSession, expectedPayload, expectedResp, _buildBgpSessionCreateResp(), "bgp-session-create", t)
 }
 
@@ -149,10 +104,6 @@ func _callReadBgpSession(payload interface{}) (interface{}, error) {
 
 func _callReadBgpSessionPrefixes(payload interface{}) (interface{}, error) {
 	return cTest.ReadBgpSessionPrefixes(payload.(string))
-}
-
-func _callDeleteBgpSessions(payload interface{}) (interface{}, error) {
-	return cTest.DeleteBgpSession(_cID, _connID, payload.(string))
 }
 
 func _callListBgpSessionSettings(payload interface{}) (interface{}, error) {

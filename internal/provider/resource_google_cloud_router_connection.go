@@ -42,6 +42,7 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection.",
 			},
 			"google_pairing_key": {
@@ -99,7 +100,7 @@ func resourceGoogleCloudRouterConnCreate(ctx context.Context, d *schema.Resource
 		fn := func() (*packetfabric.ServiceState, error) {
 			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
 		}
-		go c.CheckServiceStatus(createOkCh, err, fn)
+		go c.CheckServiceStatus(createOkCh, fn)
 		if !<-createOkCh {
 			return diag.FromErr(err)
 		}
@@ -140,7 +141,7 @@ func resourceGoogleCloudRouterConnUpdate(ctx context.Context, d *schema.Resource
 		descUpdate := packetfabric.DescriptionUpdate{
 			Description: desc.(string),
 		}
-		if _, err := c.UpdateAwsConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
+		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
 			diags = diag.FromErr(err)
 		}
 	}
@@ -148,27 +149,7 @@ func resourceGoogleCloudRouterConnUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceGoogleCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteAwsConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			deleteOk := make(chan bool)
-			defer close(deleteOk)
-			fn := func() (*packetfabric.ServiceState, error) {
-				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
-			}
-			go c.CheckServiceStatus(deleteOk, err, fn)
-			if !<-deleteOk {
-				return diag.FromErr(err)
-			}
-			d.SetId("")
-		}
-	}
-	return diags
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRouterConn {

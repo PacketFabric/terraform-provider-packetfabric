@@ -3,7 +3,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -35,7 +35,7 @@ output "pf_port_site1" {
 # Create Cross Connect
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
-  description   = var.description
+  description   = var.pf_description
   document_uuid = var.pf_document_uuid1
   port          = packetfabric_port.port_1.id
   site          = local.pf_port_site1

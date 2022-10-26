@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.1"
+      version = ">= 0.3.2"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.23.0"
+      version = ">= 4.37.0"
     }
   }
 }
@@ -152,62 +152,39 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
   ]
 }
 
-### Cannot create the VIF automatically right now because the VLAN "cloud_settings": {}, are missing from /v2/services/cloud/connections/{cloud_circuit_id} 
-### but also from aws_dx_gateway data source 
-# Vote for 26461 aws_dx_connection data source: add VLAN ID #26461
-# https://github.com/hashicorp/terraform-provider-aws/issues/26461
+# From the AWS side: Create and attach a VIF
+data "aws_dx_gateway" "direct_connect_gw_1" {
+  provider = aws
+  name     = "${var.tag_name}-${random_pet.name.id}"
 
-# # From the AWS side: Create and attach a VIF
-# data "packetfabric_cs_aws_hosted_connection" "current" {
-#   provider         = packetfabric
-#   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
+  depends_on = [
+    aws_dx_gateway.direct_connect_gw_1
+  ]
+}
 
-#   depends_on = [
-#     aws_dx_connection_confirmation.confirmation_1
-#   ]
-# }
+resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
+  provider       = aws
+  connection_id  = data.aws_dx_connection.current_1.id
+  dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
+  name           = "${var.tag_name}-${random_pet.name.id}"
+  vlan           = data.aws_dx_gateway.direct_connect_gw_1.vlan_id # provider version >= 4.35.0 https://github.com/hashicorp/terraform-provider-aws/issues/26461
+  address_family = "ipv4"
+  bgp_asn        = var.customer_side_asn1
+  depends_on = [
+    aws_dx_connection_confirmation.confirmation_1
+  ]
+}
 
-# output "data_packetfabric_cs_aws_hosted_connection" {
-#   value = data.packetfabric_cs_aws_hosted_connection.current
-# }
-
-# locals {
-#   # below may need to be updated
-#   # https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
-#   cloud_connections = data.packetfabric_cs_aws_hosted_connection.current.cloud_connections[*]
-#   helper_map = { for val in local.cloud_connections :
-#   val["description"] => val }
-#   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}"]
-# }
-# # output "cc1_vlan_id_pf" {
-# #   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-# # }
-# # output "cc2_vlan_id_pf" {
-# #   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
-# # }
-# output "packetfabric_cloud_router_connection_aws" {
-#   value = data.packetfabric_cloud_router_connection_aws.current.cloud_connections[*]
-# }
-
-# resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-#   provider       = aws
-#   connection_id  = data.aws_dx_connection.current_1.id
-#   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-#   name           = "${var.tag_name}-${random_pet.name.id}"
-#   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf) ## Problem here
-#   address_family = "ipv4"
-#   bgp_asn        = var.customer_side_asn1
-#   depends_on = [
-#     aws_dx_connection_confirmation.confirmation_1
-#   ]
-# }
+ # provider version >= 4.37.0
+data "aws_dx_router_configuration" "router_config" {
+  provider               = aws
+  virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
+  router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+}
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
 ##########################################################################################
-
-# Vote for 26432 New aws_dx_virtual_interface_router_configuration data source #26432
-# https://github.com/hashicorp/terraform-provider-aws/issues/26432
 
 # # From the AWS side: Associate Virtual Private GW to Direct Connect GW
 # resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {

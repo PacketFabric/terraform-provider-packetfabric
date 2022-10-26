@@ -15,7 +15,9 @@ const bgpSessionSettingsByUUIDURI = "/v2/services/cloud-routers/%s/connections/%
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_bgp_create
 type BgpSession struct {
 	Md5             string      `json:"md5"`
-	L3Address       string      `json:"l3_address"`
+	L3Address       string      `json:"l3_address,omitempty"`
+	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
+	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 	AddressFamily   string      `json:"address_family"`
 	RemoteAddress   string      `json:"remote_address"`
 	RemoteAsn       int         `json:"remote_asn"`
@@ -40,6 +42,8 @@ type BgpSessionUpdate struct {
 	RemoteAddress   string               `json:"remote_address"`
 	RemoteAsn       int                  `json:"remote_asn"`
 	L3Address       string               `json:"l3_address"`
+	PrimarySubnet   string               `json:"primary_subnet"`
+	SecondarySubnet string               `json:"secondary_subnet"`
 	Prefixes        []BgpSessionResponse `json:"prefixes"`
 }
 
@@ -49,9 +53,13 @@ type BgpNat struct {
 }
 
 type BgpPrefix struct {
-	Prefix string `json:"prefix"`
-	Type   string `json:"type"`
-	Order  int    `json:"order"`
+	Prefix          string `json:"prefix,omitempty"`
+	MatchType       string `json:"match_type,omitempty"`
+	AsPrepend       int    `json:"as_prepend,omitempty"`
+	Med             int    `json:"med,omitempty"`
+	LocalPreference int    `json:"local_preference,omitempty"`
+	Type            string `json:"type,omitempty"`
+	Order           int    `json:"order,omitempty"`
 }
 
 type BgpSessionCreateResp struct {
@@ -88,6 +96,8 @@ type BgpSessionBySettingsUUID struct {
 	Md5             string      `json:"md5"`
 	Med             int         `json:"med"`
 	L3Address       string      `json:"l3_address,omitempty"`
+	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
+	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 	Community       interface{} `json:"community"`
 	AsPrepend       int         `json:"as_prepend"`
 	Orlonger        bool        `json:"orlonger"`
