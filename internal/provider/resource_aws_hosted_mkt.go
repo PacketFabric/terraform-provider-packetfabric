@@ -106,11 +106,7 @@ func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcRequestUUID, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid VC Request UUID to delete")
-	}
-	err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
+	err := c.DeleteHostedMktConnection(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
