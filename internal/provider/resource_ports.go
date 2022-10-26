@@ -106,11 +106,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	portCID, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid Port Circuit ID")
-	}
-	_, err := c.GetPortByCID(portCID.(string))
+	_, err := c.GetPortByCID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -118,27 +114,8 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
 	var diags diag.Diagnostics
-	var autoneg bool
-	var portCID, description string
-	autonegData, ok := d.GetOk("autoneg") 
-	if !ok {
-		return diag.Errorf("autoneg is a required field")
-	}
-	autoneg = autonegData.(bool)
-	portCIDData, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("port circuit ID is a required field")
-	}
-	portCID = portCIDData.(string)
-	descriptionData, ok := d.GetOk("description")
-	if !ok {
-		return diag.Errorf("description is a required field")
-	}
-	description = descriptionData.(string)
-	_, err := c.UpdatePort(autoneg, portCID, description)
+	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -149,13 +126,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	var portCID string
-	portCIDData, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid Port Circuit ID")
-	}
-	portCID = portCIDData.(string)
-	resp, err := c.DeletePort(portCID)
+	resp, err := c.DeletePort(d.Id())
 	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
@@ -169,9 +140,8 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func extractInterface(d *schema.ResourceData) packetfabric.Interface {
-	return packetfabric.Interface{
+	interf := packetfabric.Interface{
 		AccountUUID:      d.Get("account_uuid").(string),
-		Autoneg:          d.Get("autoneg").(bool),
 		Description:      d.Get("description").(string),
 		Media:            d.Get("media").(string),
 		Nni:              d.Get("nni").(bool),
@@ -180,4 +150,29 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 		SubscriptionTerm: d.Get("subscription_term").(int),
 		Zone:             d.Get("zone").(string),
 	}
+	if autoneg, ok := d.GetOk("autoneg"); ok {
+		interf.Autoneg = autoneg.(bool)
+	}
+	return interf
+}
+
+func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	// Update if payload contains Autoneg and Description
+	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
+		if desc, descOk := d.GetOk("description"); descOk {
+			resp, err = c.UpdatePort(autoneg.(bool), d.Id(), desc.(string))
+		} else {
+			// Update if payload contains Autoneg only
+			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), d.Id())
+		}
+	}
+	// Update if payload contains Description only
+	if desc, descOk := d.GetOk("description"); descOk {
+		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
+			resp, err = c.UpdatePortDescriptionOnly(d.Id(), desc.(string))
+		}
+	}
+	return
 }
