@@ -188,7 +188,7 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
 		thidPartyVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
-	if interf, ok := d.GetOk("interface"); ok {
+	for _, interf := range d.Get("interface").(*schema.Set).List() {
 		thidPartyVC.Interface = extractThirdPartyInterf(interf.(map[string]interface{}))
 	}
 	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
