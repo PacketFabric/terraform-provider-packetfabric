@@ -202,9 +202,17 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 
 func extractThirdPartyInterf(interf map[string]interface{}) packetfabric.Interface {
 	interfResp := packetfabric.Interface{}
-	interfResp.PortCircuitID = interf["port_circuit_id"].(string)
-	interfResp.Vlan = interf["vlan"].(int)
-	interfResp.Svlan = interf["svlan"].(int)
-	interfResp.Untagged = interf["untagged"].(bool)
+	if portCID := interf["port_circuit_id"]; portCID != nil {
+		interfResp.PortCircuitID = portCID.(string)
+	}
+	if vlan := interf["vlan"]; vlan != nil {
+		interfResp.Vlan = vlan.(int)
+	}
+	if svlan := interf["svlan"]; svlan != nil {
+		interfResp.Svlan = svlan.(int)
+	}
+	if untagged := interf["untagged"]; untagged != nil {
+		interfResp.Untagged = untagged.(bool)
+	}
 	return interfResp
 }
