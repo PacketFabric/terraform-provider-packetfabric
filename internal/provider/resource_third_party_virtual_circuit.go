@@ -120,6 +120,9 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 				Description: "The circuit ID of the flex bandwidth container.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -129,11 +132,13 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 	thidPartyVC := extractThirdPartyVC(d)
 	resp, err := c.CreateThirdPartyVC(thidPartyVC)
+	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
-
+	if resp != nil {
+		d.SetId(resp.VcRequestUUID)
+	}
 	return diags
 }
 
@@ -141,7 +146,7 @@ func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.Resourc
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if _, err := c.GetBackboneByVcCID(d.Id()); err != nil {
+	if _, err := c.GetVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
@@ -162,9 +167,10 @@ func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.Resou
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if _, err := c.DeleteService(d.Id()); err != nil {
+	if _, err := c.DeleteVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId("")
 	return diags
 }
 
