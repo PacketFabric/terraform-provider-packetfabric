@@ -415,10 +415,11 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	type DeleteReason struct {
 		DeleteReason string `json:"delete_reason"`
 	}
+	formatedURI := fmt.Sprintf(hostedMktServiceDeleteURI, vcRequestUUID)
 	reason := DeleteReason{
 		DeleteReason: "Delete requested by PacketFabric terraform plugin.",
 	}
-	_, err := c.sendRequest(uri, deleteMethod, &reason, nil)
+	_, err := c.sendRequest(formatedURI, deleteMethod, &reason, nil)
 	if err != nil {
 		return err
 	}

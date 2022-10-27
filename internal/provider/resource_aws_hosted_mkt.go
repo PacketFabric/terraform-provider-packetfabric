@@ -12,16 +12,16 @@ import (
 
 func resourceAwsHostedMkt() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceCreateAwsHostedMkt,
-		UpdateContext: resourceUpdateAwsHostedMkt,
-		ReadContext:   resourceReadAwsHostedMkt,
-		DeleteContext: resourceDeleteAwsHostedMkt,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
+		CreateContext: resourceCreateAwsHostedMkt,
+		ReadContext:   resourceReadAwsHostedMkt,
+		UpdateContext: resourceUpdateAwsHostedMkt,
+		DeleteContext: resourceDeleteAwsHostedMkt,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -76,6 +76,9 @@ func resourceAwsHostedMkt() *schema.Resource {
 				Description:  "The speed of the new connection.\n\n\tEnum: [\"50Mbps\", \"100Mbps\", \"200Mbps\", \"300Mbps\", \"400Mbps\", \"500Mbps\", \"1Gbps\", \"2Gbps\", \"5Gbps\", \"10Gbps\"]",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -88,7 +91,9 @@ func resourceCreateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcRequestUUID)
+	if resp != nil {
+		d.SetId(resp.VcRequestUUID)
+	}
 	return diags
 }
 
