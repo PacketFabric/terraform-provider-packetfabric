@@ -49,7 +49,7 @@ func resourceAwsHostedMkt() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description: "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
+				Description:  "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
 			},
 			"aws_account_id": {
 				Type:         schema.TypeString,
@@ -98,8 +98,7 @@ func resourceReadAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceUpdateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

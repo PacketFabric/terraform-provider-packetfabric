@@ -174,6 +174,15 @@ func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
+// VC Marketplaces doesn't have an UPDATE mechanism.
+func resourceUpdateMarketplace(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return diag.Diagnostics{diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "VC Update",
+		Detail:   "If you want to update a VC, please perform a destroy, then apply a new one.",
+	}}
+}
+
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string) (*packetfabric.BackboneDeleteResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
