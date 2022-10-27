@@ -174,7 +174,7 @@ func resourceRouterConnectionAwsUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	connCid := d.Get("id").(string)
 	description := d.Get("description").(string)
-	_, err := c.UpdateAwsConnection(cID.(string), connCid, packetfabric.DescriptionUpdate{Description: description})
+	_, err := c.UpdateCloudRouterConnection(cID.(string), connCid, packetfabric.DescriptionUpdate{Description: description})
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -190,7 +190,7 @@ func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
 	connCID := d.Get("id").(string)
-	resp, err := c.DeleteAwsConnection(cID.(string), connCID)
+	resp, err := c.DeleteCloudRouterConnection(cID.(string), connCID)
 	if err != nil {
 		return diag.FromErr(err)
 	}

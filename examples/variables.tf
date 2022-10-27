@@ -30,7 +30,7 @@ variable "pf_api_server" {
 # Ports
 variable "pf_port_media" {
   type    = string
-  default = "LR" # LX
+  default = "LX" # LR
 }
 variable "pf_port_pop1" {
   type    = string
@@ -38,7 +38,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A" # A
+  default = "B" # A, B
 }
 variable "pf_port_pop2" {
   type    = string
@@ -58,7 +58,7 @@ variable "pf_port_autoneg" {
 }
 variable "pf_port_speed" {
   type    = string
-  default = "10Gbps" # 100Mbps, 10Gbps, 5Gbps
+  default = "1Gbps" # 100Mbps, 10Gbps, 5Gbps
 }
 variable "pf_port_nni" {
   type    = bool
@@ -242,11 +242,11 @@ variable "pf_market" {
 }
 variable "pf_routing_id_ix" {
   type    = string
-  default = "PDB-ROJ-9Y0K"
+  default = "PDB-ROJ-123"
 }
 variable "pf_market_ix" {
   type    = string
-  default = "ATL"
+  default = "DEN"
 }
 variable "pf_port_circuit_id_marketplace" {
   type    = string

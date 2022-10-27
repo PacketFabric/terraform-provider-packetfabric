@@ -2,6 +2,7 @@ package packetfabric
 
 import (
 	"fmt"
+	"time"
 )
 
 const serviceAwsURI = "/v2/services/third-party/hosted/aws"
@@ -384,6 +385,8 @@ func (c *PFClient) GetCurrentCustomersDedicated() ([]DedicatedConnResp, error) {
 func (c *PFClient) DeleteCloudService(cloudCID string) error {
 	formatedURI := fmt.Sprintf(cloudServicesURI, cloudCID)
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, nil)
+	// Upon requested on issue #157
+	time.Sleep(20 * time.Second)
 	if err != nil {
 		return err
 	}
