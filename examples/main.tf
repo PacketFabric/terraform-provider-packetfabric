@@ -484,7 +484,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Accept the Request
-# resource "packetfabric_marketplace_accept_request" "accept_marketplace_request" {
+# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
 #   provider        = packetfabric
 #   type            = "cloud" # backbone, ix or cloud
 #   cloud_provider  = "aws" # "aws, azure, google, oracle
@@ -494,10 +494,19 @@ resource "random_pet" "name" {}
 # }
 
 # # Reject the Request
-# resource "packetfabric_marketplace_reject_request" "reject_marketplace_request" {
+# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
 #   delete_reason   = "testing"
 #   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
+# }
+
+# # List all Service Requests (none Cloud Router)
+# data "packetfabric_marketplace_service_requests" "current" {
+#   provider = packetfabric
+# }
+
+# output "packetfabric_marketplace_service_requests" {
+#   value = data.packetfabric_marketplace_service_requests.current
 # }
 
 # #######################################
