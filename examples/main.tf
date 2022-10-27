@@ -395,8 +395,6 @@ resource "random_pet" "name" {}
 #   value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
 # }
 
-### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
-
 # # Create an IX Marketplace Connection 
 # resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
 #   provider    = packetfabric
@@ -405,7 +403,7 @@ resource "random_pet" "name" {}
 #   market      = var.pf_market_ix
 #   asn         = var.pf_asn_ix
 #   interface {
-#     port_circuit_id = packetfabric_port.port_1a.id
+#     port_circuit_id = "PF-AP-LAB5-2756010" #packetfabric_port.port_1a.id
 #     untagged        = false
 #     vlan            = var.pf_vc_vlan1
 #   }
@@ -421,8 +419,6 @@ resource "random_pet" "name" {}
 #   value = packetfabric_ix_virtual_circuit_marketplace.ix_marketplace_conn1
 # }
 
-### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
-
 # # Create a AWS Hosted Marketplace Connection 
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace" {
 #   provider       = packetfabric
@@ -435,17 +431,8 @@ resource "random_pet" "name" {}
 #   pop            = var.pf_cs_pop2
 #   zone           = var.pf_cs_zone2
 # }
-
 # output "packetfabric_cs_aws_hosted_marketplace_connection" {
 #   value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace
-# }
-
-# resource "packetfabric_cs_aws_provision_marketplace" "accept_request_aws" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
-#   vlan            = var.pf_cs_vlan2
 # }
 
 # # Create a Azure Hosted Marketplace Connection 
@@ -458,19 +445,9 @@ resource "random_pet" "name" {}
 #   market            = var.pf_market
 #   speed             = var.pf_cs_speed1 # will be deprecated
 # }
-
 # output "packetfabric_cs_azure_hosted_marketplace_connection" {
 #   sensitive = true
 #   value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure
-# }
-
-# resource "packetfabric_cs_azure_provision_marketplace" "accept_request_azure" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
-#   vlan_private    = var.pf_cs_vlan_private
-#   vlan_microsoft  = var.pf_cs_vlan_microsoft
 # }
 
 # # Create a GCP Hosted Marketplace Connection 
@@ -484,21 +461,10 @@ resource "random_pet" "name" {}
 #   google_pairing_key          = var.google_pairing_key
 #   google_vlan_attachment_name = var.google_vlan_attachment_name
 #   pop                         = var.pf_cs_pop1
-
 # }
-
-# # type terraform output packetfabric_cs_google_hosted_marketplace_connection to display the value
 # output "packetfabric_cs_google_hosted_marketplace_connection" {
 #   value     = packetfabric_cs_google_hosted_marketplace_connection.cs_conn1_marketplace_google
 #   sensitive = true
-# }
-
-# resource "packetfabric_cs_google_provision_marketplace" "accept_request_google" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_google_hosted_marketplace_connection.cs_conn1_marketplace_google.id
-#   vlan            = var.pf_cs_vlan2
 # }
 
 # # Create a Oracle Hosted Marketplace Connection 
@@ -512,18 +478,35 @@ resource "random_pet" "name" {}
 #   market       = var.pf_market
 #   pop          = var.pf_cs_pop6
 # }
-
 # output "packetfabric_cs_oracle_hosted_marketplace_connection" {
 #   value = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
 #   sensitive = true
 # }
 
-# resource "packetfabric_cs_oracle_hosted_marketplace_connection" "accept_request_oracle" {
+# # Accept the Request
+# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
 #   provider        = packetfabric
+#   type            = "cloud" # backbone, ix or cloud
+#   cloud_provider  = "aws" # "aws, azure, google, oracle
 #   description     = "${var.tag_name}-${random_pet.name.id}"
 #   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle.id
-#   vlan            = var.pf_cs_vlan2
+#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
+# }
+
+# # Reject the Request
+# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
+#   provider        = packetfabric
+#   delete_reason   = "testing"
+#   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
+# }
+
+# # List all Service Requests (none Cloud Router)
+# data "packetfabric_marketplace_service_requests" "current" {
+#   provider = packetfabric
+# }
+
+# output "packetfabric_marketplace_service_requests" {
+#   value = data.packetfabric_marketplace_service_requests.current
 # }
 
 # #######################################

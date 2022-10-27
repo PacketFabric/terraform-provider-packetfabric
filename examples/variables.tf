@@ -242,11 +242,11 @@ variable "pf_market" {
 }
 variable "pf_routing_id_ix" {
   type    = string
-  default = "PDB-ROJ-9Y0K"
+  default = "PDB-ROJ-123"
 }
 variable "pf_market_ix" {
   type    = string
-  default = "ATL"
+  default = "DEN"
 }
 variable "pf_port_circuit_id_marketplace" {
   type    = string
