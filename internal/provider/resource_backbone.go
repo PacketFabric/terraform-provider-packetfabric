@@ -42,7 +42,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"longhaul_type": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
