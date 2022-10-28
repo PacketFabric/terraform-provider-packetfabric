@@ -108,7 +108,7 @@ func resourceOracleMktCloudConnDelete(ctx context.Context, d *schema.ResourceDat
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	err := c.DeleteRequestedHostedMktService(vcRequestUUID.(string))
+	err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

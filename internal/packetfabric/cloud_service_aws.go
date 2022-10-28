@@ -9,6 +9,7 @@ const serviceAwsURI = "/v2/services/third-party/hosted/aws"
 const provisionMktConnURI = "/v2/services/requests/%s/provision/hosted"
 const hostedConnURI = "/v2/services/cloud/hosted/aws"
 const hostedMktService = "/v2/services/cloud/%s"
+const hostedMktServiceDeleteURI = "/v2/services/requests/%s"
 const dedicatedConnURI = "/v2/services/cloud/dedicated/aws"
 const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
@@ -403,10 +404,18 @@ func (c *PFClient) GetCloudServiceStatus(cloudCID string) (*ServiceState, error)
 }
 
 func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
-	formatedURI := fmt.Sprintf(hostedMktService, vcRequestUUID)
+	return c._deleteMktService(vcRequestUUID, hostedMktService)
+}
+
+func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) error {
+	return c._deleteMktService(vcRequestUUID, hostedMktServiceDeleteURI)
+}
+
+func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	type DeleteReason struct {
 		DeleteReason string `json:"delete_reason"`
 	}
+	formatedURI := fmt.Sprintf(hostedMktServiceDeleteURI, vcRequestUUID)
 	reason := DeleteReason{
 		DeleteReason: "Delete requested by PacketFabric terraform plugin.",
 	}

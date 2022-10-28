@@ -143,11 +143,6 @@ variable "pf_ptp_zone2" {
 ########################################
 ###### HOSTED CLOUD CONNECTIONS
 ########################################
-# Demo Port used for all
-variable "pf_demo_port" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
-}
 
 # Azure Hosted Connection
 variable "azure_service_key" {
@@ -234,23 +229,24 @@ variable "pf_cs_oracle_vc_ocid" {
 # Markeptlace
 variable "pf_routing_id" {
   type    = string
-  default = "PDB-ROJ-9Y0K"
+  default = "PD-WUY-9VB0" # Demo A
 }
 variable "pf_market" {
   type    = string
-  default = "ATL"
+  default = "HOU" # Demo A
+}
+variable "pf_market_port_circuit_id" {
+  type        = string
+  description = "Port Circuit ID used to provision a Marketplace request"
+  default     = "PF-AP-WDC1-1726464"
 }
 variable "pf_routing_id_ix" {
   type    = string
-  default = "PDB-ROJ-123"
+  default = "IXW-XRH-K2VX" # IX-Denver
 }
 variable "pf_market_ix" {
   type    = string
-  default = "DEN"
-}
-variable "pf_port_circuit_id_marketplace" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
+  default = "DEN" # IX-Denver
 }
 variable "pf_asn_ix" {
   type     = number
@@ -269,7 +265,7 @@ variable "pf_cs_pop3" {
 }
 variable "pf_cs_zone3" {
   type    = string
-  default = "D" #A
+  default = "D" # A
 }
 variable "pf_cs_speed3" {
   type    = string
@@ -504,8 +500,9 @@ variable "vpn_l3_address" {
 
 # Cloud Router Connection Port
 variable "pf_crc_port_circuit_id" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
+  type        = string
+  description = "Port Circuit ID used as a source port to create a Port Cloud Router Connection"
+  default     = "PF-AP-WDC1-1726464"
 }
 variable "pf_crc_vlan" {
   type    = number
