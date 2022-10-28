@@ -27,7 +27,6 @@ Terraform providers used: PacketFabric, IBM and Oracle.
 - resource & data source **"packetfabric_cloud_router_connection_ibm"**: Add an IBM Partner Connection to the Cloud Router
 - resource & data source **"packetfabric_cloud_router_connection_oracle"**: Add an Oracle FastConnect to the Cloud Router
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
 **Estimated time:** ~15 min
 
