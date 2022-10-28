@@ -132,7 +132,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "b" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
+  default = "b" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
 variable "pf_crc_pop2" {
   type        = string
@@ -141,7 +141,7 @@ variable "pf_crc_pop2" {
 }
 variable "pf_crc_zone2" {
   type    = string
-  default = "c" # you may look in the PacketFabric Web Portal to find out the zone available for the pop selected
+  default = "c" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
 variable "pf_crc_speed" {
   type        = string

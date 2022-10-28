@@ -42,7 +42,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"longhaul_type": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
@@ -123,7 +123,21 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	if resp != nil {
+		d.SetId(resp.VcCircuitID)
+	}
 	return diags
 }
 
