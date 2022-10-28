@@ -197,7 +197,7 @@ func datasourceVCRequests(ctx context.Context, d *schema.ResourceData, m interfa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	requests, err := c.GetVcRequests()
+	requests, err := c.GetSentVcRequests()
 	if err != nil {
 		return diag.FromErr(err)
 	}
