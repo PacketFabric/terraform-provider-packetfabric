@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -247,8 +246,6 @@ func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn
 	}
 	if phaseTwoAuthAlgo, ok := d.GetOk("phase2_authentication_algo"); ok {
 		iPSecRouter.Phase2AuthenticationAlgo = phaseTwoAuthAlgo.(string)
-	} else {
-		return iPSecRouter, fmt.Errorf("The field 'phase2_authentication_algo' is required.")
 	}
 	if phaseTwoLifetime, ok := d.GetOk("phase2_lifetime"); ok {
 		iPSecRouter.Phase2Lifetime = phaseTwoLifetime.(int)
