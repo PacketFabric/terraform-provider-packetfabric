@@ -117,8 +117,21 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.PtpUUID)
-
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if c.IsPointToPointComplete(resp.PtpUUID) {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	if resp != nil {
+		d.SetId(resp.PtpUUID)
+	}
 	return diags
 }
 
