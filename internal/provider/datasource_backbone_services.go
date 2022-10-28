@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -236,21 +237,20 @@ func backboneServiceRead(ctx context.Context, d *schema.ResourceData, m interfac
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if vcCID, ok := d.GetOk("vc_circuit_id"); ok {
-		service, err := c.GetBackboneByVcCID(vcCID.(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		if setErr := d.Set("backbone_services", flattenBackboneService(service)); setErr != nil {
-			return diag.FromErr(setErr)
-		}
+	services, err := c.GetServices()
+	if err != nil {
+		return diag.FromErr(err)
 	}
+	if err = d.Set("backbone_services", flattenBackboneService(&services)); err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(string(uuid.New().String()))
 	return diags
 }
 
-func flattenBackboneService(service *packetfabric.BackboneResp) []interface{} {
-	flattens := make([]interface{}, 0)
-	if service != nil {
+func flattenBackboneService(services *[]packetfabric.Services) []interface{} {
+	flattens := make([]interface{}, len(*services))
+	for i, service := range *services {
 		flatten := make(map[string]interface{})
 		flatten["vc_circuit_id"] = service.VcCircuitID
 		flatten["customer_uuid"] = service.CustomerUUID
@@ -259,19 +259,20 @@ func flattenBackboneService(service *packetfabric.BackboneResp) []interface{} {
 		flatten["service_class"] = service.ServiceClass
 		flatten["mode"] = service.Mode
 		flatten["connected"] = service.Connected
-		flatten["bandwidth"] = flattenBandwidth(&service.Bandwidth)
+		flatten["bandwidth"] = flattenServiceBandwidth(&service.Bandwidth)
 		flatten["description"] = service.Description
 		flatten["rate_limit_in"] = service.RateLimitIn
 		flatten["rate_limit_out"] = service.RateLimitOut
 		flatten["time_created"] = service.TimeCreated
 		flatten["time_updated"] = service.TimeUpdated
 		flatten["interfaces"] = flattenBackBoneInterfaces(&service.Interfaces)
+		flattens[i] = flatten
 	}
 	return flattens
 }
 
-func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []interface{} {
-	flattens := make([]interface{}, 0)
+func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []interface{} {
+	flattens := make([]interface{}, len(*interfs))
 	if interfs != nil {
 		for i, interf := range *interfs {
 			flatten := make(map[string]interface{})
@@ -279,8 +280,6 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []int
 			flatten["pop"] = interf.Pop
 			flatten["site"] = interf.Site
 			flatten["site_name"] = interf.SiteName
-			flatten["customer_site_code"] = interf.CustomerSiteCode
-			flatten["customer_site_name"] = interf.CustomerSiteName
 			flatten["speed"] = interf.Speed
 			flatten["media"] = interf.Media
 			flatten["zone"] = interf.Zone
@@ -302,4 +301,16 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []int
 		return flattens
 	}
 	return make([]interface{}, 0)
+}
+
+func flattenServiceBandwidth(bandw *packetfabric.ServiceBandwidth) []interface{} {
+	flattens := make([]interface{}, 0)
+	if bandw != nil {
+		flatten := make(map[string]interface{})
+		flatten["account_uuid"] = bandw.AccountUUID
+		flatten["subscription_term"] = bandw.SubscriptionTerm
+		flatten["speed"] = bandw.Speed
+		flattens = append(flattens, flatten)
+	}
+	return flattens
 }
