@@ -30,7 +30,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/PDX1/port-availability
 }
 variable "pf_port_pop2" {
   type    = string
@@ -38,7 +38,7 @@ variable "pf_port_pop2" {
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/NYC4/port-availability
 }
 variable "pf_port_media" {
   type    = string

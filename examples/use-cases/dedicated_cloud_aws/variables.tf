@@ -29,7 +29,7 @@ variable "pf_cs_pop1" {
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=aws&pop=SFO6
 }
 variable "pf_cs_speed" {
   type    = string
