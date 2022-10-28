@@ -269,7 +269,7 @@ resource "random_pet" "name" {}
 #   description    = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
-#   port           = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
 #   vlan           = var.pf_cs_vlan2
@@ -295,7 +295,7 @@ resource "random_pet" "name" {}
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.azure_service_key
-#   port              = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port              = packetfabric_port.port_1a.id
 #   speed             = var.pf_cs_speed1 # will be deprecated
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
@@ -319,7 +319,7 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid                = var.pf_account_uuid
-#   port                        = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port                        = packetfabric_port.port_1a.id
 #   speed                       = var.pf_cs_speed1
 #   google_pairing_key          = var.google_pairing_key
 #   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"
@@ -348,7 +348,7 @@ resource "random_pet" "name" {}
 #   account_uuid = var.pf_account_uuid
 #   vc_ocid      = var.pf_cs_oracle_vc_ocid
 #   region       = var.pf_cs_oracle_region
-#   port         = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port         = packetfabric_port.port_1a.id
 #   pop          = var.pf_cs_pop6
 #   zone         = var.pf_cs_zone6
 #   vlan         = var.pf_cs_vlan6
@@ -390,7 +390,6 @@ resource "random_pet" "name" {}
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
-
 # output "packetfabric_backbone_virtual_circuit_marketplace" {
 #   value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
 # }
@@ -403,7 +402,7 @@ resource "random_pet" "name" {}
 #   market      = var.pf_market_ix
 #   asn         = var.pf_asn_ix
 #   interface {
-#     port_circuit_id = "PF-AP-LAB5-2756010" #packetfabric_port.port_1a.id
+#     port_circuit_id = packetfabric_port.port_1a.id
 #     untagged        = false
 #     vlan            = var.pf_vc_vlan1
 #   }
@@ -414,7 +413,6 @@ resource "random_pet" "name" {}
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
-
 # output "packetfabric_ix_virtual_circuit_marketplace" {
 #   value = packetfabric_ix_virtual_circuit_marketplace.ix_marketplace_conn1
 # }
@@ -489,7 +487,7 @@ resource "random_pet" "name" {}
 #   type            = "cloud" # backbone, ix or cloud
 #   cloud_provider  = "aws" # "aws, azure, google, oracle
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
+#   port_circuit_id = var.pf_market_port_circuit_id
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
 # }
 
