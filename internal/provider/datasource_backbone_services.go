@@ -15,210 +15,213 @@ func datasourceBackboneServices() *schema.Resource {
 			"backbone_services": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Elem: map[string]*schema.Schema{
-					"vc_circuit_id": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The VC Circuit ID.",
-					},
-					"customer_uuid": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The Customer UUID.",
-					},
-					"state": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The service state.",
-					},
-					"service_type": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The service type.",
-					},
-					"service_class": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The service class.",
-					},
-					"mode": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The service mode.",
-					},
-					"connected": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "Current connection status.",
-					},
-					"bandwidth": {
-						Type:        schema.TypeSet,
-						Optional:    true,
-						Description: "Backbone service bandwidth",
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								"account_uuid": {
-									Type:        schema.TypeString,
-									Optional:    true,
-									Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
-								},
-								"longhaul_type": {
-									Type:        schema.TypeString,
-									Optional:    true,
-									Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum: [\"dedicated\" \"usage\" \"hourly\"]",
-								},
-								"subscription_term": {
-									Type:        schema.TypeInt,
-									Optional:    true,
-									Description: "Subscription term in months. Not applicable for hourly billing.\n\t\tEnum: [\"1\" \"12\" \"24\" \"36\"]",
-								},
-								"speed": {
-									Type:        schema.TypeString,
-									Optional:    true,
-									Description: "The desired speed of the new connection.\n\t\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"vc_circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The VC Circuit ID.",
+						},
+						"customer_uuid": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The Customer UUID.",
+						},
+						"state": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The service state.",
+						},
+						"service_type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The service type.",
+						},
+						"service_class": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The service class.",
+						},
+						"mode": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The service mode.",
+						},
+						"connected": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Current connection status.",
+						},
+						"bandwidth": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Description: "Backbone service bandwidth",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"account_uuid": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
+									},
+									"longhaul_type": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum: [\"dedicated\" \"usage\" \"hourly\"]",
+									},
+									"subscription_term": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: "Subscription term in months. Not applicable for hourly billing.\n\t\tEnum: [\"1\" \"12\" \"24\" \"36\"]",
+									},
+									"speed": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The desired speed of the new connection.\n\t\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
+									},
 								},
 							},
 						},
-					},
-					"description": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The service description.",
-					},
-					"rate_limit_in": {
-						Type:        schema.TypeInt,
-						Computed:    true,
-						Description: "The rate limit in.",
-					},
-					"rate_limit_out": {
-						Type:        schema.TypeInt,
-						Computed:    true,
-						Description: "The rate limit out.",
-					},
-					"time_created": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "Date and time of connection creation",
-					},
-					"time_updated": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "Date and time connection was last updated",
-					},
-					"interfaces": {
-						Type:     schema.TypeList,
-						Computed: true,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								"port_circuit_id": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The port circuit ID.",
-								},
-								"pop": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface POP.",
-								},
-								"site": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface site.",
-								},
-								"site_name": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface site name.",
-								},
-								"customer_site_code": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface customer site code.",
-								},
-								"customer_site_name": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The customer site name.",
-								},
-								"speed": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface speed.",
-								},
-								"media": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The media size.",
-								},
-								"zone": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface zone.",
-								},
-								"description": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface description.",
-								},
-								"vlan": {
-									Type:        schema.TypeInt,
-									Computed:    true,
-									Description: "The interface vlan.",
-								},
-								"untagged": {
-									Type:        schema.TypeBool,
-									Computed:    true,
-									Description: "The interface untagged state.",
-								},
-								"provisioning_status": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "Interface provisioning status.",
-								},
-								"admin_status": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface admin status.",
-								},
-								"operational_status": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface operational status.",
-								},
-								"customer_uuid": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface customer UUID.",
-								},
-								"customer_name": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface customer name.",
-								},
-								"region": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface region.",
-								},
-								"is_cloud": {
-									Type:        schema.TypeBool,
-									Computed:    true,
-									Description: "Interface cloud state.",
-								},
-								"is_ptp": {
-									Type:        schema.TypeBool,
-									Computed:    true,
-									Description: "Interface PTP state.",
-								},
-								"time_created": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface creation time.",
-								},
-								"time_updated": {
-									Type:        schema.TypeString,
-									Computed:    true,
-									Description: "The interface updated time.",
+						"description": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The service description.",
+						},
+						"rate_limit_in": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "The rate limit in.",
+						},
+						"rate_limit_out": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "The rate limit out.",
+						},
+						"time_created": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Date and time of connection creation",
+						},
+						"time_updated": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Date and time connection was last updated",
+						},
+						"interfaces": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"port_circuit_id": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The port circuit ID.",
+									},
+									"pop": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface POP.",
+									},
+									"site": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface site.",
+									},
+									"site_name": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface site name.",
+									},
+									"customer_site_code": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface customer site code.",
+									},
+									"customer_site_name": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The customer site name.",
+									},
+									"speed": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface speed.",
+									},
+									"media": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The media size.",
+									},
+									"zone": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface zone.",
+									},
+									"description": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface description.",
+									},
+									"vlan": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Description: "The interface vlan.",
+									},
+									"untagged": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Description: "The interface untagged state.",
+									},
+									"provisioning_status": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "Interface provisioning status.",
+									},
+									"admin_status": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface admin status.",
+									},
+									"operational_status": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface operational status.",
+									},
+									"customer_uuid": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface customer UUID.",
+									},
+									"customer_name": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface customer name.",
+									},
+									"region": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface region.",
+									},
+									"is_cloud": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Description: "Interface cloud state.",
+									},
+									"is_ptp": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Description: "Interface PTP state.",
+									},
+									"time_created": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface creation time.",
+									},
+									"time_updated": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: "The interface updated time.",
+									},
 								},
 							},
 						},
