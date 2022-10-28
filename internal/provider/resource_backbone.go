@@ -177,9 +177,9 @@ func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m inter
 // VC Marketplaces doesn't have an UPDATE mechanism.
 func resourceUpdateMarketplace(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "VC Update",
-		Detail:   "If you want to update a VC, please perform a destroy, then apply a new one.",
+		Severity: diag.Error,
+		Summary:  "Update a Marketplace Service Request is not supported",
+		Detail:   "If you want to update a Marketplace Service Request, please perform a destroy, change your Service Request, then re-apply.",
 	}}
 }
 

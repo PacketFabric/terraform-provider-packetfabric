@@ -153,14 +153,7 @@ func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.Resourc
 }
 
 func resourceThirdPartyVirtualCircuitUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	settings := extractServiceSettings(d)
-	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
