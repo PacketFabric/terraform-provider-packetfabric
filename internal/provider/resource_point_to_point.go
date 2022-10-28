@@ -166,6 +166,19 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	if cID := d.Id(); cID != "" {
 		if err := c.DeletePointToPointService(cID); err != nil {
 			return diag.FromErr(err)
+		} else {
+			deleteOk := make(chan bool)
+			defer close(deleteOk)
+			ticker := time.NewTicker(10 * time.Second)
+			go func() {
+				for range ticker.C {
+					if c.IsPointToPointDeleteComplete(cID) {
+						ticker.Stop()
+						deleteOk <- true
+					}
+				}
+			}()
+			<-deleteOk
 		}
 	}
 	d.SetId("")
