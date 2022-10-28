@@ -1,6 +1,7 @@
 package packetfabric
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -9,7 +10,7 @@ const serviceAwsURI = "/v2/services/third-party/hosted/aws"
 const provisionMktConnURI = "/v2/services/requests/%s/provision/hosted"
 const hostedConnURI = "/v2/services/cloud/hosted/aws"
 const hostedMktService = "/v2/services/cloud/%s"
-const hostedMktServiceDeleteURI = "/v2/services/requests/%s"
+const hostedMktServiceRequestsURI = "/v2/services/requests/%s"
 const dedicatedConnURI = "/v2/services/cloud/dedicated/aws"
 const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
@@ -407,15 +408,25 @@ func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
 }
 
-func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) error {
-	return c._deleteMktService(vcRequestUUID, hostedMktServiceDeleteURI)
+// Status can be [ pending, provisioned, rejected ]
+// if rejected or provisioned, we skip the delete, if pending, we do the delete as you already implemented it.
+func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (err error) {
+	if vcReq, e := c.GetVCRequest(vcRequestUUID); vcReq.Status != "pending" || e != nil {
+		if e != nil {
+			err = e
+		} else {
+			err = errors.New("this marketplace request is already in progress and cannot be deleted anymore")
+		}
+		return
+	}
+	return c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
 }
 
 func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	type DeleteReason struct {
 		DeleteReason string `json:"delete_reason"`
 	}
-	formatedURI := fmt.Sprintf(hostedMktServiceDeleteURI, vcRequestUUID)
+	formatedURI := fmt.Sprintf(hostedMktServiceRequestsURI, vcRequestUUID)
 	reason := DeleteReason{
 		DeleteReason: "Delete requested by PacketFabric terraform plugin.",
 	}
