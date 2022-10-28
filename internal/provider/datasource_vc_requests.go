@@ -7,12 +7,19 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceVcRequests() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceVCRequests,
 		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{"sent", "received"}, true),
+				Description:  "The VC request type. (sent/received)",
+			},
 			"vc_requests": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -197,7 +204,8 @@ func datasourceVCRequests(ctx context.Context, d *schema.ResourceData, m interfa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	requests, err := c.GetVcRequests()
+	reqType := d.Get("type").(string)
+	requests, err := c.GetVcRequestsByType(reqType)
 	if err != nil {
 		return diag.FromErr(err)
 	}
