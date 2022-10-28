@@ -375,11 +375,11 @@ resource "random_pet" "name" {}
 # # Create a VC Marketplace Connection 
 # resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}-test"
+#   description = "${var.tag_name}-${random_pet.name.id}"
 #   routing_id  = var.pf_routing_id
 #   market      = var.pf_market
 #   interface {
-#     port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#     port_circuit_id = packetfabric_port.port_1a.id
 #     untagged        = false
 #     vlan            = var.pf_vc_vlan1
 #   }
