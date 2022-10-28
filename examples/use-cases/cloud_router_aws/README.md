@@ -43,7 +43,6 @@ the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf`.
 - resource **"aws_dx_transit_virtual_interface"**: Create Direct Connect Transit Virtual interfaces (**code commented**)
 - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with s Virtual Private Gateway or Virtual Transit Gateway
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
