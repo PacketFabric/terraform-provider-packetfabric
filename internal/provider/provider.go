@@ -133,8 +133,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connection_ipsec":    datasourceIPSec(),
 			"packetfabric_activitylog":                      datasourceActivityLog(),
 			"packetfabric_marketplace_service_requests":     dataSourceVcRequests(),
-			// "packetfabric_virtual_circuits":                 datasourceBackboneServices(),
-			"packetfabric_point_to_point": datasourcePointToPoint(),
+			"packetfabric_virtual_circuits":                 datasourceBackboneServices(),
+			"packetfabric_point_to_point":                   datasourcePointToPoint(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
