@@ -116,30 +116,6 @@ output "packetfabric_cloud_router_bgp_session_crbs_1" {
   value = packetfabric_cloud_router_bgp_session.crbs_1
 }
 
-# # Configure BGP Prefix is mandatory to setup the BGP session correctly
-# resource "packetfabric_cloud_router_bgp_prefixes" "crbp_1" {
-#   provider          = packetfabric
-#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
-#   prefixes {
-#     prefix = var.vpc_cidr2
-#     type   = "out" # Allowed Prefixes to Cloud
-#     order  = 0
-#   }
-#   prefixes {
-#     prefix = var.vpc_cidr1
-#     type   = "in" # Allowed Prefixes from Cloud
-#     order  = 0
-#   }
-# }
-
-# data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_1" {
-#   provider          = packetfabric
-#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_1.id
-# }
-# output "packetfabric_bgp_prefix_crbp_1" {
-#   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_1
-# }
-
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
@@ -165,29 +141,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
 output "packetfabric_cloud_router_bgp_session_crbs_2" {
   value = packetfabric_cloud_router_bgp_session.crbs_2
 }
-
-# # Configure BGP Prefix is mandatory to setup the BGP session correctly
-# resource "packetfabric_cloud_router_bgp_prefixes" "crbp_2" {
-#   provider          = packetfabric
-#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-#   prefixes {
-#     prefix = var.vpc_cidr1
-#     type   = "out" # Allowed Prefixes to Cloud
-#     order  = 0
-#   }
-#   prefixes {
-#     prefix = var.vpc_cidr2
-#     type   = "in" # Allowed Prefixes from Cloud
-#     order  = 0
-#   }
-# }
-# data "packetfabric_cloud_router_bgp_prefixes" "bgp_prefix_crbp_2" {
-#   provider          = packetfabric
-#   bgp_settings_uuid = packetfabric_cloud_router_bgp_session.crbs_2.id
-# }
-# output "packetfabric_bgp_prefix_crbp_2" {
-#   value = data.packetfabric_cloud_router_bgp_prefixes.bgp_prefix_crbp_2
-# }
 
 data "packetfabric_cloud_router_connections" "all_crc" {
   provider   = packetfabric
