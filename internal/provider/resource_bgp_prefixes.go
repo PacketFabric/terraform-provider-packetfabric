@@ -98,7 +98,7 @@ func resourceBgpPrefixesRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	_ = d.Set("prefixes", _flattenPrefixes(prefixes))
-	
+
 	return diags
 }
 

@@ -498,9 +498,10 @@ resource "random_pet" "name" {}
 #   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
 # }
 
-# # List all Service Requests (none Cloud Router)
+# # List all Marketplace Service Requests (not Cloud Router)
 # data "packetfabric_marketplace_service_requests" "current" {
 #   provider = packetfabric
+#   type     = "sent" # sent or received
 # }
 
 # output "packetfabric_marketplace_service_requests" {
