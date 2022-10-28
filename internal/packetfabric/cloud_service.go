@@ -13,7 +13,7 @@ const requestByVCUUIDURI = "/v2/services/requests/%s"
 const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
 const speedBurstURI = "/v2/services/%s/burst"
 const vcRequestsURI = "/v2/services/requests"
-const vcSentRequestsURI = "/v2/services/requests?type=sent"
+const vcSentRequestsURI = "/v2/services/requests?type=%s"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
@@ -309,8 +309,8 @@ func (c *PFClient) GetVcRequests() ([]VcRequest, error) {
 	return c._getVCRequests(vcRequestsURI)
 }
 
-func (c *PFClient) GetSentVcRequests() ([]VcRequest, error) {
-	return c._getVCRequests(vcSentRequestsURI)
+func (c *PFClient) GetVcRequestsByType(reqType string) ([]VcRequest, error) {
+	return c._getVCRequests(fmt.Sprintf(vcSentRequestsURI, reqType))
 }
 
 func (c *PFClient) _getVCRequests(uri string) ([]VcRequest, error) {
