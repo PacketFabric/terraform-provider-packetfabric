@@ -134,15 +134,7 @@ func resourceIxVCCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceIxVCUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	vcCID := d.Id()
-	serviceSets := extractServiceSettings(d)
-	if _, err := c.UpdateServiceSettings(vcCID, serviceSets); err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceIxVCRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

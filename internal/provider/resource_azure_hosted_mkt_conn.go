@@ -96,8 +96,7 @@ func resourceAzureHostedMktRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceAzureHostedMktUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

@@ -103,8 +103,7 @@ func resourceReadAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceUpdateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
