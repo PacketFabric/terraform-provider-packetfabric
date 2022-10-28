@@ -272,8 +272,8 @@ func flattenBackboneService(services *[]packetfabric.Services) []interface{} {
 }
 
 func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []interface{} {
-	flattens := make([]interface{}, len(*interfs))
 	if interfs != nil {
+		flattens := make([]interface{}, len(*interfs))
 		for i, interf := range *interfs {
 			flatten := make(map[string]interface{})
 			flatten["port_circuit_id"] = interf.PortCircuitID
