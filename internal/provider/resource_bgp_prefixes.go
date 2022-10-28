@@ -106,8 +106,8 @@ func resourceBgpPrefixesUpdate(ctx context.Context, d *schema.ResourceData, m in
 	diags := make(diag.Diagnostics, 0)
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "Prefixes update not available at this moment.",
-		Detail:   "Prefixes can only be updated through through `cloud_router_bgp_session` resource.",
+		Summary:  "BGP Prefixes update are not supported via `packetfabric_cloud_router_bgp_prefixes` resource.",
+		Detail:   "BGP Prefixes can only be updated through `packetfabric_cloud_router_bgp_session` resource.",
 	})
 	return diags
 }
