@@ -123,7 +123,21 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	if resp != nil {
+		d.SetId(resp.VcCircuitID)
+	}
 	return diags
 }
 
