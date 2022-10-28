@@ -78,11 +78,11 @@ variable "pf_document_uuid2" {
 # Virtual Circuit
 variable "pf_vc_vlan1" {
   type    = number
-  default = 4
+  default = 40
 }
 variable "pf_vc_vlan2" {
   type    = number
-  default = 5
+  default = 50
 }
 variable "pf_vc_longhaul_type" {
   type    = string
