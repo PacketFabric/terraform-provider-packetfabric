@@ -85,7 +85,7 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"primary", "secondary"}, true),
-				Description: "Whether you intend to use this port for the primary or secondary connection in your ExpressRoute Direct circuit.\n\n\tEnum: [\"primary\" \"secondary\"]",
+				Description:  "Whether you intend to use this port for the primary or secondary connection in your ExpressRoute Direct circuit.\n\n\tEnum: [\"primary\" \"secondary\"]",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,

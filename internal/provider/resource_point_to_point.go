@@ -113,12 +113,12 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
-	resp, err := c.CreatePointToPointService(ptpService); 
+	resp, err := c.CreatePointToPointService(ptpService)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.PtpUUID)
-	
+
 	return diags
 }
 
