@@ -56,6 +56,21 @@ func (c *PFClient) GetPointToPointInfo(ptpUUID string) (*PointToPointResp, error
 	return expectedResp, nil
 }
 
+func (c *PFClient) IsPointToPointComplete(ptpUUID string) (result bool) {
+	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
+	if err != nil {
+		result = false
+	}
+	result = ptpInfo.State == "active"
+	return
+}
+
+func (c *PFClient) IsPointToPointDeleteComplete(ptpUUID string) (result bool) {
+	ptpInfo, _ := c.GetPointToPointInfo(ptpUUID)
+	result = ptpInfo.Deleted
+	return
+}
+
 func (c *PFClient) GetPointToPointInfos() ([]PointToPointResp, error) {
 	expectedResp := make([]PointToPointResp, 0)
 	if _, err := c.sendRequest(pointToPointURI, getMethod, nil, expectedResp); err != nil {
