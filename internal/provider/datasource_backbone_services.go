@@ -286,7 +286,7 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.BackboneInterfResp) []int
 			flatten["untagged"] = interf.Untagged
 			flatten["provisioning_status"] = interf.ProvisioningStatus
 			flatten["admin_status"] = interf.AdminStatus
-			flatten["operational_status"] = interf.OperationalStatus			
+			flatten["operational_status"] = interf.OperationalStatus
 			flatten["customer_uuid"] = interf.CustomerUUID
 			flatten["customer_name"] = interf.CustomerName
 			flatten["region"] = interf.Region
