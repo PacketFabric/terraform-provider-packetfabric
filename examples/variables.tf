@@ -447,7 +447,7 @@ variable "pf_crc_phase2_encryption_algo" {
 variable "pf_crc_phase2_authentication_algo" {
   type        = string
   description = "The authentication algorithm to use during phase 2"
-  default     = "hmac-sha-256-128"
+  default     = "hmac-sha-256-128" # not needed to set pf_crc_phase2_authentication_algo if pf_crc_phase2_encryption_algo = aes-256-gcm
 }
 variable "pf_crc_phase2_lifetime" {
   type        = number
