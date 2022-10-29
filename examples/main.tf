@@ -66,7 +66,6 @@ resource "random_pet" "name" {}
 #   provider            = packetfabric
 #   lag_port_circuit_id = packetfabric_link_aggregation_group.lag_1.id
 # }
-
 # output "packetfabric_link_aggregation_group" {
 #   value = data.packetfabric_link_aggregation_group.lag_1
 # }
@@ -90,7 +89,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_port" "ports_all" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_ports_all" {
 #   value = data.packetfabric_port.ports_all
 # }
@@ -134,6 +132,9 @@ resource "random_pet" "name" {}
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
+# output "packetfabric_backbone_virtual_circuit" {
+#   value = packetfabric_backbone_virtual_circuit.vc1
+# }
 
 # # Show all Virtual Circuits
 # data "packetfabric_virtual_circuits" "all_vcs" {
@@ -152,7 +153,6 @@ resource "random_pet" "name" {}
 #   vc_circuit_id = var.pf_vc_circuit_id
 #   speed         = var.pf_vc_speed_burst
 # }
-
 # output "packetfabric_backbone_virtual_circuit_speed_burst" {
 #   value = packetfabric_backbone_virtual_circuit_speed_burst.boost
 # }
@@ -178,6 +178,9 @@ resource "random_pet" "name" {}
 #     zone    = var.pf_ptp_zone2
 #     autoneg = var.pf_ptp_autoneg
 #   }
+# }
+# output "packetfabric_point_to_point" {
+#   value = packetfabric_point_to_point.ptp1
 # }
 
 # #######################################
@@ -243,7 +246,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_outbound_cross_connect" {
 #   value = data.packetfabric_outbound_cross_connect.crossconnect_1
 # }
@@ -279,7 +281,6 @@ resource "random_pet" "name" {}
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 # }
-
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.id
@@ -309,7 +310,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_azure_hosted_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_azure_hosted_connection_data" {
 #   value = data.packetfabric_cs_azure_hosted_connection.current
 # }
@@ -326,8 +326,6 @@ resource "random_pet" "name" {}
 #   pop                         = var.pf_cs_pop1
 #   vlan                        = var.pf_cs_vlan1
 # }
-
-# # type terraform output packetfabric_cs_google_hosted_connection to display the value
 # output "packetfabric_cs_google_hosted_connection" {
 #   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
 #   sensitive = true
@@ -408,7 +406,7 @@ resource "random_pet" "name" {}
 #   }
 #   bandwidth {
 #     account_uuid      = var.pf_account_uuid
-#     longhaul_type     = var.pf_vc_longhaul_type
+#     #longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
 #   }
@@ -494,7 +492,7 @@ resource "random_pet" "name" {}
 # # Reject the Request
 # resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
-#   delete_reason   = "testing"
+#   delete_reason   = "Marketplace Connection Rejected."
 #   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
 # }
 
@@ -537,7 +535,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_aws_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_aws_dedicated_connection" {
 #   value = data.packetfabric_cs_aws_dedicated_connection.current
 # }
@@ -558,7 +555,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_google_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_google_dedicated_connection" {
 #   value = data.packetfabric_cs_google_dedicated_connection.current
 # }
@@ -580,7 +576,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_azure_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_azure_dedicated_connection" {
 #   value = data.packetfabric_cs_azure_dedicated_connection.current
 # }
