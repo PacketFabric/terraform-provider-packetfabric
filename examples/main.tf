@@ -499,13 +499,20 @@ resource "random_pet" "name" {}
 # }
 
 # # List all Marketplace Service Requests (not Cloud Router)
-# data "packetfabric_marketplace_service_requests" "current" {
+# data "packetfabric_marketplace_service_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
 # }
+# output "packetfabric_marketplace_service_requests_sent" {
+#   value = data.packetfabric_marketplace_service_requests.sent
+# }
 
-# output "packetfabric_marketplace_service_requests" {
-#   value = data.packetfabric_marketplace_service_requests.current
+# data "packetfabric_marketplace_service_requests" "received" {
+#   provider = packetfabric
+#   type     = "received" # sent or received
+# }
+# output "packetfabric_marketplace_service_requests_received" {
+#   value = data.packetfabric_marketplace_service_requests.received
 # }
 
 # #######################################
