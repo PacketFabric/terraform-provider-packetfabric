@@ -1,6 +1,12 @@
 package packetfabric
 
+import (
+	"fmt"
+	"net/http"
+)
+
 const locationsURI = "/v2/locations"
+const portAvailabilityURI = "/v2/locations/%s/port-availability"
 
 type Location struct {
 	Pop               string `json:"pop"`
@@ -33,6 +39,27 @@ type Location struct {
 func (c *PFClient) ListLocations() ([]Location, error) {
 	resp := make([]Location, 0)
 	_, err := c.sendRequest(locationsURI, getMethod, nil, &resp)
+	if len(resp) == 0 {
+		return resp, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+type PortAvailability struct {
+	Zone    string `json:"zone"`
+	Speed   string `json:"speed"`
+	Media   string `json:"media"`
+	Count   int    `json:"count"`
+	Partial bool   `json:"partial"`
+	Enni    bool   `json:"enni"`
+}
+
+func (c *PFClient) GetLocationPortAvailability(pop string) ([]PortAvailability, error) {
+	resp := make([]PortAvailability, 0)
+	_, err := c.sendRequest(fmt.Sprintf(portAvailabilityURI, pop), http.MethodGet, nil, &resp)
 	if len(resp) == 0 {
 		return resp, nil
 	}
