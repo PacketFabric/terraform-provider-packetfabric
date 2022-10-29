@@ -67,19 +67,19 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 						},
 						"speed": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice(ixVcSpeedOptions(), true),
 							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 						},
 						"subscription_term": {
 							Type:         schema.TypeInt,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 							Description:  "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
 							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
