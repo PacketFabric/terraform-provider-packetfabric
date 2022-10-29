@@ -81,7 +81,7 @@ func resourceIxVC() *schema.Resource {
 						},
 						"longhaul_type": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
 							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
@@ -129,7 +129,7 @@ func resourceIxVCCreate(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
+	d.SetId(resp.VcRequestUUID)
 	return diags
 }
 
@@ -141,8 +141,7 @@ func resourceIxVCRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcCID := d.Id()
-	if _, err := c.GetBackboneByVcCID(vcCID); err != nil {
+	if _, err := c.GetVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
@@ -152,8 +151,7 @@ func resourceIXVCDelete(ctx context.Context, d *schema.ResourceData, m interface
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcCID := d.Id()
-	if _, err := c.DeleteBackbone(vcCID); err != nil {
+	if _, err := c.DeleteVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
