@@ -31,13 +31,13 @@ func resourceAddSpeedBurst() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Target's Circuit ID.",
+				Description:  "The circuit ID of the virtual circuit that you are bursting.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Speed in Mbps of the burst.",
+				Description:  "Speed in Mbps of the burst. This bandwidth will be added to the existing circuit speed. If an existing burst exists, this speed burst will replace the existing one. Must be a multiple of 100Mbps.",
 			},
 		},
 	}
