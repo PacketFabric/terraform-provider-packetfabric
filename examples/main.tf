@@ -659,7 +659,6 @@ resource "random_pet" "name" {}
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
 # }
 
-
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
@@ -676,7 +675,7 @@ resource "random_pet" "name" {}
 #   description      = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id       = packetfabric_cloud_router.cr.id
 #   account_uuid     = var.pf_account_uuid
-#   ibm_account_id   = var.pf_crc_ibm_account_id
+#   ibm_account_id   = var.ibm_account_id
 #   ibm_bgp_asn      = var.pf_crc_ibm_bgp_asn
 #   ibm_bgp_cer_cidr = var.pf_crc_ibm_bgp_cer_cidr
 #   ibm_bgp_ibm_cidr = var.pf_crc_ibm_bgp_ibm_cidr
