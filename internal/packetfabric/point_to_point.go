@@ -60,6 +60,7 @@ func (c *PFClient) IsPointToPointComplete(ptpUUID string) (result bool) {
 	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
 	if err != nil {
 		result = false
+		return
 	}
 	result = ptpInfo.State == "active"
 	return
