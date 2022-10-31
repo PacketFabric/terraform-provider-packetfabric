@@ -242,12 +242,12 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"speed": "1Gbps",
 		"state": "Requested",
 		"cloud_circuit_id": "PF-AP-LAX1-1002",
-		"account_uuid": "%s",
+		"account_uuid": "a2115890-ed02-4795-a6dd-c485bec3529c",
 		"service_class": "metro",
 		"service_provider": "aws",
 		"service_type": "cr_connection",
-		"description": "%s",
-		"uuid": "%s",
+		"description": "Updated Cloud Router Connection",
+		"uuid": "095be615-a8ad-4c33-8e9c-c7612fbf6c9f",
 		"cloud_provider_connection_id": "dxcon-fgadaaa1",
 		"cloud_settings": {
 		  "aws_region": "",
@@ -255,10 +255,10 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		  "aws_connection_id": "",
 		  "aws_account_id": ""
 		},
-		"user_uuid": "%s",
-		"customer_uuid": "%s",
-		"time_created": "%s",
-		"time_updated": "%s",
+		"user_uuid": "7c4d2d7d-8620-4fb3-967a-4a621082cf1f",
+		"customer_uuid": "e7eefd45-cb13-4c62-b229-e5bbc1362123",
+		"time_created": "2019-08-24T14:15:22Z",
+		"time_updated": "2019-08-24T14:15:22Z",
 		"cloud_provider": {
 		  "pop": "",
 		  "region": ""
