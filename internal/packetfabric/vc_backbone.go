@@ -18,7 +18,7 @@ func (c *PFClient) GetBackboneState(vcCircuitID string) (*ServiceState, error) {
 
 func (c *PFClient) IsBackboneComplete(vcCircuitID string) (result bool) {
 	status, err := c.GetBackboneState(vcCircuitID)
-	if status.Status.Current.State != "COMPLETE" {
+	if err == nil && status.Status.Current.State != "COMPLETE" {
 		result = true
 	}
 	if err != nil {
