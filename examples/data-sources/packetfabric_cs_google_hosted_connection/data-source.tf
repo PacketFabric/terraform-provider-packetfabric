@@ -1,5 +1,6 @@
 data "packetfabric_cs_google_hosted_connection" "current" {
-  provider = packetfabric
+  provider         = packetfabric
+  cloud_circuit_id = "PF-AP-LAX1-1002"
 }
 
 output "packetfabric_cs_google_hosted_connection_data" {

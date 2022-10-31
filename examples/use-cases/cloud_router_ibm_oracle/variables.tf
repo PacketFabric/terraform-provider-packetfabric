@@ -13,7 +13,6 @@ variable "public_key" {
 ## IBM VARs
 variable "ibm_account_id" {
   type        = string
-  sensitive   = true
   description = "IBM Account ID"
 }
 variable "ibmcloud_api_key" {
