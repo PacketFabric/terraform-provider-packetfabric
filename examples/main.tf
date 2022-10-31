@@ -277,15 +277,14 @@ resource "random_pet" "name" {}
 #   vlan           = var.pf_cs_vlan2
 #   zone           = var.pf_cs_zone2
 # }
-
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 # }
+
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.id
 # }
-
 # output "packetfabric_cs_aws_hosted_connection_data" {
 #   value = data.packetfabric_cs_aws_hosted_connection.current
 # }
@@ -301,7 +300,6 @@ resource "random_pet" "name" {}
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
 # }
-
 # output "packetfabric_cs_azure_hosted_connection" {
 #   sensitive = true
 #   value     = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure
@@ -334,7 +332,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_google_hosted_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_google_hosted_connection" {
 #   value = data.packetfabric_cs_google_hosted_connection.current
 # }
@@ -351,7 +348,6 @@ resource "random_pet" "name" {}
 #   zone         = var.pf_cs_zone6
 #   vlan         = var.pf_cs_vlan6
 # }
-
 # output "packetfabric_cs_oracle_hosted_connection" {
 #   value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
 #   sensitive = true
@@ -361,7 +357,6 @@ resource "random_pet" "name" {}
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle.id
 # }
-
 # output "packetfabric_cs_oracle_hosted_connection_data" {
 #   value = data.packetfabric_cs_oracle_hosted_connection.current
 # }
@@ -638,7 +633,6 @@ resource "random_pet" "name" {}
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
 #   shared_key                   = var.pf_crc_shared_key
 # }
-
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
 #   provider       = packetfabric
