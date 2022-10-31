@@ -289,13 +289,13 @@ func dataSourceCloudConn() *schema.Resource {
 							},
 						},
 						"cloud_router_name": {
-							Type: 		 schema.TypeString,
+							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "The name of the cloud router this connection is associated with.\n\t\tExample: Sample CR",
 						},
 						"cloud_router_asn": {
-							Type: 		 schema.TypeInt,
-							Optional: 	 true,
+							Type:        schema.TypeInt,
+							Optional:    true,
 							Description: "The asn of the cloud router this connection is associated with.\n\t\tExample: 4556",
 						},
 						"cloud_router_circuit_id": {
@@ -386,14 +386,14 @@ func flattenCloudProvider(provider *packetfabric.AwsCloudProvider) []interface{}
 	return flattens
 }
 
-func flattenBgpStateList(bgp_state_list *[]packetfabric.BgpStateObj) []interface{} {
-	if bgp_state_list != nil {
-		flattens := make([]interface{}, len(*bgp_state_list), len(*bgp_state_list))
+func flattenBgpStateList(BgpStateList *[]packetfabric.BgpStateObj) []interface{} {
+	if BgpStateList != nil {
+		flattens := make([]interface{}, len(*BgpStateList), len(*BgpStateList))
 
-		for i, bgp_state_obj := range *bgp_state_list {
+		for i, bgpStateObj := range *BgpStateList {
 			flatten := make(map[string]interface{})
-			flatten["bgp_settings_uuid"] = bgp_state_obj.BgpSettingsUUID
-			flatten["bgp_state"] = bgp_state_obj.BgpState
+			flatten["bgp_settings_uuid"] = bgpStateObj.BgpSettingsUUID
+			flatten["bgp_state"] = bgpStateObj.BgpState
 			flattens[i] = flatten
 		}
 		return flattens
