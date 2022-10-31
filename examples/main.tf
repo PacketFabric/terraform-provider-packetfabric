@@ -306,7 +306,8 @@ resource "random_pet" "name" {}
 # }
 
 # data "packetfabric_cs_azure_hosted_connection" "current" {
-#   provider = packetfabric
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure.id
 # }
 # output "packetfabric_cs_azure_hosted_connection_data" {
 #   value = data.packetfabric_cs_azure_hosted_connection.current
@@ -330,7 +331,8 @@ resource "random_pet" "name" {}
 # }
 
 # data "packetfabric_cs_google_hosted_connection" "current" {
-#   provider = packetfabric
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
 # }
 # output "packetfabric_cs_google_hosted_connection" {
 #   value = data.packetfabric_cs_google_hosted_connection.current
@@ -527,11 +529,11 @@ resource "random_pet" "name" {}
 #   should_create_lag = var.should_create_lag
 # }
 
-# data "packetfabric_cs_aws_dedicated_connection" "current" {
+# data "packetfabric_cs_aws_dedicated_connection_conn" "current" {
 #   provider = packetfabric
 # }
 # output "packetfabric_cs_aws_dedicated_connection" {
-#   value = data.packetfabric_cs_aws_dedicated_connection.current
+#   value = data.packetfabric_cs_aws_dedicated_connection_conn.current
 # }
 
 # # GCP Dedicated Connection

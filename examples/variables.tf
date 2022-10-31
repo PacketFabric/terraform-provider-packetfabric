@@ -129,7 +129,7 @@ variable "pf_ptp_pop1" {
 }
 variable "pf_ptp_zone1" {
   type    = string
-  default = "C" # check availability /v2/locations/SEA1/port-availability
+  default = "A" # check availability /v2/locations/SEA1/port-availability
 }
 variable "pf_ptp_pop2" {
   type    = string
@@ -209,7 +209,7 @@ variable "pf_cs_pop6" {
 }
 variable "pf_cs_zone6" {
   type    = string
-  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
 }
 variable "pf_cs_vlan6" {
   type    = number
@@ -284,7 +284,7 @@ variable "pf_cs_pop4" {
 }
 variable "pf_cs_zone4" {
   type    = string
-  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
 }
 variable "pf_cs_speed4" {
   type    = string
@@ -381,7 +381,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "a" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
 
 # Cloud Router Connection Google
