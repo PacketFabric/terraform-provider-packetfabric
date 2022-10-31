@@ -129,7 +129,7 @@ variable "pf_ptp_pop1" {
 }
 variable "pf_ptp_zone1" {
   type    = string
-  default = "C" # check availability /v2/locations/SEA1/port-availability
+  default = "A" # check availability /v2/locations/SEA1/port-availability
 }
 variable "pf_ptp_pop2" {
   type    = string
@@ -209,7 +209,7 @@ variable "pf_cs_pop6" {
 }
 variable "pf_cs_zone6" {
   type    = string
-  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
 }
 variable "pf_cs_vlan6" {
   type    = number
@@ -284,7 +284,7 @@ variable "pf_cs_pop4" {
 }
 variable "pf_cs_zone4" {
   type    = string
-  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
 }
 variable "pf_cs_speed4" {
   type    = string
@@ -351,6 +351,20 @@ variable "pf_cr_regions" {
   description = "The regions in which the Cloud Router connections will be located."
   default     = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
+
+# Cloud Router Connections
+variable "pf_crc_maybe_nat" {
+  type        = bool
+  description = "Set this to true if you intend to use NAT on this connection"
+  default     = false
+}
+variable "pf_crc_is_public" {
+  type        = bool
+  description = "Whether PacketFabric should allocate a public IP address for this connection"
+  default     = false
+}
+
+# Cloud Router Connection AWS
 variable "pf_aws_account_id" {
   type    = string
   default = "123456789"
@@ -367,18 +381,10 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "a" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
-}
-variable "pf_crc_is_public" {
-  type        = bool
-  description = "Whether PacketFabric should allocate a public IP address for this connection"
-  default     = false
-}
+
+# Cloud Router Connection Google
 variable "pf_crc_pop2" {
   type        = string
   description = "The POP in which you want to provision the connection"
@@ -393,6 +399,8 @@ variable "pf_crc_google_vlan_attachment_name" {
   type    = string
   default = "vlan_attachement_name"
 }
+
+# Cloud Router Connection Azure
 variable "pf_crc_pop3" {
   type    = string
   default = "SFO6"
@@ -517,6 +525,10 @@ variable "pf_crc_pop4" {
 variable "pf_crc_zone4" {
   type    = string
   default = "c"
+}
+variable "ibm_account_id" {
+  type        = string
+  description = "IBM Account ID"
 }
 variable "pf_crc_ibm_bgp_asn" {
   type    = number
