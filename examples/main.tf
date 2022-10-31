@@ -277,15 +277,14 @@ resource "random_pet" "name" {}
 #   vlan           = var.pf_cs_vlan2
 #   zone           = var.pf_cs_zone2
 # }
-
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 # }
+
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.id
 # }
-
 # output "packetfabric_cs_aws_hosted_connection_data" {
 #   value = data.packetfabric_cs_aws_hosted_connection.current
 # }
@@ -301,14 +300,14 @@ resource "random_pet" "name" {}
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
 # }
-
 # output "packetfabric_cs_azure_hosted_connection" {
 #   sensitive = true
 #   value     = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure
 # }
 
 # data "packetfabric_cs_azure_hosted_connection" "current" {
-#   provider = packetfabric
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure.id
 # }
 # output "packetfabric_cs_azure_hosted_connection_data" {
 #   value = data.packetfabric_cs_azure_hosted_connection.current
@@ -332,9 +331,9 @@ resource "random_pet" "name" {}
 # }
 
 # data "packetfabric_cs_google_hosted_connection" "current" {
-#   provider = packetfabric
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
 # }
-
 # output "packetfabric_cs_google_hosted_connection" {
 #   value = data.packetfabric_cs_google_hosted_connection.current
 # }
@@ -351,7 +350,6 @@ resource "random_pet" "name" {}
 #   zone         = var.pf_cs_zone6
 #   vlan         = var.pf_cs_vlan6
 # }
-
 # output "packetfabric_cs_oracle_hosted_connection" {
 #   value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
 #   sensitive = true
@@ -361,7 +359,6 @@ resource "random_pet" "name" {}
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle.id
 # }
-
 # output "packetfabric_cs_oracle_hosted_connection_data" {
 #   value = data.packetfabric_cs_oracle_hosted_connection.current
 # }
@@ -532,11 +529,11 @@ resource "random_pet" "name" {}
 #   should_create_lag = var.should_create_lag
 # }
 
-# data "packetfabric_cs_aws_dedicated_connection" "current" {
+# data "packetfabric_cs_aws_dedicated_connection_conn" "current" {
 #   provider = packetfabric
 # }
 # output "packetfabric_cs_aws_dedicated_connection" {
-#   value = data.packetfabric_cs_aws_dedicated_connection.current
+#   value = data.packetfabric_cs_aws_dedicated_connection_conn.current
 # }
 
 # # GCP Dedicated Connection
@@ -639,7 +636,6 @@ resource "random_pet" "name" {}
 #   shared_key                   = var.pf_crc_shared_key
 # }
 
-
 # resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
 #   provider       = packetfabric
 #   circuit_id     = packetfabric_cloud_router.cr.id
@@ -665,7 +661,6 @@ resource "random_pet" "name" {}
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
 # }
 
-
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
@@ -682,7 +677,7 @@ resource "random_pet" "name" {}
 #   description      = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id       = packetfabric_cloud_router.cr.id
 #   account_uuid     = var.pf_account_uuid
-#   ibm_account_id   = var.pf_crc_ibm_account_id
+#   ibm_account_id   = var.ibm_account_id
 #   ibm_bgp_asn      = var.pf_crc_ibm_bgp_asn
 #   ibm_bgp_cer_cidr = var.pf_crc_ibm_bgp_cer_cidr
 #   ibm_bgp_ibm_cidr = var.pf_crc_ibm_bgp_ibm_cidr
