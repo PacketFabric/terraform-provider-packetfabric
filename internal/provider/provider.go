@@ -70,10 +70,10 @@ func Provider() *schema.Provider {
 		// packetfabric_cs_aws_hosted_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_hosted_connection_post
 		// packetfabric_cs_aws_dedicated_connection - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post
 		ResourcesMap: map[string]*schema.Resource{
-			"packetfabric_cloud_router":                   resourceCloudRouter(),
-			"packetfabric_cloud_router_connection_aws":    resourceRouterConnectionAws(),
-			"packetfabric_cloud_router_connection_oracle": resourceOracleCloudRouteConn(),
-			"packetfabric_cloud_router_bgp_session":       resourceBgpSession(),
+			"packetfabric_cloud_router":                            resourceCloudRouter(),
+			"packetfabric_cloud_router_connection_aws":             resourceRouterConnectionAws(),
+			"packetfabric_cloud_router_connection_oracle":          resourceOracleCloudRouteConn(),
+			"packetfabric_cloud_router_bgp_session":                resourceBgpSession(),
 			"packetfabric_backbone_virtual_circuit":                resourceVcBackbone(),
 			"packetfabric_backbone_virtual_circuit_marketplace":    resourceThirdPartyVirtualCircuit(),
 			"packetfabric_backbone_virtual_circuit_speed_burst":    resourceAddSpeedBurst(),
