@@ -113,12 +113,25 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
-	resp, err := c.CreatePointToPointService(ptpService); 
+	resp, err := c.CreatePointToPointService(ptpService)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.PtpUUID)
-	
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if c.IsPointToPointComplete(resp.PtpUUID) {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	if resp != nil {
+		d.SetId(resp.PtpUUID)
+	}
 	return diags
 }
 
@@ -153,6 +166,19 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	if cID := d.Id(); cID != "" {
 		if err := c.DeletePointToPointService(cID); err != nil {
 			return diag.FromErr(err)
+		} else {
+			deleteOk := make(chan bool)
+			defer close(deleteOk)
+			ticker := time.NewTicker(10 * time.Second)
+			go func() {
+				for range ticker.C {
+					if c.IsPointToPointDeleteComplete(cID) {
+						ticker.Stop()
+						deleteOk <- true
+					}
+				}
+			}()
+			<-deleteOk
 		}
 	}
 	d.SetId("")

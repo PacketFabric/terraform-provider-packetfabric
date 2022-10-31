@@ -25,7 +25,6 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - resource & data source **"packetfabric_cloud_router_connection_ipsec"**: Add a VPN Connection to the Cloud Router
 - module **"terraform-google-gcloud"**: Get the BGP Peer Addresses and set the PacketFabric Cloud Router ASN to the BGP settings in the Google Cloud Router
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
 **Estimated time:** ~5 min for Google & PacketFabric resources
 

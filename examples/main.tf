@@ -66,7 +66,6 @@ resource "random_pet" "name" {}
 #   provider            = packetfabric
 #   lag_port_circuit_id = packetfabric_link_aggregation_group.lag_1.id
 # }
-
 # output "packetfabric_link_aggregation_group" {
 #   value = data.packetfabric_link_aggregation_group.lag_1
 # }
@@ -90,7 +89,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_port" "ports_all" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_ports_all" {
 #   value = data.packetfabric_port.ports_all
 # }
@@ -134,6 +132,9 @@ resource "random_pet" "name" {}
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
+# output "packetfabric_backbone_virtual_circuit" {
+#   value = packetfabric_backbone_virtual_circuit.vc1
+# }
 
 # # Show all Virtual Circuits
 # data "packetfabric_virtual_circuits" "all_vcs" {
@@ -152,7 +153,6 @@ resource "random_pet" "name" {}
 #   vc_circuit_id = var.pf_vc_circuit_id
 #   speed         = var.pf_vc_speed_burst
 # }
-
 # output "packetfabric_backbone_virtual_circuit_speed_burst" {
 #   value = packetfabric_backbone_virtual_circuit_speed_burst.boost
 # }
@@ -178,6 +178,9 @@ resource "random_pet" "name" {}
 #     zone    = var.pf_ptp_zone2
 #     autoneg = var.pf_ptp_autoneg
 #   }
+# }
+# output "packetfabric_point_to_point" {
+#   value = packetfabric_point_to_point.ptp1
 # }
 
 # #######################################
@@ -243,7 +246,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_outbound_cross_connect" {
 #   value = data.packetfabric_outbound_cross_connect.crossconnect_1
 # }
@@ -269,7 +271,7 @@ resource "random_pet" "name" {}
 #   description    = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
-#   port           = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
 #   vlan           = var.pf_cs_vlan2
@@ -279,7 +281,6 @@ resource "random_pet" "name" {}
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 # }
-
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.id
@@ -295,7 +296,7 @@ resource "random_pet" "name" {}
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.azure_service_key
-#   port              = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port              = packetfabric_port.port_1a.id
 #   speed             = var.pf_cs_speed1 # will be deprecated
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
@@ -309,7 +310,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_azure_hosted_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_azure_hosted_connection_data" {
 #   value = data.packetfabric_cs_azure_hosted_connection.current
 # }
@@ -319,15 +319,13 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid                = var.pf_account_uuid
-#   port                        = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port                        = packetfabric_port.port_1a.id
 #   speed                       = var.pf_cs_speed1
 #   google_pairing_key          = var.google_pairing_key
 #   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"
 #   pop                         = var.pf_cs_pop1
 #   vlan                        = var.pf_cs_vlan1
 # }
-
-# # type terraform output packetfabric_cs_google_hosted_connection to display the value
 # output "packetfabric_cs_google_hosted_connection" {
 #   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
 #   sensitive = true
@@ -348,7 +346,7 @@ resource "random_pet" "name" {}
 #   account_uuid = var.pf_account_uuid
 #   vc_ocid      = var.pf_cs_oracle_vc_ocid
 #   region       = var.pf_cs_oracle_region
-#   port         = var.pf_demo_port # packetfabric_port.port_1a.id
+#   port         = packetfabric_port.port_1a.id
 #   pop          = var.pf_cs_pop6
 #   zone         = var.pf_cs_zone6
 #   vlan         = var.pf_cs_vlan6
@@ -390,12 +388,9 @@ resource "random_pet" "name" {}
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
-
 # output "packetfabric_backbone_virtual_circuit_marketplace" {
 #   value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
 # }
-
-### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
 
 # # Create an IX Marketplace Connection 
 # resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
@@ -411,17 +406,14 @@ resource "random_pet" "name" {}
 #   }
 #   bandwidth {
 #     account_uuid      = var.pf_account_uuid
-#     longhaul_type     = var.pf_vc_longhaul_type
+#     #longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
-
 # output "packetfabric_ix_virtual_circuit_marketplace" {
 #   value = packetfabric_ix_virtual_circuit_marketplace.ix_marketplace_conn1
 # }
-
-### NEED TO ADD EXAMPLE TO ACCEPT AND REJECT
 
 # # Create a AWS Hosted Marketplace Connection 
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace" {
@@ -435,17 +427,8 @@ resource "random_pet" "name" {}
 #   pop            = var.pf_cs_pop2
 #   zone           = var.pf_cs_zone2
 # }
-
 # output "packetfabric_cs_aws_hosted_marketplace_connection" {
 #   value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace
-# }
-
-# resource "packetfabric_cs_aws_provision_marketplace" "accept_request_aws" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
-#   vlan            = var.pf_cs_vlan2
 # }
 
 # # Create a Azure Hosted Marketplace Connection 
@@ -458,19 +441,9 @@ resource "random_pet" "name" {}
 #   market            = var.pf_market
 #   speed             = var.pf_cs_speed1 # will be deprecated
 # }
-
 # output "packetfabric_cs_azure_hosted_marketplace_connection" {
 #   sensitive = true
 #   value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure
-# }
-
-# resource "packetfabric_cs_azure_provision_marketplace" "accept_request_azure" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
-#   vlan_private    = var.pf_cs_vlan_private
-#   vlan_microsoft  = var.pf_cs_vlan_microsoft
 # }
 
 # # Create a GCP Hosted Marketplace Connection 
@@ -484,21 +457,10 @@ resource "random_pet" "name" {}
 #   google_pairing_key          = var.google_pairing_key
 #   google_vlan_attachment_name = var.google_vlan_attachment_name
 #   pop                         = var.pf_cs_pop1
-
 # }
-
-# # type terraform output packetfabric_cs_google_hosted_marketplace_connection to display the value
 # output "packetfabric_cs_google_hosted_marketplace_connection" {
 #   value     = packetfabric_cs_google_hosted_marketplace_connection.cs_conn1_marketplace_google
 #   sensitive = true
-# }
-
-# resource "packetfabric_cs_google_provision_marketplace" "accept_request_google" {
-#   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_google_hosted_marketplace_connection.cs_conn1_marketplace_google.id
-#   vlan            = var.pf_cs_vlan2
 # }
 
 # # Create a Oracle Hosted Marketplace Connection 
@@ -512,18 +474,43 @@ resource "random_pet" "name" {}
 #   market       = var.pf_market
 #   pop          = var.pf_cs_pop6
 # }
-
 # output "packetfabric_cs_oracle_hosted_marketplace_connection" {
 #   value = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
 #   sensitive = true
 # }
 
-# resource "packetfabric_cs_oracle_hosted_marketplace_connection" "accept_request_oracle" {
+# # Accept the Request
+# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
 #   provider        = packetfabric
+#   type            = "cloud" # backbone, ix or cloud
+#   cloud_provider  = "aws" # "aws, azure, google, oracle
 #   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_port_circuit_id_marketplace
-#   vc_request_uuid = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle.id
-#   vlan            = var.pf_cs_vlan2
+#   port_circuit_id = var.pf_market_port_circuit_id
+#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
+# }
+
+# # Reject the Request
+# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
+#   provider        = packetfabric
+#   delete_reason   = "Marketplace Connection Rejected."
+#   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
+# }
+
+# # List all Marketplace Service Requests (not Cloud Router)
+# data "packetfabric_marketplace_service_requests" "sent" {
+#   provider = packetfabric
+#   type     = "sent" # sent or received
+# }
+# output "packetfabric_marketplace_service_requests_sent" {
+#   value = data.packetfabric_marketplace_service_requests.sent
+# }
+
+# data "packetfabric_marketplace_service_requests" "received" {
+#   provider = packetfabric
+#   type     = "received" # sent or received
+# }
+# output "packetfabric_marketplace_service_requests_received" {
+#   value = data.packetfabric_marketplace_service_requests.received
 # }
 
 # #######################################
@@ -548,7 +535,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_aws_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_aws_dedicated_connection" {
 #   value = data.packetfabric_cs_aws_dedicated_connection.current
 # }
@@ -569,7 +555,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_google_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_google_dedicated_connection" {
 #   value = data.packetfabric_cs_google_dedicated_connection.current
 # }
@@ -591,7 +576,6 @@ resource "random_pet" "name" {}
 # data "packetfabric_cs_azure_dedicated_connection" "current" {
 #   provider = packetfabric
 # }
-
 # output "packetfabric_cs_azure_dedicated_connection" {
 #   value = data.packetfabric_cs_azure_dedicated_connection.current
 # }

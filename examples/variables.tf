@@ -38,7 +38,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "B" # A, B
+  default = "B" # check availability /v2/locations/DEN2/port-availability
 }
 variable "pf_port_pop2" {
   type    = string
@@ -46,7 +46,7 @@ variable "pf_port_pop2" {
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "E"
+  default = "E" # check availability /v2/locations/WDC1/port-availability
 }
 variable "pf_port_subterm" {
   type    = number
@@ -78,11 +78,11 @@ variable "pf_document_uuid2" {
 # Virtual Circuit
 variable "pf_vc_vlan1" {
   type    = number
-  default = 4
+  default = 40
 }
 variable "pf_vc_vlan2" {
   type    = number
-  default = 5
+  default = 50
 }
 variable "pf_vc_longhaul_type" {
   type    = string
@@ -129,7 +129,7 @@ variable "pf_ptp_pop1" {
 }
 variable "pf_ptp_zone1" {
   type    = string
-  default = "C" # A
+  default = "C" # check availability /v2/locations/SEA1/port-availability
 }
 variable "pf_ptp_pop2" {
   type    = string
@@ -137,17 +137,12 @@ variable "pf_ptp_pop2" {
 }
 variable "pf_ptp_zone2" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/CHI1/port-availability
 }
 
 ########################################
 ###### HOSTED CLOUD CONNECTIONS
 ########################################
-# Demo Port used for all
-variable "pf_demo_port" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
-}
 
 # Azure Hosted Connection
 variable "azure_service_key" {
@@ -196,7 +191,7 @@ variable "pf_cs_pop2" {
 }
 variable "pf_cs_zone2" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
 }
 variable "pf_cs_speed2" {
   type    = string
@@ -214,7 +209,7 @@ variable "pf_cs_pop6" {
 }
 variable "pf_cs_zone6" {
   type    = string
-  default = "C"
+  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
 }
 variable "pf_cs_vlan6" {
   type    = number
@@ -234,23 +229,24 @@ variable "pf_cs_oracle_vc_ocid" {
 # Markeptlace
 variable "pf_routing_id" {
   type    = string
-  default = "PDB-ROJ-9Y0K"
+  default = "PD-WUY-9VB0" # Demo A
 }
 variable "pf_market" {
   type    = string
-  default = "ATL"
+  default = "HOU" # Demo A
+}
+variable "pf_market_port_circuit_id" {
+  type        = string
+  description = "Port Circuit ID used to provision a Marketplace request"
+  default     = "PF-AP-WDC1-1726464"
 }
 variable "pf_routing_id_ix" {
   type    = string
-  default = "PDB-ROJ-9Y0K"
+  default = "IXW-XRH-K2VX" # IX-Denver
 }
 variable "pf_market_ix" {
   type    = string
-  default = "ATL"
-}
-variable "pf_port_circuit_id_marketplace" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
+  default = "DEN" # IX-Denver
 }
 variable "pf_asn_ix" {
   type     = number
@@ -269,7 +265,7 @@ variable "pf_cs_pop3" {
 }
 variable "pf_cs_zone3" {
   type    = string
-  default = "D" #A
+  default = "D" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=aws&pop=NYC6
 }
 variable "pf_cs_speed3" {
   type    = string
@@ -288,7 +284,7 @@ variable "pf_cs_pop4" {
 }
 variable "pf_cs_zone4" {
   type    = string
-  default = "C"
+  default = "C" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
 }
 variable "pf_cs_speed4" {
   type    = string
@@ -302,7 +298,7 @@ variable "pf_cs_pop5" {
 }
 variable "pf_cs_zone5" {
   type    = string
-  default = "E"
+  default = "E" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=azure&pop=SFO6
 }
 variable "pf_cs_speed5" {
   type    = string
@@ -371,7 +367,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "a"
+  default = "a" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
 variable "pf_crc_maybe_nat" {
   type        = bool
@@ -451,7 +447,7 @@ variable "pf_crc_phase2_encryption_algo" {
 variable "pf_crc_phase2_authentication_algo" {
   type        = string
   description = "The authentication algorithm to use during phase 2"
-  default     = "hmac-sha-256-128"
+  default     = "hmac-sha-256-128" # not needed to set pf_crc_phase2_authentication_algo if pf_crc_phase2_encryption_algo = aes-256-gcm
 }
 variable "pf_crc_phase2_lifetime" {
   type        = number
@@ -504,8 +500,9 @@ variable "vpn_l3_address" {
 
 # Cloud Router Connection Port
 variable "pf_crc_port_circuit_id" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
+  type        = string
+  description = "Port Circuit ID used as a source port to create a Port Cloud Router Connection"
+  default     = "PF-AP-WDC1-1726464"
 }
 variable "pf_crc_vlan" {
   type    = number

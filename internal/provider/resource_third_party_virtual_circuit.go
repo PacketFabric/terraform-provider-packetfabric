@@ -67,19 +67,19 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 						},
 						"speed": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice(ixVcSpeedOptions(), true),
 							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 						},
 						"subscription_term": {
 							Type:         schema.TypeInt,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 							Description:  "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
 							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
@@ -120,6 +120,9 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 				Description: "The circuit ID of the flex bandwidth container.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -129,11 +132,13 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 	thidPartyVC := extractThirdPartyVC(d)
 	resp, err := c.CreateThirdPartyVC(thidPartyVC)
+	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
-	
+	if resp != nil {
+		d.SetId(resp.VcRequestUUID)
+	}
 	return diags
 }
 
@@ -141,30 +146,24 @@ func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.Resourc
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if _, err := c.GetBackboneByVcCID(d.Id()); err != nil {
+	if _, err := c.GetVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 
 func resourceThirdPartyVirtualCircuitUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	settings := extractServiceSettings(d)
-	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if _, err := c.DeleteService(d.Id()); err != nil {
+	if _, err := c.DeleteVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId("")
 	return diags
 }
 
@@ -185,10 +184,10 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
 		thidPartyVC.RateLimitOut = rateLimitOut.(int)
 	}
-	if bandwidth, ok := d.GetOk("bandwidth"); ok {
-		thidPartyVC.Bandwidth = extractBandwidth(bandwidth.(map[string]interface{}))
+	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
+		thidPartyVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
-	if interf, ok := d.GetOk("interface"); ok {
+	for _, interf := range d.Get("interface").(*schema.Set).List() {
 		thidPartyVC.Interface = extractThirdPartyInterf(interf.(map[string]interface{}))
 	}
 	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
@@ -202,9 +201,17 @@ func extractThirdPartyVC(d *schema.ResourceData) packetfabric.ThirdPartyVC {
 
 func extractThirdPartyInterf(interf map[string]interface{}) packetfabric.Interface {
 	interfResp := packetfabric.Interface{}
-	interfResp.PortCircuitID = interf["port_circuit_id"].(string)
-	interfResp.Vlan = interf["vlan"].(int)
-	interfResp.Svlan = interf["svlan"].(int)
-	interfResp.Untagged = interf["untagged"].(bool)
+	if portCID := interf["port_circuit_id"]; portCID != nil {
+		interfResp.PortCircuitID = portCID.(string)
+	}
+	if vlan := interf["vlan"]; vlan != nil {
+		interfResp.Vlan = vlan.(int)
+	}
+	if svlan := interf["svlan"]; svlan != nil {
+		interfResp.Svlan = svlan.(int)
+	}
+	if untagged := interf["untagged"]; untagged != nil {
+		interfResp.Untagged = untagged.(bool)
+	}
 	return interfResp
 }

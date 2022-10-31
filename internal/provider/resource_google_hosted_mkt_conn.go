@@ -98,8 +98,7 @@ func resourceGoogleHostedMktConnRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceGoogleHostedMktConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -110,7 +109,7 @@ func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceDa
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	err := c.DeleteRequestedHostedMktService(vcRequestUUID.(string))
+	err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

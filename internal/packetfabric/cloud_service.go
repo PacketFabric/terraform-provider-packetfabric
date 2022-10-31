@@ -9,9 +9,11 @@ import (
 const backboneURI = "/v2/services/backbone"
 const backboneByVCCIDURI = "/v2/services/%s"
 const cloudConnDeleteURI = "/v2/services/cloud/%s"
+const requestByVCUUIDURI = "/v2/services/requests/%s"
 const mktProvisionReqURI = "/v2/services/requests/%s/provision/hosted"
 const speedBurstURI = "/v2/services/%s/burst"
 const vcRequestsURI = "/v2/services/requests"
+const vcSentRequestsURI = "/v2/services/requests?type=%s"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
@@ -250,6 +252,16 @@ func (c *PFClient) GetBackboneByVcCID(vcCID string) (*BackboneResp, error) {
 	return expectedResp, nil
 }
 
+func (c *PFClient) GetVCRequest(vcUUID string) (*VcRequest, error) {
+	formatedURI := fmt.Sprintf(requestByVCUUIDURI, vcUUID)
+	expectedResp := &VcRequest{}
+	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 func (c *PFClient) UpdateServiceConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
 	formatedURI := fmt.Sprintf(updateCloudConnURI, cloudCID)
 	type UpdateServiceConn struct {
@@ -294,8 +306,16 @@ func (c *PFClient) GetServices() ([]Services, error) {
 }
 
 func (c *PFClient) GetVcRequests() ([]VcRequest, error) {
+	return c._getVCRequests(vcRequestsURI)
+}
+
+func (c *PFClient) GetVcRequestsByType(reqType string) ([]VcRequest, error) {
+	return c._getVCRequests(fmt.Sprintf(vcSentRequestsURI, reqType))
+}
+
+func (c *PFClient) _getVCRequests(uri string) ([]VcRequest, error) {
 	requests := make([]VcRequest, 0)
-	_, err := c.sendRequest(vcRequestsURI, getMethod, nil, &requests)
+	_, err := c.sendRequest(uri, getMethod, nil, &requests)
 	if err != nil {
 		return nil, err
 	}
@@ -324,6 +344,22 @@ func (c *PFClient) DeleteSpeedBurst(vcCID string) (*PortMessageResp, error) {
 	formatedURI := fmt.Sprintf(speedBurstURI, vcCID)
 	expectedResp := &PortMessageResp{}
 	if _, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+// https://docs.packetfabric.com/api/v2/swagger/#/Services/delete_service_request
+func (c *PFClient) DeleteVCRequest(vcUUID string) (*PortMessageResp, error) {
+	formatedURI := fmt.Sprintf(requestByVCUUIDURI, vcUUID)
+	type DeleteReason struct {
+		DeleteReason string `json:"delete_reason"`
+	}
+	deleteReason := DeleteReason{
+		DeleteReason: "Deleted from PF Terraform plugin.",
+	}
+	expectedResp := &PortMessageResp{}
+	if _, err := c.sendRequest(formatedURI, deleteMethod, deleteReason, expectedResp); err != nil {
 		return nil, err
 	}
 	return expectedResp, nil

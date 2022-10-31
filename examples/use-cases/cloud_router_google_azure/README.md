@@ -32,7 +32,6 @@ Terraform providers used: PacketFabric, Azure and Google.
 - resource & data source **"packetfabric_cloud_router_connection_azure"**: Add a AzureExpress Connection to the Cloud Router
 - module **"terraform-google-gcloud"**: Get the BGP Peer Addresses and set the PacketFabric Cloud Router ASN to the BGP settings in the Google Cloud Router
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 - resources **"azurerm_public_ip"** and **"azurerm_virtual_network_gateway"**: Create a virtual network gateway for ExpressRoute
 - resource **"azurerm_virtual_network_gateway_connection"**: Link a virtual network gateway to the ExpressRoute circuit
 

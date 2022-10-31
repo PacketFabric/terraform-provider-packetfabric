@@ -10,14 +10,12 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_con
   zone           = var.pf_cs_zone
 }
 
-resource "packetfabric_marketplace_accept_request" "accept_request_aws" {
+resource "packetfabric_marketplace_service_reject_request" "reject_request_aws" {
   provider        = packetfabric
-  type            = "cloud" # "backbone", "ix" or "cloud"
-  port_circuit_id = var.pf_port_circuit_id_marketplace
+  delete_reason   = "testing"
   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1.id
-  vlan            = var.pf_cs_vlan
 }
 
-output "packetfabric_marketplace_accept_request" {
-  value = packetfabric_marketplace_accept_request.accept_request_aws
+output "packetfabric_marketplace_service_reject_request" {
+  value = packetfabric_marketplace_service_reject_request.reject_request_aws
 }

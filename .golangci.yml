@@ -7,9 +7,9 @@ linters:
     - staticcheck # bugs, metalinter
     - typecheck # bugs
     - ineffassign # unused
+    - gofmt # format
     # - godot # style, comment
     # - gosimple # style
-    # - gofmt # format
 
 run:
   timeout: 2m
