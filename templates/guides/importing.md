@@ -32,13 +32,8 @@ resource "packetfabric_cloud_router" "awesome_cloud_routers" {
 
 In this step, you specify the resource type, its name, and circuit ID. 
 
-```terraform
+```bash
 $ terraform import packetfabric_cloud_router.awesome_cloud_routers PF-L3-CUST-1700239 
-packetfabric_cloud_router.awesome_cloud_routers: Importing from ID "PF-L3-CUST-1700239"...
-packetfabric_cloud_router.awesome_cloud_routers: Import prepared!
-  Prepared packetfabric_cloud_router for import
-packetfabric_cloud_router.awesome_cloud_routers: Refreshing state... [id=PF-L3-CUST-1700239]
-Import successful!
 ```
 
 
@@ -47,6 +42,7 @@ Import successful!
 ```terraform
 $ terraform state list 
 packetfabric_cloud_router.awesome_cloud_routers
+
 $ terraform state show packetfabric_cloud_router.awesome_cloud_routers
 # packetfabric_cloud_router.awesome_cloud_routers:
 resource "packetfabric_cloud_router" "awesome_cloud_routers" {

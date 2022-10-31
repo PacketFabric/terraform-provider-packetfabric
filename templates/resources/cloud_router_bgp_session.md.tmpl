@@ -19,3 +19,11 @@ For information specific to each cloud provider, see [the PacketFabric cloud rou
 {{tffile "examples/resources/packetfabric_cloud_router_bgp_session/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a Cloud Router BGP session using the BGP ID for the session.
+
+```bash
+terraform import packetfabric_cloud_router_bgp_session.cr_bgp1 779881f7-b0ae-4794-8183-1a8ffd9ee777
+```
