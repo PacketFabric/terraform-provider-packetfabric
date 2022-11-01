@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     packetfabric = {
-      source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.2"
+      source  = "terraform.local/PacketFabric/packetfabric"
+      version = "~> 0.0.0"
     }
   }
 }
@@ -19,22 +19,22 @@ resource "random_pet" "name" {}
 # ##### PORTS/INTERFACES
 #######################################
 
-# Create a PacketFabric Ports
-resource "packetfabric_port" "port_1a" {
-  provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}-a"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
-}
-output "packetfabric_port_1a" {
-  value = packetfabric_port.port_1a
-}
+# # Create a PacketFabric Ports
+# resource "packetfabric_port" "port_1a" {
+#   provider          = packetfabric
+#   account_uuid      = var.pf_account_uuid
+#   autoneg           = var.pf_port_autoneg
+#   description       = "${var.tag_name}-${random_pet.name.id}-a"
+#   media             = var.pf_port_media
+#   nni               = var.pf_port_nni
+#   pop               = var.pf_port_pop1
+#   speed             = var.pf_port_speed
+#   subscription_term = var.pf_port_subterm
+#   zone              = var.pf_port_avzone1
+# }
+# output "packetfabric_port_1a" {
+#   value = packetfabric_port.port_1a
+# }
 
 # ## 2nd port in the same location same zone to create a LAG
 # resource "packetfabric_port" "port_1b" {
