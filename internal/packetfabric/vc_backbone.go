@@ -24,7 +24,7 @@ func (c *PFClient) IsBackboneComplete(vcCircuitID string) bool {
 	debugLog["status"] = status
 	debugLog["error"] = err
 	tflog.Debug(c.Ctx, fmt.Sprintf("\n### BACKLOG STATUS: VCCID [%s] ###", vcCircuitID), debugLog)
-	if err == nil && status.Status.LastWorkflow.CurrentState != "COMPLETE" {
+	if err == nil && status.Status.LastWorkflow.CurrentState == "COMPLETE" {
 		return true
 	}
 	if err != nil {
