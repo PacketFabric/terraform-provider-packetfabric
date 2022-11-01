@@ -137,6 +137,9 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		}
 	}()
 	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if resp != nil {
 		d.SetId(resp.PtpUUID)
 	}
