@@ -421,7 +421,7 @@ func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message stri
 				Terraform and update your Terraform configuration.`
 			}
 			if vcReq.Status == "rejected" {
-				err = errors.New("this marketplace request is already in progress and cannot be deleted anymore")
+				err = errors.New("The Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed.")
 			}
 		}
 		return
