@@ -52,10 +52,9 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Description:  "The customer IBM account ID to connect with.",
 			},
 			"ibm_bgp_asn": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The customers IP address for the BGP session with IBM..",
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "The customers IP address for the BGP session with IBM.",
 			},
 			"ibm_bgp_cer_cidr": {
 				Type:         schema.TypeString,
