@@ -15,9 +15,9 @@ provider "packetfabric" {
 # Create random name to use to name objects
 resource "random_pet" "name" {}
 
-########################################
-###### PORTS/INTERFACES
-########################################
+# #######################################
+# ##### PORTS/INTERFACES
+# #######################################
 
 # # Create a PacketFabric Ports
 # resource "packetfabric_port" "port_1a" {
@@ -138,7 +138,7 @@ resource "random_pet" "name" {}
 
 # # Show all Virtual Circuits
 # data "packetfabric_virtual_circuits" "all_vcs" {
-#   provider   = packetfabric
+#   provider = packetfabric
 # }
 # output "packetfabric_virtual_circuits" {
 #   value = data.packetfabric_virtual_circuits.all_vcs
@@ -207,7 +207,7 @@ resource "random_pet" "name" {}
 #   val["pop"] => val }
 #   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
 #   pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
-#   
+
 #   pop_in_market = toset([for each in data.packetfabric_locations.locations_all.locations[*] : each.pop if each.market == "WDC"])
 # }
 # output "pf_port_site1" {
@@ -402,7 +402,7 @@ resource "random_pet" "name" {}
 #     vlan            = var.pf_vc_vlan1
 #   }
 #   bandwidth {
-#     account_uuid      = var.pf_account_uuid
+#     account_uuid = var.pf_account_uuid
 #     #longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
@@ -472,7 +472,7 @@ resource "random_pet" "name" {}
 #   pop          = var.pf_cs_pop6
 # }
 # output "packetfabric_cs_oracle_hosted_marketplace_connection" {
-#   value = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
+#   value     = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
 #   sensitive = true
 # }
 
@@ -480,7 +480,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
 #   provider        = packetfabric
 #   type            = "cloud" # backbone, ix or cloud
-#   cloud_provider  = "aws" # "aws, azure, google, oracle
+#   cloud_provider  = "aws"   # "aws, azure, google, oracle
 #   description     = "${var.tag_name}-${random_pet.name.id}"
 #   port_circuit_id = var.pf_market_port_circuit_id
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
@@ -673,18 +673,16 @@ resource "random_pet" "name" {}
 # }
 
 # resource "packetfabric_cloud_router_connection_ibm" "crc_5" {
-#   provider         = packetfabric
-#   description      = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
-#   circuit_id       = packetfabric_cloud_router.cr.id
-#   account_uuid     = var.pf_account_uuid
-#   ibm_account_id   = var.ibm_account_id
-#   ibm_bgp_asn      = var.pf_crc_ibm_bgp_asn
-#   ibm_bgp_cer_cidr = var.pf_crc_ibm_bgp_cer_cidr
-#   ibm_bgp_ibm_cidr = var.pf_crc_ibm_bgp_ibm_cidr
-#   pop              = var.pf_crc_pop4
-#   zone             = var.pf_crc_zone4
-#   maybe_nat        = var.pf_crc_maybe_nat
-#   speed            = var.pf_crc_speed
+#   provider       = packetfabric
+#   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   account_uuid   = var.pf_account_uuid
+#   ibm_account_id = var.ibm_account_id
+#   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
+#   pop            = var.pf_crc_pop4
+#   zone           = var.pf_crc_zone4
+#   maybe_nat      = var.pf_crc_maybe_nat
+#   speed          = var.pf_crc_speed
 # }
 
 # resource "packetfabric_cloud_router_connection_oracle" "crc_6" {
