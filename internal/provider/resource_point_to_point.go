@@ -105,6 +105,9 @@ func resourcePointToPoint() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -129,6 +132,9 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		}
 	}()
 	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if resp != nil {
 		d.SetId(resp.PtpUUID)
 	}

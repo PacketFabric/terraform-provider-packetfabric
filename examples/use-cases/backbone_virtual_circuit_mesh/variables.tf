@@ -39,7 +39,7 @@ variable "pf_vc_subterm" {
 variable "pf_port1" {
   type        = string
   description = "Port OpenColo-Santa Clara (SFO13)"
-  default     = "PF-AP-SFO13-1748214"
+  default     = "PF-AP-SFO13-1748689"
 }
 variable "pf_port2" {
   type        = string

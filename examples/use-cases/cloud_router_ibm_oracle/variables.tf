@@ -158,14 +158,6 @@ variable "ibm_bgp_asn" {
   type    = number
   default = 64536 # private (64512 to 65534)
 }
-variable "ibm_bgp_cer_cidr" {
-  type    = string
-  default = "169.254.248.41/30"
-}
-variable "ibm_bgp_ibm_cidr" {
-  type    = string
-  default = "169.254.248.42/30"
-}
 
 # PacketFabric Cloud Router Connection - Oracle
 variable "pf_crc_pop2" {

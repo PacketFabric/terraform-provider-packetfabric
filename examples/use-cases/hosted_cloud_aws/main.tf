@@ -175,7 +175,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   ]
 }
 
- # provider version >= 4.37.0
+# provider version >= 4.37.0
 data "aws_dx_router_configuration" "router_config" {
   provider               = aws
   virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
