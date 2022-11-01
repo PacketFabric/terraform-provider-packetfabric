@@ -44,8 +44,13 @@ func _buildConnUpdateExpectedResp() {
 		Pop:                       "LAX1",
 		Site:                      "us-west-1",
 		BgpState:                  "string",
-		CloudRouterCircuitID:      "PF-L3-CUST-2001",
-		NatCapable:                true,
+		BgpStateList: []BgpStateObj{
+			{BgpSettingsUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b", BgpState: "string"},
+		},
+		CloudRouterName:      "Sample CR",
+		CloudRouterASN:       4556,
+		CloudRouterCircuitID: "PF-L3-CUST-2001",
+		NatCapable:           true,
 	})
 }
 
@@ -214,6 +219,14 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+		  {
+			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+			"bgp_state": "string"
+		  }
+		],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }`, description, _cloudConnUUID))
@@ -253,6 +266,14 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+          {
+		        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+		      	"bgp_state": "string"
+		      }
+        ],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }`)
@@ -330,6 +351,14 @@ func _buildMockCloudRouterConnResps() []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+          {
+			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+			"bgp_state": "string"
+		  }
+        ],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }]`)
