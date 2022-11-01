@@ -60,13 +60,18 @@ func (c *PFClient) IsPointToPointComplete(ptpUUID string) (result bool) {
 	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
 	if err != nil {
 		result = false
+		return
 	}
 	result = ptpInfo.State == "active"
 	return
 }
 
 func (c *PFClient) IsPointToPointDeleteComplete(ptpUUID string) (result bool) {
-	ptpInfo, _ := c.GetPointToPointInfo(ptpUUID)
+	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
+	if err != nil {
+		// The PTP info gets deleted sometime after COMPLETE
+		return true
+	}
 	result = ptpInfo.Deleted
 	return
 }

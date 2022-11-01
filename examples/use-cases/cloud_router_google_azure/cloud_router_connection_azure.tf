@@ -110,40 +110,40 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
   }
 }
 
-# Please be aware that provisioning a Virtual Network Gateway takes a long time (between 30 minutes and 1 hour)
-# Deletion can take up to 15 minutes
-resource "azurerm_virtual_network_gateway" "vng_1" {
-  provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-vng1"
-  location            = azurerm_resource_group.resource_group_1.location
-  resource_group_name = azurerm_resource_group.resource_group_1.name
-  type                = "ExpressRoute"
-  sku                 = "Standard"
-  ip_configuration {
-    name                          = "vnetGatewayConfig"
-    public_ip_address_id          = azurerm_public_ip.public_ip_vng_1.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurerm_subnet.subnet_gw.id
-  }
-  tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
-  }
-  depends_on = [
-    azurerm_public_ip.public_ip_vng_1
-  ]
-}
+# # Please be aware that provisioning a Virtual Network Gateway takes a long time (between 30 minutes and 1 hour)
+# # Deletion can take up to 15 minutes
+# resource "azurerm_virtual_network_gateway" "vng_1" {
+#   provider            = azurerm
+#   name                = "${var.tag_name}-${random_pet.name.id}-vng1"
+#   location            = azurerm_resource_group.resource_group_1.location
+#   resource_group_name = azurerm_resource_group.resource_group_1.name
+#   type                = "ExpressRoute"
+#   sku                 = "Standard"
+#   ip_configuration {
+#     name                          = "vnetGatewayConfig"
+#     public_ip_address_id          = azurerm_public_ip.public_ip_vng_1.id
+#     private_ip_address_allocation = "Dynamic"
+#     subnet_id                     = azurerm_subnet.subnet_gw.id
+#   }
+#   tags = {
+#     environment = "${var.tag_name}-${random_pet.name.id}"
+#   }
+#   depends_on = [
+#     azurerm_public_ip.public_ip_vng_1
+#   ]
+# }
 
-# From the Microsoft side: Link a virtual network gateway to the ExpressRoute circuit.
-resource "azurerm_virtual_network_gateway_connection" "vng_connection_1" {
-  provider                   = azurerm
-  name                       = "${var.tag_name}-${random_pet.name.id}-vng_connection_1"
-  location                   = azurerm_resource_group.resource_group_1.location
-  resource_group_name        = azurerm_resource_group.resource_group_1.name
-  type                       = "ExpressRoute"
-  express_route_circuit_id   = azurerm_express_route_circuit.azure_express_route_1.id
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.vng_1.id
-  routing_weight             = 0
-  tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
-  }
-}
+# # From the Microsoft side: Link a virtual network gateway to the ExpressRoute circuit.
+# resource "azurerm_virtual_network_gateway_connection" "vng_connection_1" {
+#   provider                   = azurerm
+#   name                       = "${var.tag_name}-${random_pet.name.id}-vng_connection_1"
+#   location                   = azurerm_resource_group.resource_group_1.location
+#   resource_group_name        = azurerm_resource_group.resource_group_1.name
+#   type                       = "ExpressRoute"
+#   express_route_circuit_id   = azurerm_express_route_circuit.azure_express_route_1.id
+#   virtual_network_gateway_id = azurerm_virtual_network_gateway.vng_1.id
+#   routing_weight             = 0
+#   tags = {
+#     environment = "${var.tag_name}-${random_pet.name.id}"
+#   }
+# }
