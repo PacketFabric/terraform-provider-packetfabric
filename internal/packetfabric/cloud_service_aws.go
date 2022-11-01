@@ -415,7 +415,7 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	type DeleteReason struct {
 		DeleteReason string `json:"delete_reason"`
 	}
-	formatedURI := fmt.Sprintf(hostedMktServiceDeleteURI, vcRequestUUID)
+	formatedURI := fmt.Sprintf(uri, vcRequestUUID)
 	reason := DeleteReason{
 		DeleteReason: "Delete requested by PacketFabric terraform plugin.",
 	}
