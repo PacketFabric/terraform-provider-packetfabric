@@ -18,18 +18,19 @@ func (c *PFClient) GetBackboneState(vcCircuitID string) (*ServiceState, error) {
 	return expectedResp, nil
 }
 
-func (c *PFClient) IsBackboneComplete(vcCircuitID string) (result bool) {
+func (c *PFClient) IsBackboneComplete(vcCircuitID string) bool {
 	status, err := c.GetBackboneState(vcCircuitID)
 	debugLog := make(map[string]interface{})
 	debugLog["status"] = status
 	debugLog["error"] = err
 	tflog.Debug(c.Ctx, fmt.Sprintf("\n### BACKLOG STATUS: VCCID [%s] ###", vcCircuitID), debugLog)
 	if err == nil && status.Status.LastWorkflow.CurrentState != "COMPLETE" {
-		result = true
-		return
+		return true
 	}
 	if err != nil {
-		result = false
+		// We need to return TRUE in case of error since the server
+		// erases the status history after it reachs COMPLETE.
+		return true
 	}
-	return
+	return false
 }
