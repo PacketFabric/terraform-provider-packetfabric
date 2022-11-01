@@ -17,24 +17,24 @@ resource "random_pet" "name" {}
 
 # #######################################
 # ##### PORTS/INTERFACES
-# #######################################
+#######################################
 
-# # Create a PacketFabric Ports
-# resource "packetfabric_port" "port_1a" {
-#   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
-#   autoneg           = var.pf_port_autoneg
-#   description       = "${var.tag_name}-${random_pet.name.id}-a"
-#   media             = var.pf_port_media
-#   nni               = var.pf_port_nni
-#   pop               = var.pf_port_pop1
-#   speed             = var.pf_port_speed
-#   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone1
-# }
-# output "packetfabric_port_1a" {
-#   value = packetfabric_port.port_1a
-# }
+# Create a PacketFabric Ports
+resource "packetfabric_port" "port_1a" {
+  provider          = packetfabric
+  account_uuid      = var.pf_account_uuid
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}-a"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
+}
+output "packetfabric_port_1a" {
+  value = packetfabric_port.port_1a
+}
 
 # ## 2nd port in the same location same zone to create a LAG
 # resource "packetfabric_port" "port_1b" {
@@ -413,7 +413,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Create a AWS Hosted Marketplace Connection 
-# resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace" {
+# resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
 #   account_uuid   = var.pf_account_uuid
@@ -425,7 +425,7 @@ resource "random_pet" "name" {}
 #   zone           = var.pf_cs_zone2
 # }
 # output "packetfabric_cs_aws_hosted_marketplace_connection" {
-#   value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace
+#   value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws
 # }
 
 # # Create a Azure Hosted Marketplace Connection 
@@ -483,14 +483,14 @@ resource "random_pet" "name" {}
 #   cloud_provider  = "aws"   # "aws, azure, google, oracle
 #   description     = "${var.tag_name}-${random_pet.name.id}"
 #   port_circuit_id = var.pf_market_port_circuit_id
-#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace.id
+#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
 # # Reject the Request
 # resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
 #   delete_reason   = "Marketplace Connection Rejected."
-#   vc_request_uuid = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure.id
+#   vc_request_uuid = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1.id
 # }
 
 # # List all Marketplace Service Requests (not Cloud Router)
