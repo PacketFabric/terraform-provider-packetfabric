@@ -524,7 +524,7 @@ variable "pf_crc_pop4" {
 }
 variable "pf_crc_zone4" {
   type    = string
-  default = "c"
+  default = "B"
 }
 variable "ibm_account_id" {
   type        = string
@@ -534,23 +534,15 @@ variable "pf_crc_ibm_bgp_asn" {
   type    = number
   default = 64536 # private (64512 to 65534)
 }
-variable "pf_crc_ibm_bgp_cer_cidr" {
-  type    = string
-  default = "169.254.248.41/30"
-}
-variable "pf_crc_ibm_bgp_ibm_cidr" {
-  type    = string
-  default = "169.254.248.42/30"
-}
 
 # Cloud Router Connection Oracle
 variable "pf_crc_pop5" {
   type    = string
-  default = "WDC02"
+  default = "SFO1"
 }
 variable "pf_crc_zone5" {
   type    = string
-  default = "c"
+  default = "A"
 }
 variable "pf_crc_oracle_region" {
   type        = string

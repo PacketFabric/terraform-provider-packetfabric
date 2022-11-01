@@ -679,8 +679,6 @@ resource "random_pet" "name" {}
 #   account_uuid     = var.pf_account_uuid
 #   ibm_account_id   = var.ibm_account_id
 #   ibm_bgp_asn      = var.pf_crc_ibm_bgp_asn
-#   ibm_bgp_cer_cidr = var.pf_crc_ibm_bgp_cer_cidr
-#   ibm_bgp_ibm_cidr = var.pf_crc_ibm_bgp_ibm_cidr
 #   pop              = var.pf_crc_pop4
 #   zone             = var.pf_crc_zone4
 #   maybe_nat        = var.pf_crc_maybe_nat
