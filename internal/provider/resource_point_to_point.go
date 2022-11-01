@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -118,10 +117,6 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
 	resp, err := c.CreatePointToPointService(ptpService)
-	ptpDebug := make(map[string]interface{})
-	ptpDebug["ptp"] = resp
-	ptpDebug["error"] = err
-	tflog.Debug(ctx, "\n### PTP RESP ###", ptpDebug)
 	if err != nil {
 		return diag.FromErr(err)
 	}
