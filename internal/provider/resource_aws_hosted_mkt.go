@@ -110,10 +110,16 @@ func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	err := c.DeleteHostedMktConnection(d.Id())
+	msg, err := c.DeleteHostedMktConnection(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	diags = make(diag.Diagnostics, 0)
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "AWS Hosted marketplace delete result",
+		Detail:   msg,
+	})
 	return diags
 }
 

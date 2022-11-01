@@ -109,10 +109,17 @@ func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceDa
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
+	msg, err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	diags = make(diag.Diagnostics, 0)
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Google Hosted marketplace delete result",
+		Detail:   msg,
+	})
+	d.SetId("")
 	return diags
 }
 

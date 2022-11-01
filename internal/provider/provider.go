@@ -74,7 +74,6 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connection_aws":             resourceRouterConnectionAws(),
 			"packetfabric_cloud_router_connection_oracle":          resourceOracleCloudRouteConn(),
 			"packetfabric_cloud_router_bgp_session":                resourceBgpSession(),
-			"packetfabric_cloud_router_bgp_prefixes":               resourceBgpPrefixes(),
 			"packetfabric_backbone_virtual_circuit":                resourceVcBackbone(),
 			"packetfabric_backbone_virtual_circuit_marketplace":    resourceThirdPartyVirtualCircuit(),
 			"packetfabric_backbone_virtual_circuit_speed_burst":    resourceAddSpeedBurst(),
@@ -114,7 +113,6 @@ func Provider() *schema.Provider {
 		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
 			"packetfabric_cloud_router":                   dataSourceCloudRouter(),
-			"packetfabric_cloud_router_bgp_prefixes":      dataSourceBgpPrefix(),
 			"packetfabric_cloud_router_connections":       dataSourceCloudConn(),
 			"packetfabric_cloud_router_bgp_session":       dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":       dataSourceCloudServicesConnInfo(),
