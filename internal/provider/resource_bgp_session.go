@@ -133,7 +133,7 @@ func resourceBgpSession() *schema.Resource {
 			},
 			"prefixes": {
 				Type:        schema.TypeSet,
-				Optional:    true,
+				Required:    true,
 				Description: "The list of BGP prefixes",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
