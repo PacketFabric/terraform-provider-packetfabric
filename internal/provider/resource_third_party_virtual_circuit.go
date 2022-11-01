@@ -163,6 +163,7 @@ func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.Resou
 	if msg, err := c.DeleteHostedMktConnection(d.Id()); err != nil {
 		return diag.FromErr(err)
 	} else {
+		diags = make(diag.Diagnostics, 0)
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  "Third Party VC delete result",

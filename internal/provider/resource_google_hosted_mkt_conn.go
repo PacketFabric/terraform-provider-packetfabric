@@ -113,6 +113,7 @@ func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	diags = make(diag.Diagnostics, 0)
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "Google Hosted marketplace delete result",

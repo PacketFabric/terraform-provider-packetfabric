@@ -111,6 +111,7 @@ func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	diags = make(diag.Diagnostics, 0)
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "Azure Hosted marketplace delete result",
