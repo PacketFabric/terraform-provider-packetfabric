@@ -476,21 +476,35 @@ resource "random_pet" "name" {}
 #   sensitive = true
 # }
 
-# # Accept the Request
-# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
-#   provider        = packetfabric
-#   type            = "cloud" # backbone, ix or cloud
-#   cloud_provider  = "aws"   # "aws, azure, google, oracle
-#   description     = "${var.tag_name}-${random_pet.name.id}"
-#   port_circuit_id = var.pf_market_port_circuit_id
+# # Accept the Request AWS
+# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_aws" {
+#   provider       = packetfabric
+#   type           = "cloud"
+#   cloud_provider = "aws" # "aws, azure, google, oracle
+#   description    = "${var.tag_name}-${random_pet.name.id}"
+#   interface {
+#     port_circuit_id = var.pf_market_port_circuit_id
+#     vlan            = var.pf_cs_vlan2
+#   }
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
+# }
+
+# # Accept the Request Backbone VC
+# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_backbone" {
+#   provider    = packetfabric
+#   type        = "backbone"
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   interface {
+#     port_circuit_id = var.pf_market_port_circuit_id
+#     vlan            = var.pf_vc_vlan1
+#   }
+#   vc_request_uuid = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1.id
 # }
 
 # # Reject the Request
 # resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
-#   delete_reason   = "Marketplace Connection Rejected."
-#   vc_request_uuid = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1.id
+#   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
 # # List all Marketplace Service Requests (not Cloud Router)

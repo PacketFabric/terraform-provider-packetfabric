@@ -238,7 +238,7 @@ variable "pf_market" {
 variable "pf_market_port_circuit_id" {
   type        = string
   description = "Port Circuit ID used to provision a Marketplace request"
-  default     = "PF-AP-HOU1-1728353" # Demo A
+  default     = "PF-AP-HOU1-1751418" # Demo A
 }
 variable "pf_routing_id_ix" {
   type    = string

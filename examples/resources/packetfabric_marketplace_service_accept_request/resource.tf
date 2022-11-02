@@ -11,12 +11,14 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_con
 }
 
 resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
-  provider        = packetfabric
-  type            = "cloud" # "backbone", "ix" or "cloud"
-  cloud_provider  = "aws"   # "aws, azure, google, oracle
-  port_circuit_id = var.pf_port_circuit_id_marketplace
+  provider       = packetfabric
+  type           = "cloud" # "backbone", "ix" or "cloud"
+  cloud_provider = "aws"   # "aws, azure, google, oracle
+  interface {
+    port_circuit_id = var.pf_market_port_circuit_id
+    vlan            = var.pf_cs_vlan2
+  }
   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1.id
-
 }
 
 output "packetfabric_marketplace_service_accept_request" {
