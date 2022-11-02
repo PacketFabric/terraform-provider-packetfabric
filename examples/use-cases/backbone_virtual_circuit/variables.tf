@@ -1,6 +1,8 @@
 ## General VARs
 variable "tag_name" {
-  default = "demo-pf"
+  type        = string
+  description = "Used to name all resources created in this example"
+  default     = "demo-pf"
 }
 
 ## PacketFabic VARs
@@ -8,14 +10,17 @@ variable "pf_api_key" {
   type        = string
   description = "PacketFabric platform API access key"
   sensitive   = true
+  default     = "secret"
 }
 variable "pf_account_uuid" {
-  type = string
+  type        = string
+  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
+  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
 }
 variable "pf_api_server" {
   type        = string
-  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
+  default     = "https://api.packetfabric.com"
 }
 
 # Port
@@ -25,7 +30,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/PDX1/port-availability
 }
 variable "pf_port_pop2" {
   type    = string
@@ -33,7 +38,7 @@ variable "pf_port_pop2" {
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/NYC4/port-availability
 }
 variable "pf_port_media" {
   type    = string

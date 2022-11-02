@@ -15,11 +15,17 @@ Terraform providers used: PacketFabric and AWS.
 
 ## Terraform resources deployed
 
+This example uses AWS Private Gateway, if you want to see an example with AWS Transit Gatway, 
+comment the code in `aws_private_gateway.tf` and `aws_dx_private_vif.tf` and comment out 
+the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf`.
+
 - resource **"random_pet"**: Get a random pet name (use to name objects created)
 - resource **"aws_vpc"**: Create VPC in 2 AWS regions
 - resource **"aws_subnet"**: Create subnet in VPCs
 - resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
-- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (or Private VIF - Virtual Interface)
+- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (used with Private VIF - Virtual Interface)
+- resource **"aws_ec2_transit_gateway"**: Create Virtual Transit Gateway (used with Transit VIF - Virtual Interface) (**code commented**)
+- resource **"aws_ec2_transit_gateway_vpc_attachment"**: Attached the Virtual Transit Gateway to a VPC (**code commented**)
 - resource **"aws_route_table"**: Create route table for the VPCs
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
 - resource **"aws_security_group"**: Create Security groups for future EC2 instances
@@ -29,14 +35,14 @@ Terraform providers used: PacketFabric and AWS.
 - resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
 - resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
 - resource & data source **"packetfabric_cloud_router_connection_aws"**: Add AWS Direct Connect to the Cloud Router
-- resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
+- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
 - resource **"aws_dx_gateway"**: Create Direct Connect Gateways
 - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
-- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) 
+- resource **"aws_dx_transit_virtual_interface"**: Create Direct Connect Transit Virtual interfaces (**code commented**)
+- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with s Virtual Private Gateway or Virtual Transit Gateway
 - resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resource **"packetfabric_cloud_router_bgp_prefixes"**: Add BGP Prefixes to the BGP sessions in PacketFabric
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -66,7 +72,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables.
+1. Create the file ``secret.tfvars`` and update each variables as needed.
 
 ```sh
 cp secret.tfvars.sample secret.tfvars
@@ -124,7 +130,7 @@ In case you get the following error:
 
 You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
 
-As a workaround, edit the `main.tf` and comment out the following resource:
+As a workaround, edit the `cloud_router_connections.tf` and comment out the following resource:
 
 ```
 # resource "aws_dx_connection_confirmation" "confirmation_2" {
@@ -133,7 +139,7 @@ As a workaround, edit the `main.tf` and comment out the following resource:
 # }
 ```
 
-And comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_private_vif.tf` or `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -147,7 +153,7 @@ data "packetfabric_cloud_router_connections" "current" {
 }
 ```
 
-Then remove the `confirmation_2` state and re-apply the terraform plan:
+Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform state rm aws_dx_connection_confirmation.confirmation_2
 terraform apply -var-file="secret.tfvars"

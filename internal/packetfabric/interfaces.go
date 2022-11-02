@@ -20,6 +20,12 @@ type Interface struct {
 	Media            string `json:"media,omitempty"`
 	Zone             string `json:"zone,omitempty"`
 	Description      string `json:"description,omitempty"`
+	PortCircuitID    string `json:"port_circuit_id,omitempty"`
+	Vlan             int    `json:"vlan,omitempty"`
+	Svlan            int    `json:"svlan,omitempty"`
+	VlanMicrosoft    int    `json:"vlan_microsoft,omitempty"`
+	VlanPrivate      int    `json:"vlan_private,omitempty"`
+	Untagged         bool   `json:"untagged,omitempty"`
 }
 
 type InterfaceCreateResp struct {
@@ -125,7 +131,7 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	fn := func() (*ServiceState, error) {
 		return c.GetPortStatus(expectedResp.PortCircuitID)
 	}
-	go c.CheckServiceStatus(createOk, err, fn)
+	go c.CheckServiceStatus(createOk, fn)
 	if !<-createOk {
 		return nil, err
 	}
@@ -202,6 +208,38 @@ func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*Inter
 	return expectedResp, nil
 }
 
+func (c *PFClient) UpdatePortAutoNegOnly(autoNeg bool, portCID string) (*InterfaceReadResp, error) {
+	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
+	expectedResp := &InterfaceReadResp{}
+	type PortUpdate struct {
+		Autoneg bool `json:"autoneg"`
+	}
+	portUpdate := PortUpdate{
+		Autoneg: autoNeg,
+	}
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) UpdatePortDescriptionOnly(portCID, description string) (*InterfaceReadResp, error) {
+	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
+	expectedResp := &InterfaceReadResp{}
+	type PortUpdate struct {
+		Description string `json:"description"`
+	}
+	portUpdate := PortUpdate{
+		Description: description,
+	}
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
 	expectedResp := &PortMessageResp{}
@@ -213,7 +251,7 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	fn := func() (*ServiceState, error) {
 		return c.GetPortStatus(portCID)
 	}
-	go c.CheckServiceStatus(deleteOk, err, fn)
+	go c.CheckServiceStatus(deleteOk, fn)
 	if !<-deleteOk {
 		return nil, err
 	}

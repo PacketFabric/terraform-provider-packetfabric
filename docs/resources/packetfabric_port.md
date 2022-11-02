@@ -17,7 +17,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -72,3 +72,12 @@ Optional:
 - `update` (String)
 
 
+
+
+## Import
+
+Import a port using its circuit ID. 
+
+```bash
+terraform import packetfabric_port.port_1 PF-AP-WDC1-1726464
+```

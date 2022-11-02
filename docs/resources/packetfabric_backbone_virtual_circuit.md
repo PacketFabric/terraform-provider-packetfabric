@@ -17,7 +17,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -30,7 +30,7 @@ resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
-  description       = var.description
+  description       = var.pf_description
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop2
@@ -41,7 +41,7 @@ resource "packetfabric_port" "port_2" {
 
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
-  description = var.description
+  description = var.pf_description
   epl         = false
   interface_a {
     port_circuit_id = packetfabric_port.port_1.id
@@ -94,6 +94,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 Required:
 
 - `account_uuid` (String) The UUID for the billing account that should be billed.
+
+Optional:
+
 - `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
 
 	Enum ["dedicated" "usage" "hourly"]
@@ -114,6 +117,10 @@ Required:
 - `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
+Optional:
+
+- `svlan` (Number) Valid sVLAN.
+
 
 <a id="nestedblock--interface_z"></a>
 ### Nested Schema for `interface_z`
@@ -124,4 +131,17 @@ Required:
 - `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
+Optional:
 
+- `svlan` (Number) Valid sVLAN.
+
+
+
+
+## Import
+
+Import a backbone virtual circuit using its circuit ID.
+
+```bash
+terraform import packetfabric_backbone_virtual_circuit.vc1 PF-BC-RNO-CHI-1729807-PF
+```

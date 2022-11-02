@@ -1,22 +1,17 @@
-PacketFabric Terraform Provider
-==================
+# PacketFabric Terraform Provider
 
 - Documentation: https://registry.terraform.io/providers/packetfabric/packetfabric/latest/docs
 
-Requirements
-------------
+## Requirements
 
--	[Terraform](https://www.terraform.io/downloads.html) v1.2.2
--	[Go](https://golang.org/doc/install) 1.18.2 (to build the provider plugin)
+- [Terraform](https://www.terraform.io/downloads.html) v1.2.2
+- [Go](https://golang.org/doc/install) 1.18.2 (to build the provider plugin)
 
-Standard Provider usage
-----------------------
+## Standard Provider usage
 
 See the [PacketFabric Provider documentation](https://registry.terraform.io/providers/packetfabric/packetfabric/latest/docs) for resource definition and data-source structure and examples.
 
-
-Building and installing the Provider locally
----------------------
+## Building and installing the Provider locally
 
 ```sh
 $ git clone git@github.com:packetfabric/terraform-provider-packetfabric
@@ -27,8 +22,7 @@ mv terraform-provider-packetfabric ~/.terraform.d/plugins/[YOURHOSTNAME]/packetf
 
 ```
 
-Using the local build/installed provider
----------------------
+## Using the local build/installed provider
 
 ```terraform
 terraform {
@@ -41,8 +35,8 @@ terraform {
 }
 
 ```
-Contributing Documentation
----------------------
+
+## Contributing Documentation
 
 Markdown documents found in this repository are the source of the [PacketFabric Provider documentation](https://registry.terraform.io/providers/packetfabric/packetfabric/latest/docs). These source documents are generated using the [Terraform-Plugin-Docs Tools](https://github.com/hashicorp/terraform-plugin-docs).
 
@@ -52,10 +46,9 @@ Updating the provider function field descriptions should be done in [internal/pr
 
 Caveat: As of tfplugindocs 0.10.1, Nested schema elements are not properly discovered and inserted at generation time. This means data-source function field descriptions must be manually managed in the [templates](https://github.com/packetfabric/terraform-provider-packetfabric/tree/main/templates) tmpls files for data-sources.
 
-Developing The Provider
----------------------
+## Developing The Provider
 
-To work on the provider, you'll need [Go](http://www.golang.org) installed on your machine (version 1.11+ is *required*). You'll need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
+To work on the provider, you'll need [Go](http://www.golang.org) installed on your machine (version 1.11+ is _required_). You'll need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
 
 To compile, run `make build`. To compile and install, run `make install` . This will build (and install) the provider and put the provider binary in the `$GOPATH/bin` directory.
 
@@ -96,12 +89,29 @@ provider_installation {
 
 For information about writing acceptance tests, see the main Terraform [contributing guide](https://github.com/hashicorp/terraform/blob/master/.github/CONTRIBUTING.md#writing-acceptance-tests).
 
+## Acceptance Tests
 
-Releasing the Provider
-----------------------
+To run acceptance tests on your local machine, you have to set the following
+environmental variables:
+
+```shell
+export PF_HOST="https://api.packetfabric.com"
+export PF_TOKEN="api-secret"
+export PF_ACCOUNT_UUID="1234"
+export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
+export PF_ACC_TEST_MARKET="HOU"
+```
+
+Then you can safely run the following command:
+
+```shell
+make testacc
+```
+
+## Releasing the Provider
 
 This provider is published using GitHub Actions triggered by tagging a branch using semantic versioning with the pattern `v*`(Example: `v0.1.3`)
 
 Once the branch is tagged the release is built and publish via the Terraform Registry.
 
-Provider release candidates will be based on main-branch and be committed on their own, dedicated, dev branch. The release branch will be qualified and UAT then merged with main. A new Release branch will be created from main at the merge point. The Release branch will be tagged for publishing. This process allows us to support multiple versions of the provider simultaneously if desired.  
+Provider release candidates will be based on main-branch and be committed on their own, dedicated, dev branch. The release branch will be qualified and UAT then merged with main. A new Release branch will be created from main at the merge point. The Release branch will be tagged for publishing. This process allows us to support multiple versions of the provider simultaneously if desired.

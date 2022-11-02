@@ -23,12 +23,13 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - resource **"aws_route_table"**: Create route table for the VPCs
 - resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
 - resource & data source **"packetfabric_cs_aws_hosted_connection"**: Create a AWS Hosted Cloud Connection 
-- resource **"time_sleep" "wait_60_seconds"**: Wait few seconds for the Connections to appear on AWS side
+- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
 - data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
 - resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
-<!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
-<!--  - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces -->
-<!--  - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG)  -->
+- resource **"aws_dx_gateway"**: Create Direct Connect Gateways
+- resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
+- data source **"aws_dx_router_configuration"**: Download Router Configuration
+- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG)
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -56,7 +57,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables.
+1. Create the file ``secret.tfvars`` and update each variables as needed.
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

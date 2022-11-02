@@ -15,3 +15,11 @@ This is a port located in a Microsoft Azure cloud on-ramp facility, which will b
 {{tffile "examples/resources/packetfabric_cs_azure_dedicated_connection/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import an Azure dedicated connection using its circuit ID.
+
+```bash
+terraform import packetfabric_cs_azure_dedicated_connection.cs_conn1_dedicated_azure PF-CC-WDC-NYC-1726496-PF
+```

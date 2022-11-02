@@ -48,4 +48,3 @@ output "packetfabric_cloud_router_connection_ipsec" {
 - `time_created` (String) Time created.
 - `time_updated` (String) Time updated.
 
-

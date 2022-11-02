@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -31,17 +32,17 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"speed": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 					},
 					"subscription_term": {
 						Type:        schema.TypeInt,
-						Required:    true,
+						Optional:    true,
 						Description: "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 					},
 					"longhaul_type": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
@@ -61,6 +62,11 @@ func resourceBackbone() map[string]*schema.Schema {
 						Type:        schema.TypeInt,
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
+					},
+					"svlan": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "Valid sVLAN.",
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
@@ -84,6 +90,11 @@ func resourceBackbone() map[string]*schema.Schema {
 						Type:        schema.TypeInt,
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
+					},
+					"svlan": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "Valid sVLAN.",
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
@@ -117,10 +128,26 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	var diags diag.Diagnostics
 	awsBack := extractBack(d)
 	resp, err := fn(awsBack)
+	// Adding sleep time to avoid concurrent overlay.
+	time.Sleep(10 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.VcCircuitID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	if resp != nil {
+		d.SetId(resp.VcCircuitID)
+	}
 	return diags
 }
 
@@ -169,6 +196,15 @@ func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	_ = d.Set("description", resp.Description)
 	return diags
+}
+
+// VC Marketplaces doesn't have an UPDATE mechanism.
+func resourceUpdateMarketplace(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return diag.Diagnostics{diag.Diagnostic{
+		Severity: diag.Error,
+		Summary:  "Update a Marketplace Service Request is not supported",
+		Detail:   "If you want to update a Marketplace Service Request, please perform a destroy, change your Service Request, then re-apply.",
+	}}
 }
 
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string) (*packetfabric.BackboneDeleteResp, error)) diag.Diagnostics {
@@ -220,8 +256,12 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 	if longhaulType != nil {
 		bandwidth.LonghaulType = longhaulType.(string)
 	}
-	bandwidth.SubscriptionTerm = bw["subscription_term"].(int)
-	bandwidth.Speed = bw["speed"].(string)
+	if subsTerm := bw["subscription_term"]; subsTerm != nil {
+		bandwidth.SubscriptionTerm = subsTerm.(int)
+	}
+	if speed := bw["speed"]; speed != nil {
+		bandwidth.Speed = speed.(string)
+	}
 	return bandwidth
 }
 

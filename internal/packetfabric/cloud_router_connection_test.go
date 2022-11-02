@@ -18,35 +18,6 @@ const _cloudConnBillingUUID = "a2115890-ed02-4795-a6dd-c485bec3529c"
 const _awsAccountID = "723804547887"
 const _accountUUID = "847548f7-9cde-4fe5-8751-32ff19825b7e"
 
-var _clConnectionCreateResp = AwsConnectionCreateResponse{
-	PublicIP:        "",
-	UUID:            _cloudConnUUID,
-	CustomerUUID:    _cloudConnCustomerUUID,
-	UserUUID:        _cloudConnUserUUID,
-	ServiceProvider: "aws",
-	PortType:        "hosted",
-	Settings: CloudRouterSettings{
-		AwsRegion:       "",
-		AwsHostedType:   "",
-		AwsConnectionID: "",
-		AwsAccountID:    "",
-	},
-	CloudCircuitID: _cloudCircuitID,
-	AccountUUID:    _cloudConnBillingUUID,
-	ServiceClass:   "metro",
-	Description:    _cloudConnDesc,
-	State:          "Requested",
-	Billing: AwsBilling{
-		AccountUUID:      "",
-		SubscriptionTerm: 0,
-	},
-	Speed: "1Gbps",
-	Components: AwsComponents{
-		IfdPortCircuitIDCust: "",
-		IfdPortCircuitIDPf:   "",
-	},
-}
-
 var _clConnUpdateExpectedResp = make([]CloudRouterConnectionReadResponse, 0)
 
 func _buildConnUpdateExpectedResp() {
@@ -73,8 +44,13 @@ func _buildConnUpdateExpectedResp() {
 		Pop:                       "LAX1",
 		Site:                      "us-west-1",
 		BgpState:                  "string",
-		CloudRouterCircuitID:      "PF-L3-CUST-2001",
-		NatCapable:                true,
+		BgpStateList: []BgpStateObj{
+			{BgpSettingsUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b", BgpState: "string"},
+		},
+		CloudRouterName:      "Sample CR",
+		CloudRouterASN:       4556,
+		CloudRouterCircuitID: "PF-L3-CUST-2001",
+		NatCapable:           true,
 	})
 }
 
@@ -129,7 +105,7 @@ func Test_ListAwsRouterConnections(t *testing.T) {
 
 }
 
-func Test_DeleteAwsConnection(t *testing.T) {
+func Test_DeleteCloudRouterConnection(t *testing.T) {
 	var expectedResp ConnectionDeleteResp
 	_ = json.Unmarshal(_buildConnDeleteResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callDeleteAwsConn, nil, expectedResp, _buildConnDeleteResp(), "test-delete-aws-connection", t)
@@ -152,11 +128,11 @@ func _callListAwsRouterConnections(payload interface{}) (interface{}, error) {
 }
 
 func _callUpdateAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.UpdateAwsConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
+	return cTest.UpdateCloudRouterConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
 }
 
 func _callDeleteAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.DeleteAwsConnection(_circuitIdMock, _cloudConnCid)
+	return cTest.DeleteCloudRouterConnection(_circuitIdMock, _cloudConnCid)
 }
 
 func _buildMockCloudRouterConnectionCreate() []byte {
@@ -243,45 +219,17 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+		  {
+			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+			"bgp_state": "string"
+		  }
+		],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }`, description, _cloudConnUUID))
-}
-
-func _buildMockCloudRouterConnUpdateResp(description string) []byte {
-	return []byte(fmt.Sprintf(`[
-		{
-		  "port_type": "hosted",
-		  "connection_type": "cloud_hosted",
-		  "port_circuit_id": "PF-AE-1234",
-		  "pending_delete": true,
-		  "deleted": true,
-		  "speed": "1Gbps",
-		  "state": "Requested",
-		  "cloud_circuit_id": "PF-AP-LAX1-1002",
-		  "account_uuid": "%s",
-		  "service_class": "metro",
-		  "service_provider": "aws",
-		  "service_type": "cr_connection",
-		  "description": "%s",
-		  "uuid": "%s",
-		  "cloud_provider_connection_id": "dxcon-fgadaaa1",
-		  "cloud_settings": {},
-		  "user_uuid": "%s",
-		  "customer_uuid": "%s",
-		  "time_created": "%s",
-		  "time_updated": "%s",
-		  "cloud_provider": {
-			"pop": "LAX1",
-			"site": "us-west-1"
-		  },
-		  "pop": "LAX1",
-		  "site": "us-west-1",
-		  "bgp_state": "string",
-		  "cloud_router_circuit_id": "PF-L3-CUST-2001",
-		  "nat_capable": true
-		}
-	  ]`, _awsAccountUUID, description, _cloudConnUUID, _cloudConnUserUUID, _cloudConnCustomerUUID, _createdTime, _updatedTime))
 }
 
 func buildMockCloudRouterReadResp(description string) []byte {
@@ -318,6 +266,14 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+          {
+		        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+		      	"bgp_state": "string"
+		      }
+        ],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }`)
@@ -395,6 +351,14 @@ func _buildMockCloudRouterConnResps() []byte {
 		"pop": "LAX1",
 		"site": "us-west-1",
 		"bgp_state": "string",
+		"bgp_state_list": [
+          {
+			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
+			"bgp_state": "string"
+		  }
+        ],
+		"cloud_router_name": "Sample CR",
+		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true
 	  }]`)

@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.3.1"
+      version = ">= 0.4.0"
     }
   }
 }
@@ -65,53 +65,53 @@ output "packetfabric_billing_port_2" {
 
 ### Get the site filtering on the pop using packetfabric_locations
 
-# List PacketFabric locations
-data "packetfabric_locations" "locations_all" {
-  provider = packetfabric
-  # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63 to use filter
-  # filter {
-  #   pop = var.pf_port_pop1
-  # }
-}
-# output "packetfabric_locations" {
-#   value = data.packetfabric_locations.locations_all
+# # List PacketFabric locations
+# data "packetfabric_locations" "locations_all" {
+#   provider = packetfabric
+#   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63 to use filter
+#   # filter {
+#   #   pop = var.pf_port_pop1
+#   # }
+# }
+# # output "packetfabric_locations" {
+# #   value = data.packetfabric_locations.locations_all
+# # }
+
+# locals {
+#   all_locations = data.packetfabric_locations.locations_all.locations[*]
+#   helper_map = { for val in local.all_locations :
+#   val["pop"] => val }
+#   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
+#   pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
+# }
+# output "pf_port_site1" {
+#   value = local.pf_port_site1
+# }
+# output "pf_port_site2" {
+#   value = local.pf_port_site2
 # }
 
-locals {
-  all_locations = data.packetfabric_locations.locations_all.locations[*]
-  helper_map = { for val in local.all_locations :
-  val["pop"] => val }
-  pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
-  pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
-}
-output "pf_port_site1" {
-  value = local.pf_port_site1
-}
-output "pf_port_site2" {
-  value = local.pf_port_site2
-}
-
-# Create Cross Connect
-resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
-  provider      = packetfabric
-  description   = "${var.tag_name}-${random_pet.name.id}"
-  document_uuid = var.pf_document_uuid1
-  port          = packetfabric_port.port_1.id
-  site          = local.pf_port_site1
-}
-output "packetfabric_outbound_cross_connect1" {
-  value = packetfabric_outbound_cross_connect.crossconnect_1
-}
-resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
-  provider      = packetfabric
-  description   = "${var.tag_name}-${random_pet.name.id}"
-  document_uuid = var.pf_document_uuid2
-  port          = packetfabric_port.port_2.id
-  site          = local.pf_port_site2
-}
-output "packetfabric_outbound_cross_connect2" {
-  value = packetfabric_outbound_cross_connect.crossconnect_2
-}
+# # Create Cross Connect
+# resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
+#   provider      = packetfabric
+#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   document_uuid = var.pf_document_uuid1
+#   port          = packetfabric_port.port_1.id
+#   site          = local.pf_port_site1
+# }
+# output "packetfabric_outbound_cross_connect1" {
+#   value = packetfabric_outbound_cross_connect.crossconnect_1
+# }
+# resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
+#   provider      = packetfabric
+#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   document_uuid = var.pf_document_uuid2
+#   port          = packetfabric_port.port_2.id
+#   site          = local.pf_port_site2
+# }
+# output "packetfabric_outbound_cross_connect2" {
+#   value = packetfabric_outbound_cross_connect.crossconnect_2
+# }
 
 # Create backbone Virtual Circuit
 resource "packetfabric_backbone_virtual_circuit" "vc_1" {

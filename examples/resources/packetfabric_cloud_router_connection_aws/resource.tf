@@ -20,10 +20,6 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   speed          = var.pf_crc_speed
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
-output "packetfabric_cloud_router_conn" {
+output "packetfabric_cloud_router_connection_aws" {
   value = packetfabric_cloud_router_connection_aws.crc1
 }

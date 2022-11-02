@@ -1,6 +1,8 @@
 ## General VARs
 variable "tag_name" {
-  default = "demo-pf-aws"
+  type        = string
+  description = "Used to name all resources created in this example"
+  default     = "demo-pf-aws"
 }
 
 ## PacketFabic VARs
@@ -8,18 +10,22 @@ variable "pf_api_key" {
   type        = string
   description = "PacketFabric platform API access key"
   sensitive   = true
+  default     = "secret"
 }
 variable "pf_account_uuid" {
-  type = string
+  type        = string
+  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
+  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
 }
 variable "pf_api_server" {
   type        = string
-  default     = "https://api.packetfabric.com"
   description = "PacketFabric API endpoint URL"
+  default     = "https://api.packetfabric.com"
 }
 # AWS Hosted Connection
 variable "pf_aws_account_id" {
-  type = number
+  type        = number
+  description = "The AWS account ID to connect with. Must be 12 characters long"
 }
 variable "pf_port_circuit_id" {
   type    = string
@@ -31,7 +37,7 @@ variable "pf_cs_pop1" {
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A"
+  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
 }
 variable "pf_cs_speed" {
   type    = string

@@ -96,8 +96,7 @@ func resourceAzureHostedMktRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceAzureHostedMktUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -108,10 +107,17 @@ func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	err := c.DeleteRequestedHostedMktService(vcRequestUUID.(string))
+	msg, err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	diags = make(diag.Diagnostics, 0)
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Azure Hosted marketplace delete result",
+		Detail:   msg,
+	})
+	d.SetId("")
 	return diags
 }
 

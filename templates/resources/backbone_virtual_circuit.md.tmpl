@@ -15,3 +15,11 @@ A virtual circuit between two ports in the PacketFabric network. For more inform
 {{tffile "examples/resources/packetfabric_backbone_virtual_circuit/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a backbone virtual circuit using its circuit ID.
+
+```bash
+terraform import packetfabric_backbone_virtual_circuit.vc1 PF-BC-RNO-CHI-1729807-PF
+```

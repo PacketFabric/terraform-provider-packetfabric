@@ -2,7 +2,6 @@ package packetfabric
 
 import "fmt"
 
-const azureBackboneURI = "/v2/services/backbone"
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
 const azureExpressRouteConnURI = "/v2.1/services/cloud-routers/%s/connections/azure"
@@ -184,8 +183,7 @@ func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*
 
 func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) (*CloudServiceConnCreateResp, error) {
 	expressRouteResp := &CloudServiceConnCreateResp{}
-	formatedURI := fmt.Sprintf(azureExpressRouteURI)
-	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
+	_, err := c.sendRequest(azureExpressRouteURI, postMethod, azureExpressRoute, expressRouteResp)
 	if err != nil {
 		return nil, err
 	}

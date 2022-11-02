@@ -9,6 +9,7 @@ the outbound Cross connect for those 2 ports.
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [PacketFabric Ports Overview](https://docs.packetfabric.com/ports/)
+- [PacketFabric Virtual Circuits Overview](https://docs.packetfabric.com/vc/)
 - [PacketFabric Cross Connects Overview](https://docs.packetfabric.com/xconnect/)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
@@ -41,7 +42,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables.
+1. Create the file ``secret.tfvars`` and update each variables as needed.
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

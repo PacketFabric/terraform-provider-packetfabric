@@ -54,7 +54,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			"port": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: " The circuit ID of the PacketFabric port you wish to connect to Google. This starts with \"PF-AP-\".",
+				Description: "The circuit ID of the PacketFabric port you wish to connect to Google. This starts with \"PF-AP-\".",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,

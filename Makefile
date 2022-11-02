@@ -39,12 +39,13 @@ install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
+.PHONY: test
 test: 
-	go test -i $(TEST) || exit 1                                                   
-	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4                    
+	go test -v ./...               
 
+.PHONY: testacc
 testacc: 
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
+	TF_ACC=1 go test -v ./... -timeout 120m
 
 #
 # Coverage
@@ -62,7 +63,7 @@ cov-func: coverage.out
 	go tool cover -func=coverage.out
 
 coverage.out: $(SOURCES)
-	TF_ACC=0 VCR=replay go test $(V) -timeout=120m \
+	VCR=replay go test $(V) -timeout=120m \
 			-covermode=count -coverprofile=coverage.out \
 			$(TESTARGS) $(TEST)
 

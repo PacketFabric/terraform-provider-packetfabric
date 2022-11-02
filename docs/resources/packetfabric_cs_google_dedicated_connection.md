@@ -16,7 +16,7 @@ This is a port located in a Google cloud on-ramp facility, which will be connect
 resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
   provider          = packetfabric
   account_uuid      = var.pf_account_uuid
-  description       = var.description
+  description       = var.pf_description
   zone              = var.pf_cs_zone
   pop               = var.pf_cs_pop
   subscription_term = var.pf_cs_subterm
@@ -71,3 +71,12 @@ Optional:
 - `update` (String)
 
 
+
+
+## Import
+
+Import a Google dedicated connection using its circuit ID.
+
+```bash
+terraform import packetfabric_cs_google_dedicated_connection.cs_conn1_dedicated_google PF-CC-WDC-NYC-1726496-PF
+```

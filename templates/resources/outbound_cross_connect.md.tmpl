@@ -15,3 +15,11 @@ A customer inbound/PacketFabric outbound cross connect. For more information, se
 {{tffile "examples/resources/packetfabric_outbound_cross_connect/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import an outbound cross connect using the circuit ID of the port.
+
+```bash
+terraform import packetfabric_outbound_cross_connect.crossconnect_1 PF-AP-WDC1-1726464
+```
