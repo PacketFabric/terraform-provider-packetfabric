@@ -76,6 +76,10 @@ resource "aws_dx_connection_confirmation" "confirmation_1" {
       connection_id
     ]
   }
+  # timeouts {
+  #   create = "30m"
+  #   read   = "30m"
+  # }
 }
 resource "aws_dx_connection_confirmation" "confirmation_2" {
   provider      = aws.region2
@@ -86,6 +90,10 @@ resource "aws_dx_connection_confirmation" "confirmation_2" {
       connection_id
     ]
   }
+  # timeouts {
+  #   create = "30m"
+  #   read   = "30m"
+  # }
 }
 
 

@@ -38,18 +38,15 @@ output "packetfabric_backbone_virtual_circuit_marketplace" {
 }
 
 # Once the request has been accepted:
-# 1. Comment out above packetfabric_backbone_virtual_circuit_marketplace resource
-# 2. Import the new Marketplace backbone Virtual Circuit
-# 3. Add the new packetfabric_backbone_virtual_circuit resource in HCL config
-
-# Import command: (replace with correct VC ID)
-# terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-BC-RNO-CHI-1729807-PF
-
-# Then uncomment below resource below to start managing it using Terraform
+# 1. Comment above packetfabric_backbone_virtual_circuit_marketplace resource
+# 2. Import the new Marketplace backbone Virtual Circuit (replace with correct VC ID)
+#    $ terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-BC-RNO-CHI-1729807-PF
+# 3. Comment out below packetfabric_backbone_virtual_circuit resource
+# 4. Apply the plan to confirm the resource is correctly imported and managed by Terraform
 
 # resource "packetfabric_backbone_virtual_circuit" "vc_marketplace" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.tag_name}-${random_pet.name.id}-test"
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = var.pf_a_side_port_id

@@ -74,14 +74,14 @@ Apply the plan
 terraform apply -var-file="secret.tfvars"
 ```
 
-**B side** in `a_side` folder:
+**B side** in `b_side` folder:
 
 ```sh
 terraform init
 terraform plan -var-file="secret.tfvars"
 ```
 
-Update the `pf_a_side_vc_request_uuid` with the **A Side** Virtual Circuit Request UUID.
+Update the `pf_a_side_vc_request_uuid` with the **A Side** Virtual Circuit Request UUID in the `variables.tf`.
 You can either Accept or Reject the request (comment/comment out as desire).
 
 Apply the plan
@@ -90,7 +90,21 @@ Apply the plan
 terraform apply -var-file="secret.tfvars"
 ```
 
-3. Destroy all remote objects managed by the Terraform configuration on both sides.
+3. **A side**, comment `packetfabric_backbone_virtual_circuit_marketplace` and comment out `packetfabric_backbone_virtual_circuit` resources.
+
+4. **A side**, import the new Marketplace backbone Virtual Circuit (replace with correct VC ID).
+
+```sh
+terraform import -var-file="secret.tfvars" packetfabric_backbone_virtual_circuit.vc_marketplace PF-DC-PHX-NYC-1751589-PF 
+```
+
+5. **A side**, apply the plan to confirm the resource is correctly imported and managed by Terraform.
+
+```sh
+terraform apply -var-file="secret.tfvars"
+```
+
+6. Destroy all remote objects managed by the Terraform configuration on both sides (in `a_side` and `b_side` folders).
 
 ```sh
 terraform destroy -var-file="secret.tfvars"
