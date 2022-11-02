@@ -117,6 +117,7 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
 	resp, err := c.CreatePointToPointService(ptpService)
+	time.Sleep(5 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
