@@ -117,6 +117,10 @@ Required:
 - `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
+Optional:
+
+- `svlan` (Number) Valid sVLAN.
+
 
 <a id="nestedblock--interface_z"></a>
 ### Nested Schema for `interface_z`
@@ -126,6 +130,10 @@ Required:
 - `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
 - `untagged` (Boolean) Whether the interface should be untagged.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
+
+Optional:
+
+- `svlan` (Number) Valid sVLAN.
 
 
 
