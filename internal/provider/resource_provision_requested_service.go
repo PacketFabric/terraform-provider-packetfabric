@@ -6,7 +6,6 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -110,9 +109,11 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 	provisionReq := extractProvisionRequest(d)
 	vcReqUUID := d.Get("vc_request_uuid")
 	reqType := d.Get("type")
-	provDebug := make(map[string]interface{})
-	provDebug["provision_req"] = provisionReq
-	tflog.Debug(ctx, "\n### REQUEST PROVISION ###", provDebug)
+	switch reqType.(string) {
+	case "cloud":
+		cloudProvider := d.Get("cloud_provider").(string)
+		provisionReq.Provider = cloudProvider
+	}
 	_, err := c.RequestServiceProvision(vcReqUUID.(string), reqType.(string), provisionReq)
 	if err != nil {
 		return diag.FromErr(err)
@@ -135,13 +136,7 @@ func resourceRequestedServiceUpdate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceRequestedServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Marketplace Request delete.",
-		Detail: `Will not delete the Marketplace Request. 
-		Terraform will remove this resource from the state file, 
-		however Marketplace Request may remain.`,
-	}}
+	return nil
 }
 
 func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvision {
@@ -149,8 +144,10 @@ func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvisi
 	if desc, ok := d.GetOk("description"); ok {
 		provisionReq.Description = desc.(string)
 	}
-	cloudProvider := d.Get("cloud_provider").(string)
-	provisionReq.Provider = cloudProvider
+	cloudProvider := "undefined"
+	if cp, ok := d.GetOk("cloud_provider"); ok {
+		cloudProvider = cp.(string)
+	}
 	for _, interfA := range d.Get("interface").(*schema.Set).List() {
 		provisionReq.Interface = extractProvisionInterf(cloudProvider, interfA.(map[string]interface{}))
 	}

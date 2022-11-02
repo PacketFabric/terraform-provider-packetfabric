@@ -411,7 +411,11 @@ func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 // Status can be [ pending, provisioned, rejected ]
 // if rejected or provisioned, we skip the delete, if pending, we do the delete as you already implemented it.
 func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message string, err error) {
-	if vcReq, e := c.GetVCRequest(vcRequestUUID); vcReq.Status != "pending" || e != nil {
+	if vcReq, e := c.GetVCRequest(vcRequestUUID); e != nil {
+		if vcReq == nil {
+			message = "The Marketplace connection request has been either accepted or rejected."
+			return
+		}
 		if e != nil {
 			err = e
 		} else {
@@ -421,12 +425,14 @@ func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message stri
 				Terraform and update your Terraform configuration.`
 			}
 			if vcReq.Status == "rejected" {
-				err = errors.New("The Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed.")
+				err = errors.New("the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed")
+			}
+			if vcReq.Status == "pending" {
+				err = c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
 			}
 		}
-		return
 	}
-	return "", c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
+	return
 }
 
 func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
