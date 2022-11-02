@@ -80,6 +80,10 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 		if _, err := c.UpdateServiceSettings(vcCID.(string), settings); err != nil {
 			return diag.FromErr(err)
 		}
+	} else {
+		if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	return diags
 }
