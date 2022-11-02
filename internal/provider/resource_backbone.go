@@ -63,6 +63,11 @@ func resourceBackbone() map[string]*schema.Schema {
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
 					},
+					"svlan": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "Valid sVLAN.",
+					},
 					"untagged": {
 						Type:        schema.TypeBool,
 						Required:    true,
@@ -86,29 +91,6 @@ func resourceBackbone() map[string]*schema.Schema {
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
 					},
-					"untagged": {
-						Type:        schema.TypeBool,
-						Required:    true,
-						Description: "Whether the interface should be untagged.",
-					},
-				},
-			},
-		},
-		"interface": {
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"port_circuit_id": {
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
-					},
-					"vlan": {
-						Type:        schema.TypeInt,
-						Optional:    true,
-						Description: "Valid VLAN range is from 4-4094, inclusive.",
-					},
 					"svlan": {
 						Type:        schema.TypeInt,
 						Optional:    true,
@@ -116,7 +98,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
-						Optional:    true,
+						Required:    true,
 						Description: "Whether the interface should be untagged.",
 					},
 				},

@@ -222,6 +222,16 @@ func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettings
 			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
 		}
 	}
+	if _, ok := d.GetOk("interface_a"); ok {
+		for _, interf := range d.Get("interface_a").(*schema.Set).List() {
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+		}
+	}
+	if _, ok := d.GetOk("interface_z"); ok {
+		for _, interf := range d.Get("interface_z").(*schema.Set).List() {
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+		}
+	}
 	return settUpdate
 }
 
