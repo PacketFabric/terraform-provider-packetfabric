@@ -1,3 +1,47 @@
+## 0.4.0  (November 2, 2022)
+
+BREAKING CHANGES:
+
+* resource: [REMOVED] packetfabric_cs_aws_provision_marketplace (replaced by packetfabric_marketplace_service_accept_request)
+* resource: [REMOVED] packetfabric_cs_azure_provision_marketplace (replaced by  packetfabric_marketplace_service_accept_request)
+* resource: [REMOVED] packetfabric_cs_google_provision_marketplace (replaced by  packetfabric_marketplace_service_accept_request)
+* resource: [REMOVED] packetfabric_cloud_router_bgp_prefixes (use packetfabric_cloud_router_bgp_session instead)
+* data-source: [REMOVED] packetfabric_cloud_router_bgp_prefixes (use packetfabric_cloud_router_bgp_session instead)
+* data-source: [RENAMED] packetfabric_cs_aws_dedicated_connection (was packetfabric_cs_aws_dedicated_connection_conn)
+
+FEATURES:
+
+* resource: packetfabric_cloud_router_connection_azure
+* resource: packetfabric_cloud_router_connection_oracle
+* resource: packetfabric_cloud_router_connection_ibm
+* resource: packetfabric_cloud_router_connection_port
+* resource: packetfabric_ix_virtual_circuit_marketplace
+* resource: packetfabric_backbone_virtual_circuit_marketplace
+* resource: packetfabric_backbone_virtual_circuit_speed_burst
+* resource: packetfabric_point_to_point
+* resource: packetfabric_cs_oracle_hosted_connection
+* resource: packetfabric_cs_oracle_hosted_marketplace_connection
+* resource: packetfabric_marketplace_service_accept_request
+* resource: packetfabric_marketplace_service_reject_request
+* data-source: packetfabric_cs_oracle_hosted_connection
+* data-source: packetfabric_point_to_point
+* data-source: packetfabric_virtual_circuits
+* data-source: packetfabric_marketplace_service_requests
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* prefixes object attribute missing from the packetfabric_cloud_router_bgp_session resource (#138)
+* Add a 30sec delay when deleting a Cloud Router Connection (#157)
+* Wait till packetfabric_backbone_virtual_circuit is active (#172)
+* The published_quote_line_uuid attribute is missing in resourceRouterConnectionAws() (#158)
+
+BUG FIXES:
+
+* Error: Post "https://api.packetfabric.com/v2/services/backbone": context canceled (#165)
+* packetfabric_port update: Error: autoneg is a required field (#181)
+* packetfabric_cs_<aws/google/azure>_hosted_marketplace_connection delete not working (#91)
+* packetfabric_cloud_router_connection_ipsec: accept null value for phase2_authentication_algo (#192)
+
 ## 0.3.1 (October 6, 2022)
 
 BUG FIXES:
