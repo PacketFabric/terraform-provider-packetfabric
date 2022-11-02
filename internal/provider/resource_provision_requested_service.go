@@ -47,6 +47,12 @@ func resourceProvisionRequestedService() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "The VC Request UUID to be provisioned.",
 			},
+			"description": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The Provision request description.",
+			},
 			"interface": {
 				Type:     schema.TypeSet,
 				Required: true,
@@ -133,8 +139,11 @@ func resourceRequestedServiceUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceRequestedServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Error,
-		Summary:  "Delete service provision request is not supported",
+		Severity: diag.Warning,
+		Summary:  "Marketplace Request delete.",
+		Detail: `Will not delete the Marketplace Request. 
+		Terraform will remove this resource from the state file, 
+		however Marketplace Request may remain.`,
 	}}
 }
 
