@@ -32,8 +32,7 @@ func resourceVCBackboneRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceVCBackboneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServiceSettingsUpdate(ctx, d, m)
 }
 
 func resourceVCBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

@@ -63,6 +63,11 @@ func resourceBackbone() map[string]*schema.Schema {
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
 					},
+					"svlan": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "Valid sVLAN.",
+					},
 					"untagged": {
 						Type:        schema.TypeBool,
 						Required:    true,
@@ -85,6 +90,11 @@ func resourceBackbone() map[string]*schema.Schema {
 						Type:        schema.TypeInt,
 						Required:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
+					},
+					"svlan": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "Valid sVLAN.",
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
