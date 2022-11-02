@@ -15,7 +15,7 @@ A hosted cloud connection to your Google Cloud environment. For more information
 ```terraform
 resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   provider                    = packetfabric
-  description                 = var.description
+  description                 = var.pf_description
   account_uuid                = var.pf_account_uuid
   port                        = var.pf_port
   speed                       = var.pf_cs_speed

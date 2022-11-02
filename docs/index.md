@@ -10,14 +10,39 @@ description: Terraform provider for PacketFabric Carrier-Class Cloud Connectivit
 
 You can use the PacketFabric Terraform provider to create and manage PacketFabric services. 
 
+For information on how to get started, see [Getting Started](guides/getting_started) or [Terraform with PacketFabric in the PacketFabric knowledge base](https://docs.packetfabric.com/api/terraform/).
+
+## Before you begin
+
+You will need a PacketFabric user account with appropriate permissions. See [User Permissions](https://docs.packetfabric.com/admin/user/permissions/) in the PacketFabric documentation.
+
+You will also need an API key. See [Getting Started](guides/getting_started). 
+
+## Using with other Terraform providers
+
+If you are using Terraform to create cloud connections, there are typically actions that you need to take from the cloud side (for example, accepting connections or retrieving service keys). 
+
+To do this, you will need appropriate access to that cloud environment. 
+
+You can handle these manually through the cloud service provider's console, or you can use their Terraform provider:
+
+* https://registry.terraform.io/providers/hashicorp/aws/latest
+* https://registry.terraform.io/providers/hashicorp/google/latest
+* https://registry.terraform.io/providers/hashicorp/azurerm/latest
+* https://registry.terraform.io/providers/oracle/oci/latest
+* https://registry.terraform.io/providers/IBM-Cloud/ibm/latest
+
+
+For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](examples/use-cases).
+
 ## Example Usage
 
 ```terraform
 terraform {
   required_providers {
     packetfabric = {
-      source  = "packetfabric/packetfabric"
-      version = ">= 0.3.0"
+      source  = "PacketFabric/packetfabric"
+      version = ">= 0.3.2"
     }
   }
 }
@@ -40,4 +65,11 @@ provider "packetfabric" {
 - `password` (String, Sensitive)
 - `token` (String, Sensitive) Packet Fabric Cloud API access token. Example TF files input TF_VAR_pf_api_key shell environment variable
 - `username` (String, Sensitive)
+
+
+
+
+
+
+
 

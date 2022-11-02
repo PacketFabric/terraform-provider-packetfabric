@@ -17,12 +17,21 @@ An IPsec VPN connection from your cloud router. For more information, see the fo
 ## Example Usage
 
 ```terraform
-resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
+resource "packetfabric_cloud_router" "cr1" {
+  provider     = packetfabric
+  asn          = var.pf_cr_asn
+  name         = var.pf_cr_name
+  account_uuid = var.pf_account_uuid
+  capacity     = var.pf_cr_capacity
+  regions      = var.pf_cr_regions
+}
+
+resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
   provider                     = packetfabric
   description                  = var.pf_crc_description
-  circuit_id                   = packetfabric_cloud_router.cr.id
+  circuit_id                   = packetfabric_cloud_router.cr1.id
   account_uuid                 = var.pf_account_uuid
-  pop                          = var.pf_crc_pop3
+  pop                          = var.pf_crc_pop
   speed                        = var.pf_crc_speed
   gateway_address              = var.pf_crc_gateway_address
   ike_version                  = var.pf_crc_ike_version
@@ -37,6 +46,10 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
   phase2_lifetime              = var.pf_crc_phase2_lifetime
   shared_key                   = var.pf_crc_shared_key
 }
+
+output "packetfabric_cloud_router_connection_ipsec" {
+  value = packetfabric_cloud_router_connection_ipsec.crc3
+}
 ```
 
 
@@ -48,6 +61,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
 - `account_uuid` (String) The UUID for the billing account that should be billed.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
+- `gateway_address` (String) The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you.
 - `ike_version` (Number) The Internet Key Exchange (IKE) version supported by your device. In most cases, this is v2 (v1 is deprecated).
 
 	Enum: 1, 2.
@@ -81,8 +95,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
 
 ### Optional
 
-- `gateway_address` (String) The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you.
-- `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2.
+- `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. 
 
 	Enum: "hmac-md5-96" "hmac-sha-256-128" "hmac-sha1-96"
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.

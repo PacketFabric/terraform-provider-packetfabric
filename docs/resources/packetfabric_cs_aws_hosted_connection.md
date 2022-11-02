@@ -15,7 +15,7 @@ A hosted cloud connection to your AWS environment. For more information, see [Cl
 ```terraform
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider       = packetfabric
-  description    = var.description
+  description    = var.pf_description
   account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   port           = var.pf_port

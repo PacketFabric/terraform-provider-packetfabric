@@ -35,11 +35,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   speed          = var.pf_crc_speed
 }
 
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}
-
-output "packetfabric_cloud_router_conn" {
+output "packetfabric_cloud_router_connection_aws" {
   value = packetfabric_cloud_router_connection_aws.crc1
 }
 ```
@@ -60,12 +56,9 @@ output "packetfabric_cloud_router_conn" {
 
 ### Optional
 
-- `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side.
-
-	Defaults to false if unspecified.
-- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection.
-
-	Defaults to false if unspecified.
+- `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. Defaults: false
+- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
+- `published_quote_line_uuid` (String) UUID of the published quote line which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired AWS availability zone of the new connection.
 
