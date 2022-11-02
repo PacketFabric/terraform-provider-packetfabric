@@ -217,8 +217,10 @@ func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettings
 	if description, ok := d.GetOk("description"); ok {
 		settUpdate.Description = description.(string)
 	}
-	for _, interf := range d.Get("interface").(*schema.Set).List() {
-		settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+	if _, ok := d.GetOk("interface"); ok {
+		for _, interf := range d.Get("interface").(*schema.Set).List() {
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+		}
 	}
 	return settUpdate
 }
