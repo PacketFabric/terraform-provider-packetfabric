@@ -13,6 +13,7 @@ const (
 )
 
 type ServiceProvision struct {
+	Provider    string    `json:"provider,omitempty"`
 	Interface   Interface `json:"interface,omitempty"`
 	Description string    `json:"description,omitempty"`
 }
@@ -20,8 +21,7 @@ type ServiceProvision struct {
 func (c *PFClient) RequestServiceProvision(vcRequestUUID, reqType string, provisionReq ServiceProvision) (*MktConnProvisionResp, error) {
 	var formatedURI string
 	switch reqType {
-	case backboneService:
-	case ixService:
+	case backboneService, ixService:
 		formatedURI = fmt.Sprintf(requestServiceProvisionURI, vcRequestUUID)
 	case cloudService:
 		formatedURI = fmt.Sprintf(requestHostedServiceProvisionURI, vcRequestUUID)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -37,7 +38,7 @@ func resourceProvisionRequestedService() *schema.Resource {
 			"cloud_provider": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{awsProvider, googleProvider, oracleProvider, azureProvider}, true),
+				ValidateFunc: validation.StringInSlice([]string{"aws", "google", "oracle", "azure"}, true),
 				Description:  "The cloud provider.",
 			},
 			"vc_request_uuid": {
@@ -103,6 +104,9 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 	provisionReq := extractProvisionRequest(d)
 	vcReqUUID := d.Get("vc_request_uuid")
 	reqType := d.Get("type")
+	provDebug := make(map[string]interface{})
+	provDebug["provision_req"] = provisionReq
+	tflog.Debug(ctx, "\n### REQUEST PROVISION ###", provDebug)
 	_, err := c.RequestServiceProvision(vcReqUUID.(string), reqType.(string), provisionReq)
 	if err != nil {
 		return diag.FromErr(err)
@@ -136,10 +140,11 @@ func resourceRequestedServiceDelete(ctx context.Context, d *schema.ResourceData,
 
 func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvision {
 	provisionReq := packetfabric.ServiceProvision{}
-	if desc, ok := d.GetOk("description"); !ok {
+	if desc, ok := d.GetOk("description"); ok {
 		provisionReq.Description = desc.(string)
 	}
 	cloudProvider := d.Get("cloud_provider").(string)
+	provisionReq.Provider = cloudProvider
 	for _, interfA := range d.Get("interface").(*schema.Set).List() {
 		provisionReq.Interface = extractProvisionInterf(cloudProvider, interfA.(map[string]interface{}))
 	}
@@ -150,9 +155,7 @@ func extractProvisionInterf(cloudProvider string, interf map[string]interface{})
 	provisionInterf := packetfabric.Interface{}
 	provisionInterf.PortCircuitID = interf["port_circuit_id"].(string)
 	switch cloudProvider {
-	case awsProvider:
-	case googleProvider:
-	case oracleProvider:
+	case awsProvider, googleProvider, oracleProvider:
 		provisionInterf.Vlan = interf["vlan"].(int)
 	case azureProvider:
 		provisionInterf.VlanMicrosoft = interf["vlan_microsoft"].(int)
