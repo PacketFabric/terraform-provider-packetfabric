@@ -26,7 +26,7 @@ variable "pf_api_server" {
 
 variable "pf_z_side_port_id" {
   type    = string
-  default = "PF-AP-LAX-2741214"
+  default = "PF-AP-NYC10-1739866"
 }
 variable "pf_z_side_vc_vlan2" {
   type    = number
@@ -34,6 +34,6 @@ variable "pf_z_side_vc_vlan2" {
 }
 variable "pf_a_side_vc_request_uuid" {
   type    = string
-  description = "Update with the A side VC request UUID"
-  default = "dedi1bf234df-7a9d-4b4e-8d3a-3c245d6049bfcated"
+  description = "Update with the A side VC request UUID (use the id in the response of the packetfabric_backbone_virtual_circuit_marketplace resource)"
+  default = "eee2bee4-1553-444d-a7eb-0a2ce84a4548"
 }

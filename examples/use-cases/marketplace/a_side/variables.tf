@@ -24,23 +24,23 @@ variable "pf_api_server" {
 }
 
 # Marketplace Service (go to the PacketFabric Portal to get the list of services available)
-variable "pf_routing_id" {
+variable "pf_z_side_routing_id" {
   type    = string
   default = "PD-WUY-9VB0" # Demo A
 }
-variable "pf_market" {
+variable "pf_z_side_market" {
   type    = string
-  default = "HOU" # Demo A
+  default = "NYC" # Demo A
 }
 
 # Virtual Circuit
 variable "pf_a_side_port_id" {
   type    = string
-  default = "PF-AP-HOU1-1751418"
+  default = "PF-AP-PHX2-1748037"
 }
 variable "pf_z_side_port_id" {
   type    = string
-  default = "PF-AP-LAX-2741214"
+  default = "PF-AP-NYC10-1739866"
 }
 variable "pf_a_side_vc_vlan1" {
   type    = number
