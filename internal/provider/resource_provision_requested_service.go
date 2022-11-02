@@ -36,7 +36,7 @@ func resourceProvisionRequestedService() *schema.Resource {
 			},
 			"cloud_provider": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"aws", "google", "oracle", "azure"}, true),
 				Description:  "The cloud provider.",
 			},
