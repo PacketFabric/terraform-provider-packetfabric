@@ -35,5 +35,5 @@ variable "pf_z_side_vc_vlan2" {
 variable "pf_a_side_vc_request_uuid" {
   type    = string
   description = "Update with the A side VC request UUID (use the id in the response of the packetfabric_backbone_virtual_circuit_marketplace resource)"
-  default = "eee2bee4-1553-444d-a7eb-0a2ce84a4548"
+  default = "f9654a38-0722-4cc7-9aa5-7ad9af691fef"
 }

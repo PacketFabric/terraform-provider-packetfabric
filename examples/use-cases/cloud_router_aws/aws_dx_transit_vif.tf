@@ -39,7 +39,6 @@
 #   depends_on = [
 #     data.packetfabric_cloud_router_connections.current
 #   ]
-
 #   lifecycle {
 #     ignore_changes = [
 #       connection_id
@@ -57,7 +56,6 @@
 #   depends_on = [
 #     data.packetfabric_cloud_router_connections.current
 #   ]
-
 #   lifecycle {
 #     ignore_changes = [
 #       connection_id

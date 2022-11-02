@@ -46,7 +46,7 @@ output "packetfabric_backbone_virtual_circuit_marketplace" {
 
 # resource "packetfabric_backbone_virtual_circuit" "vc_marketplace" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}-test"
+#   description = "${var.tag_name}-${random_pet.name.id}"
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = var.pf_a_side_port_id

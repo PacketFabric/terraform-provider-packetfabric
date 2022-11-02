@@ -130,7 +130,7 @@ In case you get the following error:
 
 You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
 
-As a workaround, edit the `main.tf` and comment out the following resource:
+As a workaround, edit the `cloud_router_connections.tf` and comment out the following resource:
 
 ```
 # resource "aws_dx_connection_confirmation" "confirmation_2" {
@@ -139,7 +139,7 @@ As a workaround, edit the `main.tf` and comment out the following resource:
 # }
 ```
 
-And comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_private_vif.tf` or `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -153,7 +153,7 @@ data "packetfabric_cloud_router_connections" "current" {
 }
 ```
 
-Then remove the `confirmation_2` state and re-apply the terraform plan:
+Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform state rm aws_dx_connection_confirmation.confirmation_2
 terraform apply -var-file="secret.tfvars"

@@ -39,7 +39,6 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   depends_on = [
     data.packetfabric_cloud_router_connections.current
   ]
-
   lifecycle {
     ignore_changes = [
       connection_id
@@ -57,7 +56,6 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   depends_on = [
     data.packetfabric_cloud_router_connections.current
   ]
-
   lifecycle {
     ignore_changes = [
       connection_id
