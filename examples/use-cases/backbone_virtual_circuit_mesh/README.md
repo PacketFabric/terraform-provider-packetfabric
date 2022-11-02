@@ -1,7 +1,7 @@
 # Use Case: 
 
 This use case shows an example on how to use the PacketFabric Terraform provider 
-to automate the creation of a mesh of Backbone Virtual Circuit between the 6 ports.
+to automate the creation of a mesh of Backbone Virtual Circuits between 6 ports.
 
 ![Deployment Diagram](./images/diagram_mesh.png)
 
@@ -14,7 +14,7 @@ to automate the creation of a mesh of Backbone Virtual Circuit between the 6 por
 ## Terraform resources deployed
 
 - resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between the 6 ports
+- resource **"packetfabric_backbone_virtual_circuit"**: Create Backbone Virtual Circuits between 6 ports
 
 ## Before You Begin
 
