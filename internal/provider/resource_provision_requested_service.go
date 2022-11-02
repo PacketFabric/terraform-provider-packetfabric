@@ -13,16 +13,16 @@ import (
 
 func resourceProvisionRequestedService() *schema.Resource {
 	return &schema.Resource{
+		CreateContext: resourceProvisionRequestedServiceCreate,
+		ReadContext:   resourceRequestedServiceRead,
+		UpdateContext: resourceRequestedServiceUpdate,
+		DeleteContext: resourceRequestedServiceDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
-		CreateContext: resourceProvisionRequestedServiceCreate,
-		ReadContext:   resourceRequestedServiceRead,
-		UpdateContext: resourceRequestedServiceUpdate,
-		DeleteContext: resourceRequestedServiceDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -34,7 +34,7 @@ func resourceProvisionRequestedService() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"backbone", "ix", "cloud"}, true),
 				Description:  "The service type.",
 			},
-			"vc_requested_uuid": {
+			"vc_request_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
@@ -83,7 +83,7 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	provisionReq := extractProvisionRequest(d)
-	vcReqUUID := d.Get("vc_requested_uuid")
+	vcReqUUID := d.Get("vc_request_uuid")
 	reqType := d.Get("type")
 	_, err := c.RequestServiceProvision(vcReqUUID.(string), reqType.(string), provisionReq)
 	if err != nil {

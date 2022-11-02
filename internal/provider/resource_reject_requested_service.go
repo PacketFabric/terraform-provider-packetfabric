@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceRejectRequestedService() *schema.Resource {
@@ -22,6 +23,18 @@ func resourceRejectRequestedService() *schema.Resource {
 		ReadContext:   resourceRequestedServiceRead,
 		UpdateContext: resourceRequestedServiceUpdate,
 		DeleteContext: resourceRequestedServiceDelete,
+		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"vc_request_uuid": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.IsUUID,
+				Description:  "The VC Requested UUID.",
+			},
+		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -32,7 +45,7 @@ func resourceRejectRequestedServiceCreate(ctx context.Context, d *schema.Resourc
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	vcReqUUID := d.Get("vc_requested_uuid")
+	vcReqUUID := d.Get("vc_request_uuid")
 	if _, err := c.RejectServiceRequest(vcReqUUID.(string)); err != nil {
 		return diag.FromErr(err)
 	} else {
