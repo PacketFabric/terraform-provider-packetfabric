@@ -14,7 +14,7 @@ func resourceAddSpeedBurst() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAddSpeedBurstCreate,
 		ReadContext:   resourceAddSpeedBurstRead,
-		UpdateContext: resourceAddSpeedBurstUpdate,
+		UpdateContext: resourceServiceSettingsUpdate,
 		DeleteContext: resourceAddSpeedBurstDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -71,7 +71,7 @@ func resourceAddSpeedBurstRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func resourceAddSpeedBurstUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

@@ -19,6 +19,7 @@ const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
+const cloudVcBackboneURI = "/v2/services/%s"
 
 type ServiceAws struct {
 	RoutingID    string `json:"routing_id,omitempty"`
@@ -86,6 +87,7 @@ type Interfaces struct {
 	Zone               string `json:"zone,omitempty"`
 	Description        string `json:"description,omitempty"`
 	Vlan               int    `json:"vlan,omitempty"`
+	Svlan              int    `json:"svlan,omitempty"`
 	Untagged           bool   `json:"untagged,omitempty"`
 	ProvisioningStatus string `json:"provisioning_status,omitempty"`
 	AdminStatus        string `json:"admin_status,omitempty"`

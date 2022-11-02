@@ -191,9 +191,18 @@ func extractIXVC(d *schema.ResourceData) packetfabric.IxVirtualCircuit {
 
 func extractIXVcInterface(interf map[string]interface{}) packetfabric.Interfaces {
 	vxInterf := packetfabric.Interfaces{}
-	vxInterf.PortCircuitID = interf["port_circuit_id"].(string)
-	vxInterf.Vlan = interf["vlan"].(int)
-	vxInterf.Untagged = interf["untagged"].(bool)
+	if portCID := interf["port_circuit_id"]; portCID != nil {
+		vxInterf.PortCircuitID = portCID.(string)
+	}
+	if vlan := interf["vlan"]; vlan != nil {
+		vxInterf.Vlan = vlan.(int)
+	}
+	if untagged := interf["untagged"]; untagged != nil {
+		vxInterf.Untagged = untagged.(bool)
+	}
+	if svlan := interf["svlan"]; svlan != nil {
+		vxInterf.Svlan = svlan.(int)
+	}
 	return vxInterf
 }
 
