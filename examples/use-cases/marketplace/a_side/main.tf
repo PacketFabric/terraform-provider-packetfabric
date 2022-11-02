@@ -1,0 +1,73 @@
+terraform {
+  required_providers {
+    packetfabric = {
+      source  = "PacketFabric/packetfabric"
+      version = ">= 0.4.0"
+    }
+  }
+}
+
+provider "packetfabric" {
+  host  = var.pf_api_server
+  token = var.pf_api_key
+}
+
+# Create random name to use to name objects
+resource "random_pet" "name" {}
+
+# Create a VC Marketplace Connection 
+resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}"
+  routing_id  = var.pf_z_side_routing_id
+  market      = var.pf_z_side_market
+  interface {
+    port_circuit_id = var.pf_a_side_port_id
+    untagged        = false
+    vlan            = var.pf_a_side_vc_vlan1
+  }
+  bandwidth {
+    account_uuid      = var.pf_account_uuid
+    longhaul_type     = var.pf_vc_longhaul_type
+    speed             = var.pf_vc_speed
+    subscription_term = var.pf_vc_subterm
+  }
+}
+output "packetfabric_backbone_virtual_circuit_marketplace" {
+  value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
+}
+
+# Once the request has been accepted:
+# 1. Comment out above packetfabric_backbone_virtual_circuit_marketplace resource
+# 2. Import the new Marketplace backbone Virtual Circuit
+# 3. Add the new packetfabric_backbone_virtual_circuit resource in HCL config
+
+# Import command: (replace with correct VC ID)
+# terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-BC-RNO-CHI-1729807-PF
+
+# Then uncomment below resource below to start managing it using Terraform
+
+# resource "packetfabric_backbone_virtual_circuit" "vc_marketplace" {
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   epl         = false
+#   interface_a {
+#     port_circuit_id = var.pf_a_side_port_id
+#     untagged        = false
+#     vlan            = var.pf_a_side_vc_vlan1
+#   }
+#   interface_z {
+#     port_circuit_id = var.pf_z_side_port_id
+#     untagged        = false
+#     vlan            = var.pf_z_side_vc_vlan2
+#   }
+#   bandwidth {
+#     account_uuid      = var.pf_account_uuid
+#     longhaul_type     = var.pf_vc_longhaul_type
+#     speed             = var.pf_vc_speed
+#     subscription_term = var.pf_vc_subterm
+#   }
+# }
+# output "packetfabric_backbone_virtual_circuit" {
+#   value = packetfabric_backbone_virtual_circuit.vc_marketplace
+# }
