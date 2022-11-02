@@ -32,7 +32,7 @@ func resourceRejectRequestedService() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
-				Description:  "The VC Requested UUID.",
+				Description:  "UUID of the connection request you received from the marketplace user.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
