@@ -123,14 +123,11 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 }
 
 func resourceRequestedServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	vcCID := d.Id()
-	if _, err := c.GetBackboneByVcCID(vcCID); err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
+	return diag.Diagnostics{diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Marketplace Request read.",
+		Detail:   "Warning: the Marketplace connection request has been either accepted or rejected.",
+	}}
 }
 
 func resourceRequestedServiceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
