@@ -37,7 +37,7 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection.\n\n\tDefaults to false if unspecified.",
+				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
@@ -67,7 +67,7 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365).\n\n\tDefaults to false if unspecified.",
+				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). ",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,

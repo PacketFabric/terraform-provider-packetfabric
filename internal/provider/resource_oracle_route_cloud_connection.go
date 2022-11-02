@@ -37,7 +37,7 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection.\n\n\tDefaults to false if unspecified.",
+				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"vc_ocid": {
 				Type:         schema.TypeString,

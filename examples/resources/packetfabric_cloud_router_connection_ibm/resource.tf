@@ -13,7 +13,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   circuit_id     = packetfabric_cloud_router.cr1.id
   account_uuid   = var.pf_account_uuid
   ibm_account_id = var.pf_crc_ibm_account_id
-  ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
+  ibm_bgp_asn    = packetfabric_cloud_router.cr1.asn
   pop            = var.pf_crc_pop
   zone           = var.pf_crc_zone
   maybe_nat      = var.pf_crc_maybe_nat
