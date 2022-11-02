@@ -31,19 +31,19 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The routing ID of the customer to whom this VC will be connected.",
+				Description:  "The routing ID of the marketplace provider that will be receiving this request.\n\n\tExample: TR-1RI-OQ85",
 			},
 			"market": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The market that the VC will be requested in.",
+				Description:  "The market code (e.g. \"ATL\" or \"DAL\") in which you would like the marketplace provider to provision their side of the connection.\n\n\tIf the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in \"DAL5\", enter \"DAL\" for the market).",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The description of the third-party VC.",
+				Description:  "A brief description of this connection.",
 			},
 			"rate_limit_in": {
 				Type:        schema.TypeInt,
@@ -63,7 +63,7 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 						"account_uuid": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "The UUID for the billing account that should be billed.",
+							Description: "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
 						},
 						"speed": {
 							Type:         schema.TypeString,
@@ -75,7 +75,7 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
-							Description:  "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
+							Description:  "The billing term in months. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
 							Type:         schema.TypeString,
@@ -117,7 +117,7 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The circuit ID of the flex bandwidth container.",
+				Description: "If you are using flex bandwidth for the connection, enter the connection ID of the flex bandwidth container. This starts with \"PF-AB-\"",
 			},
 		},
 		Importer: &schema.ResourceImporter{

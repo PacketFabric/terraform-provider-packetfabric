@@ -31,24 +31,25 @@ func resourcePointToPoint() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The PTP Circuit ID.",
+				Description:  "The point-to-point connection ID.",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Point to Point description.",
+				Description:  "A brief description of this connection.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"1Gbps", "10Gbps", "40Gbps", "100Gbps"}, true),
-				Description:  "The point to point service speed.",
+				Description:  "The capacity for this connection.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
 			},
 			"media": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(pointToPointMediaOptions(), true),
+				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
 			"endpoints": {
 				Type:     schema.TypeSet,
@@ -59,13 +60,13 @@ func resourcePointToPoint() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
-							Description:  "The POP name.",
+							Description:  "Point of presence in which the port should be located.",
 						},
 						"zone": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
-							Description:  "The availability zone.",
+							Description:  "Availability zone of the port.",
 						},
 						"customer_site_code": {
 							Type:         schema.TypeString,
@@ -76,7 +77,7 @@ func resourcePointToPoint() *schema.Resource {
 						"autoneg": {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: "The autoneg state.",
+							Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with ports greater than 1Gbps.",
 						},
 						"loa": {
 							Type:         schema.TypeString,
@@ -91,12 +92,13 @@ func resourcePointToPoint() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
-				Description:  "The account UUID.",
+				Description:  "The UUID for the billing account that should be billed.",
 			},
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
 				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Duration of the subscription in months\n\n\tEnum [\"1\" \"12\" \"24\" \"36\"]",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,

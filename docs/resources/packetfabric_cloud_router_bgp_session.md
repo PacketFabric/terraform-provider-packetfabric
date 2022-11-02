@@ -12,7 +12,7 @@ The BGP session information for a cloud router connection.
 
 For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
 
-->**Note:** When creating a BGP session, ensure you are also creating the associated prefixes (the `packetfabric_cloud_router_bgp_prefixes` resource).
+->**Note:** When creating a BGP session, ensure you are also adding the associated prefixes.
 
 ## Example Usage
 
@@ -50,11 +50,6 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   remote_address = var.pf_crbs_remoteaddr
   l3_address     = var.pf_crbs_l3addr
   md5            = var.pf_crbs_md5
-}
-
-resource "packetfabric_cloud_router_bgp_prefixes" "cr_bgp_prefix" {
-  provider          = packetfabric
-  bgp_settings_uuid = packetfabric_cloud_router_bgp_session.cr_bgp1.id
   prefixes {
     prefix = var.pf_crbp_pfx00
     type   = var.pf_crbp_pfx00_type
@@ -65,10 +60,6 @@ resource "packetfabric_cloud_router_bgp_prefixes" "cr_bgp_prefix" {
     type   = var.pf_crbp_pfx01_type
     order  = var.pf_crbp_pfx01_order
   }
-}
-
-output "packetfabric_cloud_router_bgp_prefixes" {
-  value = packetfabric_cloud_router_bgp_prefixes.cr_bgp_prefix
 }
 
 output "packetfabric_cloud_router_bgp_session" {
@@ -86,6 +77,7 @@ output "packetfabric_cloud_router_bgp_session" {
 	Enum: "v4" "v6"
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `connection_id` (String) The circuit ID of the connection associated with the BGP session. This starts with "PF-L3-CON-".
+- `prefixes` (Block Set, Min: 1) The list of BGP prefixes (see [below for nested schema](#nestedblock--prefixes))
 - `remote_asn` (Number) The cloud-side ASN.
 
 ### Optional
@@ -119,3 +111,29 @@ output "packetfabric_cloud_router_bgp_session" {
 
 - `id` (String) The ID of this resource.
 
+<a id="nestedblock--prefixes"></a>
+### Nested Schema for `prefixes`
+
+Required:
+
+- `prefix` (String) The actual IP Prefix of this instance.
+- `type` (String) Whether this prefix is in or out.
+
+Optional:
+
+- `as_prepend` (Number) The BGP prepend value of this prefix.
+- `local_preference` (Number) The local_preference of this prefix.
+- `match_type` (String) The match type of this prefix.
+- `med` (Number) The MED of this prefix.
+- `order` (Number) The order of this prefix against the others.
+
+
+
+
+## Import
+
+Import a Cloud Router BGP session using the BGP ID for the session.
+
+```bash
+terraform import packetfabric_cloud_router_bgp_session.cr_bgp1 779881f7-b0ae-4794-8183-1a8ffd9ee777
+```

@@ -30,22 +30,22 @@ func resourceIxVC() *schema.Resource {
 			"routing_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The routing ID of the customer to whom this VC will be connected.",
+				Description: "The routing ID of the IX provider that will be receiving this request.\n\n\tExample: TR-1RI-OQ85",
 			},
 			"market": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The market that the VC will be requested in.",
+				Description: "The market code (e.g. \"ATL\" or \"DAL\") in which you would like the IX provider to provision their side of the connection.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The description of the Internet Exchange VC.",
+				Description: "A brief description of this connection.",
 			},
 			"asn": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The ASN.",
+				Description: "Your ASN.",
 			},
 			"rate_limit_in": {
 				Type:        schema.TypeInt,
@@ -114,7 +114,7 @@ func resourceIxVC() *schema.Resource {
 			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "ID of the flex bandwidth container from which to substract this VC's speed.",
+				Description: "If you are using flex bandwidth for the connection, enter the connection ID of the flex bandwidth container. This starts with \"PF-AB-\"",
 			},
 		},
 	}

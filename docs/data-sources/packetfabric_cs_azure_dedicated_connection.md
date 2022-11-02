@@ -26,8 +26,8 @@ output "packetfabric_cs_azure_dedicated_connection" {
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
 - `dedicated_connections` (List of Object) (see [below for nested schema](#nestedatt--dedicated_connections))
+- `id` (String) The ID of this resource.
 
 <a id="nestedatt--dedicated_connections"></a>
 ### Nested Schema for `dedicated_connections`
@@ -72,5 +72,6 @@ Read-Only:
 - `autoneg` (Boolean)
 - `aws_region` (String)
 - `zone_dest` (String)
+
 
 

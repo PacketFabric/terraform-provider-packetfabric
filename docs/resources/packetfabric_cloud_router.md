@@ -53,7 +53,7 @@ output "packetfabric_cloud_router" {
 		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
 
 	Defaults to US if unspecified.
-- `scope` (String) Whether the cloud router is private or public. Deprecated.
+- `scope` (String, Deprecated) Whether the cloud router is private or public.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
@@ -73,3 +73,10 @@ Optional:
 
 
 
+## Import
+
+Import a Cloud Router using its circuit ID.
+
+```bash
+terraform import packetfabric_cloud_router.cr PF-L3-CUST-1700239
+```

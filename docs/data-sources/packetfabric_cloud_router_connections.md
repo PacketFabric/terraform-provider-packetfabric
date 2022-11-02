@@ -41,10 +41,13 @@ Read-Only:
 
 - `account_uuid` (String)
 - `bgp_state` (String)
+- `bgp_state_list` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--bgp_state_list))
 - `cloud_circuit_id` (String)
 - `cloud_provider` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_provider))
 - `cloud_provider_connection_id` (String)
+- `cloud_router_asn` (Number)
 - `cloud_router_circuit_id` (String)
+- `cloud_router_name` (String)
 - `cloud_settings` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_settings))
 - `connection_type` (String)
 - `customer_uuid` (String)
@@ -66,6 +69,15 @@ Read-Only:
 - `user_uuid` (String)
 - `uuid` (String)
 
+<a id="nestedobjatt--cloud_connections--bgp_state_list"></a>
+### Nested Schema for `cloud_connections.bgp_state_list`
+
+Read-Only:
+
+- `bgp_settings_uuid` (String)
+- `bgp_state` (String)
+
+
 <a id="nestedobjatt--cloud_connections--cloud_provider"></a>
 ### Nested Schema for `cloud_connections.cloud_provider`
 
@@ -85,6 +97,7 @@ Read-Only:
 - `aws_connection_id` (String)
 - `aws_hosted_type` (String)
 - `aws_region` (String)
+- `azure_connection_type` (String)
 - `azure_service_key` (String)
 - `azure_service_tag` (Number)
 - `bgp_asn` (Number)
@@ -100,11 +113,12 @@ Read-Only:
 - `port_cross_connect_ocid` (String)
 - `port_id` (String)
 - `public_ip` (String)
+- `svlan_id_cust` (Number)
 - `vc_ocid` (String)
 - `vlan_id_cust` (Number)
+- `vlan_id_microsoft` (Number)
 - `vlan_id_pf` (Number)
-- `vlan_microsoft` (Number)
-- `vlan_private` (Number)
+- `vlan_id_private` (Number)
 
 
 

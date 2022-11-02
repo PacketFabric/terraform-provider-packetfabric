@@ -15,3 +15,11 @@ This is a port located in a Google cloud on-ramp facility, which will be connect
 {{tffile "examples/resources/packetfabric_cs_google_dedicated_connection/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a Google dedicated connection using its circuit ID.
+
+```bash
+terraform import packetfabric_cs_google_dedicated_connection.cs_conn1_dedicated_google PF-CC-WDC-NYC-1726496-PF
+```

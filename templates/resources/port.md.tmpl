@@ -15,3 +15,11 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 {{tffile "examples/resources/packetfabric_port/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a port using its circuit ID. 
+
+```bash
+terraform import packetfabric_port.port_1 PF-AP-WDC1-1726464
+```
