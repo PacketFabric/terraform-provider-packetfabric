@@ -34,6 +34,12 @@ func resourceProvisionRequestedService() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"backbone", "ix", "cloud"}, true),
 				Description:  "The service type.",
 			},
+			"cloud_provider": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{awsProvider, googleProvider, oracleProvider, azureProvider}, true),
+				Description:  "The cloud provider.",
+			},
 			"vc_request_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -62,6 +68,18 @@ func resourceProvisionRequestedService() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.IntBetween(4, 4094),
 							Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
+						},
+						"vlan_private": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN Private range is from 4-4094, inclusive.",
+						},
+						"vlan_microsoft": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN Microsoft range is from 4-4094, inclusive.",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -121,17 +139,28 @@ func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvisi
 	if desc, ok := d.GetOk("description"); !ok {
 		provisionReq.Description = desc.(string)
 	}
+	cloudProvider := d.Get("cloud_provider").(string)
 	for _, interfA := range d.Get("interface").(*schema.Set).List() {
-		provisionReq.Interface = extractProvisionInterf(interfA.(map[string]interface{}))
+		provisionReq.Interface = extractProvisionInterf(cloudProvider, interfA.(map[string]interface{}))
 	}
 	return provisionReq
 }
 
-func extractProvisionInterf(interf map[string]interface{}) packetfabric.Interface {
+func extractProvisionInterf(cloudProvider string, interf map[string]interface{}) packetfabric.Interface {
 	provisionInterf := packetfabric.Interface{}
 	provisionInterf.PortCircuitID = interf["port_circuit_id"].(string)
-	provisionInterf.Vlan = interf["vlan"].(int)
-	provisionInterf.Svlan = interf["svlan"].(int)
-	provisionInterf.Untagged = interf["untagged"].(bool)
+	switch cloudProvider {
+	case awsProvider:
+	case googleProvider:
+	case oracleProvider:
+		provisionInterf.Vlan = interf["vlan"].(int)
+	case azureProvider:
+		provisionInterf.VlanMicrosoft = interf["vlan_microsoft"].(int)
+		provisionInterf.VlanPrivate = interf["vlan_private"].(int)
+	default:
+		provisionInterf.Vlan = interf["vlan"].(int)
+		provisionInterf.Svlan = interf["svlan"].(int)
+		provisionInterf.Untagged = interf["untagged"].(bool)
+	}
 	return provisionInterf
 }

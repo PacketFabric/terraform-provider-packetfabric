@@ -23,6 +23,8 @@ type Interface struct {
 	PortCircuitID    string `json:"port_circuit_id,omitempty"`
 	Vlan             int    `json:"vlan,omitempty"`
 	Svlan            int    `json:"svlan,omitempty"`
+	VlanMicrosoft    int    `json:"vlan_microsoft,omitempty"`
+	VlanPrivate      int    `json:"vlan_private,omitempty"`
 	Untagged         bool   `json:"untagged,omitempty"`
 }
 
