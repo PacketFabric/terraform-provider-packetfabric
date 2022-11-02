@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=">= 0.3.2"
+version=">= 0.4.0"
 
 if [[ $1 = "cleanup" ]]; then
     echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt"
@@ -17,10 +17,12 @@ fi
 if [[ $1 = "local" ]]; then
   echo -e "\nSwitch to terraform.local/PacketFabric/packetfabric ~> 0.0.0\n"
   sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/main.tf
+  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/*/main.tf
   sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/provider.tf
   sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./provider/provider.tf
   sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./main.tf
   sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/main.tf
+  sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/*/main.tf
   sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/provider.tf
   sed -i '' -e "s#$version#~> 0.0.0#g" ./provider/provider.tf
   sed -i '' -e "s#$version#~> 0.0.0#g" ./main.tf
@@ -32,9 +34,11 @@ if [[ $1 = "remote" ]]; then
   echo -e "\nSwitch to PacketFabric/packetfabric $version\n"
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/main.tf
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/provider.tf
+  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/*/main.tf
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./provider/provider.tf
   sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./main.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/main.tf
+  sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/*/main.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/provider.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./provider/provider.tf
   sed -i '' -e "s#~> 0.0.0#$version#g" ./main.tf
@@ -45,6 +49,7 @@ fi
 if [[ $1 = "dev" ]]; then
   echo -e "\nSwitch to api.dev.packetfabric.net\n"
   sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./use-cases/*/variables.tf
+  sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./use-cases/*/*/variables.tf
   sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./variables.tf
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./use-cases/*/variables.tf # Azure Cloud Provider
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./variables.tf # Azure Cloud Provider
@@ -65,6 +70,7 @@ fi
 if [[ $1 = "prod" ]]; then
   echo -e "\nSwitch to api.packetfabric.com\n"
   sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./use-cases/*/variables.tf
+  sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./use-cases/*/*/variables.tf
   sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./variables.tf
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./use-cases/*/variables.tf # Azure Cloud Provider
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./variables.tf # Azure Cloud Provider
@@ -85,6 +91,8 @@ fi
 echo -e "\nCheck provider settings in examples:"
 echo
 grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/main.tf
+echo
+grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/*/main.tf
 echo
 grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/provider.tf
 echo

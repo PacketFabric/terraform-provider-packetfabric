@@ -6,10 +6,11 @@
 - [cloud_router_google_ipsec](./cloud_router_google_ipsec): connect GCP and a branch location, on-premises users, or a remote data center using a Cloud Router
 - [cloud_router_google_azure](./cloud_router_google_azure): connect GCP and Azure Clouds using a Cloud Router
 - [cloud_router_ibm_oracle](./cloud_router_ibm_oracle): connect Oracle and IBM Clouds using a Cloud Router
+- [dedicated_cloud_aws](./dedicated_cloud_aws): create Dedicated Cloud Connection on AWS
 - [hosted_cloud_aws](./hosted_cloud_aws): create an AWS Hosted Cloud Connection
 - [hosted_cloud_google](./hosted_cloud_google): create a Google Hosted Cloud Connection
 - [hosted_cloud_azure](./hosted_cloud_azure): create an Azure Hosted Cloud Connection
-- [dedicated_cloud_aws](./dedicated_cloud_aws): create Dedicated Cloud Connection on AWS
+- [marketplace](./marketplace): create a Marketplace Request and Accept/Reject it
 
 # List of known issues on other terraform providers, please vote!
 
