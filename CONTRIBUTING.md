@@ -17,7 +17,22 @@
 
 #### **Do you intend to add a new feature or change an existing one?**
 
-* Open a new [feature request](https://github.com/PacketFabric/terraform-provider-packetfabric/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=), start writing code and subbmit it for review.
+* Open a new [feature request](https://github.com/PacketFabric/terraform-provider-packetfabric/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=), start writing code and submit it for review.
+
+* Adding or Updating existing Terraform resources/data-sources consists of:
+
+    * Add/Update Terraform Go Code located under the internal folder 
+    * Add/Update Tests 
+        * using mock data `<file>_test.go` under `internal/packetfabric`
+        * using real data `<resource_name>_test.go` under `internal/provider` 
+    * Add/Update examples under `examples/resources` and/or `examples/data-sources` (used for the documentation)
+    * Add/Update the templates used to generate the docs  under `templates`
+    * Generate the docs using tfplugindocs
+    * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric).
+
+* Create your own branch with your updates including code changes, test, examples and documentation. 
+
+* Make sure you test it locally, then create a PR so it can be reviewed by our team.
 
 #### **Do you have questions about the source code or the provider in general?**
 
