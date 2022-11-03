@@ -14,5 +14,6 @@ Closes #000
 ## Checklist
 
 - [ ] tested locally
-- [ ] updated the docs
 - [ ] added/updated acceptance tests
+- [ ] add examples (in example folder)
+- [ ] generate docs
