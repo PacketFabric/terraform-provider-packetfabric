@@ -100,6 +100,7 @@ export PF_TOKEN="api-secret"
 export PF_ACCOUNT_UUID="1234"
 export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
 export PF_ACC_TEST_MARKET="HOU"
+export PF_AWS_ACCOUNT_ID="123456789"
 ```
 
 Then you can safely run the following command:

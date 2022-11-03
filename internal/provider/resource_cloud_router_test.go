@@ -26,7 +26,7 @@ func TestAccCloudRouter(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	name := testutil.GenerateUniqueName(testPrefix)
-	hcl, resourceName := hclCloudRouter(name, testutil.GetAccountUUID(), "US", "100Mbps", "12345")
+	hcl, resourceName := hclCloudRouter(name, testutil.GetAccountUUID(), "US", "100Mbps", "4556")
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { testutil.PreCheck(t, nil) },
 		Providers: testAccProviders,
@@ -38,7 +38,7 @@ func TestAccCloudRouter(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "account_uuid", testutil.GetAccountUUID()),
 					resource.TestCheckResourceAttr(resourceName, "regions.0", "US"),
 					resource.TestCheckResourceAttr(resourceName, "capacity", "100Mbps"),
-					resource.TestCheckResourceAttr(resourceName, "asn", "12345"),
+					resource.TestCheckResourceAttr(resourceName, "asn", "4556"),
 				),
 			},
 		},
