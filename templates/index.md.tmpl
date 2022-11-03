@@ -33,7 +33,7 @@ You can handle these manually through the cloud service provider's console, or y
 * https://registry.terraform.io/providers/IBM-Cloud/ibm/latest
 
 
-For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/examples/use-cases).
+For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
 ## Example Usage
 
