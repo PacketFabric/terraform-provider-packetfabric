@@ -1,6 +1,7 @@
 #!/bin/bash
 
-version=">= 0.4.0"
+version1=">= 0.4.0"
+version2=">= 0.5.0"
 
 if [[ $1 = "cleanup" ]]; then
     echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt"
@@ -14,36 +15,25 @@ if [[ $1 = "cleanup" ]]; then
     find . -name customer_router_ip_address.txt -type f -delete
 fi
 
-if [[ $1 = "local" ]]; then
-  echo -e "\nSwitch to terraform.local/PacketFabric/packetfabric ~> 0.0.0\n"
-  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/main.tf
-  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/*/main.tf
-  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./use-cases/*/provider.tf
-  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./provider/provider.tf
-  sed -i '' -e 's#PacketFabric/packetfabric#terraform.local/PacketFabric/packetfabric#g' ./main.tf
-  sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/main.tf
-  sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/*/main.tf
-  sed -i '' -e "s#$version#~> 0.0.0#g" ./use-cases/*/provider.tf
-  sed -i '' -e "s#$version#~> 0.0.0#g" ./provider/provider.tf
-  sed -i '' -e "s#$version#~> 0.0.0#g" ./main.tf
-  sed -i '' -e "s#127.0.0.1#117.109.121.202#g" ./use-cases/*/variables.tf # IPsec
-  sed -i '' -e "s#127.0.0.1#117.109.121.202#g" ./variables.tf # IPsec
-fi
+if [[ $1 = "version" ]]; then
+  echo -e "\nSwitch to PacketFabric/packetfabric $version1 => $version2\n"
+  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/main.tf
+  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/*/main.tf
+  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/provider.tf
+  sed -i '' -e "s#$version1#$version2#g" ./provider/provider.tf
+  sed -i '' -e "s#$version1#$version2#g" ./main.tf
 
-if [[ $1 = "remote" ]]; then
-  echo -e "\nSwitch to PacketFabric/packetfabric $version\n"
-  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/main.tf
-  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/provider.tf
-  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./use-cases/*/*/main.tf
-  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./provider/provider.tf
-  sed -i '' -e 's#terraform.local/PacketFabric/packetfabric#PacketFabric/packetfabric#g' ./main.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/main.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/*/main.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./use-cases/*/provider.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./provider/provider.tf
-  sed -i '' -e "s#~> 0.0.0#$version#g" ./main.tf
-  sed -i '' -e "s#117.109.121.202#127.0.0.1#g" ./use-cases/*/variables.tf # IPsec
-  sed -i '' -e "s#117.109.121.202#127.0.0.1#g" ./variables.tf # IPsec
+  echo
+  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/main.tf
+  echo
+  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/*/main.tf
+  echo
+  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/provider.tf
+  echo
+  grep -A 1 "PacketFabric/packetfabric" ./provider/provider.tf
+  echo
+  grep -A 1 "PacketFabric/packetfabric" ./main.tf
+  echo
 fi
 
 if [[ $1 = "dev" ]]; then
@@ -88,22 +78,11 @@ if [[ $1 = "prod" ]]; then
   sed -i '' -e "s#GOG#DEN#g" ./variables.tf # IX - IX-Denver to	PacketFabric - IX
 fi
 
-echo -e "\nCheck provider settings in examples:"
-echo
-grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/main.tf
-echo
-grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/*/main.tf
-echo
-grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/provider.tf
-echo
-grep -A 1 "PacketFabric/packetfabric" ./provider/provider.tf
-echo
-grep -A 1 "PacketFabric/packetfabric" ./main.tf
-echo
 echo -e "\nNumber of variables with api.packetfabric.com: $(grep "api.packetfabric.com" ./use-cases/*/variables.tf | wc -l)"
 echo -e "Number of variables with api.dev.packetfabric.net: $(grep "api.dev.packetfabric.net" ./use-cases/*/variables.tf | wc -l)"
 
-echo
+echo -e "\nEmpty files:"
+find . -empty
 
 echo -e "\nFiles to cleanup:"
 find . -name ".terraform" -type d
@@ -115,14 +94,8 @@ find . -name secret.json -type f
 find . -name cloud_router_ip_address.txt -type f
 find . -name customer_router_ip_address.txt -type f
 
-echo -e "\nEmpty files:"
-find . -empty
-
-echo -e "\nPacketFabric Terraform Provider Remote version set to \"$version\""
-
 echo -e "\nOptions:"
-echo -e "\t./$(basename $0) [cleanup]: delete files to cleanup"
-echo -e "\t./$(basename $0) [local]: switch to locally built PacketFabric provider"
-echo -e "\t./$(basename $0) [remote]: switch to PacketFabric provider on the Terraform registry (using \"$version\")"
-echo -e "\t./$(basename $0) [dev]: switch to PacketFabric dev endpoint and variables"
-echo -e "\t./$(basename $0) [prod]: switch to PacketFabric prod endpoint and variables\n"
+echo -e "\t./$(basename $0) [dev]: switch from prod to dev (PacketFabric host and variables)"
+echo -e "\t./$(basename $0) [prod]: switch from dev to prod (PacketFabric host and variables)"
+echo -e "\t./$(basename $0) [cleanup]: delete .terraform, lock, state, secret, etc..."
+echo -e "\t./$(basename $0) [version]: change version in all examples from \"$version1\" to \"$version2\")\n"

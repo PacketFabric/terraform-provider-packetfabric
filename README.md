@@ -73,11 +73,11 @@ to your `~/.terraformrc` file. This is valid for Terraform 0.14+. See
 provider_installation {
 
   # Use /home/developer/go/bin as an overridden package directory
-  # for the packetfabric/packetfabric provider. This disables the version and checksum
+  # for the PacketFabric/packetfabric provider. This disables the version and checksum
   # verifications for this provider and forces Terraform to look for the
   # packetfabric provider plugin in the given directory.
   dev_overrides {
-    "packetfabric/packetfabric" = "/home/developer/go/bin"
+    "PacketFabric/packetfabric" = "/home/developer/go/bin"
   }
 
   # For all other providers, install them directly from their origin provider
