@@ -19,7 +19,7 @@ Once you create the key, you will only have one chance to copy it. The key is en
 
 For more information, see [API Keys in the PacketFabric documentation](https://docs.packetfabric.com/admin/my_account/keys/).
 
-->**Note:** API keys will work even in you have MFA enabled.
+->**Note:** API keys will still work for users with MFA enabled.
 
 ## Account ID
 
@@ -35,7 +35,7 @@ For more information, see [Get the Account UUID in the PacketFabric documentatio
 
 ## Getting location information
 
-When provisioning new services, you may be required to provide a point of presence (POP), market, or region. For this, you can use the `packetfabric_locations` data source. See [packetfabric_locations (Data Source)](data-sources/packetfabric_locations).
+When provisioning new services, you may be required to provide a point of presence (POP), market, or region. For this, you can use the `packetfabric_locations` data source. See [packetfabric_locations (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations).
 
 
 However, the simplest way to find location information is from the [PacketFabric website](https://packetfabric.com/locations). 
