@@ -1,4 +1,7 @@
 [![Release](https://img.shields.io/github/v/release/PacketFabric/terraform-provider-packetfabric?display_name=tag)](https://github.com/PacketFabric/terraform-provider-packetfabric/releases)
+![release-date](https://img.shields.io/github/release-date/PacketFabric/terraform-provider-packetfabric)
+![contributors](https://img.shields.io/github/contributors/PacketFabric/terraform-provider-packetfabric)
+![commit-activity](https://img.shields.io/github/commit-activity/m/PacketFabric/terraform-provider-packetfabric)
 [![License](https://img.shields.io/github/license/PacketFabric/terraform-provider-packetfabric)](https://github.com/PacketFabric/terraform-provider-packetfabric)
 
 ## How to contribute to PacketFabric Terraform Provider
