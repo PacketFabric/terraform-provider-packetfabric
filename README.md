@@ -102,7 +102,9 @@ export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
 export PF_ACC_TEST_MARKET="HOU"
 ```
 
-Then you can safely run the following command:
+> **Warning**: Running below command will order various PacketFabric products, then remove them.
+
+Then you can run the following command:
 
 ```shell
 make testacc
