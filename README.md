@@ -113,7 +113,7 @@ make testacc
 If you want to know the current list of acceptance tests available without executing them, run the following command:
 
 ```
-cd /working/internal/provider
+cd ./internal/provider
 go test -cover -v | grep -v testutil.go | grep -v github.com
 ```
 
