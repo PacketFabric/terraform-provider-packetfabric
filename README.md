@@ -103,10 +103,19 @@ export PF_ACC_TEST_MARKET="HOU"
 export PF_AWS_ACCOUNT_ID="123456789"
 ```
 
-Then you can safely run the following command:
+> **Warning**: Running below command will order various PacketFabric products, then delete them.
+
+Then you can run the following command:
 
 ```shell
 make testacc
+```
+
+If you want to know the current list of acceptance tests available without executing them, run the following command:
+
+```
+cd ./internal/provider
+go test -cover -v | grep -v testutil.go | grep -v github.com
 ```
 
 ## Releasing the Provider
