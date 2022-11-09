@@ -1,0 +1,18 @@
+# default owner
+*   @rjouhann
+
+# code
+internal/* @pontovinte @elXaptation @medzin @rjouhann
+
+# test
+internal/packetfabric/*_test.go @pontovinte @elXaptation @medzin @rjouhann
+internal/provider/*_test.go @pontovinte @elXaptation @medzin @rjouhann
+internal/testutil/* @pontovinte @elXaptation @medzin @rjouhann
+
+# docs
+docs/*  @caitlinwheeless @elXaptation @rjouhann
+templates/*  @caitlinwheeless @elXaptation @rjouhann
+examples/*  @caitlinwheeless @elXaptation @rjouhann
+
+# use cases examples
+examples/use-cases/*  @rjouhann
