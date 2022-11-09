@@ -87,6 +87,9 @@ func resourceOracleHostedConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with this connection should be associated.",
 			},
+			Importer: &schema.ResourceImporter{
+				StateContext: schema.ImportStatePassthroughContext,
+			},
 		},
 	}
 }

@@ -81,6 +81,10 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+## Import
 
+Import an AWS dedicated connection using its circuit ID.
 
-
+```bash
+terraform import packetfabric_cs_aws_dedicated_connection.cs_conn1_dedicated_aws PF-CC-WDC-NYC-1726496-PF
+```

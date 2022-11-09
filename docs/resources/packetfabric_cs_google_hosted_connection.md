@@ -68,6 +68,10 @@ Optional:
 - `update` (String)
 
 
+## Import
 
+Import an Google hosted connection using its circuit ID.
 
-
+```bash
+terraform import packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google PF-CC-WDC-NYC-1726496-PF
+```
