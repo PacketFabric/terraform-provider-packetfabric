@@ -87,6 +87,11 @@ func dataSourceCloudServicesConnInfo() *schema.Resource {
 				Optional:    true,
 				Description: "Site name\n\t\tExample: SwitchNAP Las Vegas 7",
 			},
+			"is_awaiting_onramp": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Whether or not this connection is waiting for an onramp to be available before provisioning.",
+			},
 		},
 	}
 }
@@ -118,6 +123,7 @@ func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m 
 	_ = d.Set("time_updated", service.TimeUpdated)
 	_ = d.Set("pop", service.Pop)
 	_ = d.Set("site", service.Site)
+	_ = d.Set("is_awaiting_onramp", service.IsAwaitingOnramp)
 	d.SetId(service.CloudCircuitID)
 	return diags
 }
