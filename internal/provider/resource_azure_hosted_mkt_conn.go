@@ -57,11 +57,6 @@ func resourceAzureHostedMktConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
 			},
-			"zone": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The desired zone of the new connection. Optional",
-			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -137,9 +132,6 @@ func extractAzureHostedMkt(d *schema.ResourceData) packetfabric.AzureHostedMktRe
 	}
 	if accountUUID, ok := d.GetOk("account_uuid"); ok {
 		hostedMkt.AccountUUID = accountUUID.(string)
-	}
-	if zone, ok := d.GetOk("pop"); ok {
-		hostedMkt.Zone = zone.(string)
 	}
 	if speed, ok := d.GetOk("speed"); ok {
 		hostedMkt.Speed = speed.(string)

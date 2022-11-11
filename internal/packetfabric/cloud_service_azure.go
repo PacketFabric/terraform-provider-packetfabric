@@ -47,14 +47,13 @@ type AzureInterfacesCreateResp struct {
 	TimeUpdated        string `json:"time_updated,omitempty"`
 }
 
-// Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/post_aws_marketplace_cloud
+// Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/post_azure_marketplace_cloud
 type AzureHostedMktReq struct {
 	RoutingID       string `json:"routing_id,omitempty"`
 	Market          string `json:"market,omitempty"`
 	Description     string `json:"description,omitempty"`
 	AzureServiceKey string `json:"azure_service_key,omitempty"`
 	AccountUUID     string `json:"account_uuid,omitempty"`
-	Zone            string `json:"zone,omitempty"`
 	Speed           string `json:"speed,omitempty"`
 	ServiceUUID     string `json:"service_uuid,omitempty"`
 }

@@ -51,7 +51,6 @@ output "packetfabric_cs_azure_hosted_marketplace_connection" {
 - `description` (String) A brief description of this connection.
 - `service_uuid` (String) UUID of the marketplace service being requested.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired zone of the new connection. Optional
 
 ### Read-Only
 
