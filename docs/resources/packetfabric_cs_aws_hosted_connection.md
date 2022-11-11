@@ -56,5 +56,10 @@ output "packetfabric_cs_aws_hosted_connection" {
 - `id` (String) The ID of this resource.
 
 
+## Import
 
+Import an AWS hosted connection using its circuit ID.
 
+```bash
+terraform import packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws PF-CC-WDC-NYC-1726496-PF
+```
