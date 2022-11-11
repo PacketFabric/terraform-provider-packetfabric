@@ -87,3 +87,11 @@ Optional:
 - `update` (String)
 
 
+
+## Import
+
+Import a point to point circuit using its circuit ID.
+
+```bash
+terraform import packetfabric_point_to_point.ptp1 PF-PD-PHX-LAX-1748043-PF
+```

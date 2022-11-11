@@ -15,3 +15,11 @@ A point to point connection is an Ethernet Private Line between two access ports
 {{tffile "examples/resources/packetfabric_point_to_point/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a point to point circuit using its circuit ID.
+
+```bash
+terraform import packetfabric_point_to_point.ptp1 PF-PD-PHX-LAX-1748043-PF
+```
