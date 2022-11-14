@@ -16,7 +16,7 @@ export TF_VAR_tenant_id="abc"
 
 ### Google
 export TF_VAR_gcp_project_id="my-project-id"
-export TF_VAR_gcp_credentials="/Users/myuser/secret.json"
+export TF_VAR_gcp_credentials_path="/Users/myuser/secret.json"
 
 ### Oracle
 export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..1234"
