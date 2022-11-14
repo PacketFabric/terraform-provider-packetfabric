@@ -55,6 +55,6 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 - `id` (String) The ID of this resource.
 
+## Provisioning lead time
 
-
-
+Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.

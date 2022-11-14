@@ -63,3 +63,7 @@ output "packetfabric_cs_aws_hosted_connection_data" {
 
 - `id` (String) The ID of this resource.
 - `is_awaiting_onramp` (Bool) Whether or not this cloud instance is waiting for an onramp to be available before provisioning.
+
+## Provisioning lead time
+
+Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
