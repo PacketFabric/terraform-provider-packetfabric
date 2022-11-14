@@ -68,4 +68,10 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+## Import
 
+Import an Oracle hosted connection using its circuit ID.
+
+```bash
+terraform import packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle PF-CC-WDC-NYC-1726496-PF
+```

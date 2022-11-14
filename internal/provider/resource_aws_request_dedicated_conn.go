@@ -84,6 +84,9 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Description: "A base64 encoded string of a PDF of the LOA that AWS provided.\n\n\tExample: SSBhbSBhIFBERg==",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
