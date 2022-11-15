@@ -252,8 +252,7 @@ resource "aws_dx_connection" "current_1" {
 #   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
 #   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
 #   allowed_prefixes = [
-#     var.aws_vpc_cidr1,
-#     var.aws_vpc_cidr2
+#     var.aws_vpc_cidr1
 #   ]
 #   depends_on = [
 #     aws_dx_private_virtual_interface.direct_connect_vip_1
