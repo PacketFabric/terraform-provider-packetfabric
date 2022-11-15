@@ -1,6 +1,6 @@
 # Use Case: PacketFabric Cloud Router with Google and Azure
 
-This use case builds a PacketFabric Cloud Router between Google Cloud Platform and Microsoft Azure CLoud.
+This use case builds a PacketFabric Cloud Router between Google Cloud Platform and Microsoft Azure Cloud.
 Terraform providers used: PacketFabric, Azure and Google.
 
 ![Deployment Diagram](./images/diagram_cloud_router_google_azure.png)
@@ -16,24 +16,31 @@ Terraform providers used: PacketFabric, Azure and Google.
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"google_compute_network"**: Create a VPC
-- resource **"google_compute_subnetwork"**: Create a subnet in the VPC
-- resource & data source **"google_compute_router"**: Create a Google Cloud Router used for the Interconnect
-- resource **"google_compute_interconnect_attachment"**: Create a Google Interconnect
-- resource **"azurerm_resource_group"**: Create a resource group in Azure
-- resource **"azurerm_virtual_network"**: Create a Virtual Network (VNet)
-- resource **"azurerm_subnet"**: Create subnets for Virtual Network Gateway and VNet
-- resource **"packetfabric_cs_azure_hosted_connection"**: Create a Azure Hosted Cloud Connection
-- resource & data source **"azurerm_express_route_circuit"**: Create an ExpressRoute circuit
-- resource **"azurerm_express_route_circuit_peering"**: Configure peering
-- resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_cloud_router_connection_google"**: Add a Google Partner Interconnect to the Cloud Router
-- resource & data source **"packetfabric_cloud_router_connection_azure"**: Add a AzureExpress Connection to the Cloud Router
-- module **"terraform-google-gcloud"**: Get the BGP Peer Addresses and set the PacketFabric Cloud Router ASN to the BGP settings in the Google Cloud Router
-- resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
-- resources **"azurerm_public_ip"** and **"azurerm_virtual_network_gateway"**: Create a virtual network gateway for ExpressRoute
-- resource **"azurerm_virtual_network_gateway_connection"**: Link a virtual network gateway to the ExpressRoute circuit
+> **Warning**: Microsoft begins billing as soon as the service key is created, which is why we advise that you wait until your cross connect is established first.
+
+- "azurerm_resource_group"
+- "azurerm_virtual_network"
+- "azurerm_subnet"
+- "azurerm_network_security_group"
+- "azurerm_public_ip"
+- "azurerm_network_interface"
+- "azurerm_network_interface_security_group_association"
+- "azurerm_ssh_public_key"
+- "azurerm_virtual_machine"
+- "packetfabric_cloud_router"
+- "azurerm_express_route_circuit"
+- "packetfabric_cloud_router_connection_azure"
+- "azurerm_express_route_circuit_peering"
+- "azurerm_public_ip"
+- "google_compute_router"
+- "google_compute_interconnect_attachment"
+- "packetfabric_cloud_router_connection_google"
+- "packetfabric_cloud_router_bgp_session"
+- "google_compute_firewall"
+- "google_compute_instance"
+- "google_compute_network"
+- "google_compute_subnetwork"
+- "random_pet"
 
 **Estimated time:** ~10 min for Google, Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
 
@@ -64,7 +71,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars
@@ -88,6 +95,8 @@ terraform apply -var-file="secret.tfvars"
 ```sh
 terraform destroy -var-file="secret.tfvars"
 ```
+
+**Note:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
 
 ## Troubleshooting
 

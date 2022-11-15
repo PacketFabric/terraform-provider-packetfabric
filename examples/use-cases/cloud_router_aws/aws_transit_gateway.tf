@@ -40,5 +40,5 @@
 #   ]
 # }
 
-# The transit gateway to VPC attachment will propogate the route from the TGW to 
-# the DX gateway all the way to the VPC and the subnets
+# # The transit gateway to VPC attachment will propogate the route from the TGW to 
+# # the DX gateway all the way to the VPC and the subnets

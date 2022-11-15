@@ -112,13 +112,13 @@ variable "aws_dx_location" {
   type    = string
   default = "CSSV4" # need to match with pf_cs_pop1 and aws_region1
 }
-variable "vpc_cidr1" {
+variable "aws_vpc_cidr1" {
   type        = string
   description = "CIDR for the VPC"
   default     = "10.8.0.0/16"
 }
 # Subnet Variables
-variable "subnet_cidr1" {
+variable "aws_subnet_cidr1" {
   type        = string
   description = "CIDR for the subnet"
   default     = "10.8.1.0/24"

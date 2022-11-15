@@ -147,7 +147,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "c"
+  default = "C"
 }
 variable "pf_crc_speed" {
   type        = string
@@ -167,7 +167,7 @@ variable "pf_crc_pop2" {
 }
 variable "pf_crc_zone2" {
   type    = string
-  default = "c"
+  default = "C"
 }
 
 # PacketFabric Cloud Router BGP Session - IBM and Oracle
