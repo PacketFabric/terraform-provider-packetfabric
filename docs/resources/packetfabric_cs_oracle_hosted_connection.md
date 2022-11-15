@@ -56,7 +56,6 @@ output "packetfabric_cs_oracle_hosted_connection" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `is_awaiting_onramp` (Bool) Whether or not this cloud instance is waiting for an onramp to be available before provisioning.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
