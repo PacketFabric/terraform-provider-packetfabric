@@ -13,12 +13,12 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and G
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"google_compute_network"**: Create a VPC
-- resource **"google_compute_subnetwork"**: Create a subnet in the VPC
-- resource & data source **"google_compute_router"**: Create a Google Cloud Router used for the Interconnect
-- resource **"google_compute_interconnect_attachment"**: Create a Google Interconnect
-- resource **"packetfabric_cs_google_hosted_connection"**: Create a Google Hosted Cloud Connection 
+- "random_pet"
+- "google_compute_network"
+- "google_compute_subnetwork"
+- "google_compute_router"
+- "google_compute_interconnect_attachment"
+- "packetfabric_cs_google_hosted_connection"
 
 **Estimated time:** ~5 min
 
@@ -44,7 +44,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

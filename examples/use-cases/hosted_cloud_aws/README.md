@@ -15,21 +15,19 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"aws_vpc"**: Create a VPC
-- resource **"aws_subnet"**: Create subnet in the VPC
-- resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
-- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (or Private VIF - Virtual Interface)
-- resource **"aws_route_table"**: Create route table for the VPCs
-- resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
-- resource & data source **"packetfabric_cs_aws_hosted_connection"**: Create a AWS Hosted Cloud Connection 
-- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
-- data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
-- resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
-- resource **"aws_dx_gateway"**: Create Direct Connect Gateways
-- resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
-- data source **"aws_dx_router_configuration"**: Download Router Configuration
-- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG)
+- "random_pet"
+- "aws_vpc"
+- "aws_subnet"
+- "aws_internet_gateway"
+- "aws_vpn_gateway"
+- "aws_vpn_gateway_attachment"
+- "aws_route_table"
+- "aws_route_table_association"
+- "packetfabric_cs_aws_hosted_connection"
+- "time_sleep"
+- "aws_dx_connection_confirmation"
+- "aws_dx_gateway"
+- "aws_dx_private_virtual_interface"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -38,7 +36,6 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
 - Don't have an AWS Account? [Get Started](https://aws.amazon.com/free/)
-    - Permissions required: VPC, EC2, Direct Connect
 
 ## Prerequisites
 
@@ -57,7 +54,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

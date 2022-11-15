@@ -62,13 +62,13 @@ variable "aws_region1" {
   description = "AWS region"
   default     = "us-west-1" # has to be in the same region as aws_region1 var
 }
-variable "vpc_cidr1" {
+variable "aws_vpc_cidr1" {
   type        = string
   description = "CIDR for the VPC"
   default     = "10.8.0.0/16"
 }
 # Subnet Variables
-variable "subnet_cidr1" {
+variable "aws_subnet_cidr1" {
   type        = string
   description = "CIDR for the subnet"
   default     = "10.8.1.0/24"

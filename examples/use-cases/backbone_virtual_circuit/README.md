@@ -15,13 +15,9 @@ the outbound Cross connect for those 2 ports.
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_port"**: Create 2 ports in 2 PacketFabric Point of Presence (PoP)
-- data source **"packetfabric_billing"**: Get the billing details for those 2 ports
-- data source **"packetfabric_locations"**: Get PacketFabric available locations
-- resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect (You provide PacketFabric with an LOA/CFA authorizing us to make the connection)
-- resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between the 2 ports
-
+- "random_pet"
+- "packetfabric_port"
+- "packetfabric_backbone_virtual_circuit"
 
 ## Before You Begin
 
@@ -42,7 +38,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

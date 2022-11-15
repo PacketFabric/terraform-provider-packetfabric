@@ -13,8 +13,8 @@ to automate the creation of a mesh of Backbone Virtual Circuits between 6 ports.
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_backbone_virtual_circuit"**: Create Backbone Virtual Circuits between 6 ports
+- "random_pet"
+- "packetfabric_backbone_virtual_circuit"
 
 ## Before You Begin
 
@@ -35,7 +35,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

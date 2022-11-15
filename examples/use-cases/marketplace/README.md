@@ -16,15 +16,15 @@ to automate the creation of a Virtual Circuit between 2 ports owned by 2 differe
 
 **A side**
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_backbone_virtual_circuit_marketplace"**: Create the Backbone Virtual Circuit Request to the Z side
-- resource **"packetfabric_backbone_virtual_circuit"**: Once the Request has been accepted, import and manage the new resource in Terraform
+- "random_pet"
+- "packetfabric_backbone_virtual_circuit_marketplace"
+- "packetfabric_backbone_virtual_circuit"
 
 **Z side**
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"packetfabric_marketplace_service_accept_request"**: Accept the Backbone Virtual Circuit Request from the A side
-- resource **"packetfabric_marketplace_service_reject_request"**: Reject the Backbone Virtual Circuit Request from the A side
+- "random_pet"
+- "packetfabric_marketplace_service_accept_request"
+- "packetfabric_marketplace_service_reject_request"
 
 ## Before You Begin
 
@@ -45,7 +45,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed for each A and Z sides.
+1. Create the file ``secret.tfvars`` and update each variables as needed for each A and Z sides (edit ``variables.tf``).
 
 **A side**
 
