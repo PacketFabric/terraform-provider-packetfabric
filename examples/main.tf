@@ -334,7 +334,7 @@ resource "random_pet" "name" {}
 #   provider         = packetfabric
 #   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
 # }
-# output "packetfabric_cs_google_hosted_connection" {
+# output "packetfabric_cs_google_hosted_connection_data" {
 #   value = data.packetfabric_cs_google_hosted_connection.current
 # }
 

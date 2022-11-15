@@ -13,17 +13,15 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 
 ## Terraform resources deployed
 
-*Warning*: Microsoft begins billing as soon as the service key is created, which is why we advise that you wait until your cross connect is established first.
+> **Warning**: Microsoft begins billing as soon as the service key is created, which is why we advise that you wait until your cross connect is established first.
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"azurerm_resource_group"**: Create a resource group in Azure
-- resource **"azurerm_virtual_network"**: Create a Virtual Network (VNet)
-- resource **"azurerm_subnet"**: Create subnets for Virtual Network Gateway and VNet
-- resource **"packetfabric_cs_azure_hosted_connection"**: Create a Azure Hosted Cloud Connection
-- resource & data source **"azurerm_express_route_circuit"**: Create an ExpressRoute circuit
-- resource **"azurerm_express_route_circuit_peering"**: Configure peering
-- resources **"azurerm_public_ip"** and **"azurerm_virtual_network_gateway"**: Create a virtual network gateway for ExpressRoute
-- resource **"azurerm_virtual_network_gateway_connection"**: Link a virtual network gateway to the ExpressRoute circuit
+- "random_pet"
+- "azurerm_resource_group"
+- "azurerm_virtual_network"
+- "azurerm_subnet"
+- "azurerm_express_route_circuit"
+- "packetfabric_cs_azure_hosted_connection"
+- "azurerm_express_route_circuit_peering"
 
 **Estimated time:** ~5 min for Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
 
@@ -59,7 +57,7 @@ az provider register -n Microsoft.Network
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

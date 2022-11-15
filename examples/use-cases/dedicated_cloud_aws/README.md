@@ -15,23 +15,16 @@ to automate the creation of a Dedicated Cloud Connection between PacketFabric an
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"aws_vpc"**: Create a VPC
-- resource **"aws_subnet"**: Create subnet in the VPC
-- resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
-- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (or Private VIF - Virtual Interface)
-- resource **"aws_route_table"**: Create route table for the VPCs
-- resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
-- resource & data source **"packetfabric_cs_aws_dedicated_connection"**: Create a AWS Dedicated Cloud Connection 
-<!--  - data source **"packetfabric_locations"**: Get PacketFabric available locations -->
-<!--  - data source **"aws_dx_locations"**: Get AWS available locations -->
-<!--  - resource & data source **"aws_dx_connection"**: Create a Direct Connect Connection in AWS -->
-<!--  - resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side -->
-<!--  - resource **"packetfabric_outbound_cross_connect"**: Customer Inbound/PacketFabric Outbound Cross Connect using AWS LOA -->
-<!--  - resource **"packetfabric_backbone_virtual_circuit"**: Create a Backbone Virtual Circuit between a port and the AWS Dedicated Cloud interface  -->
-<!--  - resource **"aws_dx_gateway"**: Create Direct Connect Gateways -->
-<!--  - resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces -->
-<!--  - resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with a Virtual Private Gateways (VPG) -->
+- "random_pet"
+- "aws_vpc"
+- "aws_subnet"
+- "aws_internet_gateway"
+- "aws_vpn_gateway"
+- "aws_vpn_gateway_attachment"
+- "aws_route_table"
+- "aws_route_table_association"
+- "packetfabric_cs_aws_dedicated_connection"
+- "aws_dx_connection"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -40,7 +33,6 @@ to automate the creation of a Dedicated Cloud Connection between PacketFabric an
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
 - Don't have an AWS Account? [Get Started](https://aws.amazon.com/free/)
-    - Permissions required: VPC, EC2, Direct Connect
 
 ## Prerequisites
 
@@ -59,7 +51,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

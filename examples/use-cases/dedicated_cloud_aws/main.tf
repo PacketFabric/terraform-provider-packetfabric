@@ -28,7 +28,7 @@ resource "random_pet" "name" {}
 # Create the VPCs
 resource "aws_vpc" "vpc_1" {
   provider             = aws
-  cidr_block           = var.vpc_cidr1
+  cidr_block           = var.aws_vpc_cidr1
   enable_dns_hostnames = true
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -39,7 +39,7 @@ resource "aws_vpc" "vpc_1" {
 resource "aws_subnet" "subnet_1" {
   provider   = aws
   vpc_id     = aws_vpc.vpc_1.id
-  cidr_block = var.subnet_cidr1
+  cidr_block = var.aws_subnet_cidr1
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
@@ -252,8 +252,7 @@ resource "aws_dx_connection" "current_1" {
 #   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
 #   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
 #   allowed_prefixes = [
-#     var.vpc_cidr1,
-#     var.vpc_cidr2
+#     var.aws_vpc_cidr1
 #   ]
 #   depends_on = [
 #     aws_dx_private_virtual_interface.direct_connect_vip_1
