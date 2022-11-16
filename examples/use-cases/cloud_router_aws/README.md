@@ -1,7 +1,7 @@
 # Use Case: PacketFabric Cloud Router with AWS
 
 This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
-Terraform providers used: PacketFabric and AWS.
+Terraform providers used: PacketFabric and AWS. This example uses AWS Private VIF & Gateway.
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
@@ -15,38 +15,31 @@ Terraform providers used: PacketFabric and AWS.
 
 ## Terraform resources deployed
 
-This example uses AWS Private Gateway, if you want to see an example with AWS Transit Gatway, 
-comment the code in `aws_private_gateway.tf` and `aws_dx_private_vif.tf` and comment out 
-the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf`.
-
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"aws_vpc"**: Create VPC in 2 AWS regions
-- resource **"aws_subnet"**: Create subnet in VPCs
-- resource **"aws_internet_gateway"**: Create internet gateway (used to access future EC2 instances)
-- resource **"aws_vpn_gateway"**: Create Virtual Private Gateway (used with Private VIF - Virtual Interface)
-- resource **"aws_ec2_transit_gateway"**: Create Virtual Transit Gateway (used with Transit VIF - Virtual Interface) (**code commented**)
-- resource **"aws_ec2_transit_gateway_vpc_attachment"**: Attached the Virtual Transit Gateway to a VPC (**code commented**)
-- resource **"aws_route_table"**: Create route table for the VPCs
-- resource **"aws_route_table_association"**: Associate Route Table to the VPCs subnets
-- resource **"aws_security_group"**: Create Security groups for future EC2 instances
-- resource **"aws_network_interface"**: Create NICs for future EC2 instances
-- resource **"aws_key_pair"**: Create SSH key Pair for future EC2 instances
-- resource **"aws_instance"**: Create demo EC2 instances with [iperf3](https://github.com/esnet/iperf) and [locust](https://locust.io/)
-- resource **"aws_eip"**: Associate a Public IP to the EC2 instances (so you can access it)
-- resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_cloud_router_connection_aws"**: Add AWS Direct Connect to the Cloud Router
-- resource **"time_sleep"**: Wait few seconds for the Connections to appear on AWS side
-- data source **"aws_dx_connection"**: Retrieve Direct Connect Connection details
-- resource **"aws_dx_connection_confirmation"**: Accept the connections coming from PacketFabric
-- resource **"aws_dx_gateway"**: Create Direct Connect Gateways
-- resource **"aws_dx_private_virtual_interface"**: Create Direct Connect Private Virtual interfaces
-- resource **"aws_dx_transit_virtual_interface"**: Create Direct Connect Transit Virtual interfaces (**code commented**)
-- resource **"aws_dx_gateway_association"**: Associates a Direct Connect Gateway with s Virtual Private Gateway or Virtual Transit Gateway
-- resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
+- "aws_dx_gateway"
+- "aws_dx_private_virtual_interface"
+- "aws_dx_gateway_association"
+- "aws_security_group"
+- "aws_network_interface"
+- "aws_key_pair"
+- "aws_instance"
+- "aws_eip"
+- "aws_vpn_gateway"
+- "aws_vpn_gateway_attachment"
+- "aws_route_table"
+- "aws_vpc"
+- "aws_subnet"
+- "aws_internet_gateway"
+- "aws_route_table_association"
+- "packetfabric_cloud_router"
+- "packetfabric_cloud_router_connection_aws"
+- "time_sleep"
+- "aws_dx_connection_confirmation"
+- "packetfabric_cloud_router_bgp_session"
+- "random_pet"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
-**Warning**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: AWS region ``us-west-1`` is the closest to PacketFabric pop ``LAX1``.
+**Note**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: AWS region ``us-west-1`` is the closest to PacketFabric pop ``LAX1``.
 
 ## Before You Begin
 
@@ -72,7 +65,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars
@@ -90,10 +83,6 @@ Apply the plan:
 ```sh
 terraform apply -var-file="secret.tfvars"
 ```
-
-**Note 1:** You can edit the ``variables.tf`` file and change some of the default variables (default AWS regions used are ``us-west-1`` and ``us-east-1``, PacketFabric pops ``LAX1`` and ``NYC1``).
-
-**Note 2:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
 
 3. Either use and [locust](https://locust.io/) or [iperf3](https://github.com/esnet/iperf) to simulate traffic between the 2 EC2 instances in the 2 AWS regions.
 
@@ -114,6 +103,8 @@ If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the 
 terraform destroy -var-file="secret.tfvars"
 ```
 
+**Note:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
+
 ## Troubleshooting
 
 In case you get the following error:
@@ -123,8 +114,8 @@ In case you get the following error:
 │ Error: error waiting for Direct Connection Connection (dxcon-fgq3o1ff) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
 │ 
 │   with aws_dx_connection_confirmation.confirmation_2,
-│   on main.tf line 451, in resource "aws_dx_connection_confirmation" "confirmation_2":
-│  451: resource "aws_dx_connection_confirmation" "confirmation_2" {
+│   on cloud_router_connections.tf line 80, in resource "aws_dx_connection_confirmation" "confirmation_2":
+│  80: resource "aws_dx_connection_confirmation" "confirmation_2" {
 │ 
 ```
 
@@ -139,7 +130,7 @@ As a workaround, edit the `cloud_router_connections.tf` and comment out the foll
 # }
 ```
 
-Edit the `aws_dx_private_vif.tf` or `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -172,10 +163,6 @@ Example AWS Direct Connect gateway:
 Example Direct Connect Private Virtual interfaces:
 
 ![AWS Direct Connect Private Virtual interfaces](./images/aws_direct_connect_private_virtual_interfaces.png)
-
-Example PacketFabric Cloud Router AWS Connections:
-
-![PacketFabric Cloud Router AWS Connections](./images/packetfabric_cloud_router_connections_aws.png)
 
 Example AWS VPC Routing Table:
 

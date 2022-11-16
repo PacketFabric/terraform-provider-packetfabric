@@ -14,22 +14,22 @@ Terraform providers used: PacketFabric, IBM and Oracle.
 
 ## Terraform resources deployed
 
-- resource **"random_pet"**: Get a random pet name (use to name objects created)
-- resource **"ibm_resource_group"**: Create an IBM resource group
-- resource **"ibm_is_vpc"**: Create an IBM VPC
-- resource **"ibm_is_vpc_address_prefix"**: Create an IP address prefix.
-- resource **"ibm_is_subnet"**: Create an IBM Subnet in the VPC
-- resource **"oci_identity_compartment"**: Create an Oracle Compartment resource
-- resource **"oci_core_vcn"**: Create a new Virtual Cloud Network (VCN) in Oracle
-- resource **"oci_core_drg"**: Create an Oracle Dynamic Routing Gateway
-- resource **"oci_core_virtual_circuit""**: Create an Oracle FastConnect Connection
-- resource **"packetfabric_cloud_router"**: Create the Cloud Router in PacketFabric NaaS
-- resource & data source **"packetfabric_cloud_router_connection_ibm"**: Add an IBM Partner Connection to the Cloud Router
-- resource & data source **"packetfabric_cloud_router_connection_oracle"**: Add an Oracle FastConnect to the Cloud Router
-- resource **"packetfabric_cloud_router_bgp_session"**: Create BGP sessions in PacketFabric
+- "packetfabric_cloud_router"
+- "packetfabric_cloud_router_connection_ibm"
+- "ibm_dl_virtual_connection"
+- oci_core_drg"
+- "oci_core_virtual_circuit"
+- "packetfabric_cloud_router_connection_oracle"
+- "packetfabric_cloud_router_bgp_session"
+- "ibm_resource_group"
+- "ibm_is_vpc"
+- "ibm_is_vpc_address_prefix"
+- "ibm_is_subnet"
+- "oci_identity_compartment"
+- "oci_core_vcn"
+- "random_pet"
 
 **Estimated time:** ~15 min
-
 
 ## Before You Begin
 
@@ -54,7 +54,7 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed.
+1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 cp secret.tfvars.sample secret.tfvars

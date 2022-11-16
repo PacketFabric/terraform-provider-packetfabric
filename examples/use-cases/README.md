@@ -1,54 +1,53 @@
 # List of PacketFabric Use Cases
 
-- [backbone_virtual_circuit](./backbone_virtual_circuit): create ports and virtual circuit
-- [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh): create a mesh between virtual circuits
-- [cloud_router_aws](./cloud_router_aws): connect 2 AWS region using a Cloud Router
-- [cloud_router_google_ipsec](./cloud_router_google_ipsec): connect GCP and a branch location, on-premises users, or a remote data center using a Cloud Router
-- [cloud_router_google_azure](./cloud_router_google_azure): connect GCP and Azure Clouds using a Cloud Router
-- [cloud_router_ibm_oracle](./cloud_router_ibm_oracle): connect Oracle and IBM Clouds using a Cloud Router
-- [dedicated_cloud_aws](./dedicated_cloud_aws): create Dedicated Cloud Connection on AWS
-- [hosted_cloud_aws](./hosted_cloud_aws): create an AWS Hosted Cloud Connection
-- [hosted_cloud_google](./hosted_cloud_google): create a Google Hosted Cloud Connection
-- [hosted_cloud_azure](./hosted_cloud_azure): create an Azure Hosted Cloud Connection
-- [marketplace](./marketplace): create a Marketplace Request and Accept/Reject it
+Use Cases | Description
+--- | --- 
+[backbone_virtual_circuit](./backbone_virtual_circuit) | Create ports and virtual circuit
+[backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between virtual circuits
+[cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router (private VIF)
+[cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router
+[cloud_router_google_ipsec](./cloud_router_google_ipsec) | Connect Google Cloud and a branch location, on-premises users, or a remote data center using a Cloud Router
+[cloud_router_google_azure](./cloud_router_google_azure) | Connect Google and Azure Clouds using a Cloud Router
+[cloud_router_ibm_oracle](./cloud_router_ibm_oracle) | Connect Oracle and IBM Clouds using a Cloud Router
+[dedicated_cloud_aws](./dedicated_cloud_aws) | Create Dedicated Cloud Connection on AWS
+[hosted_cloud_aws](./hosted_cloud_aws) | Create an AWS Hosted Cloud Connection
+[hosted_cloud_google](./hosted_cloud_google) | Create a Google Hosted Cloud Connection
+[hosted_cloud_azure](./hosted_cloud_azure) | Create an Azure Hosted Cloud Connection
+[marketplace](./marketplace) | Create a Marketplace Request and Accept/Reject it
 
-# List of known issues on other terraform providers, please vote!
+# List of known issues on other terraform providers, please up vote!
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/25989)](https://github.com/hashicorp/terraform-provider-aws/issues/25989) aws_dx_public_virtual_interface does do dependency checks for amazon_address and customer_address
-  - **Impact**: AWS Hosted Cloud and Cloud Router using Public VIF
+**[AWS](https://registry.terraform.io/providers/hashicorp/aws/latest)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26335)](https://github.com/hashicorp/terraform-provider-aws/issues/26335) aws_dx_connection_confirmation add timeout and do not fail when state is available 
-  - **Impact**: AWS Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/25989)](https://github.com/hashicorp/terraform-provider-aws/issues/25989) aws_dx_public_virtual_interface does do dependency checks for amazon_address and customer_address (**impact**: AWS Hosted Cloud and Cloud Router using Public VIF)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26432)](https://github.com/hashicorp/terraform-provider-aws/issues/26432) New aws_dx_virtual_interface_router_configuration data source
-  - **Impact**: AWS Hosted Cloud
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26335)](https://github.com/hashicorp/terraform-provider-aws/issues/26335) aws_dx_connection_confirmation add timeout and do not fail when state is available (**impact**: AWS Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26919)](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter)
-  - **Impact**: AWS Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26919)](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter) (**impact**: AWS Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID
-  - **Impact**: AWS Hosted Cloud
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26436)](https://github.com/hashicorp/terraform-provider-aws/issues/26436) aws_dx_connection data source: add PDF LOA in base64 encoded (**impact**: AWS Dedicated Cloud
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26436)](https://github.com/hashicorp/terraform-provider-aws/issues/26436) aws_dx_connection data source: add PDF LOA in base64 encoded
-  - **Impact**: AWS Dedicated Cloud
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability (**impact**: AWS Dedicated Cloud)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability
-  - **Impact**: AWS Dedicated Cloud
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID (**impact**: AWS Hosted Cloud)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/11458)](https://github.com/hashicorp/terraform-provider-google/issues/11458) Expose bgpPeers from google_compute_router
-  - **Impact**: Google Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26432)](https://github.com/hashicorp/terraform-provider-aws/issues/26432) New aws_dx_virtual_interface_router_configuration data source (**impact**: AWS Hosted Cloud)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12624)](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment 
-  - **Impact**: Google Hosted Cloud and Cloud Router
+**[Google Cloud](https://registry.terraform.io/providers/hashicorp/google/latest)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12630)](https://github.com/hashicorp/terraform-provider-google/issues/12630) New google_compute_router_peer_asn_update resource for Partner Interconnect
-  - **Impact**: Google Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/11458)](https://github.com/hashicorp/terraform-provider-google/issues/11458) Expose bgpPeers from google_compute_router (**impact**: Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12631)](https://github.com/hashicorp/terraform-provider-google/issues/12631) google_compute_interconnect_attachment  Error 400: The resource is not ready
-  - **Impact**: Google Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12624)](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment (**impact**: Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform/27360)](https://github.com/hashicorp/terraform/issues/27360) Add support for lifecycle meta-argument in modules
-  - **Impact**: Google Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12630)](https://github.com/hashicorp/terraform-provider-google/issues/12630) New google_compute_router_peer_asn_update resource for Partner Interconnect (**impact**: Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/IBM-Cloud/terraform-provider-ibm/3978)](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept
-  - **Impact**: IBM Hosted Cloud and Cloud Router
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12631)](https://github.com/hashicorp/terraform-provider-google/issues/12631) google_compute_interconnect_attachment  Error 400: The resource is not ready (**impact**: Google Hosted Cloud and Cloud Router)
+
+**[IBM](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest)**
+
+- [![Issues](https://img.shields.io/github/issues/detail/state/IBM-Cloud/terraform-provider-ibm/3978)](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept (**impact**: IBM Hosted Cloud and Cloud Router)
+
+
+**[Terraform](https://www.terraform.io/)**
+
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform/27360)](https://github.com/hashicorp/terraform/issues/27360) Add support for lifecycle meta-argument in modules (**impact**: Google Cloud Router)

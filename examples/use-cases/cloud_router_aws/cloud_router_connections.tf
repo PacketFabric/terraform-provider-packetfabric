@@ -102,12 +102,12 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_1.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_1.bgp_auth_key
   prefixes {
-    prefix = var.vpc_cidr2
+    prefix = var.aws_vpc_cidr2
     type   = "out" # Allowed Prefixes to Cloud
     order  = 0
   }
   prefixes {
-    prefix = var.vpc_cidr1
+    prefix = var.aws_vpc_cidr1
     type   = "in" # Allowed Prefixes from Cloud
     order  = 0
   }
@@ -128,12 +128,12 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_2.customer_address # PF side
   md5            = aws_dx_private_virtual_interface.direct_connect_vip_2.bgp_auth_key
   prefixes {
-    prefix = var.vpc_cidr1
+    prefix = var.aws_vpc_cidr1
     type   = "out" # Allowed Prefixes to Cloud
     order  = 0
   }
   prefixes {
-    prefix = var.vpc_cidr2
+    prefix = var.aws_vpc_cidr2
     type   = "in" # Allowed Prefixes from Cloud
     order  = 0
   }
@@ -142,15 +142,16 @@ output "packetfabric_cloud_router_bgp_session_crbs_2" {
   value = packetfabric_cloud_router_bgp_session.crbs_2
 }
 
-data "packetfabric_cloud_router_connections" "all_crc" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
+# # just informative
+# data "packetfabric_cloud_router_connections" "all_crc" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_cloud_router.cr.id
 
-  depends_on = [
-    packetfabric_cloud_router_bgp_session.crbs_1,
-    packetfabric_cloud_router_bgp_session.crbs_2
-  ]
-}
-output "packetfabric_cloud_router_connections" {
-  value = data.packetfabric_cloud_router_connections.all_crc
-}
+#   depends_on = [
+#     packetfabric_cloud_router_bgp_session.crbs_1,
+#     packetfabric_cloud_router_bgp_session.crbs_2
+#   ]
+# }
+# output "packetfabric_cloud_router_connections" {
+#   value = data.packetfabric_cloud_router_connections.all_crc
+# }

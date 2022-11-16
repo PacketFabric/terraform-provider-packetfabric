@@ -1,25 +1,42 @@
-# Use Case: PacketFabric Cloud Router with Google and a VPN Connection
+# Use Case: PacketFabric Cloud Router with AWS and Google
 
-This use case builds a PacketFabric Cloud Router between Google Cloud Platform and a branch location, on-premises users, or a remote data center.
-Terraform providers used: PacketFabric VPN connection and Google.
+This use case builds a PacketFabric Cloud Router between AWS and Google Cloud Platform.
+Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Transit VIF & Gateway.
 
-![Deployment Diagram](./images/diagram_cloud_router_google_vpn.png)
+![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Cloud Router Docs](https://docs.packetfabric.com/cr/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
+- [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Terraform resources deployed
 
+- "aws_dx_gateway"
+- "aws_dx_transit_virtual_interface"
+- "aws_dx_gateway_association"
+- "aws_security_group"
+- "aws_network_interface"
+- "aws_key_pair"
+- "aws_instance"
+- "aws_eip"
+- "aws_ec2_transit_gateway"
+- "aws_ec2_transit_gateway_vpc_attachment"
+- "aws_vpc"
+- "aws_subnet"
+- "aws_internet_gateway"
+- "aws_route_table_association"
 - "packetfabric_cloud_router"
+- "packetfabric_cloud_router_connection_aws"
+- "time_sleep"
+- "aws_dx_connection_confirmation"
 - "google_compute_router"
 - "google_compute_interconnect_attachment"
 - "packetfabric_cloud_router_connection_google"
-- "packetfabric_cloud_router_connection_ipsec"
 - "packetfabric_cloud_router_bgp_session"
 - "google_compute_firewall"
 - "google_compute_instance"
@@ -27,7 +44,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - "google_compute_subnetwork"
 - "random_pet"
 
-**Estimated time:** ~5 min for Google & PacketFabric resources
+**Estimated time:** ~10 min for Google, AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Transit Gateway
 
 **Note**: Because the BGP session is created automatically, we use gcloud terraform module to retreive the BGP addresses and set the PacketFabric Cloud Router ASN in the BGP settings in the Google Cloud Router. Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/11458), [vote](https://github.com/hashicorp/terraform-provider-google/issues/12624) and [vote](https://github.com/hashicorp/terraform-provider-google/issues/12630) for these issues on GitHub.
 
@@ -35,6 +52,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
+- Don't have an AWS Account? [Get Started](https://aws.amazon.com/free/)
 - Don't have an Google Account? [Get Started](https://cloud.google.com/free)
 
 ## Prerequisites
@@ -48,8 +66,9 @@ Make sure you have installed all of the following prerequisites on your machine:
 
 Make sure you have the following items available:
 
+- [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
+- [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [IPsec information for the Site-to-Site VPN](https://docs.packetfabric.com/cr/vpn/)
 - [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
@@ -103,12 +122,45 @@ terraform state rm module.gcloud_bgp_addresses
 terraform state rm module.gcloud_bgp_peer_update
 ```
 
-## Screenshots
+3. In case you get the following error:
 
-Example Google Interconnect (VLAN attachment) in Google Cloud Console:
+```
+╷
+│ Error: error waiting for Direct Connection Connection (dxcon-fgohxwui) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
+│ 
+│   with aws_dx_connection_confirmation.confirmation_1,
+│   on cloud_router_connection_aws.tf line 46, in resource "aws_dx_connection_confirmation" "confirmation_1":
+│   46: resource "aws_dx_connection_confirmation" "confirmation_1" {
+│ 
+```
 
-![VLAN attachment in Google Cloud Console](./images/google_interconnect.png)
+You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
 
-Example Google Cloud Router in Google Cloud Console:
+As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the following resource:
 
-![VLAN attachment in Google Cloud Console](./images/google_cloud_router.png)
+```
+# resource "aws_dx_connection_confirmation" "confirmation_1" {
+#   provider      = aws
+#   connection_id = data.aws_dx_connection.current_1.id
+# }
+```
+
+Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connection_aws` data source: 
+
+```
+data "packetfabric_cloud_router_connections" "current" {
+  provider   = packetfabric
+  circuit_id = packetfabric_cloud_router.cr.id
+
+  depends_on = [
+    aws_dx_connection_confirmation.confirmation_1,
+    # aws_dx_connection_confirmation.confirmation_2,
+  ]
+}
+```
+
+Then remove the `confirmation_1` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
+```
+terraform state rm aws_dx_connection_confirmation.confirmation_1
+terraform apply -var-file="secret.tfvars"
+```
