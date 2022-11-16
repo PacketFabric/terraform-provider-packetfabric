@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "security_group_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-sec-group1"
+  name                = "${var.tag_name}-${random_pet.name.id}-sg1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   security_rule {
