@@ -200,7 +200,7 @@ func (c *PFClient) GetBgpSessionBy(cID, cloudConnID, bgpSettingsUUID string) (*B
 func (c *PFClient) UpdateBgpSession(bgpSession BgpSession, cID, connCID string) (*http.Response, *BgpSessionCreateResp, error) {
 	formatedURI := fmt.Sprintf(bgpSessionCloudRouterURI, cID, connCID)
 	expectedResp := &BgpSessionCreateResp{}
-	resp, err := c.sendRequest(formatedURI, patchMethod, bgpSession, expectedResp)
+	resp, err := c.sendRequest(formatedURI, putMethod, bgpSession, expectedResp)
 	if err != nil {
 		return nil, nil, err
 	}
