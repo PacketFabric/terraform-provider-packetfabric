@@ -1,6 +1,6 @@
 resource "aws_security_group" "ingress_all_1" {
   provider = aws
-  name     = "allow-icmp-ssh-http-locust-iperf-sg"
+  name     = "${var.tag_name}-${random_pet.name.id}-allow-icmp-ssh-http-locust-iperf"
   vpc_id   = aws_vpc.vpc_1.id
   ingress {
     from_port   = 22
