@@ -1,6 +1,6 @@
 resource "google_compute_firewall" "ssh-rule" {
   provider = google
-  name     = "allow-icmp-ssh-http-locust-iperf"
+  name     = "${var.tag_name}-${random_pet.name.id}-allow-icmp-ssh-http-locust-iperf"
   network  = google_compute_network.vpc_1.name
   allow {
     protocol = "icmp"
