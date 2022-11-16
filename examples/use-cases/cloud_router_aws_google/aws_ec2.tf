@@ -52,6 +52,10 @@ resource "aws_network_interface" "nic1" {
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  # need to wait for the route table to be attached to the VPC before we start building the EC2 instance
+  depends_on = [
+    aws_route_table_association.route_association_1
+  ]
 }
 
 # Create the Key Pair

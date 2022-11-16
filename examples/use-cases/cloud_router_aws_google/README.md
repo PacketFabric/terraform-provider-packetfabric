@@ -159,7 +159,7 @@ data "packetfabric_cloud_router_connections" "current" {
 }
 ```
 
-Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
+Then remove the `confirmation_1` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform state rm aws_dx_connection_confirmation.confirmation_1
 terraform apply -var-file="secret.tfvars"
