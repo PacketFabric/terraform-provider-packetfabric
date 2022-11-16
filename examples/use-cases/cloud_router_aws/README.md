@@ -1,7 +1,7 @@
 # Use Case: PacketFabric Cloud Router with AWS
 
 This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
-Terraform providers used: PacketFabric and AWS.
+Terraform providers used: PacketFabric and AWS. This example uses AWS Private VIF & Gateway.
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
@@ -14,11 +14,6 @@ Terraform providers used: PacketFabric and AWS.
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Terraform resources deployed
-
-This example uses AWS Private Gateway, if you want to see an example with AWS Transit Gatway, 
-comment the code in `aws_private_gateway.tf` and `aws_dx_private_vif.tf` and comment out 
-the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf`. 
-Finally update the `packetfabric_cloud_router_bgp_session` resource in `cloud_router_connections.tf`.
 
 - "aws_dx_gateway"
 - "aws_dx_private_virtual_interface"
@@ -135,7 +130,7 @@ As a workaround, edit the `cloud_router_connections.tf` and comment out the foll
 # }
 ```
 
-Edit the `aws_dx_private_vif.tf` or `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {

@@ -59,7 +59,6 @@ resource "aws_route_table" "route_table_1" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw_1.id
   }
-  # Comment when using Transit Gateway
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
@@ -73,7 +72,6 @@ resource "aws_route_table" "route_table_2" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw_2.id
   }
-  # Comment when using Transit Gateway
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_2.id}"]
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"

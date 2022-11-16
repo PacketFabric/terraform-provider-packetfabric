@@ -4,10 +4,10 @@ Use Cases | Description
 --- | --- 
 [backbone_virtual_circuit](./backbone_virtual_circuit) | Create ports and virtual circuit
 [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between virtual circuits
-[cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router
-[cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS and GCP Clouds using a Cloud Router
-[cloud_router_google_ipsec](./cloud_router_google_ipsec) | Connect GCP and a branch location, on-premises users, or a remote data center using a Cloud Router
-[cloud_router_google_azure](./cloud_router_google_azure) | Connect GCP and Azure Clouds using a Cloud Router
+[cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router (private VIF)
+[cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router
+[cloud_router_google_ipsec](./cloud_router_google_ipsec) | Connect Google Cloud and a branch location, on-premises users, or a remote data center using a Cloud Router
+[cloud_router_google_azure](./cloud_router_google_azure) | Connect Google and Azure Clouds using a Cloud Router
 [cloud_router_ibm_oracle](./cloud_router_ibm_oracle) | Connect Oracle and IBM Clouds using a Cloud Router
 [dedicated_cloud_aws](./dedicated_cloud_aws) | Create Dedicated Cloud Connection on AWS
 [hosted_cloud_aws](./hosted_cloud_aws) | Create an AWS Hosted Cloud Connection

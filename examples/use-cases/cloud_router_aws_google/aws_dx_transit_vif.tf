@@ -34,6 +34,10 @@ resource "aws_dx_transit_virtual_interface" "direct_connect_vip_1" {
   depends_on = [
     data.packetfabric_cloud_router_connections.current
   ]
+  timeouts {
+    create = "2h"
+    delete = "2h"
+  }
   lifecycle {
     ignore_changes = [
       connection_id

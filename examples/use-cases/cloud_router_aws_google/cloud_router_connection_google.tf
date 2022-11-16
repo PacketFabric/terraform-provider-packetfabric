@@ -122,12 +122,12 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   remote_address = data.local_file.cloud_router_ip_address.content    # Google side
   l3_address     = data.local_file.customer_router_ip_address.content # PF side
   prefixes {
-    prefix = var.gcp_subnet_cidr1
+    prefix = var.aws_vpc_cidr1
     type   = "out" # Allowed Prefixes to Cloud
     order  = 0
   }
   prefixes {
-    prefix = var.aws_vpc_cidr1
+    prefix = var.gcp_subnet_cidr1
     type   = "in" # Allowed Prefixes from Cloud
     order  = 0
   }
