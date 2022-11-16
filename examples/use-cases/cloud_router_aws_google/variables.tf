@@ -41,8 +41,13 @@ variable "gcp_subnet_cidr1" {
 ## AWS VARs
 variable "amazon_side_asn1" {
   type        = number
-  description = "ASN for 1st VPC in AWS Region 1. Used in BGP session"
+  description = "Direct Connect Gateway ASN. Used in BGP session"
   default     = 64532 # private (64512 to 65534)
+}
+variable "amazon_side_asn2" {
+  type        = number
+  description = "Transit Gateway ASN. (must be different than Direct Connect Gateway)"
+  default     = 64533 # private (64512 to 65534)
 }
 # Make sure you set the correct AWS region based on the PacketFabric pop selected
 # Find details on location https://packetfabric.com/locations/cloud-on-ramps and https://aws.amazon.com/directconnect/locations/)

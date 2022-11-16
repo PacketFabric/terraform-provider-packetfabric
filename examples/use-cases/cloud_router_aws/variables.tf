@@ -13,12 +13,12 @@ variable "public_key" {
 ## AWS VARs
 variable "amazon_side_asn1" {
   type        = number
-  description = "ASN for 1st VPC in AWS Region 1. Used in BGP session"
+  description = "Direct Connect Gateway ASN Region 1. Used in BGP session. Also set in Virtual Private Gateway 1."
   default     = 64532 # private (64512 to 65534)
 }
 variable "amazon_side_asn2" { # used in BGP session
   type        = number
-  description = "ASN for 1st VPC in AWS Region 2. Used in BGP session"
+  description = "Direct Connect Gateway ASN Region 2. Used in BGP session. Also set in Virtual Private Gateway 2."
   default     = 64533 # private (64512 to 65534)
 }
 # Make sure you set the correct AWS region based on the PacketFabric pop selected

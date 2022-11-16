@@ -2,7 +2,7 @@
 resource "aws_ec2_transit_gateway" "transit_gw_1" {
   provider        = aws
   description = "${var.tag_name}-${random_pet.name.id}"
-  amazon_side_asn = var.amazon_side_asn1
+  amazon_side_asn = var.amazon_side_asn2
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }

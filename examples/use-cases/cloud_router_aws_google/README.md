@@ -1,7 +1,7 @@
 # Use Case: PacketFabric Cloud Router with AWS and Google
 
 This use case builds a PacketFabric Cloud Router between AWS and Google Cloud Platform.
-Terraform providers used: PacketFabric, AWS and Google.
+Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Transit VIF & Gateway.
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
@@ -15,9 +15,6 @@ Terraform providers used: PacketFabric, AWS and Google.
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Terraform resources deployed
-
-This example uses AWS Transit Gateway, if you want to see an example with AWS Private Gateway, 
-comment the code in `aws_transit_gateway.tf` and `aws_dx_transit_vif.tf` and comment out the code in `aws_private_gateway.tf` and `aws_dx_private_vif.tf`. Finally update the `packetfabric_cloud_router_bgp_session` resource in `cloud_router_connection_aws.tf`.
 
 - "aws_dx_gateway"
 - "aws_dx_transit_virtual_interface"
@@ -148,7 +145,7 @@ As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the f
 # }
 ```
 
-Edit the `aws_dx_transit_vif.tf` or `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connection_aws` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -162,7 +159,7 @@ data "packetfabric_cloud_router_connections" "current" {
 }
 ```
 
-Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
+Then remove the `confirmation_1` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform state rm aws_dx_connection_confirmation.confirmation_1
 terraform apply -var-file="secret.tfvars"

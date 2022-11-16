@@ -63,21 +63,16 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn1
   orlonger       = var.pf_crbs_orlonger
-  # Private VIF
-  # remote_address = aws_dx_private_virtual_interface.direct_connect_vip_1.amazon_address   # AWS side
-  # l3_address     = aws_dx_private_virtual_interface.direct_connect_vip_1.customer_address # PF side
-  # md5            = aws_dx_private_virtual_interface.direct_connect_vip_1.bgp_auth_key
-  # Transit VIF
   remote_address = aws_dx_transit_virtual_interface.direct_connect_vip_1.amazon_address   # AWS side
   l3_address     = aws_dx_transit_virtual_interface.direct_connect_vip_1.customer_address # PF side
   md5            = aws_dx_transit_virtual_interface.direct_connect_vip_1.bgp_auth_key
   prefixes {
-    prefix = var.aws_vpc_cidr1
+    prefix = var.gcp_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
     order  = 0
   }
   prefixes {
-    prefix = var.gcp_subnet_cidr1
+    prefix = var.aws_vpc_cidr1
     type   = "in" # Allowed Prefixes from Cloud
     order  = 0
   }
