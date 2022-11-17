@@ -110,7 +110,6 @@ func Provider() *schema.Provider {
 		// packetfabric_billing - https://docs.packetfabric.com/api/v2/redoc/#operation/get_order
 		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
-<<<<<<< HEAD
 			"packetfabric_cloud_router":                  dataSourceCloudRouter(),
 			"packetfabric_cloud_router_connections":      dataSourceCloudConn(),
 			"packetfabric_cloud_router_bgp_session":      dataSourceBgpSession(),
@@ -129,26 +128,6 @@ func Provider() *schema.Provider {
 			"packetfabric_marketplace_service_requests":  dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":              datasourceBackboneServices(),
 			"packetfabric_point_to_point":                datasourcePointToPoint(),
-=======
-			"packetfabric_cloud_router":                   dataSourceCloudRouter(),
-			"packetfabric_cloud_router_connections":       dataSourceCloudConn(),
-			"packetfabric_cloud_router_bgp_session":       dataSourceBgpSession(),
-			"packetfabric_cs_aws_hosted_connection":       dataSourceCloudServicesConnInfo(),
-			"packetfabric_cs_dedicated_connections":       datasourceDedicatedConn(),
-			"packetfabric_billing":                        dataSourceBilling(),
-			"packetfabric_port":                           datasourceInterfaces(),
-			"packetfabric_locations":                      dataSourceLocations(),
-			"packetfabric_link_aggregation_group":         datasourceLinkAggregationGroups(),
-			"packetfabric_outbound_cross_connect":         dataSourceOutboundCrossConnect(),
-			"packetfabric_cs_google_hosted_connection":    dataSourceCloudServicesConnInfo(),
-			"packetfabric_cs_azure_hosted_connection":     dataSourceCloudServicesConnInfo(),
-			"packetfabric_cs_oracle_hosted_connection":    dataSourceCloudServicesConnInfo(),
-			"packetfabric_cloud_router_connection_ipsec":  datasourceIPSec(),
-			"packetfabric_activitylog":                    datasourceActivityLog(),
-			"packetfabric_marketplace_service_requests":   dataSourceVcRequests(),
-			"packetfabric_virtual_circuits":               datasourceBackboneServices(),
-			"packetfabric_point_to_point":                 datasourcePointToPoint(),
->>>>>>> bfc2eba (Simplify dedicated connections)
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
