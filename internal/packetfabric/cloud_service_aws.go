@@ -143,10 +143,11 @@ type AwsCloudConnInfo struct {
 		Pop    string `json:"pop"`
 		Region string `json:"region"`
 	} `json:"cloud_provider"`
-	TimeCreated string `json:"time_created"`
-	TimeUpdated string `json:"time_updated"`
-	Pop         string `json:"pop"`
-	Site        string `json:"site"`
+	TimeCreated      string `json:"time_created"`
+	TimeUpdated      string `json:"time_updated"`
+	Pop              string `json:"pop"`
+	Site             string `json:"site"`
+	IsAwaitingOnramp bool   `json:"is_awaiting_onramp"`
 }
 
 type CloudServiceConnCreateResp struct {
@@ -167,6 +168,7 @@ type CloudServiceConnCreateResp struct {
 	Billing                 Billing     `json:"billing,omitempty"`
 	Components              Components  `json:"components,omitempty"`
 	IsCloudRouterConnection bool        `json:"is_cloud_router_connection,omitempty"`
+	IsAwaitingOnramp        bool        `json:"is_awaiting_onramp,omitempty"`
 	AzurePortCategory       string      `json:"azure_port_category,omitempty"`
 	Speed                   string      `json:"speed,omitempty"`
 }
@@ -282,6 +284,7 @@ type HostedConnResp struct {
 	Description             string             `json:"description,omitempty"`
 	State                   string             `json:"state,omitempty"`
 	IsCloudRouterConnection bool               `json:"is_cloud_router_connection,omitempty"`
+	IsAwaitingOnramp        bool               `json:"is_awaiting_onramp,omitempty"`
 	Speed                   string             `json:"speed,omitempty"`
 	Interfaces              []HostedInterfaces `json:"interfaces,omitempty"`
 }

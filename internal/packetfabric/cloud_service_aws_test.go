@@ -266,6 +266,7 @@ func _buildFakeCreateAwsProvisionReqResp() []byte {
 		"rate_limit_out": 1000,
 		"time_created": "2019-08-24T14:15:22Z",
 		"time_updated": "2019-08-24T14:15:22Z",
+		"is_awaiting_onramp" : false,
 		"interfaces": [
 		  {
 			"port_circuit_id": "PF-AP-LAX1-1234",
@@ -352,6 +353,7 @@ func _buildFakeGetCloudConnInfoResp() []byte {
 		},
 		"time_created": "2019-08-24T14:15:22Z",
 		"time_updated": "2019-08-24T14:15:22Z",
+		"is_awaiting_onramp" : false,
 		"pop": "LAS1",
 		"site": "Switch Las Vegas 7"
 	  }`, _cloudCircuitID, _customerUUID, _userUUID, _awsServiceConnDesc))
@@ -375,6 +377,7 @@ func _buildFakeGetCurrentCustomersHostedResp() []byte {
 		  "description": "AWS Service Connection",
 		  "state": "active",
 		  "is_cloud_router_connection": true,
+		  "is_awaiting_onramp" : false,
 		  "speed": "1Gbps",
 		  "interfaces": [
 			{

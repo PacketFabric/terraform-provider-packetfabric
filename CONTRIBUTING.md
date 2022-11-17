@@ -30,8 +30,8 @@
         * using real data `<resource_name>_test.go` under `internal/provider` (see [ACC](https://github.com/PacketFabric/terraform-provider-packetfabric#acceptance-tests))
     * Add/Update examples under `examples/resources` and/or `examples/data-sources` (used for the documentation)
     * Add/Update the templates used to generate the docs  under `templates`
-    * Generate the docs using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) (or update the necessary `*.md` under `docs/`)
-    * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric).
+    * Generate the docs using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) and verify `*.md` under `docs/`
+    * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
 
 * Create your own branch with your updates including code changes, test, examples and documentation. 
 
