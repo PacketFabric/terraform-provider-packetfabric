@@ -543,13 +543,6 @@ resource "random_pet" "name" {}
 #   should_create_lag = var.should_create_lag
 # }
 
-# data "packetfabric_cs_aws_dedicated_connection_conn" "current" {
-#   provider = packetfabric
-# }
-# output "packetfabric_cs_aws_dedicated_connection" {
-#   value = data.packetfabric_cs_aws_dedicated_connection_conn.current
-# }
-
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
 #   provider          = packetfabric
@@ -561,13 +554,6 @@ resource "random_pet" "name" {}
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
-# }
-
-# data "packetfabric_cs_google_dedicated_connection" "current" {
-#   provider = packetfabric
-# }
-# output "packetfabric_cs_google_dedicated_connection" {
-#   value = data.packetfabric_cs_google_dedicated_connection.current
 # }
 
 # # Azure Dedicated Connection
@@ -584,11 +570,11 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_cs_speed5
 # }
 
-# data "packetfabric_cs_azure_dedicated_connection" "current" {
+# data "packetfabric_cs_dedicated_connections" "current" {
 #   provider = packetfabric
 # }
-# output "packetfabric_cs_azure_dedicated_connection" {
-#   value = data.packetfabric_cs_azure_dedicated_connection.current
+# output "packetfabric_cs_dedicated_connection" {
+#   value = data.packetfabric_cs_dedicated_connections.current
 # }
 
 # #######################################
