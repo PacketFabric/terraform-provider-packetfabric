@@ -112,8 +112,9 @@ type CloudSettings struct {
 	NatPublicIP              string `json:"nat_public_ip,omitempty"`
 }
 type AwsCloudProvider struct {
-	Pop  string `json:"pop,omitempty"`
-	Site string `json:"site,omitempty"`
+	Pop    string `json:"pop,omitempty"`
+	Site   string `json:"site,omitempty"`
+	Region string `json:"region,omitempty"`
 }
 
 type CloudRouterSettings struct {

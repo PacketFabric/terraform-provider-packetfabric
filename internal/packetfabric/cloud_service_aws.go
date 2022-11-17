@@ -129,29 +129,6 @@ type DedicatedAwsConn struct {
 	Loa              interface{} `json:"load"`
 }
 
-type AwsCloudConnInfo struct {
-	CloudCircuitID  string `json:"cloud_circuit_id,omitempty"`
-	CustomerUUID    string `json:"customer_uuid,omitempty"`
-	UserUUID        string `json:"user_uuid,omitempty"`
-	State           string `json:"state,omitempty"`
-	ServiceProvider string `json:"service_provider,omitempty"`
-	ServiceClass    string `json:"service_class,omitempty"`
-	PortType        string `json:"port_type,omitempty"`
-	Speed           string `json:"speed,omitempty"`
-	Description     string `json:"description,omitempty"`
-	CloudProvider   struct {
-		Pop    string `json:"pop,omitempty"`
-		Region string `json:"region,omitempty"`
-	} `json:"cloud_provider,omitempty"`
-	TimeCreated      string `json:"time_created,omitempty"`
-	TimeUpdated      string `json:"time_updated,omitempty"`
-	Pop              string `json:"pop,omitempty"`
-	Site             string `json:"site,omitempty"`
-	CustomerSiteName string `json:"customer_site_name,omitempty"`
-	CustomerSiteCode string `json:"customer_site_code,omitempty"`
-	IsAwaitingOnramp bool   `json:"is_awaiting_onramp,omitempty"`
-}
-
 type CloudServiceConnCreateResp struct {
 	UUID                    string      `json:"uuid,omitempty"`
 	CustomerUUID            string      `json:"customer_uuid,omitempty"`
@@ -359,9 +336,9 @@ func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*Clou
 	return expectedResp, err
 }
 
-func (c *PFClient) GetCloudConnInfo(cID string) (*AwsCloudConnInfo, error) {
+func (c *PFClient) GetCloudConnInfo(cID string) (*CloudConnInfo, error) {
 	formatedURI := fmt.Sprintf(cloudConnectionInfoURI, cID)
-	resp := &AwsCloudConnInfo{}
+	resp := &CloudConnInfo{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, resp)
 	if err != nil {
 		return nil, err

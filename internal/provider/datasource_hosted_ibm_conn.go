@@ -17,6 +17,16 @@ func datasourceHostedIBMConn() *schema.Resource {
 				Required:    true,
 				Description: "The unique PF circuit ID for this connection\n\t\tExample: PF-AP-LAX1-1002",
 			},
+			"uuid": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The connection UUID.",
+			},
+			"account_uuid": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The account UUID.",
+			},
 			"customer_uuid": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -31,6 +41,74 @@ func datasourceHostedIBMConn() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The state of the connection.\n\t\tEnum: [ \"active\", \"deleting\", \"inactive\", \"pending\", \"requested\" ]",
+			},
+			"deleted": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "True if the service connection is deleted.",
+			},
+			"cloud_provider": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pop": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Point of Presence for the cloud provider location\n\t\tExample: LAX1",
+						},
+						"site": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Region short name\n\t\tExample: us-west-1",
+						},
+					},
+				},
+			},
+			"vlan_id_pf": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"vlan_id_cust": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"svlan_id_cust": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"account_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"gateway_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"port_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"bgp_asn": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"bgp_cer_cidr": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"bgp_ibm_cidr": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"subscription_term": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "The subscription term in months.",
 			},
 			"service_provider": {
 				Type:        schema.TypeString,
@@ -61,11 +139,6 @@ func datasourceHostedIBMConn() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Point of Presence for the cloud provider location.\n\t\tExample: DAL1",
-			},
-			"cloud_provider_region": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Region short name.\n\t\tExample: us-west-1",
 			},
 			"time_created": {
 				Type:        schema.TypeString,
@@ -102,6 +175,11 @@ func datasourceHostedIBMConn() *schema.Resource {
 				Optional:    true,
 				Description: "True if this connection is waiting on RAMP",
 			},
+			"is_cloud_router_connection": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "True if this is a cloud router connection",
+			},
 		},
 	}
 }
@@ -119,23 +197,39 @@ func dataSourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 	if ibmConn != nil {
+		_ = d.Set("cloud_circuit_id", ibmConn.CloudCircuitID)
+		_ = d.Set("uuid", ibmConn.UUID)
 		_ = d.Set("customer_uuid", ibmConn.CustomerUUID)
 		_ = d.Set("user_uuid", ibmConn.UserUUID)
+		_ = d.Set("account_uuid", ibmConn.AccountUUID)
 		_ = d.Set("state", ibmConn.State)
 		_ = d.Set("service_provider", ibmConn.ServiceProvider)
 		_ = d.Set("service_class", ibmConn.ServiceClass)
 		_ = d.Set("port_type", ibmConn.PortType)
+		_ = d.Set("deleted", ibmConn.Deleted)
 		_ = d.Set("speed", ibmConn.Speed)
 		_ = d.Set("description", ibmConn.Description)
 		_ = d.Set("cloud_provider_pop", ibmConn.CloudProvider.Pop)
-		_ = d.Set("cloud_provider_region", ibmConn.CloudProvider.Region)
 		_ = d.Set("time_created", ibmConn.TimeCreated)
 		_ = d.Set("time_updated", ibmConn.TimeUpdated)
 		_ = d.Set("pop", ibmConn.Pop)
 		_ = d.Set("site", ibmConn.Site)
+		_ = d.Set("subscription_term", ibmConn.SubscriptionTerm)
 		_ = d.Set("customer_site_name", ibmConn.CustomerSiteName)
 		_ = d.Set("customer_site_code", ibmConn.CustomerSiteCode)
 		_ = d.Set("is_awaiting_onramp", ibmConn.IsAwaitingOnramp)
+		_ = d.Set("is_cloud_router_connection", ibmConn.IsCloudRouterConnection)
+		_ = d.Set("cloud_provider", flattenCloudProvider(&ibmConn.CloudProvider))
+		_ = d.Set("vlan_id_pf", ibmConn.Settings.VlanIDPf)
+		_ = d.Set("vlan_id_cust", ibmConn.Settings.VlanIDCust)
+		_ = d.Set("svlan_id_cust", ibmConn.Settings.SvlanIDCust)
+		_ = d.Set("account_id", ibmConn.Settings.AccountID)
+		_ = d.Set("gateway_id", ibmConn.Settings.GatewayID)
+		_ = d.Set("port_id", ibmConn.Settings.PortID)
+		_ = d.Set("name", ibmConn.Settings.Name)
+		_ = d.Set("bgp_asn", ibmConn.Settings.BgpAsn)
+		_ = d.Set("bgp_cer_cidr", ibmConn.Settings.BgpCerCidr)
+		_ = d.Set("bgp_ibm_cidr", ibmConn.Settings.BgpIbmCidr)
 		d.SetId(cCID.(string))
 	}
 	return diags

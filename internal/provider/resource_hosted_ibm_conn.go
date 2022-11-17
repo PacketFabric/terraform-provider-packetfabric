@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -116,6 +117,12 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	var diags diag.Diagnostics
 	ibmConn := extractHostedIBMConn(d)
 	expectedResp, err := c.CreateHostedIBMConn(ibmConn)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	b := make(map[string]interface{})
+	b["ibm"] = expectedResp
+	tflog.Debug(ctx, "\n#### CREATED IBM CONN", b)
 	createOk := make(chan bool)
 	defer close(createOk)
 	ticker := time.NewTicker(10 * time.Second)
@@ -143,7 +150,7 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(packetfabric.PFClient)
+	c := m.(*packetfabric.PFClient)
 	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 

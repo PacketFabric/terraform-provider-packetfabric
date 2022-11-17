@@ -54,7 +54,7 @@ func Test_UpdateAwsServiceConn(t *testing.T) {
 }
 
 func Test_GetCloudConnInfo(t *testing.T) {
-	var expectedResp AwsCloudConnInfo
+	var expectedResp CloudConnInfo
 	_ = json.Unmarshal(_buildFakeGetCloudConnInfoResp(), &expectedResp)
 	cTest.runFakeHttpServer(_callGetCloudConnInfo, nil, expectedResp, _buildFakeGetCloudConnInfoResp(), "test-get-cloud-conn-info", t)
 }
