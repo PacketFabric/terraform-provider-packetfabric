@@ -130,24 +130,26 @@ type DedicatedAwsConn struct {
 }
 
 type AwsCloudConnInfo struct {
-	CloudCircuitID  string `json:"cloud_circuit_id"`
-	CustomerUUID    string `json:"customer_uuid"`
-	UserUUID        string `json:"user_uuid"`
-	State           string `json:"state"`
-	ServiceProvider string `json:"service_provider"`
-	ServiceClass    string `json:"service_class"`
-	PortType        string `json:"port_type"`
-	Speed           string `json:"speed"`
-	Description     string `json:"description"`
+	CloudCircuitID  string `json:"cloud_circuit_id,omitempty"`
+	CustomerUUID    string `json:"customer_uuid,omitempty"`
+	UserUUID        string `json:"user_uuid,omitempty"`
+	State           string `json:"state,omitempty"`
+	ServiceProvider string `json:"service_provider,omitempty"`
+	ServiceClass    string `json:"service_class,omitempty"`
+	PortType        string `json:"port_type,omitempty"`
+	Speed           string `json:"speed,omitempty"`
+	Description     string `json:"description,omitempty"`
 	CloudProvider   struct {
-		Pop    string `json:"pop"`
-		Region string `json:"region"`
-	} `json:"cloud_provider"`
-	TimeCreated      string `json:"time_created"`
-	TimeUpdated      string `json:"time_updated"`
-	Pop              string `json:"pop"`
-	Site             string `json:"site"`
-	IsAwaitingOnramp bool   `json:"is_awaiting_onramp"`
+		Pop    string `json:"pop,omitempty"`
+		Region string `json:"region,omitempty"`
+	} `json:"cloud_provider,omitempty"`
+	TimeCreated      string `json:"time_created,omitempty"`
+	TimeUpdated      string `json:"time_updated,omitempty"`
+	Pop              string `json:"pop,omitempty"`
+	Site             string `json:"site,omitempty"`
+	CustomerSiteName string `json:"customer_site_name,omitempty"`
+	CustomerSiteCode string `json:"customer_site_code,omitempty"`
+	IsAwaitingOnramp bool   `json:"is_awaiting_onramp,omitempty"`
 }
 
 type CloudServiceConnCreateResp struct {
@@ -195,6 +197,13 @@ type Settings struct {
 	VcOcid                   string      `json:"vc_ocid,omitempty"`
 	PortCrossConnectOcid     string      `json:"port_cross_connect_ocid,omitempty"`
 	PortCompartmentOcid      string      `json:"port_compartment_ocid,omitempty"`
+	AccountID                string      `json:"account_id,omitempty"`
+	GatewayID                string      `json:"gateway_id,omitempty"`
+	PortID                   string      `json:"port_id,omitempty"`
+	Name                     string      `json:"name,omitempty"`
+	BgpAsn                   int         `json:"bgp_asn,omitempty"`
+	BgpCerCidr               string      `json:"bgp_cer_cidr,omitempty"`
+	BgpIbmCidr               string      `json:"bgp_ibm_cidr,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
