@@ -6,6 +6,10 @@ BREAKING CHANGES:
 * data-source: [RENAMED] packetfabric_cs_azure_dedicated_connection (use packetfabric_cs_dedicated_connections instead)
 * data-source: [RENAMED] packetfabric_cs_google_dedicated_connection (use packetfabric_cs_dedicated_connections instead)
 
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add is_awaiting_onramp to AWS and Google hosted cloud resources and data-sources (#261)
+
 BUG FIXES:
 
 * Remove Zone in packetfabric_cs_azure_hosted_marketplace_connection (#240)
