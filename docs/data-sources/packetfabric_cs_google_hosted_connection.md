@@ -39,6 +39,7 @@ output "packetfabric_cs_google_hosted_connection_data" {
 - `customer_uuid` (String) The UUID for the customer this connection belongs to.
 - `description` (String) The description of this connection.
 		Example: AWS connection for Foo Corp.
+- `is_awaiting_onramp` (Boolean) Whether or not this connection is waiting for an onramp to be available before provisioning.
 - `pop` (String) Point of Presence for the connection.
 		Example: LAS1
 - `port_type` (String) The port type for the given port.
@@ -61,3 +62,6 @@ output "packetfabric_cs_google_hosted_connection_data" {
 
 - `id` (String) The ID of this resource.
 
+## Provisioning lead time
+
+Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
