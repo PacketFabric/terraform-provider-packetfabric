@@ -1,3 +1,18 @@
+## 0.4.1  (November 16, 2022)
+
+BREAKING CHANGES:
+
+* data-source: [REMOVED] packetfabric_cs_aws_dedicated_connection (use packetfabric_cs_dedicated_connections instead)
+* data-source: [RENAMED] packetfabric_cs_azure_dedicated_connection (use packetfabric_cs_dedicated_connections instead)
+* data-source: [RENAMED] packetfabric_cs_google_dedicated_connection (use packetfabric_cs_dedicated_connections instead)
+
+BUG FIXES:
+
+* Remove Zone in packetfabric_cs_azure_hosted_marketplace_connection (#240)
+* Use-case examples and Location Data Source links on the docs registry are broken (#241)
+* Doc: packetfabric_marketplace_requests data-source should not exist (#243)
+* Update: Error: Status: 404 Requested URL /v2/services/cloud-routers/PF-L3-CUST-1752618/connections/PF-L3-CON-1752622/bgp not found (#264)
+
 ## 0.4.0  (November 2, 2022)
 
 BREAKING CHANGES:
