@@ -36,7 +36,9 @@ Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.
 
 For example:
 
+```sh
 $ export PF_ACCOUNT_ID="123456789"
+```
 
 ## Getting location information
 

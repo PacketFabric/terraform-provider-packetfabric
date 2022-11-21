@@ -104,7 +104,7 @@ terraform apply
 4. **A side**, import the new Marketplace backbone Virtual Circuit (replace with correct VC ID).
 
 ```sh
-terraform import -var-file="secret.tfvars" packetfabric_backbone_virtual_circuit.vc_marketplace PF-DC-PHX-NYC-1751589-PF 
+terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-DC-PHX-NYC-1751589-PF 
 ```
 
 5. **A side**, apply the plan to confirm the resource is correctly imported and managed by Terraform.
