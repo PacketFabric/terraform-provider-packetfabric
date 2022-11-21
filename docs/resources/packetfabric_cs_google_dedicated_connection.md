@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cs_google_dedicated_connection (Resource)
 
-A port located in an Google cloud on-ramp facility, which will be connected to the AWS network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+This is a port located in a Google cloud on-ramp facility, which will be connected to the Google network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
 ## Example Usage
 

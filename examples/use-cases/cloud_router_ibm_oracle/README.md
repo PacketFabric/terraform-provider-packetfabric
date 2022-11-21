@@ -75,9 +75,9 @@ export TF_VAR_parent_compartment_id="ocid1.tenancy.oc1.1234" # Parent comportmen
 ### IBM
 # https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs#environment-variables
 export TF_VAR_ibm_account_id="123456789"
-export IC_API_KEY="secret"
-export IAAS_CLASSIC_USERNAME="user"
-export IAAS_CLASSIC_API_KEY="secret"
+export IC_API_KEY="ibmcloud_api_key"
+export IAAS_CLASSIC_USERNAME="iaas_classic_username"
+export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```
 

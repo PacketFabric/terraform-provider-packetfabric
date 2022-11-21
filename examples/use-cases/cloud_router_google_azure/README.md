@@ -82,10 +82,10 @@ Set additional environment variables for Azure and Google:
 
 ```sh
 ### Azure
-export TF_VAR_subscription_id="abc-def-jhk"
-export TF_VAR_client_id="zwe-dfg-sed" 
-export TF_VAR_client_secret="secret" 
-export TF_VAR_tenant_id="abc"
+export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
+export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
+export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 
 ### Google
 export TF_VAR_gcp_project_id="my-project-id"
