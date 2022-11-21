@@ -33,6 +33,8 @@ terraform.tfstate.d/
 secret*.tfvars
 secret.json
 secret.sh
+secret.env
 env_vars_source.sh
+source_var.env
 cloud_router_ip_address.txt
 customer_router_ip_address.txt
