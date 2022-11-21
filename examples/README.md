@@ -13,7 +13,7 @@ export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
 ```
 
-**Note:** you can also use ``source_var.env.sample`` (rename to ``source_var.env`` and update each variables as needed). Then run ``source source_var.env``.
+**Note:** you can also use ``source_env_var.sh.sample`` (rename to ``source_env_var.sh`` and update each variables as needed). Then run ``source source_env_var.sh``.
 
 2. Edit the ``main.tf`` and ``variables.tf`` files and uncomment/comment out sections as needed. It is highly recommended to use the [PacketFabric documentation in the Terraform registry](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs).
 
