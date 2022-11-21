@@ -4,14 +4,14 @@ version1=">= 0.4.2"
 version2=">= 0.5.0"
 
 if [[ $1 = "cleanup" ]]; then
-    echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt secret.sh"
+    echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt source_env_var.sh"
     find . -name ".terraform" -type d -exec rm -rf "{}" \;
     find . -name ".DS_Store" -type f -delete
     find . -name ".*lock*" -type f -delete
     find . -name "*state*" -type f -delete
     find . -name secret.tfvars -type f -delete
     find . -name secret.json -type f -delete
-    find . -name secret.sh -type f -delete
+    find . -name source_env_var.sh -type f -delete
     find . -name cloud_router_ip_address.txt -type f -delete
     find . -name customer_router_ip_address.txt -type f -delete
 fi
