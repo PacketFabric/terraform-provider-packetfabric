@@ -76,8 +76,8 @@ Set additional environment variables for AWS:
 
 ```sh
 export TF_VAR_pf_aws_account_id="123456789"
-export TF_VAR_aws_access_key = "ABCDEFGH"
-export TF_VAR_aws_secret_key = "secret"
+export AWS_ACCESS_KEY_ID = "ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY = "secret"
 
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```

@@ -15,21 +15,6 @@ variable "ibm_account_id" {
   type        = string
   description = "IBM Account ID"
 }
-variable "ibmcloud_api_key" {
-  type        = string
-  sensitive   = true
-  description = "IBM API key"
-}
-variable "iaas_classic_username" {
-  type        = string
-  sensitive   = true
-  description = "IBM Classic Username"
-}
-variable "iaas_classic_api_key" {
-  type        = string
-  sensitive   = true
-  description = "IBM Classic API key"
-}
 variable "ibm_region1" {
   type        = string
   default     = "us-south"

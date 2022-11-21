@@ -1,16 +1,17 @@
 #!/bin/bash
 
-version1=">= 0.4.0"
+version1=">= 0.4.2"
 version2=">= 0.5.0"
 
 if [[ $1 = "cleanup" ]]; then
-    echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt"
+    echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt secret.sh"
     find . -name ".terraform" -type d -exec rm -rf "{}" \;
     find . -name ".DS_Store" -type f -delete
     find . -name ".*lock*" -type f -delete
     find . -name "*state*" -type f -delete
     find . -name secret.tfvars -type f -delete
     find . -name secret.json -type f -delete
+    find . -name secret.sh -type f -delete
     find . -name cloud_router_ip_address.txt -type f -delete
     find . -name customer_router_ip_address.txt -type f -delete
 fi
@@ -37,10 +38,7 @@ if [[ $1 = "version" ]]; then
 fi
 
 if [[ $1 = "dev" ]]; then
-  echo -e "\nSwitch to api.dev.packetfabric.net\n"
-  sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./use-cases/*/variables.tf
-  sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./use-cases/*/*/variables.tf
-  sed -i '' -e "s#api.packetfabric.com#api.dev.packetfabric.net#g" ./variables.tf
+  echo -e "\nSwitch to api.dev.packetfabric.net variables\n"
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./use-cases/*/variables.tf # Azure Cloud Provider
   sed -i '' -e 's#default = "PacketFabric"#default = "Packet Fabric Test"#g' ./variables.tf # Azure Cloud Provider
   sed -i '' -e "s#New York#Denver Test#g" ./use-cases/*/variables.tf # Azure Cloud location
@@ -58,10 +56,7 @@ if [[ $1 = "dev" ]]; then
 fi
 
 if [[ $1 = "prod" ]]; then
-  echo -e "\nSwitch to api.packetfabric.com\n"
-  sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./use-cases/*/variables.tf
-  sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./use-cases/*/*/variables.tf
-  sed -i '' -e "s#api.dev.packetfabric.net#api.packetfabric.com#g" ./variables.tf
+  echo -e "\nSwitch to api.packetfabric.com variables\n"
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./use-cases/*/variables.tf # Azure Cloud Provider
   sed -i '' -e 's#default = "Packet Fabric Test"#default = "PacketFabric"#g' ./variables.tf # Azure Cloud Provider
   sed -i '' -e "s#Denver Test#New York#g" ./use-cases/*/variables.tf # Azure Cloud location
@@ -78,8 +73,13 @@ if [[ $1 = "prod" ]]; then
   sed -i '' -e "s#GOG#DEN#g" ./variables.tf # IX - IX-Denver to	PacketFabric - IX
 fi
 
-echo -e "\nNumber of variables with api.packetfabric.com: $(grep "api.packetfabric.com" ./use-cases/*/variables.tf | wc -l)"
-echo -e "Number of variables with api.dev.packetfabric.net: $(grep "api.dev.packetfabric.net" ./use-cases/*/variables.tf | wc -l)"
+prod_dev=$(grep "Packet Fabric Test" ./use-cases/*/variables.tf | wc -l)
+
+if [[ "$prod_dev" -eq "0" ]]; then
+   echo -e "\nvariables.tf set for PacketFabric dev examples."
+else
+   echo -e "\nvariables.tf set for PacketFabric prod examples."
+fi
 
 echo -e "\nEmpty files:"
 find . -empty
@@ -95,7 +95,7 @@ find . -name cloud_router_ip_address.txt -type f
 find . -name customer_router_ip_address.txt -type f
 
 echo -e "\nOptions:"
-echo -e "\t./$(basename $0) [dev]: switch from prod to dev (PacketFabric host and variables)"
-echo -e "\t./$(basename $0) [prod]: switch from dev to prod (PacketFabric host and variables)"
+echo -e "\t./$(basename $0) [dev]: switch from prod to dev"
+echo -e "\t./$(basename $0) [prod]: switch from dev to prod"
 echo -e "\t./$(basename $0) [cleanup]: delete .terraform, lock, state, secret, etc..."
 echo -e "\t./$(basename $0) [version]: change version in all examples from \"$version1\" to \"$version2\")\n"

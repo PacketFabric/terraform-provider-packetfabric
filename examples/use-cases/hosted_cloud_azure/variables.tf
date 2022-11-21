@@ -26,27 +26,6 @@ variable "pf_cs_vlan_microsoft" {
 }
 
 ## Azure VARs
-variable "subscription_id" {
-  type        = string
-  description = "Azure Subscription ID"
-  sensitive   = true
-}
-variable "client_id" {
-  type        = string
-  description = "Azure Client ID"
-  sensitive   = true
-}
-variable "client_secret" {
-  type        = string
-  description = "Azure Client Secret ID"
-  sensitive   = true
-}
-variable "tenant_id" {
-  type        = string
-  description = "Azure Tenant ID"
-  sensitive   = true
-}
-
 # https://docs.microsoft.com/en-us/azure/availability-zones/az-overview
 variable "azure_region1" {
   type        = string
