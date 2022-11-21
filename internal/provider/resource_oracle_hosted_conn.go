@@ -53,7 +53,6 @@ func resourceOracleHostedConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
