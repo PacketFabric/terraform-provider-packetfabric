@@ -1,3 +1,9 @@
+## 0.4.2  (November 21, 2022)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Enhancement use of PacketFabric environment variables (#269)
+
 ## 0.4.1  (November 16, 2022)
 
 BREAKING CHANGES:
