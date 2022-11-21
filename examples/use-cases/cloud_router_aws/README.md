@@ -65,23 +65,34 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
+1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
-cp secret.tfvars.sample secret.tfvars
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789"
+```
+
+Set additional environment variables for AWS:
+
+```sh
+export TF_VAR_pf_aws_account_id="123456789"
+export TF_VAR_aws_access_key = "ABCDEFGH"
+export TF_VAR_aws_secret_key = "secret"
+
+export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init
-terraform plan -var-file="secret.tfvars"
+terraform plan
 ```
 
 Apply the plan:
 
 ```sh
-terraform apply -var-file="secret.tfvars"
+terraform apply
 ```
 
 3. Either use and [locust](https://locust.io/) or [iperf3](https://github.com/esnet/iperf) to simulate traffic between the 2 EC2 instances in the 2 AWS regions.
@@ -100,7 +111,7 @@ If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the 
 4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
-terraform destroy -var-file="secret.tfvars"
+terraform destroy
 ```
 
 **Note:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
@@ -147,7 +158,7 @@ data "packetfabric_cloud_router_connections" "current" {
 Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform state rm aws_dx_connection_confirmation.confirmation_2
-terraform apply -var-file="secret.tfvars"
+terraform apply
 ```
 
 ## Screenshots

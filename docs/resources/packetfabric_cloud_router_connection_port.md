@@ -45,7 +45,7 @@ output "packetfabric_cloud_router_connection_port" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `port_circuit_id` (String) The circuit ID of the port to connect to the cloud router. This starts with "PF-AP-".

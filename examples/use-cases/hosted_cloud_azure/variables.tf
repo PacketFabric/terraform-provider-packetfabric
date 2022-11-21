@@ -6,22 +6,6 @@ variable "tag_name" {
 }
 
 ## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  sensitive   = true
-  default     = "secret"
-}
-variable "pf_account_uuid" {
-  type        = string
-  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
-  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
 
 # Azure Hosted Connection
 variable "pf_port_circuit_id" {

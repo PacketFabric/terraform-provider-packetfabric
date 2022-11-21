@@ -83,7 +83,7 @@ output "packetfabric_backbone_virtual_circuit_marketplace" {
 
 Required:
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 
 Optional:
 

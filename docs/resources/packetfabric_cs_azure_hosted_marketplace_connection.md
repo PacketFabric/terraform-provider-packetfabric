@@ -34,7 +34,7 @@ output "packetfabric_cs_azure_hosted_marketplace_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
 	If the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in "DAL5", enter "DAL" for the market).

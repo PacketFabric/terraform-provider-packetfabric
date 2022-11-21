@@ -39,9 +39,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Description: "The AWS account ID to connect with. Must be 12 characters long.",
 			},
 			"account_uuid": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The UUID for the billing account that should be billed.",
+				Type:         schema.TypeString,
+				Required:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
+				ValidateFunc: validation.IsUUID,
+				Description: "The UUID for the billing account that should be billed. " +
+					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,

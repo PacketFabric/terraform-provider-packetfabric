@@ -12,7 +12,12 @@
 cp secret.tfvars.sample secret.tfvars
 ```
 
-**Note:** As an alternative, you can also use ``env_vars_source.sh.sample`` (rename to ``env_vars_source.sh`` and update each variables as needed). Then run ``./env_vars_source.sh``.
+**Note:** As an alternative, you can also use ``env_vars_source.sh.sample`` (rename to ``env_vars_source.sh`` and update each variables as needed). Then run ``./env_vars_source.sh`` or run:
+
+```
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789"
+```
 
 2. Edit the ``main.tf`` and ``variables.tf`` files and uncomment/comment out sections as needed. It is highly recommended to use the [PacketFabric documentation in the Terraform registry](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs).
 

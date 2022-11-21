@@ -46,7 +46,7 @@ output "packetfabric_cloud_router_connection_google" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is generated when you create your Google Cloud VLAN attachment.

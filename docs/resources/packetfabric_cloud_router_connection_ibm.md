@@ -47,7 +47,7 @@ output "packetfabric_cloud_router_connection_ibm" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) The description of this connection. This will appear as the connection name from the IBM side.
 - `ibm_account_id` (String) Your IBM account ID.

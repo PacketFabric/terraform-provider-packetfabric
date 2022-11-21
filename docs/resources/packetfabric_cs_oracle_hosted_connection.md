@@ -38,7 +38,7 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Oracle. This starts with "PF-AP-".

@@ -10,7 +10,8 @@ description: |-
 
 A hosted cloud connection to your AWS environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
-## Usage Example
+
+## Example Usage
 
 ```terraform
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
@@ -36,7 +37,7 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).

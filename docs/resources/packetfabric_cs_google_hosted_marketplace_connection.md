@@ -37,7 +37,7 @@ output "packetfabric_cs_google_hosted_marketplace_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
