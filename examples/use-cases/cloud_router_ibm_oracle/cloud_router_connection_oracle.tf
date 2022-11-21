@@ -55,7 +55,6 @@ resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
   provider     = packetfabric
   description  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id   = packetfabric_cloud_router.cr.id
-  account_uuid = var.pf_account_uuid
   region       = var.oracle_region1
   vc_ocid      = oci_core_virtual_circuit.fast_connect_1.id
   pop          = var.pf_crc_pop2

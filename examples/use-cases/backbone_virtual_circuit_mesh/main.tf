@@ -28,7 +28,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
     vlan            = var.pf_vc_vlan1
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -51,7 +50,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc2" {
     vlan            = var.pf_vc_vlan2
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -77,7 +75,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc3" {
     vlan            = var.pf_vc_vlan3
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -100,7 +97,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc4" {
     vlan            = var.pf_vc_vlan4
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -123,7 +119,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc5" {
     vlan            = var.pf_vc_vlan5
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -146,7 +141,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc6" {
     vlan            = var.pf_vc_vlan6
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -169,7 +163,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc7" {
     vlan            = var.pf_vc_vlan7
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -192,7 +185,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc8" {
     vlan            = var.pf_vc_vlan8
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -215,7 +207,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc9" {
     vlan            = var.pf_vc_vlan9
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -238,7 +229,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc10" {
     vlan            = var.pf_vc_vlan10
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -261,7 +251,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc11" {
     vlan            = var.pf_vc_vlan11
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -284,7 +273,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc12" {
     vlan            = var.pf_vc_vlan12
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -307,7 +295,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc13" {
     vlan            = var.pf_vc_vlan13
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -330,7 +317,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc14" {
     vlan            = var.pf_vc_vlan14
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -353,7 +339,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc15" {
     vlan            = var.pf_vc_vlan15
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm

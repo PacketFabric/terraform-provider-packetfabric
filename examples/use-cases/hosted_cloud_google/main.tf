@@ -71,7 +71,6 @@ resource "google_compute_interconnect_attachment" "interconnect_1" {
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
-  account_uuid                = var.pf_account_uuid
   port                        = var.pf_port_circuit_id
   speed                       = var.pf_cs_speed
   google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key

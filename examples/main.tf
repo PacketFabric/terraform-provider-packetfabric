@@ -14,12 +14,11 @@ resource "random_pet" "name" {}
 
 # #######################################
 # ##### PORTS/INTERFACES
-#######################################
+# ######################################
 
 # # Create a PacketFabric Ports
 # resource "packetfabric_port" "port_1a" {
 #   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
 #   autoneg           = var.pf_port_autoneg
 #   description       = "${var.tag_name}-${random_pet.name.id}-a"
 #   media             = var.pf_port_media
@@ -36,7 +35,6 @@ resource "random_pet" "name" {}
 # ## 2nd port in the same location same zone to create a LAG
 # resource "packetfabric_port" "port_1b" {
 #   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
 #   autoneg           = var.pf_port_autoneg
 #   description       = "${var.tag_name}-${random_pet.name.id}-b"
 #   media             = var.pf_port_media
@@ -69,7 +67,6 @@ resource "random_pet" "name" {}
 
 # resource "packetfabric_port" "port_2" {
 #   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
 #   autoneg           = var.pf_port_autoneg
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   media             = var.pf_port_media
@@ -123,7 +120,6 @@ resource "random_pet" "name" {}
 #     vlan            = var.pf_vc_vlan2
 #   }
 #   bandwidth {
-#     account_uuid      = var.pf_account_uuid
 #     longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
@@ -163,7 +159,6 @@ resource "random_pet" "name" {}
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   speed             = var.pf_ptp_speed
 #   media             = var.pf_ptp_media
-#   account_uuid      = var.pf_account_uuid
 #   subscription_term = var.pf_ptp_subterm
 #   endpoints {
 #     pop     = var.pf_ptp_pop1
@@ -266,7 +261,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
 #   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
@@ -290,7 +284,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.azure_service_key
 #   port              = packetfabric_port.port_1a.id
 #   speed             = var.pf_cs_speed1 # will be deprecated
@@ -314,7 +307,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid                = var.pf_account_uuid
 #   port                        = packetfabric_port.port_1a.id
 #   speed                       = var.pf_cs_speed1
 #   google_pairing_key          = var.google_pairing_key
@@ -337,15 +329,14 @@ resource "random_pet" "name" {}
 
 # # Create a Oracle Hosted Connection 
 # resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
-#   provider     = packetfabric
-#   description  = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid = var.pf_account_uuid
-#   vc_ocid      = var.pf_cs_oracle_vc_ocid
-#   region       = var.pf_cs_oracle_region
-#   port         = packetfabric_port.port_1a.id
-#   pop          = var.pf_cs_pop6
-#   zone         = var.pf_cs_zone6
-#   vlan         = var.pf_cs_vlan6
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   vc_ocid     = var.pf_cs_oracle_vc_ocid
+#   region      = var.pf_cs_oracle_region
+#   port        = packetfabric_port.port_1a.id
+#   pop         = var.pf_cs_pop6
+#   zone        = var.pf_cs_zone6
+#   vlan        = var.pf_cs_vlan6
 # }
 # output "packetfabric_cs_oracle_hosted_connection" {
 #   value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
@@ -376,7 +367,6 @@ resource "random_pet" "name" {}
 #     vlan            = var.pf_vc_vlan1
 #   }
 #   bandwidth {
-#     account_uuid      = var.pf_account_uuid
 #     longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
@@ -399,7 +389,6 @@ resource "random_pet" "name" {}
 #     vlan            = var.pf_vc_vlan1
 #   }
 #   bandwidth {
-#     account_uuid = var.pf_account_uuid
 #     #longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
@@ -413,7 +402,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
 #   routing_id     = var.pf_routing_id
 #   market         = var.pf_market
@@ -429,7 +417,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketplace_azure" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.azure_service_key
 #   routing_id        = var.pf_routing_id
 #   market            = var.pf_market
@@ -444,7 +431,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_marketplace_google" {
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid                = var.pf_account_uuid
 #   routing_id                  = var.pf_routing_id
 #   market                      = var.pf_market
 #   speed                       = var.pf_cs_speed1
@@ -459,14 +445,13 @@ resource "random_pet" "name" {}
 
 # # Create a Oracle Hosted Marketplace Connection 
 # resource "packetfabric_cs_oracle_hosted_marketplace_connection" "cs_conn1_marketplace_oracle" {
-#   provider     = packetfabric
-#   description  = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid = var.pf_account_uuid
-#   vc_ocid      = var.pf_cs_oracle_vc_ocid
-#   region       = var.pf_cs_oracle_region
-#   routing_id   = var.pf_routing_id
-#   market       = var.pf_market
-#   pop          = var.pf_cs_pop6
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   vc_ocid     = var.pf_cs_oracle_vc_ocid
+#   region      = var.pf_cs_oracle_region
+#   routing_id  = var.pf_routing_id
+#   market      = var.pf_market
+#   pop         = var.pf_cs_pop6
 # }
 # output "packetfabric_cs_oracle_hosted_marketplace_connection" {
 #   value     = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
@@ -529,7 +514,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
 #   provider          = packetfabric
 #   aws_region        = var.aws_region3
-#   account_uuid      = var.pf_account_uuid
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone3
 #   pop               = var.pf_cs_pop3
@@ -542,8 +526,7 @@ resource "random_pet" "name" {}
 
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
-#   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
+#   provider          = packetfabric # set via PF_ACCOUNT_ID
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone4
 #   pop               = var.pf_cs_pop4
@@ -556,7 +539,6 @@ resource "random_pet" "name" {}
 # # Azure Dedicated Connection
 # resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azure" {
 #   provider          = packetfabric
-#   account_uuid      = var.pf_account_uuid
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone5
 #   pop               = var.pf_cs_pop5
@@ -579,19 +561,17 @@ resource "random_pet" "name" {}
 # #######################################
 
 # resource "packetfabric_cloud_router" "cr" {
-#   provider     = packetfabric
-#   asn          = var.pf_cr_asn
-#   name         = "${var.tag_name}-${random_pet.name.id}"
-#   account_uuid = var.pf_account_uuid
-#   capacity     = var.pf_cr_capacity
-#   regions      = var.pf_cr_regions
+#   provider = packetfabric
+#   asn      = var.pf_cr_asn
+#   name     = "${var.tag_name}-${random_pet.name.id}"
+#   capacity = var.pf_cr_capacity
+#   regions  = var.pf_cr_regions
 # }
 
 # resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   account_uuid   = var.pf_account_uuid
 #   aws_account_id = var.pf_aws_account_id
 #   pop            = var.pf_crc_pop1
 #   zone           = var.pf_crc_zone1
@@ -604,7 +584,6 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
-#   account_uuid                = var.pf_account_uuid
 #   google_pairing_key          = var.pf_crc_google_pairing_key
 #   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
 #   pop                         = var.pf_crc_pop2
@@ -616,7 +595,6 @@ resource "random_pet" "name" {}
 #   provider                     = packetfabric
 #   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
 #   circuit_id                   = packetfabric_cloud_router.cr.id
-#   account_uuid                 = var.pf_account_uuid
 #   pop                          = var.pf_crc_pop3
 #   speed                        = var.pf_crc_speed
 #   gateway_address              = var.pf_crc_gateway_address
@@ -662,7 +640,6 @@ resource "random_pet" "name" {}
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id        = packetfabric_cloud_router.cr.id
-#   account_uuid      = var.pf_account_uuid
 #   azure_service_key = var.pf_crc_azure_service_key
 #   speed             = var.pf_crc_speed
 #   maybe_nat         = var.pf_crc_maybe_nat
@@ -673,7 +650,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   account_uuid   = var.pf_account_uuid
 #   ibm_account_id = var.ibm_account_id
 #   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
 #   pop            = var.pf_crc_pop4
@@ -683,22 +659,20 @@ resource "random_pet" "name" {}
 # }
 
 # resource "packetfabric_cloud_router_connection_oracle" "crc_6" {
-#   provider     = packetfabric
-#   description  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop5}"
-#   circuit_id   = packetfabric_cloud_router.cr.id
-#   account_uuid = var.pf_account_uuid
-#   region       = var.pf_crc_oracle_region
-#   vc_ocid      = var.pf_crc_oracle_vc_ocid
-#   pop          = var.pf_crc_pop5
-#   zone         = var.pf_crc_zone5
-#   maybe_nat    = var.pf_crc_maybe_nat
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop5}"
+#   circuit_id  = packetfabric_cloud_router.cr.id
+#   region      = var.pf_crc_oracle_region
+#   vc_ocid     = var.pf_crc_oracle_vc_ocid
+#   pop         = var.pf_crc_pop5
+#   zone        = var.pf_crc_zone5
+#   maybe_nat   = var.pf_crc_maybe_nat
 # }
 
 # resource "packetfabric_cloud_router_connection_port" "crc_7" {
 #   provider        = packetfabric
 #   description     = "${var.tag_name}-${random_pet.name.id}"
 #   circuit_id      = packetfabric_cloud_router.cr.id
-#   account_uuid    = var.pf_account_uuid
 #   port_circuit_id = packetfabric_port.port_1a.id
 #   vlan            = var.pf_crc_vlan
 #   speed           = var.pf_crc_speed

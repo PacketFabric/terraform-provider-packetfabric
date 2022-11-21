@@ -81,7 +81,6 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
-  account_uuid      = var.pf_account_uuid
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   port              = var.pf_port_circuit_id
   speed             = var.pf_cs_speed # will be deprecated

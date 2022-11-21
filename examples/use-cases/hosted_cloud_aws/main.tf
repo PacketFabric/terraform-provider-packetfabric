@@ -92,7 +92,6 @@ resource "aws_route_table_association" "route_association_1" {
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider       = packetfabric
   description    = "${var.tag_name}-${random_pet.name.id}"
-  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   port           = var.pf_port_circuit_id
   speed          = var.pf_cs_speed
