@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cs_azure_dedicated_connection (Resource)
 
-A port located in an Azure cloud on-ramp facility, which will be connected to the AWS network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+This is a port located in a Microsoft Azure cloud on-ramp facility, which will be connected to the Azure network via cross connect. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
 ## Example Usage
 
@@ -75,6 +75,9 @@ Optional:
 - `delete` (String)
 - `read` (String)
 - `update` (String)
+
+
+
 
 ## Import
 

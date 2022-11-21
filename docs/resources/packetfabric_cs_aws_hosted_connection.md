@@ -10,7 +10,6 @@ description: |-
 
 A hosted cloud connection to your AWS environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
-
 ## Example Usage
 
 ```terraform
@@ -56,6 +55,9 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 - `id` (String) The ID of this resource.
 
+
+
+
 ## Import
 
 Import an AWS hosted connection using its circuit ID.
@@ -66,4 +68,5 @@ terraform import packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws PF-CC
 
 ## Provisioning lead time
 
-Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
+Please check availability at your chosen location before provisioning. 
+If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.

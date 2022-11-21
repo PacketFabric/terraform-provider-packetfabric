@@ -67,6 +67,9 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+
+
+
 ## Import
 
 Import an Google hosted connection using its circuit ID.
@@ -77,4 +80,5 @@ terraform import packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
 
 ## Provisioning lead time
 
-Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
+Please check availability at your chosen location before provisioning. 
+If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
