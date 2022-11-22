@@ -44,27 +44,35 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
+1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
-cp secret.tfvars.sample secret.tfvars
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789"
+```
+
+Set additional environment variables for Google:
+
+```sh
+export TF_VAR_gcp_project_id="my-project-id"
+export TF_VAR_gcp_credentials_path="/Users/myuser/secret.json"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init
-terraform plan -var-file="secret.tfvars"
+terraform plan
 ```
 
 Apply the plan:
 
 ```sh
-terraform apply -var-file="secret.tfvars"
+terraform apply
 ```
 
 3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
-terraform destroy -var-file="secret.tfvars"
+terraform destroy
 ```

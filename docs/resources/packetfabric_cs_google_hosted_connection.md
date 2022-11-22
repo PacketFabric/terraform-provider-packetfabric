@@ -16,7 +16,6 @@ A hosted cloud connection to your Google Cloud environment. For more information
 resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   provider                    = packetfabric
   description                 = var.pf_description
-  account_uuid                = var.pf_account_uuid
   port                        = var.pf_port
   speed                       = var.pf_cs_speed
   google_pairing_key          = var.google_pairing_key
@@ -37,7 +36,7 @@ output "packetfabric_cs_google_hosted_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
@@ -67,6 +66,9 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+
+
+
 ## Import
 
 Import an Google hosted connection using its circuit ID.
@@ -77,4 +79,5 @@ terraform import packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
 
 ## Provisioning lead time
 
-Please check availability at your chosen location before provisioning. If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.
+Please check availability at your chosen location before provisioning. 
+If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.

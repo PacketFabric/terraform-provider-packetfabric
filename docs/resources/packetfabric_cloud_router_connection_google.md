@@ -19,7 +19,6 @@ resource "packetfabric_cloud_router" "cr1" {
   provider     = packetfabric
   asn          = var.pf_cr_asn
   name         = var.pf_cr_name
-  account_uuid = var.pf_account_uuid
   capacity     = var.pf_cr_capacity
   regions      = var.pf_cr_regions
 }
@@ -28,7 +27,6 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider                    = packetfabric
   description                 = var.pf_crc_description
   circuit_id                  = packetfabric_cloud_router.cr1.id
-  account_uuid                = var.pf_account_uuid
   google_pairing_key          = var.pf_crc_google_pairing_key
   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
   pop                         = var.pf_crc_pop
@@ -46,7 +44,7 @@ output "packetfabric_cloud_router_connection_google" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is generated when you create your Google Cloud VLAN attachment.

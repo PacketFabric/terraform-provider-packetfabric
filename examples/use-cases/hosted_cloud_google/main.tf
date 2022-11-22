@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     google = {
       source  = "hashicorp/google"
@@ -11,10 +11,7 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 # Make sure you enabled Compute Engine API
 provider "google" {
@@ -74,7 +71,6 @@ resource "google_compute_interconnect_attachment" "interconnect_1" {
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
-  account_uuid                = var.pf_account_uuid
   port                        = var.pf_port_circuit_id
   speed                       = var.pf_cs_speed
   google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key

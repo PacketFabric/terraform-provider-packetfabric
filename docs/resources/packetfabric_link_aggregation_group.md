@@ -16,7 +16,6 @@ A Link Aggregation Group interface (or a LAG) is a group of ports on the PacketF
 # Create a PacketFabric interfaces
 resource "packetfabric_port" "port_1a" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = "${var.pf_description}-a"
   media             = var.pf_port_media
@@ -33,7 +32,6 @@ output "packetfabric_port_1a" {
 ## 2nd port in the same location same zone to create a LAG
 resource "packetfabric_port" "port_1b" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = "${var.pf_description}-b"
   media             = var.pf_port_media

@@ -6,22 +6,6 @@ variable "tag_name" {
 }
 
 ## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  sensitive   = true
-  default     = "secret"
-}
-variable "pf_account_uuid" {
-  type        = string
-  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
-  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
 # AWS Hosted Connection
 variable "pf_aws_account_id" {
   type        = number
@@ -74,13 +58,3 @@ variable "aws_subnet_cidr1" {
   default     = "10.8.1.0/24"
 }
 
-variable "aws_access_key" {
-  type        = string
-  description = "AWS access key"
-  sensitive   = true
-}
-variable "aws_secret_key" {
-  type        = string
-  description = "AWS secret key"
-  sensitive   = true
-}

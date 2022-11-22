@@ -5,24 +5,6 @@ variable "tag_name" {
   default     = "demo"
 }
 
-## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  default     = "secret"
-  sensitive   = true
-}
-variable "pf_account_uuid" {
-  type    = string
-  default = "secret"
-  #sensitive = true
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
-
 ########################################
 ###### PORTS / CROSS CONNECT / VC
 ########################################

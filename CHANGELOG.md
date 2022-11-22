@@ -1,3 +1,9 @@
+## 0.4.2  (November 21, 2022)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Enhancement use of PacketFabric environment variables (#269)
+
 ## 0.4.1  (November 16, 2022)
 
 BREAKING CHANGES:
@@ -9,6 +15,7 @@ BREAKING CHANGES:
 IMPROVEMENTS/ENHANCEMENTS:
 
 * Add is_awaiting_onramp to AWS and Google hosted cloud resources and data-sources (#261)
+* Add support Terraform Import to hosted/dedicated cloud (#259)
 
 BUG FIXES:
 

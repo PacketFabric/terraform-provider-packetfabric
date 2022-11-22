@@ -18,7 +18,6 @@ resource "packetfabric_point_to_point" "ptp1" {
   description       = var.pf_description
   speed             = var.pf_ptp_speed
   media             = var.pf_ptp_media
-  account_uuid      = var.pf_account_uuid
   subscription_term = var.pf_ptp_subterm
   endpoints {
     pop     = var.pf_ptp_pop1
@@ -38,7 +37,7 @@ resource "packetfabric_point_to_point" "ptp1" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `endpoints` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--endpoints))
 - `media` (String) Optic media type.

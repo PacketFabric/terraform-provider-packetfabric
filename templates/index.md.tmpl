@@ -39,7 +39,31 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 
 {{ tffile "examples/provider/provider.tf"  }}
 
+
+## Environment Variables
+
+!> **Warning:** Hard-coded credentials are not recommended in any Terraform configuration. Using environment variables is highly recommended.
+
+Credentials can be provided by using the `PF_TOKEN`, and optionally `PF_USER` and `PF_PASSWORD` environment variables.
+
+For example:
+
+```sh
+$ export PF_TOKEN="secret"
+$ terraform init
+$ terraform plan
+```
+
+Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.
+
+For example:
+
+```sh
+$ export PF_ACCOUNT_ID="123456789"
+```
+
 {{ .SchemaMarkdown }}
+
 
 
 

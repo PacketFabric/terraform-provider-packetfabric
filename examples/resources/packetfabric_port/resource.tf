@@ -1,6 +1,5 @@
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = var.pf_description
   media             = var.pf_port_media
