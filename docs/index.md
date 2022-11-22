@@ -78,7 +78,7 @@ $ export PF_ACCOUNT_ID="123456789"
 ### Optional
 
 - `host` (String) PacketFabric API endpoint. Can also be set with the PF_HOST environment variable. Defaults to https://api.packetfabric.com
-- `password` (String, Sensitive) PacketFabric username. Can also be set with the PF_USER environment variable.
+- `password` (String, Sensitive) PacketFabric username. Can also be set with the PF_PASSWORD environment variable.
 - `token` (String, Sensitive) PacketFabric API access token. Can also be set with the PF_TOKEN environment variable.
 - `username` (String, Sensitive) PacketFabric username. Can also be set with the PF_USER environment variable.
 
