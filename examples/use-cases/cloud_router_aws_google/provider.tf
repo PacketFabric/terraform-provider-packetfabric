@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     google = {
       source  = "hashicorp/google"
@@ -15,10 +15,7 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 # Make sure you enabled Compute Engine API
 provider "google" {
@@ -30,7 +27,5 @@ provider "google" {
 }
 
 provider "aws" {
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-  region     = var.aws_region1
+  region = var.aws_region1
 }

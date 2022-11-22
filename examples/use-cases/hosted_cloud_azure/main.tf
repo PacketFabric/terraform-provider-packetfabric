@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -11,10 +11,7 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 provider "azurerm" {
   features {
@@ -22,10 +19,6 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-  subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
-  tenant_id       = var.tenant_id
 }
 
 # create random name to use to name objects
@@ -88,7 +81,6 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
-  account_uuid      = var.pf_account_uuid
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   port              = var.pf_port_circuit_id
   speed             = var.pf_cs_speed # will be deprecated

@@ -48,8 +48,10 @@ func resourceAwsHostedMkt() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.",
+				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
+				ValidateFunc: validation.IsUUID,
+				Description: "The UUID for the billing account that should be billed. " +
+					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
 			"aws_account_id": {
 				Type:         schema.TypeString,

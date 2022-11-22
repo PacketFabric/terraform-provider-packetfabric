@@ -39,26 +39,6 @@ variable "gcp_subnet_cidr1" {
 }
 
 ## Azure VARs
-variable "subscription_id" {
-  type        = string
-  description = "Azure Subscription ID"
-  sensitive   = true
-}
-variable "client_id" {
-  type        = string
-  description = "Azure Client ID"
-  sensitive   = true
-}
-variable "client_secret" {
-  type        = string
-  description = "Azure Client Secret ID"
-  sensitive   = true
-}
-variable "tenant_id" {
-  type        = string
-  description = "Azure Tenant ID"
-  sensitive   = true
-}
 # https://docs.microsoft.com/en-us/azure/availability-zones/az-overview
 variable "azure_region1" {
   type        = string
@@ -82,22 +62,6 @@ variable "azure_subnet_cidr2" {
 }
 
 ## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  sensitive   = true
-  default     = "secret"
-}
-variable "pf_account_uuid" {
-  type        = string
-  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
-  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
 
 # PacketFabric Cloud-Router
 variable "pf_cr_asn" {

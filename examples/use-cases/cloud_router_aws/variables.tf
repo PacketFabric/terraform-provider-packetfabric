@@ -70,38 +70,12 @@ variable "ec2_instance_type" {
   description = "Instance Type/Size"
   default     = "t2.micro" # Free tier
 }
-variable "aws_access_key" {
-  type        = string
-  description = "AWS access key"
-  sensitive   = true
-}
-variable "aws_secret_key" {
-  type        = string
-  description = "AWS secret key"
-  sensitive   = true
-}
 variable "pf_aws_account_id" {
   type        = number
   description = "The AWS account ID to connect with. Must be 12 characters long"
 }
 
 ## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  sensitive   = true
-  default     = "secret"
-}
-variable "pf_account_uuid" {
-  type        = string
-  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
-  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
 # PacketFabric Cloud-Router
 variable "pf_cr_asn" {
   type        = number

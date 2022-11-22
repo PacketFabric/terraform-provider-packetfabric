@@ -7,6 +7,7 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 const cloudCidNotFoundDetailsMsg = "Please wait few minutes then run: terraform refresh"
@@ -34,9 +35,12 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Description: "The region that the new connection will connect to.\n\n\tExample: us-west-1",
 			},
 			"account_uuid": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The UUID for the billing account that should be billed.",
+				Type:         schema.TypeString,
+				Required:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
+				ValidateFunc: validation.IsUUID,
+				Description: "The UUID for the billing account that should be billed. " +
+					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
 			"description": {
 				Type:        schema.TypeString,

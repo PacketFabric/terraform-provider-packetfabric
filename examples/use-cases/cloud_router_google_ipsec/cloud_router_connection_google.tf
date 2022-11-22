@@ -37,7 +37,6 @@ resource "packetfabric_cloud_router_connection_google" "crc_1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id                  = packetfabric_cloud_router.cr.id
-  account_uuid                = var.pf_account_uuid
   google_pairing_key          = google_compute_interconnect_attachment.google_interconnect_1.pairing_key
   google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect_1.name
   pop                         = var.pf_crc_pop1

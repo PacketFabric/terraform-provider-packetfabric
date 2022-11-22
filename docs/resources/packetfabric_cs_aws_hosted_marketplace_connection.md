@@ -16,7 +16,6 @@ Connect a marketplace provider to your AWS cloud environment. For more informati
 resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
   provider       = packetfabric
   description    = var.pf_description
-  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   routing_id     = var.pf_routing_id
   market         = var.pf_market
@@ -35,7 +34,7 @@ output "packetfabric_cs_aws_hosted_marketplace_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
@@ -69,3 +68,10 @@ Optional:
 - `update` (String)
 
 
+
+
+## Provisioning lead time
+
+Please check availability at your chosen location before provisioning. 
+
+If there are no hosted cloud connections available at the chosen location, provisioning can take up to two weeks.

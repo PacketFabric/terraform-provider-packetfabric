@@ -54,27 +54,48 @@ Make sure you have the following items available:
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
+1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
-cp secret.tfvars.sample secret.tfvars
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789"
+```
+
+Set additional environment variables for Oracle and IBM:
+
+```sh
+### Oracle
+# https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm
+export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..1234"
+export TF_VAR_user_ocid="ocid1.user.oc1.1234"
+export TF_VAR_fingerprint="AA:aa:a1:12:34:56..."
+export TF_VAR_private_key="-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----"
+export TF_VAR_parent_compartment_id="ocid1.tenancy.oc1.1234" # Parent comportment
+
+### IBM
+# https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs#environment-variables
+export TF_VAR_ibm_account_id="123456789"
+export IC_API_KEY="ibmcloud_api_key"
+export IAAS_CLASSIC_USERNAME="iaas_classic_username"
+export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
+export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init
-terraform plan -var-file="secret.tfvars"
+terraform plan
 ```
 
 Apply the plan:
 
 ```sh
-terraform apply -var-file="secret.tfvars"
+terraform apply
 ```
 
 3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
-terraform destroy -var-file="secret.tfvars"
+terraform destroy
 ```

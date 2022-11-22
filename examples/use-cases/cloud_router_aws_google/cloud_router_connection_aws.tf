@@ -5,7 +5,6 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   circuit_id     = packetfabric_cloud_router.cr.id
-  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   pop            = var.pf_crc_pop1
   zone           = var.pf_crc_zone1

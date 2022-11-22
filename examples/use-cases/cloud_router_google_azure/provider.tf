@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     google = {
       source  = "hashicorp/google"
@@ -15,10 +15,7 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 # Make sure you enabled Compute Engine API
 provider "google" {
@@ -30,9 +27,9 @@ provider "google" {
 }
 
 provider "azurerm" {
-  features {}
-  subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
-  tenant_id       = var.tenant_id
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }

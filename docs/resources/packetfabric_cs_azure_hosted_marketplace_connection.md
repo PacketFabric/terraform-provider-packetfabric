@@ -16,7 +16,6 @@ Connect a marketplace provider to your Microsoft Azure cloud environment. For mo
 resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketplace_azure" {
   provider          = packetfabric
   description       = var.pf_description
-  account_uuid      = var.pf_account_uuid
   azure_service_key = var.azure_service_key
   routing_id        = var.pf_routing_id
   market            = var.pf_market
@@ -34,7 +33,7 @@ output "packetfabric_cs_azure_hosted_marketplace_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. This is your billing account, not the marketplace provider's.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
 	If the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in "DAL5", enter "DAL" for the market).

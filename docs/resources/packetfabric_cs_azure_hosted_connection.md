@@ -17,7 +17,6 @@ description: |-
 resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
   provider          = packetfabric
   description       = var.pf_description
-  account_uuid      = var.pf_account_uuid
   azure_service_key = var.azure_service_key
   port              = var.pf_port
   speed             = var.pf_cs_speed # will be deprecated
@@ -36,7 +35,7 @@ output "packetfabric_cs_azure_hosted_connection" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `description` (String) A brief description of this connection.
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Azure. This starts with "PF-AP-".

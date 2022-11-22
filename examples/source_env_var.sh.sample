@@ -1,24 +1,26 @@
 ### PacketFabric
-export TF_VAR_pf_api_server="https://api.packetfabric.com"
-export TF_VAR_pf_api_key="abcd-ebgh-ijkl-mnop-qrst"
-export TF_VAR_pf_account_uuid="abcd-ebgh-ijkl-mnop-qrst" # Billing Account ID
+# export PF_HOST="https://api.packetfabric.com"
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789" # Billing Account ID
 
 ### AWS
 export TF_VAR_pf_aws_account_id="123456789"
-export TF_VAR_aws_access_key = "ABCDEFGH"
-export TF_VAR_aws_secret_key = "secret"
+export AWS_ACCESS_KEY_ID = "ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY = "secret"
 
 ### Azure
-export TF_VAR_subscription_id="abc-def-jhk"
-export TF_VAR_client_id="zwe-dfg-sed" 
-export TF_VAR_client_secret="secret" 
-export TF_VAR_tenant_id="abc"
+export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
+export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
+export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 
 ### Google
 export TF_VAR_gcp_project_id="my-project-id"
 export TF_VAR_gcp_credentials_path="/Users/myuser/secret.json"
+# export GOOGLE_CREDENTIALS="secret"
 
 ### Oracle
+# https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm
 export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..1234"
 export TF_VAR_user_ocid="ocid1.user.oc1.1234"
 export TF_VAR_fingerprint="AA:aa:a1:12:34:56..."
@@ -28,9 +30,9 @@ export TF_VAR_parent_compartment_id="ocid1.tenancy.oc1.1234" # Parent comportmen
 ### IBM
 # https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs#environment-variables
 export TF_VAR_ibm_account_id="123456789"
-export IC_API_KEY="secret"
-export IAAS_CLASSIC_USERNAME="user"
-export IAAS_CLASSIC_API_KEY="secret"
+export IC_API_KEY="ibmcloud_api_key"
+export IAAS_CLASSIC_USERNAME="iaas_classic_username"
+export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
 
 ### All CSPs
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
