@@ -508,10 +508,6 @@ variable "pf_crc_zone4" {
   type    = string
   default = "B"
 }
-variable "ibm_account_id" {
-  type        = string
-  description = "IBM Account ID"
-}
 variable "pf_crc_ibm_bgp_asn" {
   type    = number
   default = 64536 # private (64512 to 65534)

@@ -26,7 +26,6 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   provider       = packetfabric
   description    = var.pf_crc_description
   circuit_id     = packetfabric_cloud_router.cr1.id
-  ibm_account_id = var.pf_crc_ibm_account_id
   ibm_bgp_asn    = packetfabric_cloud_router.cr1.asn
   pop            = var.pf_crc_pop
   zone           = var.pf_crc_zone
@@ -45,10 +44,12 @@ output "packetfabric_cloud_router_connection_ibm" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
+- `account_uuid` (String) The UUID for the billing account that should be billed. 
+Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) The description of this connection. This will appear as the connection name from the IBM side.
 - `ibm_account_id` (String) Your IBM account ID.
+Can also be set with the PF_IBM_ACCOUNT_ID environment variable.
 - `ibm_bgp_asn` (Number) Enter an ASN to use with your BGP session. This should be the same ASN you used for your Cloud Router.
 - `pop` (String) The POP in which you want to provision the connection (the on-ramp).
 - `speed` (String) The speed of the new connection.

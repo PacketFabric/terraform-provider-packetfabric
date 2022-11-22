@@ -650,7 +650,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   ibm_account_id = var.ibm_account_id
 #   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
 #   pop            = var.pf_crc_pop4
 #   zone           = var.pf_crc_zone4

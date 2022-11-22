@@ -50,8 +50,10 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"ibm_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PF_IBM_ACCOUNT_ID", nil),
 				ValidateFunc: validation.StringLenBetween(1, 32),
-				Description:  "Your IBM account ID.",
+				Description: "Your IBM account ID. " +
+					"Can also be set with the PF_IBM_ACCOUNT_ID environment variable.",
 			},
 			"ibm_bgp_asn": {
 				Type:        schema.TypeInt,
