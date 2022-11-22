@@ -14,7 +14,7 @@ terraform {
 provider "packetfabric" {}
 
 provider "aws" {
-  region     = var.aws_region1
+  region = var.aws_region1
 }
 
 # create random name to use to name objects

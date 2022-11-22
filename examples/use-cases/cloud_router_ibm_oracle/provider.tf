@@ -18,7 +18,7 @@ terraform {
 provider "packetfabric" {}
 
 provider "ibm" {
-  region                = var.ibm_region1
+  region = var.ibm_region1
 }
 
 provider "oci" {

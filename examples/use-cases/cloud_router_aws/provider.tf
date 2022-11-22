@@ -15,15 +15,15 @@ provider "packetfabric" {}
 
 # Define default profile
 provider "aws" {
-  region     = var.aws_region1
+  region = var.aws_region1
 }
 # Profile for Region1
 provider "aws" {
-  region     = var.aws_region1
-  alias      = "region1"
+  region = var.aws_region1
+  alias  = "region1"
 }
 # Profile for Region2
 provider "aws" {
-  region     = var.aws_region2
-  alias      = "region2"
+  region = var.aws_region2
+  alias  = "region2"
 }

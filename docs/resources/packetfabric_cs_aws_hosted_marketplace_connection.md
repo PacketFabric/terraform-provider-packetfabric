@@ -16,7 +16,6 @@ Connect a marketplace provider to your AWS cloud environment. For more informati
 resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
   provider       = packetfabric
   description    = var.pf_description
-  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   routing_id     = var.pf_routing_id
   market         = var.pf_market

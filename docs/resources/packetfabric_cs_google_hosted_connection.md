@@ -16,7 +16,6 @@ A hosted cloud connection to your Google Cloud environment. For more information
 resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   provider                    = packetfabric
   description                 = var.pf_description
-  account_uuid                = var.pf_account_uuid
   port                        = var.pf_port
   speed                       = var.pf_cs_speed
   google_pairing_key          = var.google_pairing_key

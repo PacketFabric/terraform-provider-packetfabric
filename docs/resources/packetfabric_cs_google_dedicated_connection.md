@@ -15,7 +15,6 @@ This is a port located in a Google cloud on-ramp facility, which will be connect
 ```terraform
 resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   description       = var.pf_description
   zone              = var.pf_cs_zone
   pop               = var.pf_cs_pop

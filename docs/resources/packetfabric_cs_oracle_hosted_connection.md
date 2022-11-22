@@ -17,7 +17,6 @@ description: |-
 resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
   provider     = packetfabric
   description  = var.pf_description
-  account_uuid = var.pf_account_uuid
   vc_ocid      = var.oracle_vc_ocid
   region       = var.oracle_region
   port         = var.pf_port

@@ -16,7 +16,6 @@ A port located in an AWS cloud on-ramp facility, which will be connected to the 
 resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
   provider          = packetfabric
   aws_region        = var.aws_region
-  account_uuid      = var.pf_account_uuid
   description       = var.pf_description
   zone              = var.pf_cs_zone
   pop               = var.pf_cs_pop
