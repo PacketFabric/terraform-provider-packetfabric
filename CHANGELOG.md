@@ -15,6 +15,7 @@ BREAKING CHANGES:
 IMPROVEMENTS/ENHANCEMENTS:
 
 * Add is_awaiting_onramp to AWS and Google hosted cloud resources and data-sources (#261)
+* Add support Terraform Import to hosted/dedicated cloud (#259)
 
 BUG FIXES:
 
