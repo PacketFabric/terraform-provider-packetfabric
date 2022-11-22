@@ -70,10 +70,6 @@ variable "ec2_instance_type" {
   description = "Instance Type/Size"
   default     = "t2.micro" # Free tier
 }
-variable "pf_aws_account_id" {
-  type        = number
-  description = "The AWS account ID to connect with. Must be 12 characters long"
-}
 
 ## PacketFabic VARs
 # PacketFabric Cloud-Router
