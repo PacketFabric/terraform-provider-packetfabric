@@ -21,6 +21,14 @@ For more information, see [API Keys in the PacketFabric documentation](https://d
 
 ->**Note:** API keys will still work for users with MFA enabled.
 
+API Key can be provided by using the `PF_TOKEN` environment variable.
+
+For example:
+
+```sh
+$ export PF_TOKEN="secret"
+```
+
 ## Account ID
 
 When you provision a new service through Terraform, you will need to provide an account ID. The account ID is mapped to a billing account. 
