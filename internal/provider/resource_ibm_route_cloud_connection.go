@@ -47,7 +47,6 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"ibm_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
