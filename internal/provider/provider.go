@@ -59,7 +59,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PF_PASSWORD", nil),
 				Description: "PacketFabric username. " +
-					"Can also be set with the PF_USER environment variable.",
+					"Can also be set with the PF_PASSWORD environment variable.",
 				Sensitive: true,
 			},
 		},
