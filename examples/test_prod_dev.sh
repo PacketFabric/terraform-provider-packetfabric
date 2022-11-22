@@ -1,8 +1,5 @@
 #!/bin/bash
 
-version1=">= 0.4.2"
-version2=">= 0.5.0"
-
 if [[ $1 = "cleanup" ]]; then
     echo -e "\nDelete *state* .*lock* .terraform secret.tfvars secret.json .DS_Store cloud_router_ip_address.txt customer_router_ip_address.txt source_env_var.sh"
     find . -name ".terraform" -type d -exec rm -rf "{}" \;
@@ -14,27 +11,6 @@ if [[ $1 = "cleanup" ]]; then
     find . -name source_env_var.sh -type f -delete
     find . -name cloud_router_ip_address.txt -type f -delete
     find . -name customer_router_ip_address.txt -type f -delete
-fi
-
-if [[ $1 = "version" ]]; then
-  echo -e "\nSwitch to PacketFabric/packetfabric $version1 => $version2\n"
-  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/main.tf
-  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/*/main.tf
-  sed -i '' -e "s#$version1#$version2#g" ./use-cases/*/provider.tf
-  sed -i '' -e "s#$version1#$version2#g" ./provider/provider.tf
-  sed -i '' -e "s#$version1#$version2#g" ./main.tf
-
-  echo
-  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/main.tf
-  echo
-  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/*/main.tf
-  echo
-  grep -A 1 "PacketFabric/packetfabric" ./use-cases/*/provider.tf
-  echo
-  grep -A 1 "PacketFabric/packetfabric" ./provider/provider.tf
-  echo
-  grep -A 1 "PacketFabric/packetfabric" ./main.tf
-  echo
 fi
 
 if [[ $1 = "dev" ]]; then
@@ -91,6 +67,7 @@ find . -name ".*lock*" -type f
 find . -name "*state*" -type f
 find . -name secret.tfvars -type f
 find . -name secret.json -type f
+find . -name source_env_var.sh -type f
 find . -name cloud_router_ip_address.txt -type f
 find . -name customer_router_ip_address.txt -type f
 
@@ -98,4 +75,3 @@ echo -e "\nOptions:"
 echo -e "\t./$(basename $0) [dev]: switch from prod to dev"
 echo -e "\t./$(basename $0) [prod]: switch from dev to prod"
 echo -e "\t./$(basename $0) [cleanup]: delete .terraform, lock, state, secret, etc..."
-echo -e "\t./$(basename $0) [version]: change version in all examples from \"$version1\" to \"$version2\")\n"

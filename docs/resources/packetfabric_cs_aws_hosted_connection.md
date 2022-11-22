@@ -16,7 +16,6 @@ A hosted cloud connection to your AWS environment. For more information, see [Cl
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider       = packetfabric
   description    = var.pf_description
-  aws_account_id = var.pf_aws_account_id
   port           = var.pf_port
   speed          = var.pf_cs_speed
   pop            = var.pf_cs_pop
@@ -37,6 +36,7 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
+Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you want to connect to AWS. This starts with "PF-AP-".

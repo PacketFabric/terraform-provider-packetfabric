@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
   }
 }
@@ -261,7 +261,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
@@ -402,7 +401,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   routing_id     = var.pf_routing_id
 #   market         = var.pf_market
 #   speed          = var.pf_cs_speed2
@@ -572,7 +570,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   aws_account_id = var.pf_aws_account_id
 #   pop            = var.pf_crc_pop1
 #   zone           = var.pf_crc_zone1
 #   speed          = var.pf_crc_speed
@@ -650,7 +647,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   ibm_account_id = var.ibm_account_id
 #   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
 #   pop            = var.pf_crc_pop4
 #   zone           = var.pf_crc_zone4

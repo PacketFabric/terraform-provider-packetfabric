@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -16,14 +16,17 @@ provider "packetfabric" {}
 # Define default profile
 provider "aws" {
   region = var.aws_region1
+  # use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
 }
 # Profile for Region1
 provider "aws" {
   region = var.aws_region1
   alias  = "region1"
+  # use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
 }
 # Profile for Region2
 provider "aws" {
   region = var.aws_region2
-  alias  = "region2"
+  # use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
+  alias = "region2"
 }

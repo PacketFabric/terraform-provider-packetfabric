@@ -16,11 +16,6 @@ variable "gcp_project_id" {
   # sensitive   = true
   description = "Google Cloud project ID"
 }
-variable "gcp_credentials_path" {
-  type        = string
-  sensitive   = true
-  description = "Google Cloud service account credentials (path to GCP json file)"
-}
 # https://cloud.google.com/compute/docs/regions-zones
 variable "gcp_region1" {
   type        = string

@@ -85,13 +85,13 @@ Set additional environment variables for AWS and Google:
 
 ```sh
 ### AWS
-export TF_VAR_pf_aws_account_id="123456789"
+export PF_AWS_ACCOUNT_ID="98765432"
 export AWS_ACCESS_KEY_ID = "ABCDEFGH"
 export AWS_SECRET_ACCESS_KEY = "secret"
 
 ### Google
-export TF_VAR_gcp_project_id="my-project-id"
-export TF_VAR_gcp_credentials_path="/Users/myuser/secret.json"
+export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gcloud module
+export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-setting-1234", "private_key_id": "1234", "private_key": "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----\n", "client_email": "demoapi@demo-setting-1234.iam.gserviceaccount.com", "client_id": "102640829015169383380", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demoapi%40demo-setting-1234.iam.gserviceaccount.com" }'
 
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```

@@ -347,10 +347,6 @@ variable "pf_crc_is_public" {
 }
 
 # Cloud Router Connection AWS
-variable "pf_aws_account_id" {
-  type    = string
-  default = "123456789"
-}
 variable "pf_crc_speed" {
   type        = string
   description = "The speed of the new connection"
@@ -507,10 +503,6 @@ variable "pf_crc_pop4" {
 variable "pf_crc_zone4" {
   type    = string
   default = "B"
-}
-variable "ibm_account_id" {
-  type        = string
-  description = "IBM Account ID"
 }
 variable "pf_crc_ibm_bgp_asn" {
   type    = number

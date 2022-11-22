@@ -11,10 +11,6 @@ variable "public_key" {
 }
 
 ## IBM VARs
-variable "ibm_account_id" {
-  type        = string
-  description = "IBM Account ID"
-}
 variable "ibm_region1" {
   type        = string
   default     = "us-south"
