@@ -9,6 +9,7 @@ const portStatusURI = "/v2.1/ports/%s/status"
 const portByCIDURI = "/v2/ports/%s"
 const portEnableURI = "/v2/ports/%s/enable"
 const portDisableURI = "/v2/ports/%s/disable"
+const portLoaURI = "/v2/ports/%s/letter-of-authorization"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -120,6 +121,22 @@ type PortMessageResp struct {
 	Message string `json:"message"`
 }
 
+type PortLoa struct {
+	LoaCustomerName  string `json:"loa_customer_name,omitempty"`
+	DestinationEmail string `json:"destination_email,omitempty"`
+}
+
+type PortLoaResp struct {
+	UUID        string `json:"uuid,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Description string `json:"description,omitempty"`
+	MimeType    string `json:"mime_type,omitempty"`
+	Size        int    `json:"size,omitempty"`
+	TimeCreated string `json:"time_created,omitempty"`
+	TimeUpdated string `json:"time_updated,omitempty"`
+}
+
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
 	expectedResp := &InterfaceCreateResp{}
 	_, err := c.sendRequest(portsURI, postMethod, interf, expectedResp)
@@ -133,6 +150,16 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	}
 	go c.CheckServiceStatus(createOk, fn)
 	if !<-createOk {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) SendPortLoa(portCID string, portLoa PortLoa) (*PortLoaResp, error) {
+	formatedURI := fmt.Sprintf(portLoaURI, portCID)
+	expectedResp := &PortLoaResp{}
+	_, err := c.sendRequest(formatedURI, postMethod, portLoa, expectedResp)
+	if err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
