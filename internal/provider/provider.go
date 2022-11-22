@@ -31,10 +31,10 @@ func Provider() *schema.Provider {
 		Schema: map[string]*schema.Schema{
 			"host": {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PF_HOST", nil),
-				Description: "Packet Fabric Cloud API endpoint. " +
-					"Example TF files input TF_VAR_pf_api_server shell environment variable. " +
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("PF_HOST", "https://api.packetfabric.com"),
+				Description: "PacketFabric API endpoint. " +
+					"Can also be set with the PF_HOST environment variable. " +
 					"Defaults to https://api.packetfabric.com",
 				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 			},
@@ -42,21 +42,25 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PF_TOKEN", nil),
-				Description: "Packet Fabric Cloud API access token. " +
-					"Example TF files input TF_VAR_pf_api_key shell environment variable",
+				Description: "PacketFabric API access token. " +
+					"Can also be set with the PF_TOKEN environment variable.",
 				Sensitive: true,
 			},
 			"username": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PF_USER", nil),
-				Sensitive:   true,
+				Description: "PacketFabric username. " +
+					"Can also be set with the PF_USER environment variable.",
+				Sensitive: true,
 			},
 			"password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PF_PASSWORD", nil),
-				Sensitive:   true,
+				Description: "PacketFabric username. " +
+					"Can also be set with the PF_USER environment variable.",
+				Sensitive: true,
 			},
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/aws_dedicated_connection_post

@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
@@ -15,16 +15,10 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 provider "ibm" {
-  region                = var.ibm_region1
-  ibmcloud_api_key      = var.ibmcloud_api_key
-  iaas_classic_username = var.iaas_classic_username
-  iaas_classic_api_key  = var.iaas_classic_api_key
+  region = var.ibm_region1
 }
 
 provider "oci" {

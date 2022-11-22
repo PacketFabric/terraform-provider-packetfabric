@@ -91,9 +91,12 @@ func resourcePointToPoint() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
-				Description:  "The UUID for the billing account that should be billed.",
+				Description: "The UUID for the billing account that should be billed. " +
+					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
+
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,

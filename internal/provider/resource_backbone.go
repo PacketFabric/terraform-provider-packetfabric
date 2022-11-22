@@ -7,6 +7,7 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceBackbone() map[string]*schema.Schema {
@@ -26,9 +27,12 @@ func resourceBackbone() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"account_uuid": {
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "The UUID for the billing account that should be billed.",
+						Type:         schema.TypeString,
+						Required:     true,
+						DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
+						ValidateFunc: validation.IsUUID,
+						Description: "The UUID for the billing account that should be billed. " +
+							"Can also be set with the PF_ACCOUNT_ID environment variable.",
 					},
 					"speed": {
 						Type:        schema.TypeString,

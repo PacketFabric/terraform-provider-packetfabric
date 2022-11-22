@@ -57,30 +57,40 @@ az provider register -n Microsoft.Network
 
 ## Quick Start
 
-1. Create the file ``secret.tfvars`` and update each variables as needed (edit ``variables.tf``).
+1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
-cp secret.tfvars.sample secret.tfvars
+export PF_TOKEN="secret"
+export PF_ACCOUNT_ID="123456789"
+```
+
+Set additional environment variables for Azure:
+
+```sh
+export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
+export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
+export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
 terraform init
-terraform plan -var-file="secret.tfvars"
+terraform plan
 ```
 
 Apply the plan:
 
 ```sh
-terraform apply -var-file="secret.tfvars"
+terraform apply
 ```
 
 3. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform state rm azurerm_express_route_circuit.azure_express_route_1
-terraform destroy -var-file="secret.tfvars"
+terraform destroy
 ```
 
 The ExpressRoute Circuit needs to be in a deprovisioned state before being deleted.

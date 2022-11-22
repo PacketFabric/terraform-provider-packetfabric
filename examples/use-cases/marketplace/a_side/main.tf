@@ -2,15 +2,12 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 # Create random name to use to name objects
 resource "random_pet" "name" {}
@@ -27,7 +24,6 @@ resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_con
     vlan            = var.pf_a_side_vc_vlan1
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -59,7 +55,6 @@ output "packetfabric_backbone_virtual_circuit_marketplace" {
 #     vlan            = var.pf_z_side_vc_vlan2
 #   }
 #   bandwidth {
-#     account_uuid      = var.pf_account_uuid
 #     longhaul_type     = var.pf_vc_longhaul_type
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm

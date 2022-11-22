@@ -2,7 +2,6 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc_2" {
   provider                     = packetfabric
   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   circuit_id                   = packetfabric_cloud_router.cr.id
-  account_uuid                 = var.pf_account_uuid
   pop                          = var.pf_crc_pop2
   speed                        = var.pf_crc_speed
   gateway_address              = var.pf_crc_gateway_address

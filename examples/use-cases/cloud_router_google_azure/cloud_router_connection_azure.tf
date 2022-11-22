@@ -26,7 +26,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   # using Azure Peering location for the name but removing the spaces with a regex
   description       = "${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"
   circuit_id        = packetfabric_cloud_router.cr.id
-  account_uuid      = var.pf_account_uuid
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   speed             = var.pf_crc_speed
   maybe_nat         = var.pf_crc_maybe_nat

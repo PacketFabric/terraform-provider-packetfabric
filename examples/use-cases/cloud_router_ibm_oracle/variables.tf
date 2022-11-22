@@ -15,21 +15,6 @@ variable "ibm_account_id" {
   type        = string
   description = "IBM Account ID"
 }
-variable "ibmcloud_api_key" {
-  type        = string
-  sensitive   = true
-  description = "IBM API key"
-}
-variable "iaas_classic_username" {
-  type        = string
-  sensitive   = true
-  description = "IBM Classic Username"
-}
-variable "iaas_classic_api_key" {
-  type        = string
-  sensitive   = true
-  description = "IBM Classic API key"
-}
 variable "ibm_region1" {
   type        = string
   default     = "us-south"
@@ -97,22 +82,6 @@ variable "oracle_subnet_cidr1" {
 }
 
 ## PacketFabic VARs
-variable "pf_api_key" {
-  type        = string
-  description = "PacketFabric platform API access key"
-  sensitive   = true
-  default     = "secret"
-}
-variable "pf_account_uuid" {
-  type        = string
-  description = "The UUID for the billing account (Find it under Billing > Accounts in the Portal)"
-  default     = "34ff9ffb-9bbf-43b1-9cf8-6c8e62370597"
-}
-variable "pf_api_server" {
-  type        = string
-  description = "PacketFabric API endpoint URL"
-  default     = "https://api.packetfabric.com"
-}
 
 # PacketFabric Cloud-Router
 variable "pf_cr_asn" {

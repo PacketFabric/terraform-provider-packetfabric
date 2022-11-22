@@ -21,6 +21,14 @@ For more information, see [API Keys in the PacketFabric documentation](https://d
 
 ->**Note:** API keys will still work for users with MFA enabled.
 
+API Key can be provided by using the `PF_TOKEN` environment variable.
+
+For example:
+
+```sh
+$ export PF_TOKEN="secret"
+```
+
 ## Account ID
 
 When you provision a new service through Terraform, you will need to provide an account ID. The account ID is mapped to a billing account. 
@@ -32,6 +40,13 @@ To find this information via the API, use the following call: `https://api.packe
 
 For more information, see [Get the Account UUID in the PacketFabric documentation](https://docs.packetfabric.com/api/examples/account_uuid/).
 
+Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.
+
+For example:
+
+```sh
+$ export PF_ACCOUNT_ID="123456789"
+```
 
 ## Getting location information
 
@@ -65,6 +80,6 @@ This returns information that includes the available media types and zones.
 
 ## Getting support
 
-If you are experiencing issues with the PacketFabric Terraform provider, open an issue via Github. 
+If you are experiencing issues with the PacketFabric Terraform provider, open an [issue](https://github.com/PacketFabric/terraform-provider-packetfabric/issues) via Github. 
 
-If you are experiencing issues with your PacketFabric services, open a support ticket by emailing support@packetfabric.com.
+If you are experiencing issues with your PacketFabric services, open a support ticket by emailing [support AT packetfabric.com](mailto:support AT packetfabric.com).

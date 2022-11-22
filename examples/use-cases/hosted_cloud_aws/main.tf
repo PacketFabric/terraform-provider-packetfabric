@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -11,15 +11,10 @@ terraform {
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 provider "aws" {
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-  region     = var.aws_region1
+  region = var.aws_region1
 }
 
 # create random name to use to name objects
@@ -97,7 +92,6 @@ resource "aws_route_table_association" "route_association_1" {
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider       = packetfabric
   description    = "${var.tag_name}-${random_pet.name.id}"
-  account_uuid   = var.pf_account_uuid
   aws_account_id = var.pf_aws_account_id
   port           = var.pf_port_circuit_id
   speed          = var.pf_cs_speed

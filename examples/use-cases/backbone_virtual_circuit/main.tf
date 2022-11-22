@@ -2,15 +2,12 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.0"
+      version = ">= 0.4.2"
     }
   }
 }
 
-provider "packetfabric" {
-  host  = var.pf_api_server
-  token = var.pf_api_key
-}
+provider "packetfabric" {}
 
 # Create random name to use to name objects
 resource "random_pet" "name" {}
@@ -18,7 +15,6 @@ resource "random_pet" "name" {}
 # Create a PacketFabric ports
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
   media             = var.pf_port_media
@@ -33,7 +29,6 @@ output "packetfabric_port_1" {
 }
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
   media             = var.pf_port_media
@@ -129,7 +124,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
     vlan            = var.pf_vc_vlan2
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm

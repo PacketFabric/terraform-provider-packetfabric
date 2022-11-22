@@ -15,7 +15,6 @@ A virtual circuit between two ports in the PacketFabric network. For more inform
 ```terraform
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = var.pf_description
   media             = var.pf_port_media
@@ -28,7 +27,6 @@ resource "packetfabric_port" "port_1" {
 
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
-  account_uuid      = var.pf_account_uuid
   autoneg           = var.pf_port_autoneg
   description       = var.pf_description
   media             = var.pf_port_media
@@ -54,7 +52,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
     vlan            = var.pf_vc_vlan2
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
@@ -93,7 +90,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 
 Required:
 
-- `account_uuid` (String) The UUID for the billing account that should be billed.
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 
 Optional:
 
