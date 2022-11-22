@@ -52,6 +52,8 @@ provider "packetfabric" {}
 
 ## Environment Variables
 
+!> **Warning:** Hard-coded credentials are not recommended in any Terraform configuration. Using environment variables is highly recommended.
+
 Credentials can be provided by using the `PF_TOKEN`, and optionally `PF_USER` and `PF_PASSWORD` environment variables.
 
 For example:
