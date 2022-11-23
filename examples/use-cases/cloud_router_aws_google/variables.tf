@@ -124,15 +124,15 @@ variable "pf_crc_pop2" {
   default     = "SFO1"
 }
 
-# PacketFabric Google Cloud Router Connection - Azure ExpressRoute Circuit
+# PacketFabric Google Cloud Router Connection - AWS
 variable "pf_crc_is_public" {
   type        = bool
   description = "Whether PacketFabric should allocate a public IP address for this connection"
-  default     = false # set to true if peering_type = MicrosoftPeering
+  default     = false
 }
 
 
-# PacketFabric Cloud Router BGP Session - Google and Azure
+# PacketFabric Cloud Router BGP Session - Google and AWS
 variable "pf_crbs_af" {
   type        = string
   description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
