@@ -39,6 +39,9 @@ func GetPopAndZoneWithAvailablePort(speed string) (string, string, error) {
 		return "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 	for _, l := range locations {
+		if l.Vendor == "Colt" {
+			continue
+		}
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
 			return "", "", fmt.Errorf("error getting location port availability: %w", err)
