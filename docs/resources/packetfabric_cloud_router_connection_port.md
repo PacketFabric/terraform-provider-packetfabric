@@ -25,6 +25,7 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
   provider        = packetfabric
   description     = var.pf_crc_description
   circuit_id      = packetfabric_cloud_router.cr1.id
+  account_uuid    = var.pf_account_uuid
   port_circuit_id = var.pf_crc_port_circuit_id
   vlan            = var.pf_crc_vlan
   untagged        = var.pf_crc_untagged

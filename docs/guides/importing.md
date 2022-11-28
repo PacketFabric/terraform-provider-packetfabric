@@ -22,6 +22,7 @@ resource "packetfabric_cloud_router" "awesome_cloud_routers" {
   provider     = packetfabric
   asn          = 4556
   name         = "Awesome Cloud Routers"
+  account_uuid = var.pf_account_uuid
   capacity     = "5Gbps"
   regions      = ["US"]
 }
