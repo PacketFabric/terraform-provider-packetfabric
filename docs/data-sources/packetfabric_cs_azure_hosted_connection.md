@@ -61,4 +61,3 @@ output "packetfabric_cs_azure_hosted_connection_data" {
 
 - `id` (String) The ID of this resource.
 
-
