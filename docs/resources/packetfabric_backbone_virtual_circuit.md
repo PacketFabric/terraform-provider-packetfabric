@@ -52,7 +52,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
     vlan            = var.pf_vc_vlan2
   }
   bandwidth {
-    account_uuid      = var.pf_account_uuid
     longhaul_type     = var.pf_vc_longhaul_type
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
