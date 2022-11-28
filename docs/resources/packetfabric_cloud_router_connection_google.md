@@ -16,11 +16,11 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
-  provider     = packetfabric
-  asn          = var.pf_cr_asn
-  name         = var.pf_cr_name
-  capacity     = var.pf_cr_capacity
-  regions      = var.pf_cr_regions
+  provider = packetfabric
+  asn      = var.pf_cr_asn
+  name     = var.pf_cr_name
+  capacity = var.pf_cr_capacity
+  regions  = var.pf_cr_regions
 }
 
 resource "packetfabric_cloud_router_connection_google" "crc2" {

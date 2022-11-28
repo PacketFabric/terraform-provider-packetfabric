@@ -50,6 +50,7 @@ terraform {
 provider "packetfabric" {}
 ```
 
+
 ## Environment Variables
 
 !> **Warning:** Hard-coded credentials are not recommended in any Terraform configuration. Using environment variables is highly recommended.
