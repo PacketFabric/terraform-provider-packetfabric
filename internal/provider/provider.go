@@ -134,6 +134,10 @@ func Provider() *schema.Provider {
 			"packetfabric_marketplace_service_requests":  dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":              datasourceBackboneServices(),
 			"packetfabric_point_to_point":                datasourcePointToPoint(),
+			"packetfabric_port_vlans":                    dataSourcePortVlanSummary(),
+			"packetfabric_locations_markets":             dataSourceLocationsMarkets(),
+			"packetfabric_locations_port_availability":   dataSourcePortAvailability(),
+			"packetfabric_locations_regions":             datasourceLocationsRegions(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

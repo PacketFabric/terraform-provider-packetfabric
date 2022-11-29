@@ -16,6 +16,21 @@ resource "random_pet" "name" {}
 # ##### PORTS/INTERFACES
 # ######################################
 
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop1
+# }
+# output "packetfabric_locations_port_availability_pop1" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
+# }
+# locals {
+#   zones_pop1= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop1_single_zone" {
+#   value = tolist(local.zones_pop1)[0]
+# }
+
 # # Create a PacketFabric Ports
 # resource "packetfabric_port" "port_1a" {
 #   provider          = packetfabric
@@ -26,7 +41,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop1
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone1
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
 # }
 # output "packetfabric_port_1a" {
 #   value = packetfabric_port.port_1a
@@ -42,7 +57,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop1
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone1
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
 # }
 # output "packetfabric_port_1b" {
 #   value = packetfabric_port.port_1b
@@ -65,6 +80,21 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_link_aggregation_group.lag_1
 # }
 
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop2" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop2
+# }
+# output "packetfabric_locations_port_availability_pop2" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop2
+# }
+# locals {
+#   zones_pop2= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop2.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop2_single_zone" {
+#   value = tolist(local.zones_pop2)[0]
+# }
+
 # resource "packetfabric_port" "port_2" {
 #   provider          = packetfabric
 #   autoneg           = var.pf_port_autoneg
@@ -74,7 +104,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop2
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone2
+#   zone              = tolist(local.zones_pop2)[0] # var.pf_port_avzone2
 # }
 # output "packetfabric_port_2" {
 #   value = packetfabric_port.port_2
