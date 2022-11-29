@@ -381,6 +381,27 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_cs_oracle_hosted_connection.current
 # }
 
+# resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
+#   provider    = packetfabric
+#   ibm_bgp_asn = var.ibm_bgp_asn
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   pop         = var.pf_cs_pop7
+#   port        = packetfabric_port.port_1a.id
+#   vlan        = var.pf_cs_vlan7
+#   speed       = var.pf_cs_speed1
+# }
+# output "packetfabric_cs_ibm_hosted_connection" {
+#   value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
+# }
+
+# data "packetfabric_cs_ibm_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm.id
+# }
+# output "packetfabric_cs_ibm_hosted_connection_data" {
+#   value = data.packetfabric_cs_ibm_hosted_connection.current
+# }
+
 # #######################################
 # ##### MARKETPLACE
 # #######################################
@@ -680,7 +701,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   ibm_account_id = var.ibm_account_id
 #   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
 #   pop            = var.pf_crc_pop4
 #   zone           = var.pf_crc_zone4

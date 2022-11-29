@@ -208,6 +208,20 @@ variable "pf_cs_oracle_vc_ocid" {
   sensitive = true
 }
 
+# IBM Hosted Connection
+variable "pf_cs_pop7" {
+  type    = string
+  default = "SFO1"
+}
+variable "pf_cs_vlan7" {
+  type    = number
+  default = 108
+}
+variable "ibm_bgp_asn" {
+  type    = string
+  default = 64537 # private (64512 to 65534)
+}
+
 # Markeptlace
 variable "pf_routing_id" {
   type    = string
@@ -507,10 +521,6 @@ variable "pf_crc_pop4" {
 variable "pf_crc_zone4" {
   type    = string
   default = "B"
-}
-variable "ibm_account_id" {
-  type        = string
-  description = "IBM Account ID"
 }
 variable "pf_crc_ibm_bgp_asn" {
   type    = number
