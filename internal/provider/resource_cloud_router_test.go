@@ -18,7 +18,13 @@ func hclCloudRouter(name, accountUUID, region, capacity, asn string) (hcl string
 		regions      = ["%s"]
 		capacity     = "%s"
 		asn          = "%s"
-	}`, hclName, name, accountUUID, region, capacity, asn)
+	}
+	
+	resource "time_sleep" "delay_cloud_router_destroy" {
+		depends_on = [packetfabric_cloud_router.%s]
+	  
+		destroy_duration = "10s"
+	}`, hclName, name, accountUUID, region, capacity, asn, hclName)
 	return
 }
 
@@ -28,8 +34,9 @@ func TestAccCloudRouter(t *testing.T) {
 	name := testutil.GenerateUniqueName(testPrefix)
 	hcl, resourceName := hclCloudRouter(name, testutil.GetAccountUUID(), "US", "100Mbps", "4556")
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testutil.PreCheck(t, nil) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testutil.PreCheck(t, nil) },
+		ProviderFactories: testAccProviderFactories,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: hcl,
