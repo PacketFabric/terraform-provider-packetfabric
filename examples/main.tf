@@ -242,6 +242,17 @@ resource "random_pet" "name" {}
 #   value = local.pop_in_market
 # }
 
+# # Generate a LOA for a port (inbound cross connect)
+# resource "packetfabric_port_loa" "inbound_crossconnect_1" {
+#   provider          = packetfabric
+#   port_circuit_id   = packetfabric_port.port_1a.id
+#   loa_customer_name = "My Awesome Company"
+#   destination_email = "email@mydomain.com"
+# }
+# output "packetfabric_port_loa" {
+#   value = packetfabric_port_loa.inbound_crossconnect_1
+# }
+
 # # Create Cross Connect
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
