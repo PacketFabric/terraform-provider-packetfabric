@@ -136,6 +136,7 @@ type PortLoaResp struct {
 	Size        int    `json:"size,omitempty"`
 	TimeCreated string `json:"time_created,omitempty"`
 	TimeUpdated string `json:"time_updated,omitempty"`
+}
 
 type PortVlanSummary struct {
 	LowestAvailableVlan int `json:"lowest_available_vlan,omitempty"`
