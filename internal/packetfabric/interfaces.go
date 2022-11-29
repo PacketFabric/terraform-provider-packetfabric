@@ -10,6 +10,7 @@ const portByCIDURI = "/v2/ports/%s"
 const portEnableURI = "/v2/ports/%s/enable"
 const portDisableURI = "/v2/ports/%s/disable"
 const portLoaURI = "/v2/ports/%s/letter-of-authorization"
+const portVlanSummaryURI = "/v2/ports/%s/vlan-summary"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -135,6 +136,10 @@ type PortLoaResp struct {
 	Size        int    `json:"size,omitempty"`
 	TimeCreated string `json:"time_created,omitempty"`
 	TimeUpdated string `json:"time_updated,omitempty"`
+
+type PortVlanSummary struct {
+	LowestAvailableVlan int `json:"lowest_available_vlan,omitempty"`
+	MaxVlan             int `json:"max_vlan,omitempty"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
@@ -210,6 +215,16 @@ func (c *PFClient) ListPorts() (*[]InterfaceReadResp, error) {
 func (c *PFClient) GetPortStatus(portCID string) (*ServiceState, error) {
 	formatedURI := fmt.Sprintf(portStatusURI, portCID)
 	expectedResp := &ServiceState{}
+	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) GetPortVlanSummary(portCID string) (*PortVlanSummary, error) {
+	formatedURI := fmt.Sprintf(portVlanSummaryURI, portCID)
+	expectedResp := &PortVlanSummary{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
