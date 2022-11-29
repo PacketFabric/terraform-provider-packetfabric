@@ -8,6 +8,8 @@ description: |-
 
 # packetfabric_cs_ibm_hosted_connection (Resource)
 
+ A hosted cloud connection to your IBM cloud environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+
 
 
 ## Example Usage
