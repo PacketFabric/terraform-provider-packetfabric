@@ -16,69 +16,69 @@ resource "random_pet" "name" {}
 # ##### PORTS/INTERFACES
 # ######################################
 
-# Get the zone from the pop automatically
-data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
-  provider = packetfabric
-  pop      = var.pf_port_pop1
-}
-output "packetfabric_locations_port_availability_pop1" {
-  value = data.packetfabric_locations_port_availability.port_availabilty_pop1
-}
-locals {
-  zones_pop1= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
-}
-output "packetfabric_locations_port_availability_pop1_single_zone" {
-  value = tolist(local.zones_pop1)[0]
-}
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop1
+# }
+# output "packetfabric_locations_port_availability_pop1" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
+# }
+# locals {
+#   zones_pop1= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop1_single_zone" {
+#   value = tolist(local.zones_pop1)[0]
+# }
 
-# Create a PacketFabric Ports
-resource "packetfabric_port" "port_1a" {
-  provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}-a"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
-}
-output "packetfabric_port_1a" {
-  value = packetfabric_port.port_1a
-}
+# # Create a PacketFabric Ports
+# resource "packetfabric_port" "port_1a" {
+#   provider          = packetfabric
+#   autoneg           = var.pf_port_autoneg
+#   description       = "${var.tag_name}-${random_pet.name.id}-a"
+#   media             = var.pf_port_media
+#   nni               = var.pf_port_nni
+#   pop               = var.pf_port_pop1
+#   speed             = var.pf_port_speed
+#   subscription_term = var.pf_port_subterm
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+# }
+# output "packetfabric_port_1a" {
+#   value = packetfabric_port.port_1a
+# }
 
-## 2nd port in the same location same zone to create a LAG
-resource "packetfabric_port" "port_1b" {
-  provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}-b"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
-}
-output "packetfabric_port_1b" {
-  value = packetfabric_port.port_1b
-}
+# ## 2nd port in the same location same zone to create a LAG
+# resource "packetfabric_port" "port_1b" {
+#   provider          = packetfabric
+#   autoneg           = var.pf_port_autoneg
+#   description       = "${var.tag_name}-${random_pet.name.id}-b"
+#   media             = var.pf_port_media
+#   nni               = var.pf_port_nni
+#   pop               = var.pf_port_pop1
+#   speed             = var.pf_port_speed
+#   subscription_term = var.pf_port_subterm
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+# }
+# output "packetfabric_port_1b" {
+#   value = packetfabric_port.port_1b
+# }
 
-resource "packetfabric_link_aggregation_group" "lag_1" {
-  provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
-  interval    = "fast" # or slow
-  members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
-  #members = [packetfabric_port.port_1a.id]
-  pop = var.pf_port_pop1
-}
+# resource "packetfabric_link_aggregation_group" "lag_1" {
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   interval    = "fast" # or slow
+#   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
+#   #members = [packetfabric_port.port_1a.id]
+#   pop = var.pf_port_pop1
+# }
 
-data "packetfabric_link_aggregation_group" "lag_1" {
-  provider       = packetfabric
-  lag_circuit_id = packetfabric_link_aggregation_group.lag_1.id
-}
-output "packetfabric_link_aggregation_group" {
-  value = data.packetfabric_link_aggregation_group.lag_1
-}
+# data "packetfabric_link_aggregation_group" "lag_1" {
+#   provider       = packetfabric
+#   lag_circuit_id = packetfabric_link_aggregation_group.lag_1.id
+# }
+# output "packetfabric_link_aggregation_group" {
+#   value = data.packetfabric_link_aggregation_group.lag_1
+# }
 
 # # Get the zone from the pop automatically
 # data "packetfabric_locations_port_availability" "port_availabilty_pop2" {
