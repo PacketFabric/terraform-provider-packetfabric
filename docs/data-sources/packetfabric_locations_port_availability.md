@@ -40,7 +40,7 @@ output "packetfabric_locations_port_availability_dal_1_single_zone" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `ports_available` (List of Object) (see [below for nested schema](#nestedatt--ports_available))
+- `ports_available` (List of Object) The list of ports available in the given POP. (see [below for nested schema](#nestedatt--ports_available))
 
 <a id="nestedatt--ports_available"></a>
 ### Nested Schema for `ports_available`
