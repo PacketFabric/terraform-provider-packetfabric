@@ -18,11 +18,11 @@ For information specific to each cloud provider, see [the PacketFabric cloud rou
 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
-  provider     = packetfabric
-  asn          = var.pf_cr_asn
-  name         = var.pf_cr_name
-  capacity     = var.pf_cr_capacity
-  regions      = var.pf_cr_regions
+  provider = packetfabric
+  asn      = var.pf_cr_asn
+  name     = var.pf_cr_name
+  capacity = var.pf_cr_capacity
+  regions  = var.pf_cr_regions
 }
 
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
