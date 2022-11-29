@@ -198,6 +198,32 @@ type ThirdPartyVC struct {
 	FlexBandwidthID string    `json:"flex_bandwidth_id,omitempty"`
 }
 
+type CloudConnInfo struct {
+	UUID                    string           `json:"uuid,omitempty"`
+	CloudCircuitID          string           `json:"cloud_circuit_id,omitempty"`
+	CustomerUUID            string           `json:"customer_uuid,omitempty"`
+	AccountUUID             string           `json:"account_uuid,omitempty"`
+	UserUUID                string           `json:"user_uuid,omitempty"`
+	State                   string           `json:"state,omitempty"`
+	ServiceProvider         string           `json:"service_provider,omitempty"`
+	ServiceClass            string           `json:"service_class,omitempty"`
+	PortType                string           `json:"port_type,omitempty"`
+	Speed                   string           `json:"speed,omitempty"`
+	Deleted                 bool             `json:"deleted,omitempty"`
+	Description             string           `json:"description,omitempty"`
+	CloudProvider           AwsCloudProvider `json:"cloud_provider,omitempty"`
+	Settings                CloudSettings    `json:"settings,omitempty"`
+	SubscriptionTerm        int              `json:"subscription_term,omitempty"`
+	TimeCreated             string           `json:"time_created,omitempty"`
+	TimeUpdated             string           `json:"time_updated,omitempty"`
+	Pop                     string           `json:"pop,omitempty"`
+	Site                    string           `json:"site,omitempty"`
+	CustomerSiteName        string           `json:"customer_site_name,omitempty"`
+	CustomerSiteCode        string           `json:"customer_site_code,omitempty"`
+	IsAwaitingOnramp        bool             `json:"is_awaiting_onramp,omitempty"`
+	IsCloudRouterConnection bool             `json:"is_cloud_router_connection,omitempty"`
+}
+
 type ServiceMessage struct {
 	Message string `json:"message"`
 }

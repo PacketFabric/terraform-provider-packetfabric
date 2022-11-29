@@ -107,6 +107,7 @@ export PF_ACCOUNT_ID="1234"
 export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
 export PF_ACC_TEST_MARKET="HOU"
 export PF_AWS_ACCOUNT_ID="123456789"
+export PF_IBM_ACCOUNT_ID="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ```
 
 > **Warning**: Running below command will order various PacketFabric products, then delete them.
