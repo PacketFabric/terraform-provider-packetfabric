@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_port_loa (Resource)
 
-
+This is the LOA issued by PacketFabric for one of our ports. You can use this to arrange a cross connect in the data center. If you would prefer to have PacketFabric manage the cross connect on your behalf, you can provide your own LOA and request an outbound cross connect. For more information, see [Generate an LOA](https://docs.packetfabric.com/xconnect/inbound/loa/) and [Cross Connects in the PacketFabric documentation](https://docs.packetfabric.com/xconnect/).
 
 ## Example Usage
 
