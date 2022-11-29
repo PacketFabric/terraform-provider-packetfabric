@@ -23,7 +23,7 @@ resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
   speed       = var.pf_cs_speed
 }
 output "packetfabric_cs_ibm_hosted_connection" {
-  value     = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
+  value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
 }
 ```
 
@@ -33,7 +33,7 @@ output "packetfabric_cs_ibm_hosted_connection" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `description` (String) The description of this connection. This will appear as the connection name from the IBM side.
+- `description` (String) The description of this connection. This will appear as the connection name from the IBM side. Allows only numbers, letters, underscores and dashes.
 - `ibm_account_id` (String) Your IBM account ID. Can also be set with the PF_IBM_ACCOUNT_ID environment variable.
 - `ibm_bgp_asn` (Number) Enter an ASN to use with your BGP session. This should be the same ASN you used for your Cloud Router.
 - `pop` (String) The POP in which you want to provision the connection (the on-ramp).

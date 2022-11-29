@@ -57,7 +57,7 @@ func resourceHostedIbmConn() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The description of this connection. This will appear as the connection name from the IBM side.",
+				Description:  "The description of this connection. This will appear as the connection name from the IBM side. Allows only numbers, letters, underscores and dashes.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
