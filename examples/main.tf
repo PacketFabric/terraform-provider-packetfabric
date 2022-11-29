@@ -626,6 +626,20 @@ resource "random_pet" "name" {}
 #   regions  = var.pf_cr_regions
 # }
 
+# data "packetfabric_locations_cloud" "cloud_location_aws" {
+#   provider              = packetfabric
+#   cloud_provider        = "aws"
+#   cloud_connection_type = "hosted"
+#   # has_cloud_router      = true
+#   # nat_capable           = true
+#   # pop                   = var.pf_crc_pop1
+# }
+# output "packetfabric_locations_cloud" {
+#   value = data.packetfabric_locations_cloud.cloud_location_aws
+# }
+
+# # Use local to parse output and get one of the zone available for a specific PoP
+
 # resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
