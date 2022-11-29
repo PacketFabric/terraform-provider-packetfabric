@@ -17,11 +17,11 @@ For more information, see the [PacketFabric Cloud Router documentation](https://
 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
-  provider     = packetfabric
-  asn          = var.pf_cr_asn
-  name         = var.pf_cr_name
-  capacity     = var.pf_cr_capacity
-  regions      = var.pf_cr_regions
+  provider = packetfabric
+  asn      = var.pf_cr_asn
+  name     = var.pf_cr_name
+  capacity = var.pf_cr_capacity
+  regions  = var.pf_cr_regions
 }
 
 output "packetfabric_cloud_router" {
