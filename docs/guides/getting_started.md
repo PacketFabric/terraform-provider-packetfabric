@@ -7,7 +7,7 @@ subcategory: "Guides"
 
 ## Setting up API keys
 
-You must authenticate your Terraform actions with an API key. You can use the [PacketFabric portal](https://portal.packetfabric.com/) to create and manage keys. 
+You must authenticate your Terraform actions with an API key. You can use the PacketFabric portal to create and manage keys. 
 
 1. Click the account icon in the upper right (your username initials) and select **API keys**. 
 
@@ -34,7 +34,7 @@ $ export PF_TOKEN="secret"
 When you provision a new service through Terraform, you will need to provide an account ID. The account ID is mapped to a billing account. 
 
 
-You can find this ID via the [portal](https://portal.packetfabric.com/billing/billing-accounts) by navigating to **Billing > Accounts**. The ID is listed in the table. 
+You can find this ID via the portal by navigating to **Billing > Accounts**. The ID is listed in the table. 
 
 To find this information via the API, use the following call: `https://api.packetfabric.com/v2/contacts?billing=true`. This API call must be authorized.
 
@@ -46,20 +46,6 @@ For example:
 
 ```sh
 $ export PF_ACCOUNT_ID="123456789"
-```
-
-## Build your infrastructure
-
-Create your Terraform configuration files and start writing code in [HCL](https://developer.hashicorp.com/terraform/language).
-
-You can follow the instructions/example in the [PacketFabric knowledge base](https://docs.packetfabric.com/api/terraform/).
-
-Once you are ready, run the following commands to initialize the Terraform provider, plan and apply your configuration ([Introduction to Terraform](https://developer.hashicorp.com/terraform/intro)).
-
-```sh
-$ terraform init
-$ terraform plan
-$ terraform apply
 ```
 
 ## Getting location information
@@ -96,4 +82,4 @@ This returns information that includes the available media types and zones.
 
 If you are experiencing issues with the PacketFabric Terraform provider, open an [issue](https://github.com/PacketFabric/terraform-provider-packetfabric/issues) via Github. 
 
-If you are experiencing issues with your PacketFabric services, open a support ticket by emailing support AT packetfabric.com.
+If you are experiencing issues with your PacketFabric services, open a support ticket by emailing [support AT packetfabric.com](mailto:support AT packetfabric.com).

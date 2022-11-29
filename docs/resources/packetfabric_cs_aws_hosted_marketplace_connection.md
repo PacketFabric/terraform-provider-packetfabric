@@ -14,13 +14,13 @@ Connect a marketplace provider to your AWS cloud environment. For more informati
 
 ```terraform
 resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
-  provider       = packetfabric
-  description    = var.pf_description
-  routing_id     = var.pf_routing_id
-  market         = var.pf_market
-  speed          = var.pf_cs_speed
-  pop            = var.pf_cs_pop
-  zone           = var.pf_cs_zone
+  provider    = packetfabric
+  description = var.pf_description
+  routing_id  = var.pf_routing_id
+  market      = var.pf_market
+  speed       = var.pf_cs_speed
+  pop         = var.pf_cs_pop
+  zone        = var.pf_cs_zone
 }
 
 output "packetfabric_cs_aws_hosted_marketplace_connection" {
@@ -34,8 +34,7 @@ output "packetfabric_cs_aws_hosted_marketplace_connection" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long.
-Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
+- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
 	If the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in "DAL5", enter "DAL" for the market).
