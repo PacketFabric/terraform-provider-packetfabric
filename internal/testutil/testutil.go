@@ -23,7 +23,7 @@ func GenerateUniqueResourceName() string {
 }
 
 func GetAccountUUID() string {
-	return os.Getenv("PF_ACCOUNT_UUID")
+	return os.Getenv("PF_ACCOUNT_ID")
 }
 
 func GetPopAndZoneWithAvailablePort(speed string) (string, string, error) {
@@ -56,7 +56,7 @@ func PreCheck(t *testing.T, additionalEnvVars []string) {
 	requiredEnvVars := []string{
 		"PF_HOST",
 		"PF_TOKEN",
-		"PF_ACCOUNT_UUID",
+		"PF_ACCOUNT_ID",
 	}
 	if additionalEnvVars != nil {
 		requiredEnvVars = append(requiredEnvVars, additionalEnvVars...)
