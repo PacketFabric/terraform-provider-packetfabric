@@ -55,7 +55,8 @@ func TestAccCloudRouterConnectionAws(t *testing.T) {
 				"PF_AWS_ACCOUNT_ID",
 			})
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProviderFactories,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: hcl,
