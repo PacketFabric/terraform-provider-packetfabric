@@ -1,13 +1,13 @@
 # From the PacketFabric side: Create a Cloud Router connection.
 resource "packetfabric_cloud_router_connection_ibm" "crc_1" {
-  provider       = packetfabric
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  circuit_id     = packetfabric_cloud_router.cr.id
-  ibm_bgp_asn    = packetfabric_cloud_router.cr.asn
-  pop            = var.pf_crc_pop1
-  zone           = var.pf_crc_zone1
-  maybe_nat      = var.pf_crc_maybe_nat
-  speed          = var.pf_crc_speed
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  circuit_id  = packetfabric_cloud_router.cr.id
+  ibm_bgp_asn = packetfabric_cloud_router.cr.asn
+  pop         = var.pf_crc_pop1
+  zone        = var.pf_crc_zone1
+  maybe_nat   = var.pf_crc_maybe_nat
+  speed       = var.pf_crc_speed
 }
 
 # From the IBM side: Accept the connection.
