@@ -2,7 +2,7 @@ package packetfabric
 
 import "fmt"
 
-const cloudLocationsURI = "/v2/locations/cloud?cloud_provider=%s&cloud_connection_type=%s"
+const cloudLocationsURI = "/v2/locations/cloud?cloud_provider=%s&cloud_connection_type=%s&nat_capable=%v&has_cloud_router=%v&any_type=%v&pop=%s&city=%s&state=%s&market=%s&region=%s"
 
 type CloudLocation struct {
 	Pop                    string                 `json:"pop,omitempty"`
@@ -40,8 +40,13 @@ type CloudConnectionDetails struct {
 	RegionDescription string `json:"region_description,omitempty"`
 }
 
-func (c *PFClient) GetCloudLocations(cloudProvider, cloudConnType string) ([]CloudLocation, error) {
-	formatedURI := fmt.Sprintf(cloudLocationsURI, cloudProvider, cloudConnType)
+func (c *PFClient) GetCloudLocations(
+	cloudProvider, cloudConnType string,
+	natCapable, hasCloudRouter, anyType bool,
+	pop, city, state, market, region string) ([]CloudLocation, error) {
+	formatedURI := fmt.Sprintf(cloudLocationsURI, cloudProvider, cloudConnType,
+		natCapable, hasCloudRouter, anyType,
+		pop, city, state, market, region)
 	expectedResp := make([]CloudLocation, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {

@@ -25,6 +25,54 @@ func datasourceCloudLocations() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"hosted", "dedicated"}, true),
 				Description:  "Filter locations by cloud connection type.",
 			},
+			"nat_capable": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Flag specifying that only locations capable of NAT should be returned",
+			},
+			"has_cloud_router": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Flag to look for only cloud-router capable locations",
+			},
+			"any_type": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Flag specifying should only primary locations or locations of any type be returned",
+			},
+			"pop": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Filter locations by the POP name",
+			},
+			"city": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Filter locations by the city name",
+			},
+			"state": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Filter locations by the state",
+			},
+			"market": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Filter locations by the market code",
+			},
+			"region": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Filter locations by the region's short name",
+			},
 			"cloud_locations": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -203,7 +251,10 @@ func dataSourceCloudLocationsRead(ctx context.Context, d *schema.ResourceData, m
 	if !ok {
 		return diag.Errorf("please provide a valid cloud connection type")
 	}
-	locations, err := c.GetCloudLocations(cp.(string), ccType.(string))
+	natCapable, hasCloudRouter, anyType := _extractOptionalLocationBoolValues(d)
+	pop, city, state, market, region := _extractOptionalLocationStringValues(d)
+	locations, err := c.GetCloudLocations(cp.(string), ccType.(string),
+		natCapable, hasCloudRouter, anyType, pop, city, state, market, region)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -260,4 +311,44 @@ func flattenCloudLocations(locs *[]packetfabric.CloudLocation) []interface{} {
 		flattens[i] = flatten
 	}
 	return flattens
+}
+
+func _extractOptionalLocationBoolValues(d *schema.ResourceData) (natCapable, hasCloudRouter, anyType bool) {
+	natCapable = false
+	hasCloudRouter = false
+	anyType = false
+	if nat, ok := d.GetOk("nat_capable"); ok {
+		natCapable = nat.(bool)
+	}
+	if cloudRouter, ok := d.GetOk("has_cloud_router"); ok {
+		hasCloudRouter = cloudRouter.(bool)
+	}
+	if any, ok := d.GetOk("any_type"); ok {
+		anyType = any.(bool)
+	}
+	return
+}
+
+func _extractOptionalLocationStringValues(d *schema.ResourceData) (pop, city, state, market, region string) {
+	pop = ""
+	city = ""
+	state = ""
+	market = ""
+	region = ""
+	if p, ok := d.GetOk("pop"); ok {
+		pop = p.(string)
+	}
+	if c, ok := d.GetOk("city"); ok {
+		city = c.(string)
+	}
+	if s, ok := d.GetOk("state"); ok {
+		state = s.(string)
+	}
+	if m, ok := d.GetOk("market"); ok {
+		market = m.(string)
+	}
+	if r, ok := d.GetOk("region"); ok {
+		region = r.(string)
+	}
+	return
 }
