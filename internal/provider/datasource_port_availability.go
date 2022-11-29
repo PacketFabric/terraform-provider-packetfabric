@@ -57,6 +57,7 @@ func dataSourcePortAvailability() *schema.Resource {
 						},
 					},
 				},
+				Description: "The list of ports available in the given POP.",
 			},
 		},
 	}
