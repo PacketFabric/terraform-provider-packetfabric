@@ -3,7 +3,6 @@ resource "packetfabric_point_to_point" "ptp1" {
   description       = var.pf_description
   speed             = var.pf_ptp_speed
   media             = var.pf_ptp_media
-  account_uuid      = var.pf_account_uuid
   subscription_term = var.pf_ptp_subterm
   endpoints {
     pop     = var.pf_ptp_pop1
