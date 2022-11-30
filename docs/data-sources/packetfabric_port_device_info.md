@@ -14,10 +14,9 @@ description: |-
 
 ```terraform
 data "packetfabric_port_device_info" "port_device_info_1" {
-  provider = packetfabric
+  provider        = packetfabric
   port_circuit_id = var.pf_port_circuit_id
 }
-
 output "packetfabric_port_device_info" {
   value = data.packetfabric_port_device_info.port_device_info_1
 }
@@ -46,8 +45,10 @@ output "packetfabric_port_device_info" {
 - `optics_diagnostics_lane_index` (Number) The optics diagnostics lane Index.
 - `optics_diagnostics_lane_rx_power` (Number) The optics diagnostics lane RX Power.
 - `optics_diagnostics_lane_rx_power_dbm` (Number) The optics diagnostics lane RX Power dbm.
+- `optics_diagnostics_lane_rx_status` (String) The optics diagnostics lane rx status.
 - `optics_diagnostics_lane_tx_power` (Number) The optics diagnostics lane TX Power.
 - `optics_diagnostics_lane_tx_power_dbm` (Number) The optics diagnostics lane TX Power dbm.
+- `optics_diagnostics_lane_tx_status` (String) The optics diagnostics lane tx status.
 - `polltime` (Number) The port pool time.
 - `site_id` (Number) The site ID.
 - `speed` (String) The port speed.
@@ -74,5 +75,4 @@ output "packetfabric_port_device_info" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
 
