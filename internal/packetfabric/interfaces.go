@@ -11,6 +11,7 @@ const portEnableURI = "/v2/ports/%s/enable"
 const portDisableURI = "/v2/ports/%s/disable"
 const portLoaURI = "/v2/ports/%s/letter-of-authorization"
 const portVlanSummaryURI = "/v2/ports/%s/vlan-summary"
+const portDeviceInfoURI = "/v2/ports/%s/device-info"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -143,6 +144,53 @@ type PortVlanSummary struct {
 	MaxVlan             int `json:"max_vlan,omitempty"`
 }
 
+type PortDeviceInfo struct {
+	AdjacentRouter              interface{}                   `json:"adjacent_router,omitempty"`
+	DeviceID                    int                           `json:"device_id,omitempty"`
+	DeviceName                  string                        `json:"device_name,omitempty"`
+	DeviceMake                  string                        `json:"device_make,omitempty"`
+	AdminStatus                 string                        `json:"admin_status,omitempty"`
+	OperStatus                  string                        `json:"oper_status,omitempty"`
+	AutoNegotiation             bool                          `json:"auto_negotiation,omitempty"`
+	IfaceName                   string                        `json:"iface_name,omitempty"`
+	Speed                       string                        `json:"speed,omitempty"`
+	SiteID                      int                           `json:"site_id,omitempty"`
+	OpticsDiagnosticsLaneValues []OpticsDiagnosticsLaneValues `json:"optics_diagnostics_lane_values,omitempty"`
+	Polltime                    interface{}                   `json:"polltime,omitempty"`
+	TimeFlapped                 string                        `json:"time_flapped,omitempty"`
+	TrafficRxBps                int                           `json:"traffic_rx_bps,omitempty"`
+	TrafficRxBytes              int                           `json:"traffic_rx_bytes,omitempty"`
+	TrafficRxIpv6Bytes          int                           `json:"traffic_rx_ipv6_bytes,omitempty"`
+	TrafficRxIpv6Packets        int                           `json:"traffic_rx_ipv6_packets,omitempty"`
+	TrafficRxPackets            int                           `json:"traffic_rx_packets,omitempty"`
+	TrafficRxPps                int                           `json:"traffic_rx_pps,omitempty"`
+	TrafficTxBps                int                           `json:"traffic_tx_bps,omitempty"`
+	TrafficTxBytes              int                           `json:"traffic_tx_bytes,omitempty"`
+	TrafficTxIpv6Bytes          int                           `json:"traffic_tx_ipv6_bytes,omitempty"`
+	TrafficTxIpv6Packets        int                           `json:"traffic_tx_ipv6_packets,omitempty"`
+	TrafficTxPackets            int                           `json:"traffic_tx_packets,omitempty"`
+	TrafficTxPps                int                           `json:"traffic_tx_pps,omitempty"`
+	WiringMedia                 string                        `json:"wiring_media,omitempty"`
+	WiringModule                string                        `json:"wiring_module,omitempty"`
+	WiringPanel                 string                        `json:"wiring_panel,omitempty"`
+	WiringPosition              string                        `json:"wiring_position,omitempty"`
+	WiringReach                 string                        `json:"wiring_reach,omitempty"`
+	WiringType                  string                        `json:"wiring_type,omitempty"`
+	LagSpeed                    int                           `json:"lag_speed,omitempty"`
+	DeviceCanLag                bool                          `json:"device_can_lag,omitempty"`
+}
+
+type OpticsDiagnosticsLaneValues struct {
+	TxPowerDbm  float64 `json:"tx_power_dbm,omitempty"`
+	TxPower     float64 `json:"tx_power,omitempty"`
+	LaneIndex   float64 `json:"lane_index,omitempty"`
+	RxPower     float64 `json:"rx_power,omitempty"`
+	RxPowerDbm  float64 `json:"rx_power_dbm,omitempty"`
+	BiasCurrent float64 `json:"bias_current,omitempty"`
+	TxStatus    string  `json:"tx_status,omitempty"`
+	RxStatus    string  `json:"rx_status,omitempty"`
+}
+
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
 	expectedResp := &InterfaceCreateResp{}
 	_, err := c.sendRequest(portsURI, postMethod, interf, expectedResp)
@@ -226,6 +274,17 @@ func (c *PFClient) GetPortStatus(portCID string) (*ServiceState, error) {
 func (c *PFClient) GetPortVlanSummary(portCID string) (*PortVlanSummary, error) {
 	formatedURI := fmt.Sprintf(portVlanSummaryURI, portCID)
 	expectedResp := &PortVlanSummary{}
+
+	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) GetPortDeviceInfo(portCID string) (*PortDeviceInfo, error) {
+	formatedURI := fmt.Sprintf(portDeviceInfoURI, portCID)
+	expectedResp := &PortDeviceInfo{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
