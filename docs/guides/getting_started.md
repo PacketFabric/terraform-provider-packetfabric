@@ -67,10 +67,10 @@ This list is extensive, so you should add one or more location filters: `pop`, `
 
 If you want to stay within Terraform, there are several data sources that you can use to gather location information:
 
-*`[packetfabric_locations (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations) - This returns the full PacketFabric location list with all the attributes for each location. 
-*`[packetfabric_locations_markets (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_markets) - This returns a list of PacketFabric markets, including the market code to use for filtering. 
-*`[packetfabric_locations_regions (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_regions) - This returns a list of PacketFabric regions, including the region code to use for filtering. 
-*`[packetfabric_locations_regions (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_cloud) - This returns a list of PacketFabric cloud on-ramps.
+* [`packetfabric_locations (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations) - This returns the full PacketFabric location list with all the attributes for each location. 
+* [`packetfabric_locations_markets (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_markets) - This returns a list of PacketFabric markets, including the market code to use for filtering. 
+* [`packetfabric_locations_regions (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_regions) - This returns a list of PacketFabric regions, including the region code to use for filtering. 
+* [`packetfabric_locations_regions (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_cloud) - This returns a list of PacketFabric cloud on-ramps.
 
 
 
@@ -93,8 +93,8 @@ Once you have decided on a POP, you can check port availability using the follow
 
 If you want to stay within Terraform, you can use the following data sources:
 
-*`[packetfabric_locations_port_availability (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_port_availability) - This returns information about includes the available media types, speeds, and zones within a given POP.
-*`[packetfabric_locations_pop_zones (Data Source)](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_pop_zones) - This returns a list of availability zones within the given POP.
+* [`packetfabric_locations_port_availability (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_port_availability) - This returns information about includes the available media types, speeds, and zones within a given POP.
+* [`packetfabric_locations_pop_zones (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_pop_zones) - This returns a list of availability zones within the given POP.
 
 
 ## Getting support
