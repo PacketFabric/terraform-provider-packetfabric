@@ -187,6 +187,8 @@ type OpticsDiagnosticsLaneValues struct {
 	RxPower     float64 `json:"rx_power,omitempty"`
 	RxPowerDbm  float64 `json:"rx_power_dbm,omitempty"`
 	BiasCurrent float64 `json:"bias_current,omitempty"`
+	TxStatus    string  `json:"tx_status,omitempty"`
+	RxStatus    string  `json:"rx_status,omitempty"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {

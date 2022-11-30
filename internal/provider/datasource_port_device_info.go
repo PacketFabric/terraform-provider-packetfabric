@@ -99,6 +99,16 @@ func dataSourcePortDeviceInfo() *schema.Resource {
 				Optional:    true,
 				Description: "The optics diagnostics lane bias current.",
 			},
+			"optics_diagnostics_lane_tx_status": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The optics diagnostics lane tx status.",
+			},
+			"optics_diagnostics_lane_rx_status": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The optics diagnostics lane rx status.",
+			},
 			"polltime": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -245,6 +255,8 @@ func dataSourcePortDeviceInfoRead(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("optics_diagnostics_lane_rx_power_dbm", optics.RxPowerDbm)
 			_ = d.Set("optics_diagnostics_lane_rx_power", optics.RxPower)
 			_ = d.Set("optics_diagnostics_lane_bias_current", optics.BiasCurrent)
+			_ = d.Set("optics_diagnostics_lane_tx_status", optics.TxStatus)
+			_ = d.Set("optics_diagnostics_lane_rx_status", optics.RxStatus)
 		}
 		if portInfo.Polltime != nil {
 			_ = d.Set("polltime", portInfo.Polltime)
