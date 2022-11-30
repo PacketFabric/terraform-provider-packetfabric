@@ -27,6 +27,7 @@ func dataSourceLocationsZones() *schema.Resource {
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
 				},
+				Description: "The list of zones in the given POP.",
 			},
 		},
 	}
