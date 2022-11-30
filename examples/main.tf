@@ -214,10 +214,6 @@ resource "random_pet" "name" {}
 # # List PacketFabric locations
 # data "packetfabric_locations" "locations_all" {
 #   provider = packetfabric
-#   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63 to use filter
-#   # filter {
-#   #   pop = var.pf_port_pop1
-#   # }
 # }
 # # output "packetfabric_locations" {
 # #   value = data.packetfabric_locations.locations_all
