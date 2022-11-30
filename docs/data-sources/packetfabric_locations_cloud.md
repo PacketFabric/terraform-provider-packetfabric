@@ -11,13 +11,13 @@ description: |-
 
 ```terraform
 data "packetfabric_locations_cloud" "cloud_location_1" {
-  provider = packetfabric
-  cloud_provider = "aws"
+  provider              = packetfabric
+  cloud_provider        = "aws"
   cloud_connection_type = "hosted"
 }
 
 output "packetfabric_locations_cloud" {
-  value = data.packetfabric_locations_cloud.cloud_location_1  
+  value = data.packetfabric_locations_cloud.cloud_location_1
 }
 ```
 
@@ -26,8 +26,19 @@ output "packetfabric_locations_cloud" {
 
 ### Required
 
-- `cloud_connection_type` (String) Filter locations by cloud connection type.
-- `cloud_provider` (String) Filter locations by cloud provider.
+- `cloud_connection_type` (String) Filter locations by cloud connection type. Options are: hosted or dedicated
+- `cloud_provider` (String) Filter locations by cloud provider. Options are: aws, azure, packet, google, ibm, oracle, salesforce, webex
+
+### Optional
+
+- `any_type` (Boolean) Flag specifying should only primary locations or locations of any type be returnedDefaults: false
+- `city` (String) Filter locations by the city name
+- `has_cloud_router` (Boolean) Flag to look for only cloud-router capable locationsDefaults: false
+- `market` (String) Filter locations by the market code
+- `nat_capable` (Boolean) Flag specifying that only locations capable of NAT should be returnedDefaults: false
+- `pop` (String) Filter locations by the POP name
+- `region` (String) Filter locations by the region's short name
+- `state` (String) Filter locations by the state
 
 ### Read-Only
 
