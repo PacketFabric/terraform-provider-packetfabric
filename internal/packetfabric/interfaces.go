@@ -12,6 +12,7 @@ const portDisableURI = "/v2/ports/%s/disable"
 const portLoaURI = "/v2/ports/%s/letter-of-authorization"
 const portVlanSummaryURI = "/v2/ports/%s/vlan-summary"
 const portDeviceInfoURI = "/v2/ports/%s/device-info"
+const portRouterLogsURI = "/v2/ports/%s/router-logs?time_from=%s&time_to=%s"
 
 type Interface struct {
 	Autoneg          bool   `json:"autoneg,omitempty"`
@@ -191,6 +192,15 @@ type OpticsDiagnosticsLaneValues struct {
 	RxStatus    string  `json:"rx_status,omitempty"`
 }
 
+type PortRouterLogs struct {
+	DeviceName   string `json:"device_name,omitempty"`
+	IfaceName    string `json:"iface_name,omitempty"`
+	Message      string `json:"message,omitempty"`
+	Severity     int    `json:"severity,omitempty"`
+	SeverityName string `json:"severity_name,omitempty"`
+	Timestamp    string `json:"timestamp,omitempty"`
+}
+
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
 	expectedResp := &InterfaceCreateResp{}
 	_, err := c.sendRequest(portsURI, postMethod, interf, expectedResp)
@@ -286,6 +296,16 @@ func (c *PFClient) GetPortDeviceInfo(portCID string) (*PortDeviceInfo, error) {
 	formatedURI := fmt.Sprintf(portDeviceInfoURI, portCID)
 	expectedResp := &PortDeviceInfo{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) GetPortRouterLogs(portCID, timeFrom, timeTo string) ([]PortRouterLogs, error) {
+	formatedURI := fmt.Sprintf(portRouterLogsURI, portCID, timeFrom, timeTo)
+	expectedResp := make([]PortRouterLogs, 0)
+	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}
