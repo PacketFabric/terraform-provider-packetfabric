@@ -68,4 +68,10 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+## Import
 
+Import an IBM hosted connection using its circuit ID.
+
+```bash
+terraform import packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm PF-CC-WDC-NYC-1726496-PF
+```
