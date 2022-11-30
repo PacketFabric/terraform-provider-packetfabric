@@ -2,7 +2,6 @@ package packetfabric
 
 import (
 	"fmt"
-	"net/http"
 )
 
 const locationsURI = "/v2/locations"
@@ -36,6 +35,15 @@ type Location struct {
 	EnniSupported     bool   `json:"enni_supported"`
 }
 
+type PortAvailability struct {
+	Zone    string `json:"zone,omitempty"`
+	Speed   string `json:"speed,omitempty"`
+	Media   string `json:"media,omitempty"`
+	Count   int    `json:"count,omitempty"`
+	Partial bool   `json:"partial,omitempty"`
+	Enni    bool   `json:"enni,omitempty"`
+}
+
 func (c *PFClient) ListLocations() ([]Location, error) {
 	resp := make([]Location, 0)
 	_, err := c.sendRequest(locationsURI, getMethod, nil, &resp)
@@ -48,18 +56,9 @@ func (c *PFClient) ListLocations() ([]Location, error) {
 	return resp, nil
 }
 
-type PortAvailability struct {
-	Zone    string `json:"zone"`
-	Speed   string `json:"speed"`
-	Media   string `json:"media"`
-	Count   int    `json:"count"`
-	Partial bool   `json:"partial"`
-	Enni    bool   `json:"enni"`
-}
-
 func (c *PFClient) GetLocationPortAvailability(pop string) ([]PortAvailability, error) {
 	resp := make([]PortAvailability, 0)
-	_, err := c.sendRequest(fmt.Sprintf(portAvailabilityURI, pop), http.MethodGet, nil, &resp)
+	_, err := c.sendRequest(fmt.Sprintf(portAvailabilityURI, pop), getMethod, nil, &resp)
 	if len(resp) == 0 {
 		return resp, nil
 	}

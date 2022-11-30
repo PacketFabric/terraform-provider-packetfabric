@@ -93,6 +93,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connection_google":          resourceGoogleCloudRouterConn(),
 			"packetfabric_cloud_router_connection_azure":           resourceAzureExpressRouteConn(),
 			"packetfabric_cloud_router_connection_ibm":             resourceIBMCloudRouteConn(),
+			"packetfabric_cs_ibm_hosted_connection":                resourceHostedIbmConn(),
 			"packetfabric_cs_azure_hosted_marketplace_connection":  resourceAzureHostedMktConn(),
 			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
@@ -104,6 +105,7 @@ func Provider() *schema.Provider {
 			"packetfabric_point_to_point":                          resourcePointToPoint(),
 			"packetfabric_marketplace_service_accept_request":      resourceProvisionRequestedService(),
 			"packetfabric_marketplace_service_reject_request":      resourceRejectRequestedService(),
+			"packetfabric_port_loa":                                resourcePortLoa(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -118,6 +120,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connections":      dataSourceCloudConn(),
 			"packetfabric_cloud_router_bgp_session":      dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":      dataSourceCloudServicesConnInfo(),
+			"packetfabric_cs_ibm_hosted_connection":      datasourceHostedIBMConn(),
 			"packetfabric_cs_dedicated_connections":      datasourceDedicatedConn(),
 			"packetfabric_billing":                       dataSourceBilling(),
 			"packetfabric_port":                          datasourceInterfaces(),
@@ -132,6 +135,11 @@ func Provider() *schema.Provider {
 			"packetfabric_marketplace_service_requests":  dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":              datasourceBackboneServices(),
 			"packetfabric_point_to_point":                datasourcePointToPoint(),
+			"packetfabric_port_vlans":                    dataSourcePortVlanSummary(),
+			"packetfabric_locations_markets":             dataSourceLocationsMarkets(),
+			"packetfabric_locations_port_availability":   dataSourcePortAvailability(),
+			"packetfabric_locations_regions":             datasourceLocationsRegions(),
+			"packetfabric_port_device_info":              dataSourcePortDeviceInfo(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

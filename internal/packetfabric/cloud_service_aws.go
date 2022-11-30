@@ -129,27 +129,6 @@ type DedicatedAwsConn struct {
 	Loa              interface{} `json:"load"`
 }
 
-type AwsCloudConnInfo struct {
-	CloudCircuitID  string `json:"cloud_circuit_id"`
-	CustomerUUID    string `json:"customer_uuid"`
-	UserUUID        string `json:"user_uuid"`
-	State           string `json:"state"`
-	ServiceProvider string `json:"service_provider"`
-	ServiceClass    string `json:"service_class"`
-	PortType        string `json:"port_type"`
-	Speed           string `json:"speed"`
-	Description     string `json:"description"`
-	CloudProvider   struct {
-		Pop    string `json:"pop"`
-		Region string `json:"region"`
-	} `json:"cloud_provider"`
-	TimeCreated      string `json:"time_created"`
-	TimeUpdated      string `json:"time_updated"`
-	Pop              string `json:"pop"`
-	Site             string `json:"site"`
-	IsAwaitingOnramp bool   `json:"is_awaiting_onramp"`
-}
-
 type CloudServiceConnCreateResp struct {
 	UUID                    string      `json:"uuid,omitempty"`
 	CustomerUUID            string      `json:"customer_uuid,omitempty"`
@@ -195,6 +174,13 @@ type Settings struct {
 	VcOcid                   string      `json:"vc_ocid,omitempty"`
 	PortCrossConnectOcid     string      `json:"port_cross_connect_ocid,omitempty"`
 	PortCompartmentOcid      string      `json:"port_compartment_ocid,omitempty"`
+	AccountID                string      `json:"account_id,omitempty"`
+	GatewayID                string      `json:"gateway_id,omitempty"`
+	PortID                   string      `json:"port_id,omitempty"`
+	Name                     string      `json:"name,omitempty"`
+	BgpAsn                   int         `json:"bgp_asn,omitempty"`
+	BgpCerCidr               string      `json:"bgp_cer_cidr,omitempty"`
+	BgpIbmCidr               string      `json:"bgp_ibm_cidr,omitempty"`
 }
 type Billing struct {
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -350,9 +336,9 @@ func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*Clou
 	return expectedResp, err
 }
 
-func (c *PFClient) GetCloudConnInfo(cID string) (*AwsCloudConnInfo, error) {
+func (c *PFClient) GetCloudConnInfo(cID string) (*CloudConnInfo, error) {
 	formatedURI := fmt.Sprintf(cloudConnectionInfoURI, cID)
-	resp := &AwsCloudConnInfo{}
+	resp := &CloudConnInfo{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, resp)
 	if err != nil {
 		return nil, err

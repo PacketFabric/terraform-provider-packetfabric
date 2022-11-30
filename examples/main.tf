@@ -16,6 +16,21 @@ resource "random_pet" "name" {}
 # ##### PORTS/INTERFACES
 # ######################################
 
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop1
+# }
+# output "packetfabric_locations_port_availability_pop1" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
+# }
+# locals {
+#   zones_pop1= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop1_single_zone" {
+#   value = tolist(local.zones_pop1)[0]
+# }
+
 # # Create a PacketFabric Ports
 # resource "packetfabric_port" "port_1a" {
 #   provider          = packetfabric
@@ -26,7 +41,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop1
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone1
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
 # }
 # output "packetfabric_port_1a" {
 #   value = packetfabric_port.port_1a
@@ -42,7 +57,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop1
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone1
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
 # }
 # output "packetfabric_port_1b" {
 #   value = packetfabric_port.port_1b
@@ -58,11 +73,26 @@ resource "random_pet" "name" {}
 # }
 
 # data "packetfabric_link_aggregation_group" "lag_1" {
-#   provider            = packetfabric
-#   lag_port_circuit_id = packetfabric_link_aggregation_group.lag_1.id
+#   provider       = packetfabric
+#   lag_circuit_id = packetfabric_link_aggregation_group.lag_1.id
 # }
 # output "packetfabric_link_aggregation_group" {
 #   value = data.packetfabric_link_aggregation_group.lag_1
+# }
+
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop2" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop2
+# }
+# output "packetfabric_locations_port_availability_pop2" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop2
+# }
+# locals {
+#   zones_pop2= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop2.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop2_single_zone" {
+#   value = tolist(local.zones_pop2)[0]
 # }
 
 # resource "packetfabric_port" "port_2" {
@@ -74,7 +104,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop2
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = var.pf_port_avzone2
+#   zone              = tolist(local.zones_pop2)[0] # var.pf_port_avzone2
 # }
 # output "packetfabric_port_2" {
 #   value = packetfabric_port.port_2
@@ -184,10 +214,6 @@ resource "random_pet" "name" {}
 # # List PacketFabric locations
 # data "packetfabric_locations" "locations_all" {
 #   provider = packetfabric
-#   # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/63 to use filter
-#   # filter {
-#   #   pop = var.pf_port_pop1
-#   # }
 # }
 # # output "packetfabric_locations" {
 # #   value = data.packetfabric_locations.locations_all
@@ -210,6 +236,17 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_location_pop_in_market" {
 #   value = local.pop_in_market
+# }
+
+# # Generate a LOA for a port (inbound cross connect)
+# resource "packetfabric_port_loa" "inbound_crossconnect_1" {
+#   provider          = packetfabric
+#   port_circuit_id   = packetfabric_port.port_1a.id
+#   loa_customer_name = "My Awesome Company"
+#   destination_email = "email@mydomain.com"
+# }
+# output "packetfabric_port_loa" {
+#   value = packetfabric_port_loa.inbound_crossconnect_1
 # }
 
 # # Create Cross Connect
@@ -348,6 +385,27 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cs_oracle_hosted_connection_data" {
 #   value = data.packetfabric_cs_oracle_hosted_connection.current
+# }
+
+# resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
+#   provider    = packetfabric
+#   ibm_bgp_asn = var.ibm_bgp_asn
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   pop         = var.pf_cs_pop7
+#   port        = packetfabric_port.port_1a.id
+#   vlan        = var.pf_cs_vlan7
+#   speed       = var.pf_cs_speed1
+# }
+# output "packetfabric_cs_ibm_hosted_connection" {
+#   value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
+# }
+
+# data "packetfabric_cs_ibm_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm.id
+# }
+# output "packetfabric_cs_ibm_hosted_connection_data" {
+#   value = data.packetfabric_cs_ibm_hosted_connection.current
 # }
 
 # #######################################
