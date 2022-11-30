@@ -17,13 +17,13 @@ func datasourceCloudLocations() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "packet", "google", "ibm", "oracle", "salesforce", "webex"}, true),
-				Description:  "Filter locations by cloud provider.",
+				Description:  "Filter locations by cloud provider. Options are: aws, azure, packet, google, ibm, oracle, salesforce, webex",
 			},
 			"cloud_connection_type": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"hosted", "dedicated"}, true),
-				Description:  "Filter locations by cloud connection type.",
+				Description:  "Filter locations by cloud connection type. Options are: hosted or dedicated",
 			},
 			"nat_capable": {
 				Type:        schema.TypeBool,
