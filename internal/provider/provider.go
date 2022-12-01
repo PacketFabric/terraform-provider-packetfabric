@@ -139,6 +139,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations_markets":             dataSourceLocationsMarkets(),
 			"packetfabric_locations_port_availability":   dataSourcePortAvailability(),
 			"packetfabric_locations_regions":             datasourceLocationsRegions(),
+			"packetfabric_locations_pop_zones":           dataSourceLocationsZones(),
 			"packetfabric_port_device_info":              dataSourcePortDeviceInfo(),
 			"packetfabric_port_router_logs":              datasourcePortRouterLogs(),
 			"packetfabric_locations_cloud":               datasourceCloudLocations(),
