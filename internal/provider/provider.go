@@ -141,6 +141,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations_regions":             datasourceLocationsRegions(),
 			"packetfabric_locations_pop_zones":           dataSourceLocationsZones(),
 			"packetfabric_port_device_info":              dataSourcePortDeviceInfo(),
+			"packetfabric_locations_cloud":               datasourceCloudLocations(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
