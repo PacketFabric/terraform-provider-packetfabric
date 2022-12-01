@@ -40,6 +40,7 @@ func hclIBMHostedConnection(description, accountUUID, ibmAccountID, ibmBgpAsn, p
 
 func TestAccIBMHostedConnection(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
+	t.Skip("Skipped as it causes problems with PacketFabric API.")
 
 	description := testutil.GenerateUniqueName(testPrefix)
 	// TODO(medzi): add function to get pop / zone automatically when packetfabric_locations_cloud available (#200)
