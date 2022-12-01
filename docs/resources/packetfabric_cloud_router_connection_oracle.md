@@ -22,14 +22,14 @@ resource "packetfabric_cloud_router" "cr1" {
 }
 
 resource "packetfabric_cloud_router_connection_oracle" "crc6" {
-  provider     = packetfabric
-  description  = var.pf_crc_description
-  circuit_id   = packetfabric_cloud_router.cr1.id
-  region       = var.pf_crc_oracle_region
-  vc_ocid      = var.pf_crc_oracle_vc_ocid
-  pop          = var.pf_crc_pop
-  zone         = var.pf_crc_zone
-  maybe_nat    = var.pf_crc_maybe_nat
+  provider    = packetfabric
+  description = var.pf_crc_description
+  circuit_id  = packetfabric_cloud_router.cr1.id
+  region      = var.pf_crc_oracle_region
+  vc_ocid     = var.pf_crc_oracle_vc_ocid
+  pop         = var.pf_crc_pop
+  zone        = var.pf_crc_zone
+  maybe_nat   = var.pf_crc_maybe_nat
 }
 
 output "packetfabric_cloud_router_connection_oracle" {
