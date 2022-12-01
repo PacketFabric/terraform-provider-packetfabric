@@ -2,8 +2,9 @@
 
 Use Cases | Description
 --- | --- 
-[backbone_virtual_circuit](./backbone_virtual_circuit) | Create ports and virtual circuit
-[backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between virtual circuits
+[backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit
+[backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between Virtual Circuits
+[cloud_router_module](./cloud_router_module) | Create a Cloud Router Terraform Module with AWS and Google
 [cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router (private VIF)
 [cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router
 [cloud_router_google_ipsec](./cloud_router_google_ipsec) | Connect Google Cloud and a branch location, on-premises users, or a remote data center using a Cloud Router
