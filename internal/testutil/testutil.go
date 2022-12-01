@@ -26,7 +26,7 @@ func GetAccountUUID() string {
 	return os.Getenv("PF_ACCOUNT_ID")
 }
 
-func GetPopAndZoneWithAvailablePort(speed string) (string, string, error) {
+func GetPopAndZoneWithAvailablePort(speed, media string) (string, string, error) {
 	host := os.Getenv("PF_HOST")
 	token := os.Getenv("PF_TOKEN")
 	c, err := packetfabric.NewPFClient(&host, &token)
@@ -47,7 +47,7 @@ func GetPopAndZoneWithAvailablePort(speed string) (string, string, error) {
 			return "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
 		for _, p := range portAvailability {
-			if p.Count > 0 && p.Speed == speed {
+			if p.Count > 0 && p.Speed == speed && p.Media == media {
 				return l.Pop, p.Zone, nil
 			}
 		}
