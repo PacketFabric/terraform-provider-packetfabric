@@ -37,7 +37,7 @@ func hclPortLOA(pop, zone, speed, destinationEmail, loaCustomerName string) (hcl
 func TestAccPortLOA(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
-	pop, zone, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps")
+	pop, zone, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps", "LX")
 	if err != nil {
 		t.Fatalf("Unable to find pop and zone with available port: %s", err)
 	}

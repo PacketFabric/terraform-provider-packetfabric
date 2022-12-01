@@ -6,6 +6,7 @@ import (
 
 const locationsURI = "/v2/locations"
 const portAvailabilityURI = "/v2/locations/%s/port-availability"
+const locationsZonesURI = "/v2/locations/%s/zones"
 
 type Location struct {
 	Pop               string `json:"pop"`
@@ -66,4 +67,14 @@ func (c *PFClient) GetLocationPortAvailability(pop string) ([]PortAvailability, 
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *PFClient) GetLocarionsZones(pop string) ([]string, error) {
+	formatedURI := fmt.Sprintf(locationsZonesURI, pop)
+	expectedResp := make([]string, 0)
+	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
 }
