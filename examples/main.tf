@@ -117,6 +117,16 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_port.ports_all
 # }
 
+# data "packetfabric_port_router_logs" "port_1a_logs" {
+#   provider        = packetfabric
+#   port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#   time_from       = "2022-11-30 00:00:00"
+#   time_to         = "2022-12-01 00:00:00"
+# }
+# output "packetfabric_port_router_logs" {
+#   value = data.packetfabric_port_router_logs.port_1a_logs
+# }
+
 # #######################################
 # ##### Billing
 # #######################################
