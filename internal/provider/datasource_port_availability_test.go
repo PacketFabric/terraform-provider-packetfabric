@@ -21,7 +21,7 @@ func hclDataSourceLocationsPortAvailability(pop string) (hcl string, resourceNam
 func TestAccDataSourceLocationsPortAvailability(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
-	pop, _, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps")
+	pop, _, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps", "LX")
 	if err != nil {
 		t.Fatalf("Unable to find pop and zone with available port: %s", err)
 	}

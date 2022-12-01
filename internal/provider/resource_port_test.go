@@ -30,7 +30,7 @@ func TestAccPort(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	description := testutil.GenerateUniqueName(testPrefix)
-	pop, zone, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps")
+	pop, zone, err := testutil.GetPopAndZoneWithAvailablePort("1Gbps", "LX")
 	if err != nil {
 		t.Fatalf("Unable to find pop and zone with available port: %s", err)
 	}
