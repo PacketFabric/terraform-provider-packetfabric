@@ -13,7 +13,7 @@ provider "packetfabric" {}
 resource "random_pet" "name" {}
 
 # #######################################
-# ##### PORTS/INTERFACES
+# ##### Ports/Interfaces
 # ######################################
 
 # # Get the zone from the pop automatically
@@ -291,7 +291,23 @@ resource "random_pet" "name" {}
 # }
 
 # #######################################
-# ##### HOSTED CLOUD CONNECTIONS
+# ##### Locations
+# #######################################
+
+# data "packetfabric_locations_cloud" "cloud_location_aws" {
+#   provider              = packetfabric
+#   cloud_provider        = "aws"
+#   cloud_connection_type = "hosted"
+#   # has_cloud_router      = true
+#   # nat_capable           = true
+#   # pop                   = var.pf_crc_pop1
+# }
+# output "packetfabric_locations_cloud" {
+#   value = data.packetfabric_locations_cloud.cloud_location_aws
+# }
+
+# #######################################
+# ##### Hosted Cloud Connections
 # #######################################
 
 # # Create a AWS Hosted Connection 
@@ -563,7 +579,7 @@ resource "random_pet" "name" {}
 # }
 
 # #######################################
-# ##### DEDICATED CLOUD CONNECTIONS
+# ##### Dedicated Cloud Connections
 # #######################################
 
 # # AWS Dedicated Connection
@@ -613,7 +629,7 @@ resource "random_pet" "name" {}
 # }
 
 # #######################################
-# ##### CLOUD ROUTER
+# ##### Cloud Router
 # #######################################
 
 # resource "packetfabric_cloud_router" "cr" {

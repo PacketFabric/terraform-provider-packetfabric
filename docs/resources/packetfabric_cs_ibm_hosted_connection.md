@@ -68,6 +68,9 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+
+
+
 ## Import
 
 Import an IBM hosted connection using its circuit ID.

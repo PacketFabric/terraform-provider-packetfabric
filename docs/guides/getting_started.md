@@ -70,7 +70,7 @@ If you want to stay within Terraform, there are several data sources that you ca
 * [`packetfabric_locations (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations) - This returns the full PacketFabric location list with all the attributes for each location. 
 * [`packetfabric_locations_markets (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_markets) - This returns a list of PacketFabric markets, including the market code to use for filtering. 
 * [`packetfabric_locations_regions (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_regions) - This returns a list of PacketFabric regions, including the region code to use for filtering. 
-* [`packetfabric_locations_regions (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_cloud) - This returns a list of PacketFabric cloud on-ramps.
+* [`packetfabric_locations_cloud (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_locations_cloud) - This returns a list of PacketFabric cloud on-ramps.
 
 
 
