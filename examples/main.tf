@@ -616,7 +616,7 @@ resource "random_pet" "name" {}
 
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
-#   provider          = packetfabric # set via PF_ACCOUNT_ID
+#   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone4
 #   pop               = var.pf_cs_pop4
@@ -624,6 +624,9 @@ resource "random_pet" "name" {}
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
+# }
+# output "packetfabric_cs_google_dedicated_connection" {
+#   value = packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
 # }
 
 # # Azure Dedicated Connection
