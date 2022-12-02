@@ -8,7 +8,17 @@ description: |-
 
 # packetfabric_billing_modify_order (Resource)
 
+You can only increase speed or term (not decrease) and only service from metro to long-haul.
 
+* **Backbone Virtual Circuit**: can only update subscription_term and/or speed (resource `packetfabric_backbone_virtual_circuit`)
+* **Point-to-Point**: can only update subscription_term (resource `packetfabric_point_to_point`)
+* **Hosted Cloud (AWS, Azure, Google, IBM, Oracle)**: can only update speed (resources `packetfabric_cs_<aws/azure/google/oracle/ibm>_hosted_connection`)
+* **Dedicated Cloud (AWS, Azure, Google)**: can only update subscription_term and/or service_class (resource `packetfabric_cs_<aws/azure/google>_dedicated_connection`)
+* **Cloud Router** (AWS without BGP configured, Google, IBM, IPsec, Port): can only update speed (resource `packetfabric_cloud_router_connection_<aws/google/ibm/ipsec/port>`)
+
+For information specific to each cloud provider, see [the PacketFabric cloud documentation](https://docs.packetfabric.com/cloud/general/upgrade/).
+
+For information specific to each Virtual Circuit, see [the PacketFabric Virtual Circuit documentation](https://docs.packetfabric.com/vc/manage/upgrade/).
 
 ## Example Usage
 
