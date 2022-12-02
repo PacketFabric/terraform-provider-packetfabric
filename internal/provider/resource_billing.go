@@ -49,7 +49,7 @@ func resourceBilling() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Billing type for VCs. Options are longhaul_dedicated, longhaul_usage, longhaul_hourly, surcharge, metro_dedicated.",
+				Description:  "Billing type for VCs. Option is longhaul_dedicated.",
 			},
 			"service_class": {
 				Type:         schema.TypeString,
