@@ -117,6 +117,16 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_port.ports_all
 # }
 
+# data "packetfabric_port_router_logs" "port_1a_logs" {
+#   provider        = packetfabric
+#   port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#   time_from       = "2022-11-30 00:00:00"
+#   time_to         = "2022-12-01 00:00:00"
+# }
+# output "packetfabric_port_router_logs" {
+#   value = data.packetfabric_port_router_logs.port_1a_logs
+# }
+
 # #######################################
 # ##### Billing
 # #######################################
@@ -304,6 +314,14 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_locations_cloud" {
 #   value = data.packetfabric_locations_cloud.cloud_location_aws
+# }
+
+# data "packetfabric_locations_pop_zones" "locations_pop_zones_DAL_1" {
+#   provider = packetfabric
+#   pop      = "DAL1"
+# }
+# output "packetfabric_locations_pop_zones" {
+#   value = data.packetfabric_locations_pop_zones.locations_pop_zones_DAL_1
 # }
 
 # #######################################

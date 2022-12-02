@@ -50,7 +50,7 @@ resource "packetfabric_link_aggregation_group" "lag_1" {
   description = var.pf_description
   interval    = "fast" # or slow
   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
-  pop = var.pf_port_pop1
+  pop         = var.pf_port_pop1
 }
 output "packetfabric_link_aggregation_group" {
   value = packetfabric_link_aggregation_group.lag_1
