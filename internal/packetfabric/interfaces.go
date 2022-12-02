@@ -2,7 +2,6 @@ package packetfabric
 
 import (
 	"fmt"
-	"time"
 )
 
 const portsURI = "/v2/ports"
@@ -250,10 +249,13 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	if err != nil {
 		return nil, err
 	}
-	enableOk := make(chan bool)
-	go c._checkPortState(enableOk, portCID, !enable)
-	if !<-enableOk {
-		return nil, fmt.Errorf("could not check port status for: %s", portCID)
+	statusChangeOk := make(chan bool)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(portCID)
+	}
+	go c.CheckServiceStatus(statusChangeOk, fn)
+	if !<-statusChangeOk {
+		return nil, err
 	}
 	return expectedResp, nil
 }
@@ -384,26 +386,4 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 		return nil, err
 	}
 	return expectedResp, nil
-}
-
-func (c *PFClient) _checkPortState(ch chan bool, portCID string, desiredState bool) {
-	ticker := time.NewTicker(5 * time.Second)
-	var count int
-	for range ticker.C {
-		count = count + 1
-		state, serviceErr := c.GetPortByCID(portCID)
-		if serviceErr != nil && count == 0 {
-			ch <- false
-		}
-		if state != nil {
-			if state.Disabled == desiredState {
-				ticker.Stop()
-				ch <- true
-			}
-		}
-		if serviceErr != nil && count > 0 {
-			ticker.Stop()
-			ch <- true
-		}
-	}
 }
