@@ -1,0 +1,94 @@
+{
+    "cloud_routers": {
+        "dev-us-west": {
+            "asn": 4556,
+            "capacity": "10Gbps",
+            "regions": ["US"]
+        },
+        "dev-us-east": {
+            "asn": 4556,
+            "capacity": "10Gbps",
+            "regions": ["US"]
+        }
+    },
+    "aws_connections": {
+        "dev-us-west": {
+            "dev": {
+                "speed": "50Mbps",
+                "pop": "PDX2"
+            }
+        },
+        "dev-us-east": {
+            "dev": {
+                "speed": "50Mbps",
+                "pop": "WDC2"
+            }
+        }
+    },
+    "gcp_connections": {
+        "dev-us-west": {
+            "dev": {
+                "pairing_key": "redacted",
+                "vlan_attachment_name": "vlan-dev-pf",
+                "speed": "50Mbps",
+                "pop": "SEA3"
+            }
+        },
+        "dev-us-east": {
+            "dev": {
+                "pairing_key": "redacted",
+                "vlan_attachment_name": "vlan-dev-pf",
+                "speed": "50Mbps",
+                "pop": "WDC1"
+            }
+        }
+    },
+    "gcp_bgp_sessions": {
+        "dev-us-west": {
+        },
+        "dev-us-east": {
+        }
+    },
+    "aws_bgp_sessions": {
+        "dev-us-west": {
+        },
+        "dev-us-east": {
+        }
+    },
+    "gcp_inbound": {
+        "us-west": [
+            { "prefix": "10.0.0.0/8", "match_type": "orlonger", "env": ["dev", "prod"] },
+            { "prefix": "2.2.2.0/30", "match_type": "exact", "env": ["prod"] },
+            { "prefix": "2.2.3.0/30", "match_type": "exact", "env": ["prod"] }
+        ],
+        "us-east": [
+            { "prefix": "10.0.0.0/8", "match_type": "orlonger", "env": ["dev", "prod"] },
+            { "prefix": "2.2.2.0/30", "match_type": "exact", "env": ["prod"] },
+            { "prefix": "2.2.3.0/30", "match_type": "exact", "env": ["prod"] }
+        ]
+    },
+    "gcp_outbound": {
+        "us-west": [
+            { "prefix": "1.1.1.1/32", "match_type": "exact" }
+        ],
+        "us-east": [
+            { "prefix": "1.1.1.1/32", "match_type": "exact" }
+        ]
+    },
+    "aws_inbound": {
+        "us-west": [
+            { "prefix": "10.0.0.0/8", "match_type": "orlonger" }
+        ],
+        "us-east": [
+            { "prefix": "10.0.0.0/8", "match_type": "orlonger" }
+        ]
+    },
+    "aws_outbound": {
+        "us-west": [
+            { "prefix": "1.1.1.1/32", "match_type": "exact" }
+        ],
+        "us-east": [
+            { "prefix": "1.1.1.1/32", "match_type": "exact" }
+        ]
+    }
+}

@@ -41,7 +41,7 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 
 **Note**: Make sure you set the correct AWS region based on the PacketFabric pop selected (find details on location [here](https://packetfabric.com/locations/cloud-on-ramps) and [here](https://aws.amazon.com/directconnect/locations/). Essentially, select the PacketFabric pop the closest to the AWS region you want to connect to. Example: AWS region ``us-west-1`` is the closest to PacketFabric pop ``LAX1``.
 
-## Before You Begin
+## Before you begin
 
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
@@ -50,12 +50,12 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 
 ## Prerequisites
 
-Make sure you have installed all of the following prerequisites on your machine:
+Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-Make sure you have the following items available:
+Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
@@ -63,9 +63,9 @@ Make sure you have the following items available:
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 - [SSH Public Key](https://www.ssh.com/academy/ssh/keygen)
 
-## Quick Start
+## Quick start
 
-1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
+1. Set the PacketFabric API key and Account ID in the environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 export PF_TOKEN="secret"
@@ -89,13 +89,13 @@ terraform init
 terraform plan
 ```
 
-Apply the plan:
+3. Apply the plan:
 
 ```sh
 terraform apply
 ```
 
-3. Either use and [locust](https://locust.io/) or [iperf3](https://github.com/esnet/iperf) to simulate traffic between the 2 EC2 instances in the 2 AWS regions.
+4. Either use and [locust](https://locust.io/) or [iperf3](https://github.com/esnet/iperf) to simulate traffic between the 2 EC2 instances in the 2 AWS regions.
 
 - iperf3: (replace ``<ec2_private_ip_2>`` with the EC2 private IP from instance 2)
 
@@ -108,7 +108,7 @@ In a browser, on instance 1), open ``http://<ec2_public_ip_1>:8089/``, then upda
 
 If you want to use iperf3, open a ssh session using the user ``ubuntu`` and the ssh private key linked to the public key you specified in the ``secret.tfvars`` file.
 
-4. Destroy all remote objects managed by the Terraform configuration.
+5. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform destroy
