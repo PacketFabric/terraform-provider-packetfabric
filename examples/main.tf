@@ -85,9 +85,9 @@ resource "random_pet" "name" {}
 #   provider = packetfabric
 #   pop      = var.pf_port_pop2
 # }
-# output "packetfabric_locations_port_availability_pop2" {
-#   value = data.packetfabric_locations_port_availability.port_availabilty_pop2
-# }
+# # output "packetfabric_locations_port_availability_pop2" {
+# #   value = data.packetfabric_locations_port_availability.port_availabilty_pop2
+# # }
 # locals {
 #   zones_pop2= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop2.ports_available[*] : each.zone if each.media == var.pf_port_media])
 # }
@@ -110,11 +110,29 @@ resource "random_pet" "name" {}
 #   value = packetfabric_port.port_2
 # }
 
-# data "packetfabric_port" "ports_all" {
-#   provider = packetfabric
+# # remove the resource to enable the port
+# resource "packetfabric_port_disable" "disable_port_2" {
+#   provider        = packetfabric
+#   port_circuit_id = packetfabric_port.port_2.id
 # }
-# output "packetfabric_ports_all" {
-#   value = data.packetfabric_port.ports_all
+
+# data "packetfabric_port" "ports_all" {
+#   provider   = packetfabric
+#   depends_on = [packetfabric_port_disable.disable_port_2]
+# }
+# # output "packetfabric_ports_all" {
+# #   value = data.packetfabric_port.ports_all
+# # }
+
+# locals {
+#   port_2_admin_status = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each.admin_status if each.port_circuit_id == packetfabric_port.port_2.id])
+#   port_2_full_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_2.id])
+# }
+# output "packetfabric_port_2_admin_status" {
+#   value = local.port_2_admin_status
+# }
+# output "packetfabric_port_2_full_details" {
+#   value = local.port_2_full_details
 # }
 
 # data "packetfabric_port_router_logs" "port_1a_logs" {
