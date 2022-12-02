@@ -3,6 +3,15 @@ package packetfabric
 import "fmt"
 
 const billingURI = "/v2/billing/services/%s"
+const billingModifyURI = "/v2/billing/services/%s/modify"
+
+type BillingUpgrade struct {
+	SubscriptionTerm   int    `json:"subscription_term,omitempty"`
+	Speed              string `json:"speed,omitempty"`
+	BillingProductType string `json:"billing_product_type,omitempty"`
+	ServiceClass       string `json:"service_class,omitempty"`
+	Capacity           string `json:"capacity,omitempty"`
+}
 
 type BillingResponse struct {
 	OrderID        int            `json:"order_id"`
@@ -40,6 +49,10 @@ type ProductDetails struct {
 	TranslationID  int         `json:"translation_id"`
 }
 
+type BillingUpgradeResp struct {
+	Message string `json:"message,omitempty"`
+}
+
 // https://docs.packetfabric.com/api/v2/redoc/#operation/get_order
 func (c *PFClient) ReadBilling(cID string) ([]BillingResponse, error) {
 	formatedURI := fmt.Sprintf(billingURI, cID)
@@ -47,6 +60,16 @@ func (c *PFClient) ReadBilling(cID string) ([]BillingResponse, error) {
 	expectedResp := make([]BillingResponse, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) ModifyBilling(cID string, billing BillingUpgrade) (*BillingUpgradeResp, error) {
+	formatedURI := fmt.Sprintf(billingModifyURI, cID)
+
+	expectedResp := &BillingUpgradeResp{}
+	if _, err := c.sendRequest(formatedURI, postMethod, billing, expectedResp); err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
