@@ -15,6 +15,7 @@ Terraform providers used: PacketFabric.
 ## Terraform resources deployed
 
 - "packetfabric_cloud_router"
+- "packetfabric_locations_pop_zones"
 - "packetfabric_cloud_router_connection_aws"
 - "packetfabric_cloud_router_connection_google"
 - "packetfabric_cloud_router_bgp_session"

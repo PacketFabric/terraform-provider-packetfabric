@@ -1,5 +1,5 @@
 variable "asn" {
-  type = number 
+  type = number
 }
 
 variable "name" {
@@ -56,31 +56,37 @@ terraform {
 }
 
 resource "packetfabric_cloud_router" "cr" {
-  provider     = packetfabric
-  asn          = var.asn
-  name         = var.name
-  capacity     = var.capacity
-  regions      = var.regions
+  provider = packetfabric
+  asn      = var.asn
+  name     = var.name
+  capacity = var.capacity
+  regions  = var.regions
   timeouts {
     create = "20m"
   }
 }
 
-resource "packetfabric_cloud_router_connection_aws" "aws" {
+data "packetfabric_locations_pop_zones" "locations_pop_zones_aws" {
   for_each = var.aws_connections
   provider = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
+  pop      = each.value.pop
+}
+
+resource "packetfabric_cloud_router_connection_aws" "aws" {
+  for_each    = var.aws_connections
+  provider    = packetfabric
+  circuit_id  = packetfabric_cloud_router.cr.id
   description = "aws-${each.key}"
-  pop = each.value.pop
-  speed = each.value.speed
-  zone = each.value.zone
+  pop         = each.value.pop
+  speed       = each.value.speed
+  zone        = data.packetfabric_locations_pop_zones.locations_pop_zones_aws[each.key].locations_zones[0]
   timeouts {
     create = "20m"
   }
 }
 
 resource "packetfabric_cloud_router_connection_google" "gcp" {
-  for_each = var.gcp_connections
+  for_each                    = var.gcp_connections
   provider                    = packetfabric
   circuit_id                  = packetfabric_cloud_router.cr.id
   google_pairing_key          = each.value.pairing_key
@@ -95,7 +101,7 @@ resource "packetfabric_cloud_router_connection_google" "gcp" {
 
 
 resource "packetfabric_cloud_router_bgp_session" "gcp" {
-  for_each = var.gcp_bgp_sessions
+  for_each       = var.gcp_bgp_sessions
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_google.gcp[each.key].id
@@ -103,13 +109,11 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
   remote_asn     = each.value.asn
   remote_address = each.value.remote_address
   l3_address     = each.value.l3_address
-  bfd_interval   = 1000
-  bfd_multiplier = 5
   multihop_ttl   = 1
   disabled       = each.value.disabled
 
   dynamic "prefixes" {
-    for_each   = { for i,v in var.gcp_inbound : i => v if contains(v.env, each.key)}
+    for_each = { for i, v in var.gcp_inbound : i => v if contains(v.env, each.key) }
     content {
       prefix     = prefixes.value.prefix
       type       = "in"
@@ -119,7 +123,7 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
   }
 
   dynamic "prefixes" {
-    for_each   = { for i,v in var.gcp_outbound : i => v }
+    for_each = { for i, v in var.gcp_outbound : i => v }
     content {
       prefix     = prefixes.value.prefix
       type       = "out"
@@ -132,7 +136,7 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
 
 
 resource "packetfabric_cloud_router_bgp_session" "aws" {
-  for_each = var.aws_bgp_sessions
+  for_each       = var.aws_bgp_sessions
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_aws.aws[each.key].id
@@ -140,14 +144,12 @@ resource "packetfabric_cloud_router_bgp_session" "aws" {
   remote_asn     = each.value.asn
   remote_address = each.value.remote_address
   l3_address     = each.value.l3_address
-  bfd_interval   = 300
-  bfd_multiplier = 3
   multihop_ttl   = 1
   md5            = each.value.md5
   disabled       = each.value.disabled
 
   dynamic "prefixes" {
-    for_each   = { for i,v in var.aws_inbound : i => v }
+    for_each = { for i, v in var.aws_inbound : i => v }
     content {
       prefix     = prefixes.value.prefix
       type       = "in"
@@ -157,7 +159,7 @@ resource "packetfabric_cloud_router_bgp_session" "aws" {
   }
 
   dynamic "prefixes" {
-    for_each   = { for i,v in var.aws_outbound : i => v }
+    for_each = { for i, v in var.aws_outbound : i => v }
     content {
       prefix     = prefixes.value.prefix
       type       = "out"

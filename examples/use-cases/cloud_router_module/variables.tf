@@ -20,17 +20,17 @@ variable "aws_bgp_sessions" {
 }
 
 variable "gcp_inbound" {
-  type = list(any)
+  type = map(any)
 }
 
 variable "gcp_outbound" {
-  type = list(any)
+  type = map(any)
 }
 
 variable "aws_inbound" {
-  type = list(any)
+  type = map(any)
 }
 
 variable "aws_outbound" {
-  type = list(any)
+  type = map(any)
 }
