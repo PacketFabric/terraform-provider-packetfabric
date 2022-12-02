@@ -26,26 +26,26 @@ to automate the creation of a Virtual Circuit between 2 ports owned by 2 differe
 - "packetfabric_marketplace_service_accept_request"
 - "packetfabric_marketplace_service_reject_request"
 
-## Before You Begin
+## Before you begin
 
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
 
 ## Prerequisites
 
-Make sure you have installed all of the following prerequisites on your machine:
+Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-Make sure you have the following items available:
+Ensure you have the following items available:
 
 - [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
-## Quick Start
+## Quick start
 
-1. Set PacketFabric API key and Account ID for **A side** in environment variables and update each variables as needed (edit ``variables.tf``).
+1. Set the PacketFabric API key and Account ID for **A side** in the environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 export PF_TOKEN="secret"
@@ -61,13 +61,13 @@ terraform init
 terraform plan
 ```
 
-Apply the plan
+3. Apply the plan
 
 ```sh
 terraform apply
 ```
 
-**B side** in `b_side` folder:
+4. **B side** in `b_side` folder:
 
 Update API key and Account ID for **B side**:
 
@@ -76,44 +76,44 @@ export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
 ```
 
-Then run:
+5. Then run:
 
 ```sh
 terraform init
 terraform plan
 ```
 
-Update the `pf_a_side_vc_request_uuid` with the **A Side** Virtual Circuit Request UUID in the `variables.tf`.
+6. Update the `pf_a_side_vc_request_uuid` with the **A Side** Virtual Circuit Request UUID in the `variables.tf`.
 You can either Accept or Reject the request (comment/comment out as desire).
 
-Update API key and Account ID for **A side**:
+7. Update API key and Account ID for **A side**:
 
 ```sh
 export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
 ```
 
-Apply the plan
+8. Apply the plan
 
 ```sh
 terraform apply
 ```
 
-3. **A side**, comment `packetfabric_backbone_virtual_circuit_marketplace` and comment out `packetfabric_backbone_virtual_circuit` resources.
+9. **A side**, comment `packetfabric_backbone_virtual_circuit_marketplace` and comment out `packetfabric_backbone_virtual_circuit` resources.
 
-4. **A side**, import the new Marketplace backbone Virtual Circuit (replace with correct VC ID).
+10. **A side**, import the new Marketplace backbone Virtual Circuit (replace with correct VC ID).
 
 ```sh
 terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-DC-PHX-NYC-1751589-PF 
 ```
 
-5. **A side**, apply the plan to confirm the resource is correctly imported and managed by Terraform.
+11. **A side**, apply the plan to confirm the resource is correctly imported and managed by Terraform.
 
 ```sh
 terraform apply
 ```
 
-6. Destroy all remote objects managed by the Terraform configuration on both sides (in `a_side` and `b_side` folders).
+12. Destroy all remote objects managed by the Terraform configuration on both sides (in `a_side` and `b_side` folders).
 
 ```sh
 terraform destroy
