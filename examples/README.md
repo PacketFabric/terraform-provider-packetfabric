@@ -4,9 +4,9 @@
 - [PacketFabric documentation in the Terraform registry](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs)
 - [Use case examples of using the PacketFabric provider](./use-cases)
 
-## Quick Start
+## Quick start
 
-1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
+1. Set the PacketFabric API key and Account ID in the environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 export PF_TOKEN="secret"
@@ -25,13 +25,13 @@ terraform init
 terraform plan
 ```
 
-Apply the plan:
+4. Apply the plan:
 
 ```sh
 terraform apply
 ```
 
-4. Destroy all remote objects managed by the Terraform configuration.
+5. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform destroy

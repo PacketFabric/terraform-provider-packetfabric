@@ -25,7 +25,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 
 **Estimated time:** ~5 min for Azure & PacketFabric resources + up to 50 min for Azure Virtual Network Gateway (deletion up to 12min)
 
-## Before You Begin
+## Before you begin
 
 - Before you begin we recommend you read about the [Terraform basics](https://www.terraform.io/intro)
 - Don't have a PacketFabric Account? [Get Started](https://docs.packetfabric.com/intro/)
@@ -33,12 +33,12 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 
 ## Prerequisites
 
-Make sure you have installed all of the following prerequisites on your machine:
+Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-Make sure you have the following items available:
+Ensure you have the following items available:
 
 - [Microsoft Azure Credentials](https://docs.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash)
 - [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
@@ -55,9 +55,9 @@ az feature register --namespace Microsoft.Network --name AllowExpressRoutePorts
 az provider register -n Microsoft.Network
 ```
 
-## Quick Start
+## Quick start
 
-1. Set PacketFabric API key and Account ID in environment variables and update each variables as needed (edit ``variables.tf``).
+1. Set the PacketFabric API key and Account ID in the environment variables and update each variables as needed (edit ``variables.tf``).
 
 ```sh
 export PF_TOKEN="secret"
@@ -80,13 +80,13 @@ terraform init
 terraform plan
 ```
 
-Apply the plan:
+3. Apply the plan:
 
 ```sh
 terraform apply
 ```
 
-3. Destroy all remote objects managed by the Terraform configuration.
+4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
 terraform state rm azurerm_express_route_circuit.azure_express_route_1
