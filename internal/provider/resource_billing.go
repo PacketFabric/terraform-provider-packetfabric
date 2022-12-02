@@ -31,7 +31,7 @@ func resourceBilling() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Circuit ID of the order to modify.",
+				Description:  "Circuit ID of the service to modify.",
 			},
 			"subscription_term": {
 				Type:         schema.TypeInt,
@@ -43,25 +43,25 @@ func resourceBilling() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "New speed of the circuit.",
+				Description:  "New speed of the connection.",
 			},
 			"billing_product_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Billing type for VCs. Option is longhaul_dedicated.",
+				Description:  "Billing type for virtual circuits. The only option is `longhaul_dedicated`. This is applicable when upgrading an hourly or usage-based circuit.",
 			},
 			"service_class": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"longhaul", "metro"}, true),
-				Description:  "The service class dedicated cloud connections, either longhaul or metro.",
+				Description:  "Only applicable to dedicated cloud connections. This can be `longhaul` or `metro`.",
 			},
 			"capacity": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "New capacity if modifying an aggregate capacity container.",
+				Description:  "New capacity if modifying a flex bandwidth container.",
 			},
 		},
 		Importer: &schema.ResourceImporter{

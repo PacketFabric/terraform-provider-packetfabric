@@ -8,17 +8,35 @@ description: |-
 
 # packetfabric_billing_modify_order (Resource)
 
-You can only increase speed or term (not decrease) and only service from metro to long-haul.
+Updating billing means modifying something that affects how much you are billed monthly. This can mean changing the subscription term, billing plan, or speed. The options available to you depend on the service type and your current billing plan. 
 
-* **Backbone Virtual Circuit**: can only update subscription_term and/or speed (resource `packetfabric_backbone_virtual_circuit`)
-* **Point-to-Point**: can only update subscription_term (resource `packetfabric_point_to_point`)
-* **Hosted Cloud (AWS, Azure, Google, IBM, Oracle)**: can only update speed (resources `packetfabric_cs_<aws/azure/google/oracle/ibm>_hosted_connection`)
-* **Dedicated Cloud (AWS, Azure, Google)**: can only update subscription_term and/or service_class (resource `packetfabric_cs_<aws/azure/google>_dedicated_connection`)
-* **Cloud Router** (AWS without BGP configured, Google, IBM, IPsec, Port): can only update speed (resource `packetfabric_cloud_router_connection_<aws/google/ibm/ipsec/port>`)
+
+
+* **Backbone virtual circuit**: (resource `packetfabric_backbone_virtual_circuit`)
+
+    You can upgrade the speed. If you are using flex bandwidth, you can also downgrade the speed.
+
+    If you are on an hourly or usage-based plan, you can upgrade to longhaul dedicated. 
+    
+    If you are already on a longhaul dedicated billing plan, you can extend or renew your subscription term. 
+* **Point-to-Point**: (resource `packetfabric_point_to_point`)
+
+    You can extend or renew the subscription term. 
+* **Hosted Cloud (AWS, Azure, Google, IBM, Oracle)**: (resources `packetfabric_cs_<aws/azure/google/oracle/ibm>_hosted_connection`)
+
+    You can upgrade the speed.
+* **Dedicated cloud (AWS, Azure, Google)**: (resource `packetfabric_cs_<aws/azure/google>_dedicated_connection`)
+
+    You can extend or renew the subscription term. You can also change the service_class (`longhaul` or `metro`). For example, if you created the Dedicated port as a metro service, but now you want to build a virtual circuit that extends outside the metro, you will need to upgrade to `longhaul`. 
+* **Cloud Router connections** (AWS without BGP configured, Google, IBM, IPsec, Port): (resource `packetfabric_cloud_router_connection_<aws/google/ibm/ipsec/port>`)
+
+    You can upgrade speed.
+
+    ->**Note:** If you want to change the capacity or regions for the Cloud Router, then update the `packetfabric_cloud_router` resource.
 
 For information specific to each cloud provider, see [the PacketFabric cloud documentation](https://docs.packetfabric.com/cloud/general/upgrade/).
 
-For information specific to each Virtual Circuit, see [the PacketFabric Virtual Circuit documentation](https://docs.packetfabric.com/vc/manage/upgrade/).
+For information specific to each virtual circuit, see [the PacketFabric Virtual Circuit documentation](https://docs.packetfabric.com/vc/manage/upgrade/).
 
 
 ## Example Usage
