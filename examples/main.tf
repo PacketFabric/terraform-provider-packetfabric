@@ -128,19 +128,6 @@ resource "random_pet" "name" {}
 # }
 
 # #######################################
-# ##### Billing
-# #######################################
-
-# # Get billing information related to the ports created
-# data "packetfabric_billing" "port_1a" {
-#   provider   = packetfabric
-#   circuit_id = packetfabric_port.port_1a.id
-# }
-# output "packetfabric_billing_port_1a" {
-#   value = data.packetfabric_billing.port_1a
-# }
-
-# #######################################
 # ##### Virtual Circuit (VC)
 # #######################################
 
@@ -777,4 +764,39 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cloud_router_connections" {
 #   value = data.packetfabric_cloud_router_connections.all_crc
+# }
+
+# #######################################
+# ##### Billing
+# #######################################
+
+# # Get billing information related to the ports created
+# data "packetfabric_billing" "port_1a" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_port.port_1a.id
+# }
+# output "packetfabric_billing_port_1a" {
+#   value = data.packetfabric_billing.port_1a
+# }
+
+# # Upgrade Cloud Router Connection
+# resource "packetfabric_billing_modify_order" "upgrade_cloud_router_connection" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_cloud_router.cr1.id
+#   speed      = "100Mbps"
+# }
+# output "packetfabric_billing_modify_order_upgrade_crc" {
+#   value = packetfabric_billing_modify_order.upgrade_cloud_router_connection
+# }
+
+# # Upgrade anc change Subscript Term for Backbone VC
+# resource "packetfabric_billing_modify_order" "upgrade_backbone_vc" {
+#   provider             = packetfabric
+#   circuit_id           = packetfabric_backbone_virtual_circuit.vc1
+#   billing_product_type = "longhaul_dedicated"
+#   subscription_term    = 1
+#   speed                = "1Gbps"
+# }
+# output "packetfabric_billing_modify_order_upgrade_backbone_vc" {
+#   value = packetfabric_billing_modify_order.upgrade_backbone_vc
 # }
