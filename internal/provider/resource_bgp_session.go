@@ -292,7 +292,13 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	}
 	session, err := c.GetBgpSessionBy(cID.(string), connCID.(string), bgpSettingsUUID.(string))
 	if err != nil {
-		return diag.Errorf("could not find BGP session associated with the provided Cloud Router ID: %v", err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Can't find the BGP Settings.",
+			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
+				"is associated with a Cloud Router Connection "+
+				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
+		})
 	}
 	sessionToDisable := session.BuildNewBgpSessionInstance()
 	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
@@ -301,10 +307,10 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 		if err != nil {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
-				Summary:  "BGP Settings to be deleted",
+				Summary:  "Can't find the BGP Settings.",
 				Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-					"might be associated with an active Cloud Router Connection "+
-					"and will be deleted together with current Cloud Router Connection.", bgpSettingsUUID.(string)),
+					"is associated with a Cloud Router Connection "+
+					"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
 			})
 		} else {
 			diags = append(diags, diag.Diagnostic{
