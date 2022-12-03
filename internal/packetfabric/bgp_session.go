@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 const bgpSessionURI = "/v2/bgp-settings/%s/prefixes"
@@ -222,6 +223,8 @@ func (c *PFClient) DeleteBgpPrefixes(prefixesUUID []string, bgpSettingsUUID stri
 func (c *PFClient) DisableBgpSession(bgpSession *BgpSessionUpdate, cID, cloudConnCID string) error {
 	formatedURI := fmt.Sprintf(bgpSessionCloudRouterURI, cID, cloudConnCID)
 	_, err := c.sendRequest(formatedURI, putMethod, bgpSession, nil)
+	// Adding sleep time to avoid concurrent overlay.
+	time.Sleep(10 * time.Second)
 	if err != nil {
 		return err
 	}
@@ -235,6 +238,8 @@ func (c *PFClient) DeleteBgpSession(cID, cloudConnCID, bgpSettingsUUID string) (
 	formatedURI := fmt.Sprintf(bgpSessionSettingsByUUIDURI, cID, cloudConnCID, bgpSettingsUUID)
 	expectedResp := &BgpDeleteMessage{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
+	// Adding sleep time to avoid concurrent overlay.
+	time.Sleep(10 * time.Second)
 	if err != nil {
 		return nil, err
 	}
