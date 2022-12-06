@@ -31,7 +31,7 @@
     * Add/Update examples under `examples/resources` and/or `examples/data-sources` (used for the documentation)
     * Add/Update the templates used to generate the docs  under `templates`
     * Generate the docs using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) and verify `*.md` under `docs/`
-        * When you're done running the plugin, you need to run the following command on the `docs/resources` and `docs/data-sources` folders:  
+        * When you're done running the plugin, you need to run the following command on the `docs/resources` and `docs/data-sources` folders to prepend packetfabric_ to the file name:  
         `for file in *; do mv $file packetfabric_${file%%}; done`
     * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
 
