@@ -80,21 +80,9 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_link_aggregation_group.lag_1
 # }
 
-# # Get the zone from the pop automatically
-# data "packetfabric_locations_port_availability" "port_availabilty_pop2" {
-#   provider = packetfabric
-#   pop      = var.pf_port_pop2
-# }
-# locals {
-#   zones_pop2= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop2.ports_available[*] : each.zone if each.media == var.pf_port_media])
-# }
-# output "packetfabric_locations_port_availability_pop2_single_zone" {
-#   value = tolist(local.zones_pop2)[0]
-# }
-
 # resource "packetfabric_port" "port_2" {
 #   provider          = packetfabric
-#   enabled           = true # set to false disabling port
+#   enabled           = true # set to false to disable the port
 #   autoneg           = var.pf_port_autoneg
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   media             = var.pf_port_media
@@ -102,7 +90,7 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop2
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = tolist(local.zones_pop2)[0] # var.pf_port_avzone2
+#   zone              = var.pf_port_avzone2
 # }
 # output "packetfabric_port_2" {
 #   value = packetfabric_port.port_2
