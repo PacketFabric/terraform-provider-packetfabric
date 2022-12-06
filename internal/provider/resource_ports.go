@@ -85,6 +85,7 @@ func resourceInterfaces() *schema.Resource {
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     true,
 				Description: "Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Default is true.",
 			},
 		},
