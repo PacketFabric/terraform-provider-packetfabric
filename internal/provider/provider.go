@@ -108,6 +108,7 @@ func Provider() *schema.Provider {
 			"packetfabric_port_loa":                                resourcePortLoa(),
 			"packetfabric_billing_modify_order":                    resourceBilling(),
 			"packetfabric_port_disable":                            resourcePortDisable(),
+			"packetfabric_port_status":                             resourcePortDisable(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list

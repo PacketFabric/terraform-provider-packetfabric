@@ -14,7 +14,7 @@ func resourcePortDisable() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePortDisableCreate,
 		ReadContext:   resourcePortDisableRead,
-		UpdateContext: resourcePortDisableUpdate,
+		UpdateContext: resourcePortDisableCreate,
 		DeleteContext: resourcePortDisableDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -33,6 +33,11 @@ func resourcePortDisable() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The port circuit ID.",
 			},
+			"enabled": {
+				Type:        schema.TypeBool,
+				Required:    true,
+				Description: "True when port is enabled.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -44,7 +49,11 @@ func resourcePortDisableCreate(ctx context.Context, d *schema.ResourceData, m in
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	portCID := d.Get("port_circuit_id")
+	enabled := d.Get("enabled")
 	d.SetId(portCID.(string))
+	if enabled.(bool) {
+		return _callPortStatusFunc(d, c.EnablePort)
+	}
 	return _callPortStatusFunc(d, c.DisablePort)
 }
 
@@ -52,15 +61,11 @@ func resourcePortDisableRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diag.Diagnostics{}
 }
 
-func resourcePortDisableUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{}
-}
-
 func resourcePortDisableDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	d.SetId("")
-	return _callPortStatusFunc(d, c.EnablePort)
+	return diag.Diagnostics{}
 }
 
 func _callPortStatusFunc(d *schema.ResourceData, fn func(portCID string) (*packetfabric.PortMessageResp, error)) diag.Diagnostics {
