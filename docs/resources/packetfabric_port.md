@@ -15,6 +15,7 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 ```terraform
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
+  enabled           = true
   autoneg           = var.pf_port_autoneg
   description       = var.pf_description
   media             = var.pf_port_media
@@ -26,6 +27,16 @@ resource "packetfabric_port" "port_1" {
 }
 output "packetfabric_port_1" {
   value = packetfabric_port.port_1
+}
+data "packetfabric_port" "ports_all" {
+  provider   = packetfabric
+  depends_on = [packetfabric_port.port_1]
+}
+locals {
+  port_1_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_1.id])
+}
+output "packetfabric_port_1_details" {
+  value = local.port_1_details
 }
 ```
 
@@ -49,6 +60,7 @@ output "packetfabric_port_1" {
 
 ### Optional
 
+- `enabled` (Boolean) Set this to false if you want to disable the port (admin_status=down) or true if you want to enable the port (admin_status=up). Defaults: true
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
