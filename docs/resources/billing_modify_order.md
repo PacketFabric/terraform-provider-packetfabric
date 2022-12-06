@@ -21,7 +21,7 @@ Updating billing means modifying something that affects how much you are billed 
     If you are already on a longhaul dedicated billing plan, you can extend or renew your subscription term. 
 * **Ports**: (resource `packetfabric_port`)
 
-    You can extend or renew the subscription term. 
+    You can extend or extend the subscription term. 
 * **Point-to-Point**: (resource `packetfabric_point_to_point`)
 
     You can extend or renew the subscription term. 
