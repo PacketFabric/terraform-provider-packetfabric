@@ -315,8 +315,7 @@ func (c *PFClient) ReadAwsConnection(cID, connCid string) (*CloudRouterConnectio
 
 	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, resp)
-	// Adding sleep time to avoid concurrent overlay.
-	time.Sleep(10 * time.Second)
+
 	if err != nil {
 		return nil, err
 	}
