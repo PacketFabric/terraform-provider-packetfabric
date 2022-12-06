@@ -364,7 +364,7 @@ func _buildMockCloudRouterConnResps() []byte {
 		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true,
-		"dnat_capable": false,
+		"dnat_capable": false
 	  }]`)
 }
 func _buildConnDeleteResp() []byte {
