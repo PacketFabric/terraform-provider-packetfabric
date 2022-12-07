@@ -62,6 +62,7 @@ type CloudRouterConnectionReadResponse struct {
 	CloudProviderConnectionID string           `json:"cloud_provider_connection_id,omitempty"`
 	CloudSettings             CloudSettings    `json:"cloud_settings,omitempty"`
 	NatCapable                bool             `json:"nat_capable,omitempty"`
+	DNatCapable               bool             `json:"dnat_capable,omitempty"`
 	BgpState                  interface{}      `json:"bgp_state,omitempty"`
 	BgpStateList              []BgpStateObj    `json:"bgp_state_list,omitempty"`
 	CloudRouterName           string           `json:"cloud_router_name,omitempty"`
