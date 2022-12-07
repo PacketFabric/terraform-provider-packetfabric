@@ -99,9 +99,7 @@ func (c *PFClient) _doRequest(req *http.Request, authToken *string) (*http.Respo
 func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp interface{}) (interface{}, error) {
 	var req *http.Request
 	var err error
-	if c.Ctx == nil {
-		c.Ctx = context.Background()
-	}
+	c.Ctx = context.Background()
 	formatedURL := fmt.Sprintf("%s%s", c.HostURL, uri)
 	switch method {
 	case getMethod:

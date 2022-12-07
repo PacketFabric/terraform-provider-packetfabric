@@ -132,8 +132,6 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	var diags diag.Diagnostics
 	awsBack := extractBack(d)
 	resp, err := fn(awsBack)
-	// Adding sleep time to avoid concurrent overlay.
-	time.Sleep(10 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
