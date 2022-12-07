@@ -51,6 +51,7 @@ func _buildConnUpdateExpectedResp() {
 		CloudRouterASN:       4556,
 		CloudRouterCircuitID: "PF-L3-CUST-2001",
 		NatCapable:           true,
+		DNatCapable:          false,
 	})
 }
 
@@ -228,7 +229,8 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 		"cloud_router_name": "Sample CR",
 		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
-		"nat_capable": true
+		"nat_capable": true,
+		"dnat_capable": false
 	  }`, description, _cloudConnUUID))
 }
 
@@ -275,7 +277,8 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"cloud_router_name": "Sample CR",
 		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
-		"nat_capable": true
+		"nat_capable": true,
+		"dnat_capable": false
 	  }`)
 }
 
@@ -360,7 +363,8 @@ func _buildMockCloudRouterConnResps() []byte {
 		"cloud_router_name": "Sample CR",
 		"cloud_router_asn": 4556,
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
-		"nat_capable": true
+		"nat_capable": true,
+		"dnat_capable": false
 	  }]`)
 }
 func _buildConnDeleteResp() []byte {
