@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -15,6 +15,7 @@ provider "packetfabric" {}
 
 provider "aws" {
   region = var.aws_region1
+  # use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
 }
 
 # create random name to use to name objects

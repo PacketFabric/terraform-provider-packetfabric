@@ -82,6 +82,12 @@ func resourceInterfaces() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Availability zone of the port.",
 			},
+			"enabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Default is true.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -100,6 +106,12 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		enabled := d.Get("enabled")
+		if !enabled.(bool) {
+			if toggleErr := _togglePortStatus(c, enabled.(bool), resp.PortCircuitID); toggleErr != nil {
+				return diag.FromErr(toggleErr)
+			}
+		}
 		d.SetId(resp.PortCircuitID)
 	}
 	return diags
@@ -176,6 +188,20 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
 			resp, err = c.UpdatePortDescriptionOnly(d.Id(), desc.(string))
 		}
+	}
+	// Update port status
+	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
+		_, enableChange := d.GetChange("enabled")
+		err = _togglePortStatus(c, enableChange.(bool), d.Id())
+	}
+	return
+}
+
+func _togglePortStatus(c *packetfabric.PFClient, enabled bool, portCID string) (err error) {
+	if enabled {
+		_, err = c.EnablePort(portCID)
+	} else {
+		_, err = c.DisablePort(portCID)
 	}
 	return
 }
