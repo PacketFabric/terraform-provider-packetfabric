@@ -83,6 +83,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Add a 30sec delay when deleting a Cloud Router Connection (#157)
 * Wait till packetfabric_backbone_virtual_circuit is active (#172)
 * The published_quote_line_uuid attribute is missing in resourceRouterConnectionAws() (#158)
+* Update Cloud Router Connection response (#194)
 
 BUG FIXES:
 

@@ -16,11 +16,6 @@ variable "gcp_project_id" {
   # sensitive   = true
   description = "Google Cloud project ID"
 }
-variable "gcp_credentials_path" {
-  type        = string
-  sensitive   = true
-  description = "Google Cloud service account credentials (path to GCP json file)"
-}
 # https://cloud.google.com/compute/docs/regions-zones
 variable "gcp_region1" {
   type        = string
@@ -78,10 +73,6 @@ variable "ec2_instance_type" {
   description = "Instance Type/Size"
   default     = "t2.micro" # Free tier
 }
-variable "pf_aws_account_id" {
-  type        = number
-  description = "The AWS account ID to connect with. Must be 12 characters long"
-}
 
 ## PacketFabic VARs
 
@@ -133,15 +124,15 @@ variable "pf_crc_pop2" {
   default     = "SFO1"
 }
 
-# PacketFabric Google Cloud Router Connection - Azure ExpressRoute Circuit
+# PacketFabric Google Cloud Router Connection - AWS
 variable "pf_crc_is_public" {
   type        = bool
   description = "Whether PacketFabric should allocate a public IP address for this connection"
-  default     = false # set to true if peering_type = MicrosoftPeering
+  default     = false
 }
 
 
-# PacketFabric Cloud Router BGP Session - Google and Azure
+# PacketFabric Cloud Router BGP Session - Google and AWS
 variable "pf_crbs_af" {
   type        = string
   description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"

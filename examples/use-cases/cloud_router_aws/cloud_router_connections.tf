@@ -3,25 +3,23 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   provider = packetfabric
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  circuit_id     = packetfabric_cloud_router.cr.id
-  aws_account_id = var.pf_aws_account_id
-  pop            = var.pf_crc_pop1
-  zone           = var.pf_crc_zone1
-  speed          = var.pf_crc_speed
-  maybe_nat      = var.pf_crc_maybe_nat
-  is_public      = var.pf_crc_is_public
+  description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  circuit_id  = packetfabric_cloud_router.cr.id
+  pop         = var.pf_crc_pop1
+  zone        = var.pf_crc_zone1
+  speed       = var.pf_crc_speed
+  maybe_nat   = var.pf_crc_maybe_nat
+  is_public   = var.pf_crc_is_public
 }
 resource "packetfabric_cloud_router_connection_aws" "crc_2" {
-  provider       = packetfabric
-  description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  circuit_id     = packetfabric_cloud_router.cr.id
-  aws_account_id = var.pf_aws_account_id
-  pop            = var.pf_crc_pop2
-  zone           = var.pf_crc_zone2
-  speed          = var.pf_crc_speed
-  maybe_nat      = var.pf_crc_maybe_nat
-  is_public      = var.pf_crc_is_public
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  circuit_id  = packetfabric_cloud_router.cr.id
+  pop         = var.pf_crc_pop2
+  zone        = var.pf_crc_zone2
+  speed       = var.pf_crc_speed
+  maybe_nat   = var.pf_crc_maybe_nat
+  is_public   = var.pf_crc_is_public
 }
 
 # From the AWS side: Accept the connection
