@@ -1,3 +1,26 @@
+## 0.5.0  (December 6, 2022)
+
+FEATURES:
+
+* resource: packetfabric_cs_ibm_hosted_connection
+* resource: packetfabric_billing_modify_order (change the subscription term, billing plan, or speed of a connection)
+* resource: packetfabric_port_loa
+* resource: [UPDATED] packetfabric_port (added enable/disable option)
+* data-source: packetfabric_cs_ibm_hosted_connection
+* data-source: packetfabric_locations_cloud
+* data-source: packetfabric_locations_regions
+* data-source: packetfabric_locations_markets
+* data-source: packetfabric_locations_pop_zones
+* data-source: packetfabric_locations_port_availability
+* data-source: packetfabric_port_vlans
+* data-source: packetfabric_port_router_logs
+* data-source: packetfabric_port_device_info
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add environment variables for Cloud Providers Account information (#276)
+* Add support Terraform import for AWS, Google, Oracle and IBM hosted clouds, AWS dedicated cloud and point to point resources (#259)
+
 ## 0.4.2  (November 21, 2022)
 
 IMPROVEMENTS/ENHANCEMENTS:
