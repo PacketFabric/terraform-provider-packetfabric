@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
@@ -19,6 +19,7 @@ provider "packetfabric" {}
 
 provider "ibm" {
   region = var.ibm_region1
+  # use PF_IBM_ACCOUNT_ID environment variable
 }
 
 provider "oci" {

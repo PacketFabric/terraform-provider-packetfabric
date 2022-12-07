@@ -11,6 +11,7 @@
 ```sh
 export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
+export PF_AWS_ACCOUNT_ID="98765432"
 ```
 
 **Note:** you can also use ``source_env_var.sh.sample`` (rename to ``source_env_var.sh`` and update each variables as needed). Then run ``source source_env_var.sh``.

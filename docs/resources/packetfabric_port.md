@@ -15,6 +15,7 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 ```terraform
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
+  enabled           = true
   autoneg           = var.pf_port_autoneg
   description       = var.pf_description
   media             = var.pf_port_media
@@ -26,6 +27,16 @@ resource "packetfabric_port" "port_1" {
 }
 output "packetfabric_port_1" {
   value = packetfabric_port.port_1
+}
+data "packetfabric_port" "ports_all" {
+  provider   = packetfabric
+  depends_on = [packetfabric_port.port_1]
+}
+locals {
+  port_1_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_1.id])
+}
+output "packetfabric_port_1_details" {
+  value = local.port_1_details
 }
 ```
 
@@ -55,6 +66,7 @@ output "packetfabric_port_1" {
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) Availability zone of the port.
+- `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Default is true.
 
 ### Read-Only
 
