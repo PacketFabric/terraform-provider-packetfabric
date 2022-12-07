@@ -102,16 +102,16 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
 	time.Sleep(30 * time.Second)
-	enabled := d.Get("enabled")
-	if !enabled.(bool) {
-		if toggleErr := _togglePortStatus(c, enabled.(bool), resp.PortCircuitID); toggleErr != nil {
-			return diag.FromErr(toggleErr)
-		}
-	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		enabled := d.Get("enabled")
+		if !enabled.(bool) {
+			if toggleErr := _togglePortStatus(c, enabled.(bool), resp.PortCircuitID); toggleErr != nil {
+				return diag.FromErr(toggleErr)
+			}
+		}
 		d.SetId(resp.PortCircuitID)
 	}
 	return diags
