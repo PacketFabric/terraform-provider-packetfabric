@@ -53,6 +53,7 @@ Read-Only:
 - `customer_uuid` (String)
 - `deleted` (Boolean)
 - `description` (String)
+- `dnat_capable` (Boolean)
 - `nat_capable` (Boolean)
 - `pending_delete` (Boolean)
 - `pop` (String)
