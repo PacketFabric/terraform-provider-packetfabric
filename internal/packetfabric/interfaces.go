@@ -249,6 +249,14 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	if err != nil {
 		return nil, err
 	}
+	statusChangeOk := make(chan bool)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(portCID)
+	}
+	go c.CheckServiceStatus(statusChangeOk, fn)
+	if !<-statusChangeOk {
+		return nil, err
+	}
 	return expectedResp, nil
 }
 
