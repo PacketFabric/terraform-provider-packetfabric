@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
   }
 }
@@ -309,7 +309,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
@@ -471,7 +470,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   routing_id     = var.pf_routing_id
 #   market         = var.pf_market
 #   speed          = var.pf_cs_speed2
@@ -595,7 +593,7 @@ resource "random_pet" "name" {}
 
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
-#   provider          = packetfabric # set via PF_ACCOUNT_ID
+#   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone4
 #   pop               = var.pf_cs_pop4
@@ -603,6 +601,9 @@ resource "random_pet" "name" {}
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
+# }
+# output "packetfabric_cs_google_dedicated_connection" {
+#   value = packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
 # }
 
 # # Azure Dedicated Connection
@@ -641,7 +642,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   aws_account_id = var.pf_aws_account_id
 #   pop            = var.pf_crc_pop1
 #   zone           = var.pf_crc_zone1
 #   speed          = var.pf_crc_speed

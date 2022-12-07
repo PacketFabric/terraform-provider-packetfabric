@@ -20,7 +20,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "B" # check availability /v2/locations/DEN2/port-availability
+  default = "B" # check location /v2/locations/DEN2/port-availability
 }
 variable "pf_port_pop2" {
   type    = string
@@ -28,7 +28,7 @@ variable "pf_port_pop2" {
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "E" # check availability /v2/locations/WDC1/port-availability
+  default = "E" # check location /v2/locations/WDC1/port-availability
 }
 variable "pf_port_subterm" {
   type    = number
@@ -111,7 +111,7 @@ variable "pf_ptp_pop1" {
 }
 variable "pf_ptp_zone1" {
   type    = string
-  default = "A" # check availability /v2/locations/SEA1/port-availability
+  default = "A" # check location /v2/locations/SEA1/port-availability
 }
 variable "pf_ptp_pop2" {
   type    = string
@@ -119,7 +119,7 @@ variable "pf_ptp_pop2" {
 }
 variable "pf_ptp_zone2" {
   type    = string
-  default = "A" # check availability /v2/locations/CHI1/port-availability
+  default = "A" # check location /v2/locations/CHI1/port-availability
 }
 
 ########################################
@@ -173,7 +173,7 @@ variable "pf_cs_pop2" {
 }
 variable "pf_cs_zone2" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
+  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
 }
 variable "pf_cs_speed2" {
   type    = string
@@ -191,7 +191,7 @@ variable "pf_cs_pop6" {
 }
 variable "pf_cs_zone6" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
+  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
 }
 variable "pf_cs_vlan6" {
   type    = number
@@ -261,7 +261,7 @@ variable "pf_cs_pop3" {
 }
 variable "pf_cs_zone3" {
   type    = string
-  default = "D" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=aws&pop=NYC6
+  default = "D" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=aws&pop=NYC6
 }
 variable "pf_cs_speed3" {
   type    = string
@@ -280,7 +280,7 @@ variable "pf_cs_pop4" {
 }
 variable "pf_cs_zone4" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
+  default = "C" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
 }
 variable "pf_cs_speed4" {
   type    = string
@@ -294,7 +294,7 @@ variable "pf_cs_pop5" {
 }
 variable "pf_cs_zone5" {
   type    = string
-  default = "E" # check availability /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=azure&pop=SFO6
+  default = "E" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=azure&pop=SFO6
 }
 variable "pf_cs_speed5" {
   type    = string
@@ -361,10 +361,6 @@ variable "pf_crc_is_public" {
 }
 
 # Cloud Router Connection AWS
-variable "pf_aws_account_id" {
-  type    = string
-  default = "123456789"
-}
 variable "pf_crc_speed" {
   type        = string
   description = "The speed of the new connection"
@@ -377,7 +373,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
 }
 
 # Cloud Router Connection Google

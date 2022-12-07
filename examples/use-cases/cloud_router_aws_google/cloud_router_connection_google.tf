@@ -40,13 +40,13 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
 # # Verify Terraform gcloud module works in your environment
 # module "gcloud_version" {
 #   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-#   source  = "terraform-google-modules/gcloud/google"
-#   version = "~> 2.0"
+#   source                            = "terraform-google-modules/gcloud/google"
+#   version                           = "~> 2.0"
+
+#   use_tf_google_credentials_env_var = true
 #   # when running locally with gcloud already installed
-#   service_account_key_file = var.GOOGLE_CREDENTIALS
-#   skip_download            = true
+#   skip_download = true
 #   # when running in a CI/CD pipeline without glcoud installed
-#   # use_tf_google_credentials_env_var = true
 #   # skip_download                     = false
 
 #   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
@@ -68,13 +68,13 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
 # Get the BGP Addresses using glcoud terraform module as a workaround
 module "gcloud_bgp_addresses" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source  = "terraform-google-modules/gcloud/google"
-  version = "~> 2.0"
+  source                            = "terraform-google-modules/gcloud/google"
+  version                           = "~> 2.0"
+
+  use_tf_google_credentials_env_var = true
   # when running locally with gcloud already installed
-  service_account_key_file = var.gcp_credentials_path
-  skip_download            = true
+  skip_download = true
   # when running in a CI/CD pipeline without glcoud installed
-  # use_tf_google_credentials_env_var = true
   # skip_download                     = false
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer
@@ -151,13 +151,13 @@ output "packetfabric_cloud_router_bgp_session_crbs_2" {
 # Update BGP Peer in the BGP session's Google Cloud Router
 module "gcloud_bgp_peer_update" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source  = "terraform-google-modules/gcloud/google"
-  version = "~> 2.0"
+  source                            = "terraform-google-modules/gcloud/google"
+  version                           = "~> 2.0"
+  
+  use_tf_google_credentials_env_var = true
   # when running locally with gcloud already installed
-  service_account_key_file = var.gcp_credentials_path
-  skip_download            = true
+  skip_download = true
   # when running in a CI/CD pipeline without glcoud installed
-  # use_tf_google_credentials_env_var = true
   # skip_download                     = false
 
   # https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer

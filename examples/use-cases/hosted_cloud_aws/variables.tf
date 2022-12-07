@@ -7,10 +7,6 @@ variable "tag_name" {
 
 ## PacketFabic VARs
 # AWS Hosted Connection
-variable "pf_aws_account_id" {
-  type        = number
-  description = "The AWS account ID to connect with. Must be 12 characters long"
-}
 variable "pf_port_circuit_id" {
   type    = string
   default = "PF-AP-WDC1-1726464"
