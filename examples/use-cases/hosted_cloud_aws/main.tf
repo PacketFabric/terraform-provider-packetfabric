@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -15,6 +15,7 @@ provider "packetfabric" {}
 
 provider "aws" {
   region = var.aws_region1
+  # use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
 }
 
 # create random name to use to name objects
@@ -90,14 +91,13 @@ resource "aws_route_table_association" "route_association_1" {
 
 # From the PacketFabric side: Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
-  provider       = packetfabric
-  description    = "${var.tag_name}-${random_pet.name.id}"
-  aws_account_id = var.pf_aws_account_id
-  port           = var.pf_port_circuit_id
-  speed          = var.pf_cs_speed
-  pop            = var.pf_cs_pop1
-  vlan           = var.pf_cs_vlan1
-  zone           = var.pf_cs_zone1
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}"
+  port        = var.pf_port_circuit_id
+  speed       = var.pf_cs_speed
+  pop         = var.pf_cs_pop1
+  vlan        = var.pf_cs_vlan1
+  zone        = var.pf_cs_zone1
 }
 
 output "packetfabric_cs_aws_hosted_connection" {

@@ -20,35 +20,37 @@ Use Cases | Description
 
 **[AWS](https://registry.terraform.io/providers/hashicorp/aws/latest)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/25989)](https://github.com/hashicorp/terraform-provider-aws/issues/25989) aws_dx_public_virtual_interface does do dependency checks for amazon_address and customer_address (**impact**: AWS Hosted Cloud and Cloud Router using Public VIF)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/25989)](https://github.com/hashicorp/terraform-provider-aws/issues/25989) aws_dx_public_virtual_interface does do dependency checks for amazon_address and customer_address (**impact**: PacketFabric AWS Hosted Cloud and Cloud Router using Public VIF)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26335)](https://github.com/hashicorp/terraform-provider-aws/issues/26335) aws_dx_connection_confirmation add timeout and do not fail when state is available (**impact**: AWS Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26335)](https://github.com/hashicorp/terraform-provider-aws/issues/26335) aws_dx_connection_confirmation add timeout and do not fail when state is available (**impact**: PacketFabric AWS Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26919)](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter) (**impact**: AWS Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26919)](https://github.com/hashicorp/terraform-provider-aws/issues/26919) aws_dx_connection: Error: 2 Direct Connect Connections matched (add filter) (**impact**: PacketFabric AWS Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26436)](https://github.com/hashicorp/terraform-provider-aws/issues/26436) aws_dx_connection data source: add PDF LOA in base64 encoded (**impact**: AWS Dedicated Cloud
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26436)](https://github.com/hashicorp/terraform-provider-aws/issues/26436) aws_dx_connection data source: add PDF LOA in base64 encoded (**impact**: PacketFabric AWS Dedicated Cloud
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability (**impact**: AWS Dedicated Cloud)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability (**impact**: PacketFabric AWS Dedicated Cloud)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID (**impact**: AWS Hosted Cloud)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID (**impact**: PacketFabric AWS Hosted Cloud)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26432)](https://github.com/hashicorp/terraform-provider-aws/issues/26432) New aws_dx_virtual_interface_router_configuration data source (**impact**: AWS Hosted Cloud)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26432)](https://github.com/hashicorp/terraform-provider-aws/issues/26432) New aws_dx_virtual_interface_router_configuration data source (**impact**: PacketFabric AWS Hosted Cloud)
 
 **[Google Cloud](https://registry.terraform.io/providers/hashicorp/google/latest)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/11458)](https://github.com/hashicorp/terraform-provider-google/issues/11458) Expose bgpPeers from google_compute_router (**impact**: Google Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/11458)](https://github.com/hashicorp/terraform-provider-google/issues/11458) Expose bgpPeers from google_compute_router (**impact**: PacketFabric Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12624)](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment (**impact**: Google Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12624)](https://github.com/hashicorp/terraform-provider-google/issues/12624) New data source for google_compute_interconnect_attachment (**impact**: PacketFabric Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12630)](https://github.com/hashicorp/terraform-provider-google/issues/12630) New google_compute_router_peer_asn_update resource for Partner Interconnect (**impact**: Google Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12630)](https://github.com/hashicorp/terraform-provider-google/issues/12630) New google_compute_router_peer_asn_update resource for Partner Interconnect (**impact**: PacketFabric Google Hosted Cloud and Cloud Router)
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12631)](https://github.com/hashicorp/terraform-provider-google/issues/12631) google_compute_interconnect_attachment  Error 400: The resource is not ready (**impact**: Google Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/12631)](https://github.com/hashicorp/terraform-provider-google/issues/12631) google_compute_interconnect_attachment  Error 400: The resource is not ready (**impact**: PacketFabric Google Hosted Cloud and Cloud Router)
+
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-google/13103)](https://github.com/hashicorp/terraform-provider-google/issues/13103) Add md5_authentication_key in google_compute_router (**impact**: PacketFabric Google Hosted Cloud and Cloud Router)
 
 **[IBM](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/IBM-Cloud/terraform-provider-ibm/3978)](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept (**impact**: IBM Hosted Cloud and Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/IBM-Cloud/terraform-provider-ibm/3978)](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978) New resource to accept a direct link creation request: ibm_dl_gateway_accept (**impact**: PacketFabric IBM Hosted Cloud and Cloud Router)
 
 
 **[Terraform](https://www.terraform.io/)**
 
-- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform/27360)](https://github.com/hashicorp/terraform/issues/27360) Add support for lifecycle meta-argument in modules (**impact**: Google Cloud Router)
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform/27360)](https://github.com/hashicorp/terraform/issues/27360) Add support for lifecycle meta-argument in modules (**impact**: PacketFabric Google Cloud Router)

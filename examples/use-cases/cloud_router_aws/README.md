@@ -75,7 +75,7 @@ export PF_ACCOUNT_ID="123456789"
 Set additional environment variables for AWS:
 
 ```sh
-export TF_VAR_pf_aws_account_id="123456789"
+export PF_AWS_ACCOUNT_ID="98765432"
 export AWS_ACCESS_KEY_ID = "ABCDEFGH"
 export AWS_SECRET_ACCESS_KEY = "secret"
 

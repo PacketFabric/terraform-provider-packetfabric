@@ -56,8 +56,10 @@ func resourceAwsHostedMkt() *schema.Resource {
 			"aws_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PF_AWS_ACCOUNT_ID", nil),
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The AWS account ID to connect with. Must be 12 characters long.",
+				Description: "The AWS account ID to connect with. Must be 12 characters long. " +
+					"Can also be set with the PF_AWS_ACCOUNT_ID environment variable.",
 			},
 			"pop": {
 				Type:         schema.TypeString,

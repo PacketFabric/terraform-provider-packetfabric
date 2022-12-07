@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.4.2"
+      version = ">= 0.5.0"
     }
   }
 }
@@ -80,23 +80,9 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_link_aggregation_group.lag_1
 # }
 
-# # Get the zone from the pop automatically
-# data "packetfabric_locations_port_availability" "port_availabilty_pop2" {
-#   provider = packetfabric
-#   pop      = var.pf_port_pop2
-# }
-# output "packetfabric_locations_port_availability_pop2" {
-#   value = data.packetfabric_locations_port_availability.port_availabilty_pop2
-# }
-# locals {
-#   zones_pop2= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop2.ports_available[*] : each.zone if each.media == var.pf_port_media])
-# }
-# output "packetfabric_locations_port_availability_pop2_single_zone" {
-#   value = tolist(local.zones_pop2)[0]
-# }
-
 # resource "packetfabric_port" "port_2" {
 #   provider          = packetfabric
+#   enabled           = true # set to false to disable the port
 #   autoneg           = var.pf_port_autoneg
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   media             = var.pf_port_media
@@ -104,17 +90,21 @@ resource "random_pet" "name" {}
 #   pop               = var.pf_port_pop2
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
-#   zone              = tolist(local.zones_pop2)[0] # var.pf_port_avzone2
+#   zone              = var.pf_port_avzone2
 # }
 # output "packetfabric_port_2" {
 #   value = packetfabric_port.port_2
 # }
 
 # data "packetfabric_port" "ports_all" {
-#   provider = packetfabric
+#   provider   = packetfabric
+#   depends_on = [packetfabric_port.port_2]
 # }
-# output "packetfabric_ports_all" {
-#   value = data.packetfabric_port.ports_all
+# locals {
+#   port_2_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_2.id])
+# }
+# output "packetfabric_port_2_details" {
+#   value = local.port_2_details
 # }
 
 # data "packetfabric_port_router_logs" "port_1a_logs" {
@@ -319,7 +309,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   port           = packetfabric_port.port_1a.id
 #   speed          = var.pf_cs_speed2
 #   pop            = var.pf_cs_pop2
@@ -481,7 +470,6 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}"
-#   aws_account_id = var.pf_aws_account_id
 #   routing_id     = var.pf_routing_id
 #   market         = var.pf_market
 #   speed          = var.pf_cs_speed2
@@ -605,7 +593,7 @@ resource "random_pet" "name" {}
 
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
-#   provider          = packetfabric # set via PF_ACCOUNT_ID
+#   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone4
 #   pop               = var.pf_cs_pop4
@@ -613,6 +601,9 @@ resource "random_pet" "name" {}
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
+# }
+# output "packetfabric_cs_google_dedicated_connection" {
+#   value = packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
 # }
 
 # # Azure Dedicated Connection
@@ -651,7 +642,6 @@ resource "random_pet" "name" {}
 #   provider       = packetfabric
 #   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   aws_account_id = var.pf_aws_account_id
 #   pop            = var.pf_crc_pop1
 #   zone           = var.pf_crc_zone1
 #   speed          = var.pf_crc_speed
