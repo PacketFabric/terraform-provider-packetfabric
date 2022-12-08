@@ -1,3 +1,14 @@
+## 0.5.1  (December 7, 2022)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* PSE-10317: add dnat_capable to cr connection response (#298)
+
+BUG FIXES:
+
+* Delete Error: could not find BGP session associated with the provided Cloud Router ID: Status: 404 (#266)
+* packetfabric_cloud_router - Intermittent 'Context Canceled' error on plan/apply (#284)
+
 ## 0.5.0  (December 6, 2022)
 
 FEATURES:
