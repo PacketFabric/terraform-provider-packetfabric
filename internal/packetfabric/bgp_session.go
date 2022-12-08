@@ -81,9 +81,10 @@ type BgpSessionCreateResp struct {
 		PreNatSources []string `json:"pre_nat_sources"`
 		PoolPrefixes  []string `json:"pool_prefixes"`
 	} `json:"nat"`
-	BgpState    string `json:"bgp_state"`
-	TimeCreated string `json:"time_created"`
-	TimeUpdated string `json:"time_updated"`
+	BgpState    string      `json:"bgp_state"`
+	Prefixes    []BgpPrefix `json:"prefixes,omitempty"`
+	TimeCreated string      `json:"time_created"`
+	TimeUpdated string      `json:"time_updated"`
 }
 
 type BgpSessionBySettingsUUID struct {
@@ -105,6 +106,7 @@ type BgpSessionBySettingsUUID struct {
 	BfdMultiplier   int         `json:"bfd_multiplier"`
 	Disabled        bool        `json:"disabled"`
 	BgpState        string      `json:"bgp_state"`
+	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
 	Subnet          interface{} `json:"subnet"`
 	PublicIP        string      `json:"public_ip"`
 }

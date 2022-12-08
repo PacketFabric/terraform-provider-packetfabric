@@ -313,6 +313,11 @@ func dataSourceCloudConn() *schema.Resource {
 							Optional:    true,
 							Description: "Indicates whether this connection supports DNAT",
 						},
+						"zone": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The cloud router connection zone",
+						},
 					},
 				},
 			},

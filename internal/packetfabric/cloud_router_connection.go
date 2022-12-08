@@ -76,6 +76,7 @@ type CloudRouterConnectionReadResponse struct {
 	CloudProvider             AwsCloudProvider `json:"cloud_provider,omitempty"`
 	Pop                       string           `json:"pop,omitempty"`
 	Site                      string           `json:"site,omitempty"`
+	Zone                      string           `json:"zone,omitempty"`
 }
 
 type BgpStateObj struct {

@@ -141,6 +141,7 @@ func _buildBgpSessionCreateResp() []byte {
 		"time_updated": "%s",
 		"time_created": "%s",
 		"bgp_state": "Configuring",
+		"prefixes": [],
 		"subnet": null,
 		"public_ip": "%s",
 		"nat": null
