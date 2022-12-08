@@ -69,6 +69,7 @@ Read-Only:
 - `time_updated` (String)
 - `user_uuid` (String)
 - `uuid` (String)
+- `zone` (String)
 
 <a id="nestedobjatt--cloud_connections--bgp_state_list"></a>
 ### Nested Schema for `cloud_connections.bgp_state_list`
