@@ -55,9 +55,25 @@ Optional:
 - `multihop_ttl` (Number) The TTL of this session.
 		Defaults to 1.
 - `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
+- `prefixes` (Block Set) A list of prefixes attached to the bgp session (see [below for nested schema](#nestedblock--bgp_sessions--prefixes))
 - `remote_address` (String) The cloud-side address of the instance.
 - `remote_asn` (Number) The cloud-side ASN of the instance.
 - `time_created` (String) Time the instance was created.
 - `time_updated` (String) Time the instance was last updated.
+
+<a id="nestedblock--bgp_sessions--prefixes"></a>
+### Nested Schema for `bgp_sessions.prefixes`
+
+Optional:
+
+- `as_prepend` (Number) The BGP prepend value of the bgp prefix
+- `bgp_prefix_uuid` (String) TThe UUID of the bgp prefix
+- `local_preference` (Number) The local_preference of the bgp prefix
+- `match_type` (String) The prefix match type
+- `med` (Number) The med of the bgp prefix
+- `order` (Number) The order of the bgp prefix against the others
+- `prefix` (String) The actual IP Prefix of the bgp prefix.
+- `type` (String) Indicates whether the prefix is in or out
+
 
 

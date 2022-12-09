@@ -53,6 +53,7 @@ type BgpNat struct {
 }
 
 type BgpPrefix struct {
+	BgpPrefixUUID   string `json:"bgp_prefix_uuid,omitempty"`
 	Prefix          string `json:"prefix,omitempty"`
 	MatchType       string `json:"match_type,omitempty"`
 	AsPrepend       int    `json:"as_prepend,omitempty"`
