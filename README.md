@@ -104,10 +104,12 @@ environmental variables:
 export PF_HOST="https://api.packetfabric.com"
 export PF_TOKEN="api-secret"
 export PF_ACCOUNT_ID="1234"
-export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
-export PF_ACC_TEST_MARKET="HOU"
 export PF_AWS_ACCOUNT_ID="123456789"
 export PF_IBM_ACCOUNT_ID="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
+export PF_ACC_TEST_MARKET="BOS"
+export PF_ACC_TEST_IX_ROUTING_ID="PD-WUY-9VB0"
+export PF_ACC_TEST_IX_MARKET="HOU"
 ```
 
 > **Warning**: Running below command will order various PacketFabric products, then delete them.
