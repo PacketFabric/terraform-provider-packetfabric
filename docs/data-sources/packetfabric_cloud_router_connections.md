@@ -53,6 +53,7 @@ Read-Only:
 - `customer_uuid` (String)
 - `deleted` (Boolean)
 - `description` (String)
+- `desired_nat` (String)
 - `dnat_capable` (Boolean)
 - `nat_capable` (Boolean)
 - `pending_delete` (Boolean)
@@ -69,6 +70,7 @@ Read-Only:
 - `time_updated` (String)
 - `user_uuid` (String)
 - `uuid` (String)
+- `vlan` (Number)
 - `zone` (String)
 
 <a id="nestedobjatt--cloud_connections--bgp_state_list"></a>

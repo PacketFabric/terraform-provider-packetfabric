@@ -53,6 +53,8 @@ func _buildConnUpdateExpectedResp() {
 		NatCapable:           true,
 		DNatCapable:          false,
 		Zone:                 "A",
+		Vlan:                 4,
+		DesiredNat:           "overload",
 	})
 }
 
@@ -232,7 +234,9 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true,
 		"dnat_capable": false,
-		"zone": "A"
+		"zone": "A",
+		"vlan": 4,
+		"desired_nat": "overload"
 	  }`, description, _cloudConnUUID))
 }
 
@@ -281,7 +285,9 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true,
 		"dnat_capable": false,
-		"zone": "A"
+		"zone": "A",
+		"vlan": 4,
+		"desired_nat": "overload"
 	  }`)
 }
 
@@ -368,7 +374,9 @@ func _buildMockCloudRouterConnResps() []byte {
 		"cloud_router_circuit_id": "PF-L3-CUST-2001",
 		"nat_capable": true,
 		"dnat_capable": false,
-		"zone": "A"
+		"zone": "A",
+		"vlan": 4,
+		"desired_nat": "overload"
 	  }]`)
 }
 func _buildConnDeleteResp() []byte {

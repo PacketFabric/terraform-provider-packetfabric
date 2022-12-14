@@ -318,6 +318,16 @@ func dataSourceCloudConn() *schema.Resource {
 							Optional:    true,
 							Description: "The cloud router connection zone",
 						},
+						"vlan": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The connection vlan for dedicated connections",
+						},
+						"desired_nat": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Indicates the user's choice of NAT type",
+						},
 					},
 				},
 			},
