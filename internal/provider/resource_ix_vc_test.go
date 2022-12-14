@@ -56,8 +56,8 @@ func TestAccIxVc(t *testing.T) {
 		pop,
 		zone,
 		description,
-		os.Getenv("PF_ACC_TEST_ROUTING_ID"), // TODO(medzin): Refactor to use the data from the customer endpoint.
-		os.Getenv("PF_ACC_TEST_MARKET"),     // TODO(medzin): Refactor to use the data from the customer endpoint.
+		os.Getenv("PF_ACC_TEST_IX_ROUTING_ID"), // TODO(medzin): Refactor to use the data from the customer endpoint.
+		os.Getenv("PF_ACC_TEST_IX_MARKET"),     // TODO(medzin): Refactor to use the data from the customer endpoint.
 		"12345",
 		"5",
 		testutil.GetAccountUUID(),
@@ -66,8 +66,8 @@ func TestAccIxVc(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
-				"PF_ACC_TEST_ROUTING_ID",
-				"PF_ACC_TEST_MARKET",
+				"PF_ACC_TEST_IX_ROUTING_ID",
+				"PF_ACC_TEST_IX_MARKET",
 			})
 		},
 		Providers: testAccProviders,

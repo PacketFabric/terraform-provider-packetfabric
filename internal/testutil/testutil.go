@@ -3,9 +3,11 @@ package testutil
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
@@ -38,6 +40,14 @@ func GetPopAndZoneWithAvailablePort(speed, media string) (string, string, error)
 	if err != nil {
 		return "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
+
+	// We need to shuffle the list of locations. Otherwise, we may try to run
+	// all tests on the same port.
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(locations), func(i, j int) {
+		locations[i], locations[j] = locations[j], locations[i]
+	})
+
 	for _, l := range locations {
 		if l.Vendor == "Colt" {
 			continue

@@ -42,6 +42,15 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+
+#   lifecycle {
+#     ignore_changes = [
+#       # Ignore changes to zone because zone cannot be modified 
+#       # after the port is created but can change as we get it 
+#       # from packetfabric_locations_port_availability data source
+#       zone,
+#     ]
+#   }
 # }
 # output "packetfabric_port_1a" {
 #   value = packetfabric_port.port_1a
@@ -58,6 +67,15 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+
+#   lifecycle {
+#     ignore_changes = [
+#       # Ignore changes to zone because zone cannot be modified 
+#       # after the port is created but can change as we get it 
+#       # from packetfabric_locations_port_availability data source
+#       zone,
+#     ]
+#   }
 # }
 # output "packetfabric_port_1b" {
 #   value = packetfabric_port.port_1b
