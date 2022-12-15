@@ -141,7 +141,7 @@ As a workaround, edit the `cloud_router_connections.tf` and comment out the foll
 # }
 ```
 
-Edit the `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connections` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -157,7 +157,6 @@ data "packetfabric_cloud_router_connections" "current" {
 
 Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
-terraform state rm aws_dx_connection_confirmation.confirmation_2
 terraform apply
 ```
 
