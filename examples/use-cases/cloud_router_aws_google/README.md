@@ -158,25 +158,29 @@ As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the f
 # resource "aws_dx_connection_confirmation" "confirmation_1" {
 #   provider      = aws
 #   connection_id = data.aws_dx_connection.current_1.id
+
+#   lifecycle {
+#     ignore_changes = [
+#       connection_id
+#     ]
+#   }
 # }
 ```
 
-Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connection_aws` data source: 
+Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connections` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
   provider   = packetfabric
   circuit_id = packetfabric_cloud_router.cr.id
 
-  depends_on = [
-    aws_dx_connection_confirmation.confirmation_1,
-    # aws_dx_connection_confirmation.confirmation_2,
-  ]
+  # depends_on = [
+  #   aws_dx_connection_confirmation.confirmation_1
+  # ]
 }
 ```
 
 Then remove the `confirmation_1` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
-terraform state rm aws_dx_connection_confirmation.confirmation_1
 terraform apply
 ```
