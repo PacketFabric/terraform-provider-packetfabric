@@ -31,6 +31,7 @@ type BgpSession struct {
 	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
 	Disabled        bool        `json:"disabled,omitempty"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	Nat             BgpNat      `json:"nat,omitempty"`
 }
 
 type BgpSessionUpdate struct {
@@ -45,11 +46,21 @@ type BgpSessionUpdate struct {
 	PrimarySubnet   string               `json:"primary_subnet"`
 	SecondarySubnet string               `json:"secondary_subnet"`
 	Prefixes        []BgpSessionResponse `json:"prefixes"`
+	Nat             BgpNat               `json:"nat"`
+}
+
+type BgpDnatMapping struct {
+	PrivateIP         string `json:"private_ip,omitempty"`
+	PublicIP          string `json:"public_ip,omitempty"`
+	ConditionalPrefix string `json:"conditional_prefix,omitempty"`
 }
 
 type BgpNat struct {
-	PreNatSources []interface{} `json:"pre_nat_sources,omitempty"`
-	PoolPrefixes  []interface{} `json:"pool_prefixes,omitempty"`
+	PreNatSources []string         `json:"pre_nat_sources,omitempty"`
+	PoolPrefixes  []string         `json:"pool_prefixes,omitempty"`
+	Direction     string           `json:"direction,omitempty"`
+	NatType       string           `json:"nat_type,omitempty"`
+	DnatMappings  []BgpDnatMapping `json:"dnat_mappings,omitempty"`
 }
 
 type BgpPrefix struct {
@@ -77,13 +88,10 @@ type BgpSessionCreateResp struct {
 	BfdInterval     int    `json:"bfd_interval"`
 	BfdMultiplier   int    `json:"bfd_multiplier"`
 	Disabled        bool   `json:"disabled"`
-	Nat             struct {
-		PreNatSources []string `json:"pre_nat_sources"`
-		PoolPrefixes  []string `json:"pool_prefixes"`
-	} `json:"nat"`
-	BgpState    string `json:"bgp_state"`
-	TimeCreated string `json:"time_created"`
-	TimeUpdated string `json:"time_updated"`
+	Nat             BgpNat `json:"nat"`
+	BgpState        string `json:"bgp_state"`
+	TimeCreated     string `json:"time_created"`
+	TimeUpdated     string `json:"time_updated"`
 }
 
 type BgpSessionBySettingsUUID struct {
@@ -107,6 +115,7 @@ type BgpSessionBySettingsUUID struct {
 	BgpState        string      `json:"bgp_state"`
 	Subnet          interface{} `json:"subnet"`
 	PublicIP        string      `json:"public_ip"`
+	Nat             BgpNat      `json:"nat"`
 }
 
 // This struct represents a Bgp Session create response

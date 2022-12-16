@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceBgpSession() *schema.Resource {
@@ -96,6 +97,70 @@ func dataSourceBgpSession() *schema.Resource {
 							Computed:    true,
 							Optional:    true,
 							Description: "Whether this BGP session is disabled.\n\t\tDefault \"false\"",
+						},
+						"nat": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"pre_nat_sources": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										Description: "The source IP address + mask of the host before NAT translation.",
+										Elem: &schema.Schema{
+											Type:         schema.TypeString,
+											ValidateFunc: validation.StringIsNotEmpty,
+										},
+									},
+									"pool_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										Description: "The source IP address + mask of the NAT pool prefix.",
+										Elem: &schema.Schema{
+											Type:         schema.TypeString,
+											ValidateFunc: validation.StringIsNotEmpty,
+										},
+									},
+									"direction": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+										Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input",
+									},
+									"nat_type": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+										Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat",
+									},
+									"dnat_mappings": {
+										Type:     schema.TypeSet,
+										Computed: true,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"private_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The private prefix of this DNAT mapping.",
+												},
+												"public_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The public prefix of this DNAT mapping.",
+												},
+												"conditional_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The conditional prefix prefix of this DNAT mapping.",
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 						"time_created": {
 							Type:        schema.TypeString,
