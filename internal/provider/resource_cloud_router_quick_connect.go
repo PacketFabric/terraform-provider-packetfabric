@@ -46,7 +46,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Description:  "The cloud router quick connection import CID.",
 			},
 			"service_uuid": {
-				Type:         schema.TypeSet,
+				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "The service UUID associated with the cloud router quick connect.",
@@ -64,9 +64,9 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
-							Description:  "The import filters match type.",
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
+							Description:  "The match type of this prefix.",
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
@@ -89,9 +89,9 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
-							Description:  "The return filters match type.",
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
+							Description:  "The match type of this prefix.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
@@ -246,7 +246,6 @@ func extractReturnFilters(d *schema.ResourceData) []packetfabric.QuickConnectRet
 				MatchType: filter.(map[string]interface{})["match_type"].(string),
 				Asprepend: filter.(map[string]interface{})["as_prepend"].(int),
 				Med:       filter.(map[string]interface{})["med"].(int),
-				Localpref: filter.(map[string]interface{})["local_preference"].(int),
 			})
 		}
 		return extractedFilters

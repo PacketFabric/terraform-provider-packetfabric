@@ -85,7 +85,7 @@ func (c *PFClient) DeleteCloudRouterQuickConnect(cID, crCID, connCID, importCID 
 		err = c._deletePendingCloudRouterQuickConnect(cID)
 	case state == "active":
 		if crCID == "" || connCID == "" || importCID == "" {
-			err = errors.New("cloud router circuit ID, connection circuit ID or import circuit ID cannot be empty")
+			err = fmt.Errorf("cloud router circuit ID, connection circuit ID or import circuit ID cannot be empty, we got: CrID: %s; ConnCID: %s; ImportCID: %s", crCID, connCID, importCID)
 			return
 		}
 		err = c._deleteActiveCloudRouterQuickConnect(crCID, connCID, importCID)
