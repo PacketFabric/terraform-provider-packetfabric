@@ -144,6 +144,7 @@ func Provider() *schema.Provider {
 			"packetfabric_port_device_info":              dataSourcePortDeviceInfo(),
 			"packetfabric_port_router_logs":              datasourcePortRouterLogs(),
 			"packetfabric_locations_cloud":               datasourceCloudLocations(),
+			"packetfabric_quick_connect_requests":        datasourceQuickConnectRequests(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
