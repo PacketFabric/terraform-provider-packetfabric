@@ -327,7 +327,6 @@ variable "pf_cs_subterm" {
   default = 1 # default 1 month
 }
 
-
 ########################################
 ###### CLOUD ROUTER
 ########################################
@@ -541,4 +540,82 @@ variable "pf_crc_oracle_vc_ocid" {
   type      = string
   default   = "secret"
   sensitive = true
+}
+
+########################################
+###### MARKETPLACE
+########################################
+
+variable "pf_sku" {
+  type        = string
+  description = "Internal identifier for the service"
+  default     = "001234567"
+}
+variable "pf_categories" {
+  type        = list(any)
+  description = "Categories in which the service will fit"
+  default = [
+    "cloud-computing",
+    "security",
+    "web-hosting"
+  ]
+}
+variable "pf_published" {
+  type        = bool
+  description = "Whether or not the service should be publically viewable"
+  default     = true
+}
+
+# Port Service
+variable "pf_locations" {
+  type        = list(any)
+  description = "Locations in which the service will operate"
+  default = [
+    "PDX1",
+    "SFO2"
+  ]
+}
+
+# Quick Conect Service
+variable "pf_cloud_router_circuit_id" {
+  type        = string
+  description = "The circuit ID of the cloud router this service is associated with"
+  default     = "PF-L3-CUST-2839140"
+}
+variable "pf_connection_circuit_ids" {
+  type        = list(any)
+  description = "The connection circuit IDs"
+  default = [
+    "PF-L3-CON-2853999",
+    "PF-L3-CON-2888830"
+  ]
+}
+variable "pf_route_set_description" {
+  type    = string
+  default = "Default"
+}
+variable "pf_route_set_is_private" {
+  type        = bool
+  description = "Whether this route set is private. We only support public prefix at this time. Must be set to false."
+  default     = false
+}
+variable "pf_route_set_prefix1" {
+  type        = string
+  description = "Single Prefix of this Route Set"
+  default     = "185.56.153.165/32"
+}
+variable "pf_route_set_match_type1" {
+  type        = string
+  description = "The match type of this Route Set"
+  default     = "orlonger" # exact
+}
+variable "pf_route_set_prefix2" {
+  type        = string
+  description = "Single Prefix of this Route Set"
+  default     = "185.56.153.166/32"
+}
+variable "pf_route_set_match_type2" {
+  type        = string
+  description = "The match type of this Route Set"
+  default     = "orlonger" # exact
 }
