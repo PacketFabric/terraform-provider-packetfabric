@@ -1,8 +1,8 @@
 # Create a Marketplace Service type quick-connect
 resource "packetfabric_marketplace_service" "marketplace_quick_connect" {
   provider                = packetfabric
-  name                    = "${var.tag_name}-${random_pet.name.id}-quick-connect"
-  description             = "Lorem ipsum dolor sit amet. Lobortis mattis aliquam faucibus purus in massa tempor nec."
+  name                    = var.pf_name
+  description             = var.pf_description
   service_type            = "quick-connect-service"
   sku                     = var.pf_sku
   categories              = var.pf_categories
@@ -29,8 +29,8 @@ output "packetfabric_marketplace_service_quick_connect" {
 # Create a Marketplace Service type port
 resource "packetfabric_marketplace_service" "marketplace_port" {
   provider     = packetfabric
-  name         = "${var.tag_name}-${random_pet.name.id}-port"
-  description  = "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  name         = var.pf_name
+  description  = var.pf_description
   service_type = "port-service"
   sku          = var.pf_sku
   categories   = var.pf_categories
