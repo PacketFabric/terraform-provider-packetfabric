@@ -58,13 +58,13 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Optional:     true,
+							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
 							Description:  "The match type of this prefix.",
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "The import filters local preference.",
 						},
 					},
@@ -83,18 +83,18 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Optional:     true,
+							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
 							Description:  "The match type of this prefix.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "The return filters as prepend.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "The return filters med.",
 						},
 					},
