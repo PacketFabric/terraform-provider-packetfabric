@@ -39,12 +39,6 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The cloud router connection circuit ID.",
 			},
-			"import_circuit_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The cloud router quick connection import CID.",
-			},
 			"service_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -70,7 +64,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "The import filters local preference.",
 						},
 					},
@@ -89,18 +83,18 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
 							Description:  "The match type of this prefix.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "The return filters as prepend.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "The return filters med.",
 						},
 					},
@@ -164,15 +158,14 @@ func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.Resource
 
 func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	if importCID, ok := d.GetOk("import_circuit_id"); ok {
-		c := m.(*packetfabric.PFClient)
-		c.Ctx = ctx
-		crCID := d.Get("cr_circuit_id").(string)
-		connCID := d.Get("connection_circuit_id").(string)
-		quickConn := extractCloudRouterQuickConnectUpdate(d)
-		if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, importCID.(string), quickConn); err != nil {
-			return diag.FromErr(err)
-		}
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	crCID := d.Get("cr_circuit_id").(string)
+	connCID := d.Get("connection_circuit_id").(string)
+	quickConn := extractCloudRouterQuickConnectUpdate(d)
+	//OBS: We use Circuit ID as Import CID defined per design.
+	if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, d.Id(), quickConn); err != nil {
+		return diag.FromErr(err)
 	}
 	return diags
 }
@@ -181,17 +174,15 @@ func resourceCloudRouterQuickConnectDelete(ctx context.Context, d *schema.Resour
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	var crCIDStr, connCIDStr, importCIDStr string
+	var crCIDStr, connCIDStr string
 	if crCID, ok := d.GetOk("cr_circuit_id"); ok {
 		crCIDStr = crCID.(string)
 	}
 	if connCID, ok := d.GetOk("connection_circuit_id"); ok {
 		connCIDStr = connCID.(string)
 	}
-	if importCID, ok := d.GetOk("import_circuit_id"); ok {
-		importCIDStr = importCID.(string)
-	}
-	warningMsg, err := c.DeleteCloudRouterQuickConnect(d.Id(), crCIDStr, connCIDStr, importCIDStr)
+	//OBS: We use Circuit ID as Import CID defined per design.
+	warningMsg, err := c.DeleteCloudRouterQuickConnect(d.Id(), crCIDStr, connCIDStr, d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
