@@ -574,21 +574,44 @@ resource "random_pet" "name" {}
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
-# # List all Marketplace Service Requests (not Cloud Router)
-# data "packetfabric_marketplace_service_requests" "sent" {
+# # List all Marketplace Service Requests (port service type)
+# data "packetfabric_marketplace_service_requests" "port_sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
 # }
-# output "packetfabric_marketplace_service_requests_sent" {
-#   value = data.packetfabric_marketplace_service_requests.sent
+# output "packetfabric_marketplace_service_requests_port_sent" {
+#   value = data.packetfabric_marketplace_service_requests.port_sent
 # }
 
-# data "packetfabric_marketplace_service_requests" "received" {
+# data "packetfabric_marketplace_service_requests" "port_received" {
 #   provider = packetfabric
 #   type     = "received" # sent or received
 # }
-# output "packetfabric_marketplace_service_requests_received" {
-#   value = data.packetfabric_marketplace_service_requests.received
+# output "packetfabric_marketplace_service_requests_port_received" {
+#   value = data.packetfabric_marketplace_service_requests.port_received
+# }
+
+# # Create a Quick Connect Cloud Router Marketplace Connection
+# resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
+#   provider              = packetfabric
+#   cr_circuit_id         = var.pf_cr_circuit_id
+#   connection_circuit_id = var.pf_connection_circuit_id
+#   service_uuid          = var.pf_service_uuid
+#   import_filters {
+#     prefix     = var.pf_import_filters_prefix
+#     match_type = var.pf_import_filters_match_type
+#   }
+#   return_filters {
+#     prefix     = var.pf_return_filters_prefix1
+#     match_type = var.pf_return_filters_match_type1
+#   }
+#   return_filters {
+#     prefix     = var.pf_return_filters_prefix2
+#     match_type = var.pf_return_filters_match_type2
+#   }
+# }
+# output "packetfabric_cloud_router_quick_connect" {
+#   value = packetfabric_cloud_router_quick_connect.cr_quick_connect
 # }
 
 # #######################################

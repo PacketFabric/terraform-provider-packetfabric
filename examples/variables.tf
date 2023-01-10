@@ -542,3 +542,50 @@ variable "pf_crc_oracle_vc_ocid" {
   default   = "secret"
   sensitive = true
 }
+
+# Cloud Router Connection Quick Connect
+variable "pf_cr_circuit_id" {
+  type        = string
+  description = "The circuit ID of the cloud router this service is associated with"
+  default     = "PF-L3-CUST-2839140"
+}
+variable "pf_connection_circuit_id" {
+  type        = string
+  description = "The connection circuit ID"
+  default     = "PF-L3-CON-2853999"
+}
+variable "pf_service_uuid" {
+  type        = string
+  description = "The service UUID associated with the cloud router quick connect."
+  default     = "64a41294-9e1a-4ab0-935c-a116e8870420"
+}
+variable "pf_import_filters_prefix" {
+  type        = string
+  description = "The import filters prefix."
+  default     = "192.169.0.30/32"
+}
+variable "pf_import_filters_match_type" {
+  type        = string
+  description = "The match type of this prefix."
+  default     = "exact" # orlonger
+}
+variable "pf_return_filters_prefix1" {
+  type        = string
+  description = "The return filters prefix."
+  default     = "192.140.0.31/32"
+}
+variable "pf_return_filters_match_type1" {
+  type        = string
+  description = "The match type of this prefix."
+  default     = "orlonger" # orlonger
+}
+variable "pf_return_filters_prefix2" {
+  type        = string
+  description = "The return filters prefix."
+  default     = "192.141.0.32/32"
+}
+variable "pf_return_filters_match_type2" {
+  type        = string
+  description = "The match type of this prefix."
+  default     = "exact" # orlonger
+}
