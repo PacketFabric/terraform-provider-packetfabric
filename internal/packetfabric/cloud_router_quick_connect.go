@@ -23,14 +23,14 @@ type CloudRouterQuickConnectUpdate struct {
 type QuickConnectImportFilters struct {
 	Prefix    string `json:"prefix,omitempty"`
 	MatchType string `json:"match_type,omitempty"`
-	Localpref int    `json:"localpref,omitempty"`
+	Localpref int    `json:"local_preference,omitempty"`
 }
 type QuickConnectReturnFilters struct {
 	Prefix    string `json:"prefix,omitempty"`
 	MatchType string `json:"match_type,omitempty"`
-	Asprepend int    `json:"asprepend,omitempty"`
+	Asprepend int    `json:"as_prepend,omitempty"`
 	Med       int    `json:"med,omitempty"`
-	Localpref int    `json:"localpref,omitempty"`
+	Localpref int    `json:"local_preference,omitempty"`
 }
 
 type CloudRouterQuickConnectResp struct {
