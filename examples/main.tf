@@ -597,10 +597,6 @@ resource "random_pet" "name" {}
 #   cr_circuit_id         = var.pf_cr_circuit_id
 #   connection_circuit_id = var.pf_connection_circuit_id
 #   service_uuid          = var.pf_service_uuid
-#   import_filters {
-#     prefix     = var.pf_import_filters_prefix
-#     match_type = var.pf_import_filters_match_type
-#   }
 #   return_filters {
 #     prefix     = var.pf_return_filters_prefix1
 #     match_type = var.pf_return_filters_match_type1

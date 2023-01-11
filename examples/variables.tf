@@ -559,16 +559,6 @@ variable "pf_service_uuid" {
   description = "The service UUID associated with the cloud router quick connect."
   default     = "64a41294-9e1a-4ab0-935c-a116e8870420"
 }
-variable "pf_import_filters_prefix" {
-  type        = string
-  description = "The import filters prefix."
-  default     = "192.169.0.30/32"
-}
-variable "pf_import_filters_match_type" {
-  type        = string
-  description = "The match type of this prefix."
-  default     = "exact" # orlonger
-}
 variable "pf_return_filters_prefix1" {
   type        = string
   description = "The return filters prefix."
