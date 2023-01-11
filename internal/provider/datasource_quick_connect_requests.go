@@ -23,7 +23,6 @@ func datasourceQuickConnectRequests() *schema.Resource {
 			"quick_connect_requests": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Optional:    true,
 				Description: "List of quick connect requests.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -70,14 +69,17 @@ func datasourceQuickConnectRequests() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"prefix": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Description: "The quick connect prefix.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Description: "The quick connect prefix match type.",
 									},
 									"localpref": {
 										Type:        schema.TypeInt,
+										Computed:    true,
 										Description: "The quick connect prefix localpref.",
 									},
 								},
@@ -91,22 +93,27 @@ func datasourceQuickConnectRequests() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"prefix": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Description: "The quick connect prefix.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Description: "The quick connect prefix match type.",
 									},
 									"asprepend": {
 										Type:        schema.TypeInt,
+										Computed:    true,
 										Description: "The quick connect prefix asprepend.",
 									},
 									"med": {
 										Type:        schema.TypeInt,
+										Computed:    true,
 										Description: "The quick connect prefix med.",
 									},
 									"localpref": {
 										Type:        schema.TypeInt,
+										Computed:    true,
 										Description: "The quick connect prefix localpref.",
 									},
 								},
