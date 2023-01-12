@@ -591,6 +591,35 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_marketplace_service_requests.received
 # }
 
+# # List all Marketplace Service Requests (Quick Connect)
+# data "packetfabric_quick_connect_requests" "quick_connect_sent" {
+#   provider = packetfabric
+#   type     = "sent" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_sent" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_sent
+# }
+
+# data "packetfabric_quick_connect_requests" "quick_connect_received" {
+#   provider = packetfabric
+#   type     = "received" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_received" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_received
+# }
+
+# # Accept the Request Quick Connect
+# resource "packetfabric_quick_connect_accept_request" "accept_request_quick_connect" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
+# }
+
+# # Reject the Request
+# resource "packetfabric_quick_connect_reject_request" "reject_request_quick_connect" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
+# }
+
 # #######################################
 # ##### Dedicated Cloud Connections
 # #######################################
