@@ -44,7 +44,7 @@ Ensure you have the following items available:
 
 ## Quick start
 
-1. Set the PacketFabric API key, Account ID, and AWS Account ID in the environment variables and update each variables as needed (edit ``tfvars.json``).
+1. Set the PacketFabric API key, Account ID, and AWS Account ID in your terminal as environment variables.
 
 ```sh
 export PF_TOKEN="secret"
@@ -64,6 +64,8 @@ terraform plan --var-file=tfvars.json
 ```sh
 terraform apply --var-file=tfvars.json
 ```
+
+**Note:** you can update terraform variables in the ``tfvars.json``.
 
 4. Destroy all remote objects managed by the Terraform configuration.
 
