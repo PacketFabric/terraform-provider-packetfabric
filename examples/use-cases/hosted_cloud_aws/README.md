@@ -54,7 +54,7 @@ Ensure you have the following items available:
 
 ## Quick start
 
-1. Set the PacketFabric API key and Account ID in the environment variables and update each variables as needed (edit ``variables.tf``).
+1. Set the PacketFabric API key and Account ID in your terminal as environment variables.
 
 ```sh
 export PF_TOKEN="secret"
@@ -75,6 +75,8 @@ export AWS_SECRET_ACCESS_KEY = "secret"
 terraform init
 terraform plan
 ```
+
+**Note:** you can update terraform variables in the ``variables.tf``.
 
 3. Apply the plan:
 
