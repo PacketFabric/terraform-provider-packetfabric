@@ -110,7 +110,7 @@ func datasourceQuickConnectRequests() *schema.Resource {
 										Type:        schema.TypeInt,
 										Computed:    true,
 										Description: "The quick connect prefix med.",
-									}
+									},
 								},
 							},
 						},
