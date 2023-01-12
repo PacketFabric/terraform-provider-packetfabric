@@ -77,10 +77,10 @@ func datasourceQuickConnectRequests() *schema.Resource {
 										Computed:    true,
 										Description: "The quick connect prefix match type.",
 									},
-									"localpref": {
+									"local_preference": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The quick connect prefix localpref.",
+										Description: "The quick connect prefix local preference.",
 									},
 								},
 							},
@@ -101,21 +101,16 @@ func datasourceQuickConnectRequests() *schema.Resource {
 										Computed:    true,
 										Description: "The quick connect prefix match type.",
 									},
-									"asprepend": {
+									"as_prepend": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The quick connect prefix asprepend.",
+										Description: "The quick connect prefix as prepend.",
 									},
 									"med": {
 										Type:        schema.TypeInt,
 										Computed:    true,
 										Description: "The quick connect prefix med.",
-									},
-									"localpref": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "The quick connect prefix localpref.",
-									},
+									}
 								},
 							},
 						},
@@ -173,7 +168,7 @@ func flattenImportFilters(filters []packetfabric.ImportFilters) []interface{} {
 		flatten := make(map[string]interface{})
 		flatten["prefix"] = filter.Prefix
 		flatten["match_type"] = filter.MatchType
-		flatten["localpref"] = filter.Localpref
+		flatten["local_preference"] = filter.Localpref
 		flattens[i] = flatten
 	}
 	return flattens
@@ -185,9 +180,8 @@ func flattenReturnFilters(filters []packetfabric.ReturnFilters) []interface{} {
 		flatten := make(map[string]interface{})
 		flatten["prefix"] = filter.Prefix
 		flatten["match_type"] = filter.MatchType
-		flatten["asprepend"] = filter.Asprepend
+		flatten["as_prepend"] = filter.Asprepend
 		flatten["med"] = filter.Med
-		flatten["localpref"] = filter.Localpref
 		flattens[i] = flatten
 	}
 	return flattens

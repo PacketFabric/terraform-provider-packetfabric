@@ -26,7 +26,6 @@ type ReturnFilters struct {
 	MatchType string `json:"match_type,omitempty"`
 	Asprepend int    `json:"as_prepend,omitempty"`
 	Med       int    `json:"med,omitempty"`
-	Localpref int    `json:"local_preference,omitempty"`
 }
 
 func (c *PFClient) GetCloudRouterRequests(reqType string) ([]CloudRouterRequest, error) {
