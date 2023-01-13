@@ -30,7 +30,7 @@ type ReturnFilters struct {
 
 func (c *PFClient) GetCloudRouterRequests(reqType string) ([]CloudRouterRequest, error) {
 	cloudRouterRequests := make([]CloudRouterRequest, 0)
-	if _, err := c.sendRequest(fmt.Sprintf(cloudRouterRequestsURI, reqType), getMethod, nil, cloudRouterRequests); err != nil {
+	if _, err := c.sendRequest(fmt.Sprintf(cloudRouterRequestsURI, reqType), getMethod, nil, &cloudRouterRequests); err != nil {
 		return nil, err
 	}
 	return cloudRouterRequests, nil
