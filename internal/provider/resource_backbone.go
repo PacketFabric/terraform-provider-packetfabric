@@ -75,6 +75,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"untagged": {
 						Type:        schema.TypeBool,
 						Optional:    true,
+						Default:     false,
 						Description: "Whether the interface should be untagged.",
 					},
 				},
@@ -103,6 +104,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"untagged": {
 						Type:        schema.TypeBool,
 						Optional:    true,
+						Default:     false,
 						Description: "Whether the interface should be untagged.",
 					},
 				},
@@ -270,8 +272,13 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 func extractBackboneInterface(interf map[string]interface{}) packetfabric.BackBoneInterface {
 	backboneInter := packetfabric.BackBoneInterface{}
 	backboneInter.PortCircuitID = interf["port_circuit_id"].(string)
-	backboneInter.Vlan = interf["vlan"].(int)
-	backboneInter.Untagged = interf["untagged"].(bool)
+	if vlan := interf["vlan"]; vlan != nil {
+		backboneInter.Vlan = vlan.(int)
+	}
+	if untagged := interf["untagged"]; untagged != nil {
+		backboneInter.Untagged = untagged.(bool)
+	}
+
 	return backboneInter
 }
 
@@ -279,5 +286,6 @@ func speedOptions() []string {
 	return []string{
 		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
 		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
-		"5Gbps", "10Gbps"}
+		"5Gbps", "10Gbps", "20Gbps", "30Gbps",
+		"40Gbps", "50Gbps", "60Gbps", "80Gbps", "100Gbps"}
 }
