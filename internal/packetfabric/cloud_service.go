@@ -29,7 +29,7 @@ type Backbone struct {
 
 type BackBoneInterface struct {
 	PortCircuitID string `json:"port_circuit_id"`
-	Vlan          int    `json:"vlan"`
+	Vlan          int    `json:"vlan,omitempty"`
 	Untagged      bool   `json:"untagged"`
 }
 
