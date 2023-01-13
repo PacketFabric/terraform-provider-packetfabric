@@ -36,17 +36,17 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"speed": {
 						Type:        schema.TypeString,
-						Optional:    true,
+						Required:    true,
 						Description: "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 					},
 					"subscription_term": {
 						Type:        schema.TypeInt,
-						Optional:    true,
+						Required:    true,
 						Description: "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 					},
 					"longhaul_type": {
 						Type:        schema.TypeString,
-						Optional:    true,
+						Required:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
@@ -64,7 +64,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"vlan": {
 						Type:        schema.TypeInt,
-						Required:    true,
+						Optional:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
 					},
 					"svlan": {
@@ -74,7 +74,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
-						Required:    true,
+						Optional:    true,
 						Description: "Whether the interface should be untagged.",
 					},
 				},
@@ -92,7 +92,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"vlan": {
 						Type:        schema.TypeInt,
-						Required:    true,
+						Optional:    true,
 						Description: "Valid VLAN range is from 4-4094, inclusive.",
 					},
 					"svlan": {
@@ -102,7 +102,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					},
 					"untagged": {
 						Type:        schema.TypeBool,
-						Required:    true,
+						Optional:    true,
 						Description: "Whether the interface should be untagged.",
 					},
 				},
