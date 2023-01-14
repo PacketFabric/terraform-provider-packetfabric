@@ -423,10 +423,14 @@ func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteR
 	return expectedResp, nil
 }
 
-func (c *PFClient) RejectCloudRouterService(circuitID string) (*ServiceRejectionReson, error) {
+func (c *PFClient) RejectCloudRouterService(circuitID, rejectionReason string) (*ServiceRejectionReson, error) {
 	formatedURI := fmt.Sprintf(rejectCloudRouterService, circuitID)
 	rejectionResp := &ServiceRejectionReson{}
-	_, err := c.sendRequest(formatedURI, postMethod, nil, rejectionResp)
+	type RejectionReasonMsg struct {
+		RejectionReason string `json:"rejection_reason"`
+	}
+	reason := &RejectionReasonMsg{RejectionReason: rejectionReason}
+	_, err := c.sendRequest(formatedURI, postMethod, reason, rejectionResp)
 	if err != nil {
 		return nil, err
 	}

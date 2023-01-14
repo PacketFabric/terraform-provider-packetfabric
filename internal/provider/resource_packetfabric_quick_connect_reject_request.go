@@ -33,6 +33,11 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the Cloud Router third-party service import.",
 			},
+			"rejection_reason": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The quick connect rejection reason.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -44,9 +49,15 @@ func resourceRejectRequestCreate(ctx context.Context, d *schema.ResourceData, m 
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+	rejectionReason := ""
+	if reason, ok := d.GetOk("rejection_reason"); ok {
+		rejectionReason = reason.(string)
+	}
 	if circuitID, ok := d.GetOk("circuit_id"); ok {
-		if _, err := c.RejectCloudRouterService(circuitID.(string)); err != nil {
+		if _, err := c.RejectCloudRouterService(circuitID.(string), rejectionReason); err != nil {
 			return diag.FromErr(err)
+		} else {
+			d.SetId(circuitID.(string))
 		}
 	}
 	return diags
