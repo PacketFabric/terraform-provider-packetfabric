@@ -72,5 +72,6 @@ func resourceRejectRequestUpdate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceRejectRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	d.SetId("")
 	return diag.Diagnostics{}
 }
