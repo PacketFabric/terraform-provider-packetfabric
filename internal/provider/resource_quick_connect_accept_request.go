@@ -47,6 +47,8 @@ func resourceAcceptRequestCreate(ctx context.Context, d *schema.ResourceData, m 
 	if circuitID, ok := d.GetOk("circuit_id"); ok {
 		if _, err := c.AcceptCloudRouterService(circuitID.(string)); err != nil {
 			return diag.FromErr(err)
+		} else {
+			d.SetId(circuitID.(string))
 		}
 	}
 	return diags
@@ -61,5 +63,6 @@ func resourceAcceptRequestUpdate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAcceptRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	d.SetId("")
 	return diag.Diagnostics{}
 }
