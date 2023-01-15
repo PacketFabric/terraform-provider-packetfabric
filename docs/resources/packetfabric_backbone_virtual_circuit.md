@@ -129,4 +129,10 @@ Optional:
 - `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
+## Import
 
+Import a backbone virtual circuit using its circuit ID.
+
+```bash
+terraform import packetfabric_backbone_virtual_circuit.vc1 PF-BC-RNO-CHI-1729807-PF
+```
