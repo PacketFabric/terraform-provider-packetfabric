@@ -616,8 +616,9 @@ resource "random_pet" "name" {}
 
 # # Reject the Request
 # resource "packetfabric_quick_connect_reject_request" "reject_request_quick_connect" {
-#   provider   = packetfabric
-#   circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
+#   provider         = packetfabric
+#   circuit_id       = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
+#   rejection_reason = "Return filters are too broad."
 # }
 
 # #######################################
