@@ -91,9 +91,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 Required:
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-
-Optional:
-
 - `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
 
 	Enum ["dedicated" "usage" "hourly"]
@@ -111,12 +108,12 @@ Optional:
 Required:
 
 - `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
-- `untagged` (Boolean) Whether the interface should be untagged.
-- `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
+- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
 <a id="nestedblock--interface_z"></a>
@@ -125,20 +122,11 @@ Optional:
 Required:
 
 - `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
-- `untagged` (Boolean) Whether the interface should be untagged.
-- `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
+- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
-
-
-## Import
-
-Import a backbone virtual circuit using its circuit ID.
-
-```bash
-terraform import packetfabric_backbone_virtual_circuit.vc1 PF-BC-RNO-CHI-1729807-PF
-```
