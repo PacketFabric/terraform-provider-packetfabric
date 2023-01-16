@@ -8,7 +8,6 @@ import (
 const bgpSessionURI = "/v2/bgp-settings/%s/prefixes"
 const bgpSessionPrefixesURI = "/v2/bgp-settings/%s/prefixes"
 const bgpSessionCloudRouterURI = "/v2/services/cloud-routers/%s/connections/%s/bgp"
-const bgpSessionSettingsURI = "/v2/bgp-settings"
 const bgpSessionSettingsByUUIDURI = "/v2/services/cloud-routers/%s/connections/%s/bgp/%s"
 
 // This struct represents a Bgp Session for an existing Cloud Router connection
@@ -34,17 +33,17 @@ type BgpSession struct {
 }
 
 type BgpSessionUpdate struct {
-	AddressFamily   string               `json:"address_family"`
-	BgpSettingsUUID string               `json:"bgp_settings_uuid"`
-	Disabled        bool                 `json:"disabled"`
-	MultihopTTL     int                  `json:"multihop_ttl"`
-	Orlonger        bool                 `json:"orlonger"`
-	RemoteAddress   string               `json:"remote_address"`
-	RemoteAsn       int                  `json:"remote_asn"`
-	L3Address       string               `json:"l3_address"`
-	PrimarySubnet   string               `json:"primary_subnet"`
-	SecondarySubnet string               `json:"secondary_subnet"`
-	Prefixes        []BgpSessionResponse `json:"prefixes"`
+	AddressFamily   string      `json:"address_family"`
+	BgpSettingsUUID string      `json:"bgp_settings_uuid"`
+	Disabled        bool        `json:"disabled"`
+	MultihopTTL     int         `json:"multihop_ttl"`
+	Orlonger        bool        `json:"orlonger"`
+	RemoteAddress   string      `json:"remote_address"`
+	RemoteAsn       int         `json:"remote_asn"`
+	L3Address       string      `json:"l3_address"`
+	PrimarySubnet   string      `json:"primary_subnet"`
+	SecondarySubnet string      `json:"secondary_subnet"`
+	Prefixes        []BgpPrefix `json:"prefixes"`
 }
 
 type BgpNat struct {
@@ -52,6 +51,7 @@ type BgpNat struct {
 	PoolPrefixes  []interface{} `json:"pool_prefixes,omitempty"`
 }
 
+// https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_create
 type BgpPrefix struct {
 	BgpPrefixUUID   string `json:"bgp_prefix_uuid,omitempty"`
 	Prefix          string `json:"prefix,omitempty"`
@@ -113,30 +113,23 @@ type BgpSessionBySettingsUUID struct {
 }
 
 // This struct represents a Bgp Session create response
-// https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_create
-type BgpSessionResponse struct {
-	BgpPrefixUUID string `json:"bgp_prefix_uuid"`
-	Prefix        string `json:"prefix"`
-	Type          string `json:"type"`
-	Order         int    `json:"order"`
-}
-
 type BgpSessionAssociatedResp struct {
-	BgpSettingsUUID string `json:"bgp_settings_uuid"`
-	AddressFamily   string `json:"address_family"`
-	RemoteAddress   string `json:"remote_address"`
-	RemoteAsn       int    `json:"remote_asn"`
-	MultihopTTL     int    `json:"multihop_ttl"`
-	LocalPreference int    `json:"local_preference"`
-	Community       string `json:"community"`
-	AsPrepend       int    `json:"as_prepend"`
-	Med             int    `json:"med"`
-	Orlonger        bool   `json:"orlonger"`
-	BfdInterval     int    `json:"bfd_interval"`
-	BfdMultiplier   int    `json:"bfd_multiplier"`
-	Disabled        bool   `json:"disabled"`
-	TimeCreated     string `json:"time_created"`
-	TimeUpdated     string `json:"time_updated"`
+	BgpSettingsUUID string      `json:"bgp_settings_uuid"`
+	AddressFamily   string      `json:"address_family"`
+	RemoteAddress   string      `json:"remote_address"`
+	RemoteAsn       int         `json:"remote_asn"`
+	MultihopTTL     int         `json:"multihop_ttl"`
+	LocalPreference int         `json:"local_preference"`
+	Community       string      `json:"community"`
+	AsPrepend       int         `json:"as_prepend"`
+	Med             int         `json:"med"`
+	Orlonger        bool        `json:"orlonger"`
+	BfdInterval     int         `json:"bfd_interval"`
+	BfdMultiplier   int         `json:"bfd_multiplier"`
+	Disabled        bool        `json:"disabled"`
+	TimeCreated     string      `json:"time_created"`
+	TimeUpdated     string      `json:"time_updated"`
+	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
 }
 
 type BgpDeleteMessage struct {
@@ -155,9 +148,9 @@ func (c *PFClient) CreateBgpSession(bgpSession BgpSession, cID, connID string) (
 	return expectedResp, nil
 }
 
-func (c *PFClient) CreateBgpSessionPrefixes(prefixes []BgpPrefix, bgpSessionUUID string) ([]BgpSessionResponse, error) {
+func (c *PFClient) CreateBgpSessionPrefixes(prefixes []BgpPrefix, bgpSessionUUID string) ([]BgpPrefix, error) {
 	formatedURI := fmt.Sprintf(bgpSessionPrefixesURI, bgpSessionUUID)
-	expectedResp := make([]BgpSessionResponse, 0)
+	expectedResp := make([]BgpPrefix, 0)
 	_, err := c.sendRequest(formatedURI, postMethod, prefixes, &expectedResp)
 	if err != nil {
 		return nil, err
@@ -165,9 +158,9 @@ func (c *PFClient) CreateBgpSessionPrefixes(prefixes []BgpPrefix, bgpSessionUUID
 	return expectedResp, nil
 }
 
-func (c *PFClient) ReadBgpSessionPrefixes(bgpSettingsUUID string) ([]BgpSessionResponse, error) {
+func (c *PFClient) ReadBgpSessionPrefixes(bgpSettingsUUID string) ([]BgpPrefix, error) {
 	formatedURI := fmt.Sprintf(bgpSessionPrefixesURI, bgpSettingsUUID)
-	expectedResp := make([]BgpSessionResponse, 0)
+	expectedResp := make([]BgpPrefix, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
@@ -177,9 +170,9 @@ func (c *PFClient) ReadBgpSessionPrefixes(bgpSettingsUUID string) ([]BgpSessionR
 
 // This function represents the Action to Retrieve a list of Bgp Sessions by Bgp Settings UUID
 // https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_list
-func (c *PFClient) ReadBgpSession(bgpSetUUID string) ([]BgpSessionResponse, error) {
+func (c *PFClient) ReadBgpSession(bgpSetUUID string) ([]BgpSessionAssociatedResp, error) {
 	formatedURI := fmt.Sprintf(bgpSessionURI, bgpSetUUID)
-	expectedResp := make([]BgpSessionResponse, 0)
+	expectedResp := make([]BgpSessionAssociatedResp, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 
 	if err != nil {
@@ -210,9 +203,9 @@ func (c *PFClient) UpdateBgpSession(bgpSession BgpSession, cID, connCID string) 
 	return resp.(*http.Response), expectedResp, err
 }
 
-func (c *PFClient) DeleteBgpPrefixes(prefixesUUID []string, bgpSettingsUUID string) ([]BgpSessionResponse, error) {
+func (c *PFClient) DeleteBgpPrefixes(prefixesUUID []string, bgpSettingsUUID string) ([]BgpPrefix, error) {
 	formatedURI := fmt.Sprintf(bgpSessionPrefixesURI, bgpSettingsUUID)
-	expectedResp := make([]BgpSessionResponse, 0)
+	expectedResp := make([]BgpPrefix, 0)
 	_, err := c.sendRequest(formatedURI, deleteMethod, prefixesUUID, &expectedResp)
 	if err != nil {
 		return nil, err
@@ -246,10 +239,10 @@ func (c *PFClient) DeleteBgpSession(cID, cloudConnCID, bgpSettingsUUID string) (
 
 // This function represents the Action to Return a list of Bgp settings instances associated with the current Account.
 // https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
-func (c *PFClient) ListBgpSessions() ([]BgpSessionAssociatedResp, error) {
+func (c *PFClient) ListBgpSessions(cID, connCID string) ([]BgpSessionAssociatedResp, error) {
+	formatedURI := fmt.Sprintf(bgpSessionCloudRouterURI, cID, connCID)
 	expectedResp := make([]BgpSessionAssociatedResp, 0)
-	_, err := c.sendRequest(bgpSessionSettingsURI, getMethod, nil, &expectedResp)
-
+	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}

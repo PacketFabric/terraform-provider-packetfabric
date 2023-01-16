@@ -389,6 +389,8 @@ func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) [
 			flatten["cloud_router_circuit_id"] = conn.CloudRouterCircuitID
 			flatten["nat_capable"] = conn.NatCapable
 			flatten["dnat_capable"] = conn.DNatCapable
+			flatten["zone"] = conn.Zone
+			flatten["vlan"] = conn.Vlan
 			flattens[i] = flatten
 		}
 		return flattens

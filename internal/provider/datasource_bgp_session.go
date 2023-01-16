@@ -13,6 +13,16 @@ func dataSourceBgpSession() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBgpSessionRead,
 		Schema: map[string]*schema.Schema{
+			"circuit_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
+			},
+			"connection_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The circuit ID of the connection associated with the BGP session. This starts with \"PF-L3-CON-\".",
+			},
 			"bgp_sessions": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -178,7 +188,15 @@ func dataSourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	sessions, err := c.ListBgpSessions()
+	cID, ok := d.GetOk("circuit_id")
+	if !ok {
+		return diag.Errorf("please provide a valid Circuit ID")
+	}
+	connCID, ok := d.GetOk("connection_id")
+	if !ok {
+		return diag.Errorf("please provide a valid Cloud Router Connection ID")
+	}
+	sessions, err := c.ListBgpSessions(cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -211,6 +229,27 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["disabled"] = session.Disabled
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
+			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
+			flattens[i] = flatten
+		}
+		return flattens
+	}
+	return make([]interface{}, 0)
+}
+
+func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{} {
+	if prefixes != nil {
+		flattens := make([]interface{}, len(*prefixes), len(*prefixes))
+		for i, prefix := range *prefixes {
+			flatten := make(map[string]interface{})
+			flatten["bgp_prefix_uuid"] = prefix.BgpPrefixUUID
+			flatten["prefix"] = prefix.Prefix
+			flatten["match_type"] = prefix.MatchType
+			flatten["as_prepend"] = prefix.AsPrepend
+			flatten["med"] = prefix.Med
+			flatten["local_preference"] = prefix.LocalPreference
+			flatten["type"] = prefix.Type
+			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens

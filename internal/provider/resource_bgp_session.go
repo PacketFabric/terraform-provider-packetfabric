@@ -330,9 +330,9 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	sessionToDisable.L3Address = l3Address.(string)
 	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
 	sessionToDisable.Disabled = true
-	sessionToDisable.Prefixes = make([]packetfabric.BgpSessionResponse, 0)
+	sessionToDisable.Prefixes = make([]packetfabric.BgpPrefix, 0)
 	for _, prefix := range sessionPrefixes {
-		sessionToDisable.Prefixes = append(sessionToDisable.Prefixes, packetfabric.BgpSessionResponse{
+		sessionToDisable.Prefixes = append(sessionToDisable.Prefixes, packetfabric.BgpPrefix{
 			BgpPrefixUUID: prefix.BgpPrefixUUID,
 			Prefix:        prefix.Prefix,
 			Type:          prefix.Type,

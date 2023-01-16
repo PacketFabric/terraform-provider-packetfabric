@@ -42,15 +42,41 @@ func resourceBgpPrefixes() *schema.Resource {
 							Required:    true,
 							Description: "The actual IP prefix of this instance.",
 						},
+						"match_type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "The prefix match type",
+						},
+						"as_prepend": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Optional:    true,
+							Description: "The BGP prepend value of the bgp prefix",
+						},
+						"med": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Optional:    true,
+							Description: "The med of the bgp prefix",
+						},
+						"local_preference": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Optional:    true,
+							Description: "The local_preference of the bgp prefix",
+						},
 						"type": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Specify `\"in\"` or `\"out\"`. Prefixes that are \"in\" are allowed into the attached cloud environment. Prefixes that are \"out\" are going to cloud router connections.",
+							Computed:    true,
+							Optional:    true,
+							Description: "Indicates whether the prefix is in or out",
 						},
 						"order": {
 							Type:        schema.TypeInt,
-							Required:    true,
-							Description: "The order of this prefix against the others.",
+							Computed:    true,
+							Optional:    true,
+							Description: "The order of the bgp prefix against the others",
 						},
 					},
 				},
@@ -126,9 +152,13 @@ func extractBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPrefix 
 		sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
 		for _, pref := range prefixes.(*schema.Set).List() {
 			sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
-				Prefix: pref.(map[string]interface{})["prefix"].(string),
-				Type:   pref.(map[string]interface{})["type"].(string),
-				Order:  pref.(map[string]interface{})["order"].(int),
+				Prefix:          pref.(map[string]interface{})["prefix"].(string),
+				MatchType:       pref.(map[string]interface{})["match_type"].(string),
+				AsPrepend:       pref.(map[string]interface{})["as_prepend"].(int),
+				Med:             pref.(map[string]interface{})["med"].(int),
+				LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
+				Type:            pref.(map[string]interface{})["type"].(string),
+				Order:           pref.(map[string]interface{})["order"].(int),
 			})
 		}
 		return sessionPrefixes
@@ -136,12 +166,16 @@ func extractBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPrefix 
 	return make([]packetfabric.BgpPrefix, 0)
 }
 
-func _flattenPrefixes(prefixes []packetfabric.BgpSessionResponse) []interface{} {
+func _flattenPrefixes(prefixes []packetfabric.BgpPrefix) []interface{} {
 	flattens := make([]interface{}, len(prefixes), len(prefixes))
 	for i, prefix := range prefixes {
 		flatten := make(map[string]interface{})
 		flatten["bgp_prefix_uuid"] = prefix.BgpPrefixUUID
 		flatten["prefix"] = prefix.Prefix
+		flatten["match_type"] = prefix.MatchType
+		flatten["as_prepend"] = prefix.AsPrepend
+		flatten["med"] = prefix.Med
+		flatten["local_preference"] = prefix.LocalPreference
 		flatten["type"] = prefix.Type
 		flatten["order"] = prefix.Order
 		flattens[i] = prefix
