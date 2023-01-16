@@ -22,24 +22,26 @@ const _bgpPublicIP = "185.161.1.152/31"
 var _bgpPrefixOut = "10.0.0.2/32"
 var _bgpPrefixIn = "10.0.0.1/32"
 
-var _bgpSessionPrefixes = make([]BgpSessionResponse, 0)
+var _bgpSessionPrefixes = make([]BgpPrefix, 0)
 var _bgpSessionSettings = make([]BgpSessionAssociatedResp, 0)
 
 var _createdTime = "2019-08-24T14:15:22Z"
 var _updatedTime = "2019-08-24T14:15:22Z"
 
 func init() {
-	_bgpSessionPrefixes = append(_bgpSessionPrefixes, BgpSessionResponse{
+	_bgpSessionPrefixes = append(_bgpSessionPrefixes, BgpPrefix{
 		BgpPrefixUUID: _bgpPrefixOutUUID,
 		Prefix:        _bgpPrefixOut,
 		Type:          "out",
+		Med:           2,
 		Order:         1,
 	})
-	_bgpSessionPrefixes = append(_bgpSessionPrefixes, BgpSessionResponse{
-		BgpPrefixUUID: _bgpPrefixInUUID,
-		Prefix:        _bgpPrefixIn,
-		Type:          "in",
-		Order:         1,
+	_bgpSessionPrefixes = append(_bgpSessionPrefixes, BgpPrefix{
+		BgpPrefixUUID:   _bgpPrefixInUUID,
+		Prefix:          _bgpPrefixIn,
+		Type:            "in",
+		LocalPreference: 100,
+		Order:           1,
 	})
 	_bgpSessionSettings = append(_bgpSessionSettings, BgpSessionAssociatedResp{
 		BgpSettingsUUID: _bgpSettingsUUID,
@@ -70,7 +72,7 @@ func Test_CreateBgpSession(t *testing.T) {
 
 func Test_CreateBgpSessionPrefixes(t *testing.T) {
 	var payload []BgpPrefix
-	var expectedResp []BgpSessionResponse
+	var expectedResp []BgpPrefix
 	_ = json.Unmarshal(_buildBgpPrefixList(), &payload)
 	_ = json.Unmarshal(_buildCreateBgpSessionPrefixes(), &expectedResp)
 	cTest.runFakeHttpServer(_callCreateBgpSessionPrefixes, payload, expectedResp, _buildCreateBgpSessionPrefixes(), "test-create-bgp-session-prefixes", t)
@@ -81,7 +83,7 @@ func Test_ReadBgpSession(t *testing.T) {
 }
 
 func Test_ReadBgpSessionPrefixes(t *testing.T) {
-	var expectedResp []BgpSessionResponse
+	var expectedResp []BgpPrefix
 	_ = json.Unmarshal(_buildBgpPrefixList(), &expectedResp)
 	cTest.runFakeHttpServer(_callReadBgpSessionPrefixes, _bgpSettingsUUID, expectedResp, _buildBgpPrefixList(), "test-read-bgp-session-prefixes", t)
 }
@@ -154,12 +156,14 @@ func _buildBgpPrefixList() []byte {
 			"bgp_prefix_uuid": "%s",
 			"prefix": "%s",
 			"type": "out",
+			"med": 2
 			"order": 1
 		},
 		{
 			"bgp_prefix_uuid": "%s",
 			"prefix": "%s",
 			"type": "in",
+			"local_preference": 100
 			"order": 1
 		}
 	]`, _bgpPrefixOutUUID, _bgpPrefixOut, _bgpPrefixInUUID, _bgpPrefixIn))
@@ -170,11 +174,13 @@ func _buildCreateBgpSessionPrefixes() []byte {
 		{
 			"prefix": "%s",
 			"type": "out",
+			"med": 2
 			"order": 1
 		},
 		{
 			"prefix": "%s",
 			"type": "in",
+			"local_preference": 100
 			"order": 1
 		}
 	]`, _bgpPrefixOut, _bgpPrefixIn))
