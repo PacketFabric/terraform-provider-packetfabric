@@ -61,12 +61,12 @@ output "packetfabric_port_1_details" {
 ### Optional
 
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
+- `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Default is true.Defaults: true
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) Availability zone of the port.
-- `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Default is true.
 
 ### Read-Only
 

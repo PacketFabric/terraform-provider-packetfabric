@@ -70,17 +70,17 @@ func datasourceQuickConnectRequests() *schema.Resource {
 									"prefix": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The quick connect prefix.",
+										Description: "The Quick Connect prefix.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The quick connect prefix match type.",
+										Description: "The Quick Connect prefix match type.",
 									},
 									"local_preference": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The quick connect prefix local preference.",
+										Description: "The Quick Connect prefix local preference.",
 									},
 								},
 							},
@@ -94,22 +94,22 @@ func datasourceQuickConnectRequests() *schema.Resource {
 									"prefix": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The quick connect prefix.",
+										Description: "The Quick Connect prefix.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The quick connect prefix match type.",
+										Description: "The Quick Connect prefix match type.",
 									},
 									"as_prepend": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The quick connect prefix as prepend.",
+										Description: "The Quick Connect prefix as prepend.",
 									},
 									"med": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The quick connect prefix med.",
+										Description: "The Quick Connect prefix med.",
 									},
 								},
 							},
