@@ -31,7 +31,7 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "UUID of the Quick Connect import request you received.",
+				Description:  "Circuit ID of the Quick Connect import.",
 			},
 			"rejection_reason": {
 				Type:        schema.TypeString,

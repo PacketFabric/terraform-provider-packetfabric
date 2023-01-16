@@ -25,7 +25,7 @@ resource "packetfabric_quick_connect_reject_request" "reject_request_quick_conne
 
 ### Required
 
-- `circuit_id` (String) UUID of the Quick Connect import request you received.
+- `circuit_id` (String) Circuit ID of the Quick Connect import.
 
 ### Optional
 
