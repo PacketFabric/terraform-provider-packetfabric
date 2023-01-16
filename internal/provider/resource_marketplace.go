@@ -38,18 +38,18 @@ func resourceMarketplaceService() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Short description of what the service does.",
+				Description:  "Brief description of what the service does.",
 			},
 			"sku": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Internal identifier for the service.",
+				Description:  "A SKU identifier for the service. This is not shown to the A side user (the requestor).",
 			},
 			"locations": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Locations in which the service will operate (port-service only).",
+				Description: "Locations in which the service will operate (port service only). The location should be a POP, e.g. `NYC5`.",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
@@ -58,7 +58,7 @@ func resourceMarketplaceService() *schema.Resource {
 			"categories": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Categories in which the service will fit.",
+				Description: "Categories in which the service will fit.\n\n\tEnum: `\"cloud-computing\"`, `\"content-delivery-network\"`, `\"edge-computing\"`, `\"sd-wan\"`, `\"data-storage\"`, `\"developer-platform\"`, `\"internet-service-provider\"`, `\"security\"`, `\"video-conferencing\"`, `\"voice-and-messaging\"`, `\"web-hosting\"`, `\"internet-of-things\"`, `\"private-connectivity\"`, `\"bare-metal-hosting\"`",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
@@ -67,20 +67,20 @@ func resourceMarketplaceService() *schema.Resource {
 			"published": {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "Whether or not the service should be publically viewable.",
+				Description: "If published, the service appears in your marketplace listing.",
 			},
 			"service_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"port-service", "quick-connect-service"}, true),
 				Default:      "port-service",
-				Description:  "The service type of this service. Defaults to 'port-service'.",
+				Description:  "The service type of this service. Enum: `\"port-service\"`, `\"quick-connect-service\"` ",
 			},
 			"cloud_router_circuit_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The circuit ID of the cloud router this service is associated with (quick-connect-service only)s.",
+				Description:  "The circuit ID of the Cloud Router this service is associated with (Quick Connect service only).",
 			},
 			"route_set": {
 				Type:     schema.TypeSet,
@@ -96,7 +96,7 @@ func resourceMarketplaceService() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     true,
-							Description: "Whether this route set is private. Defaults to true.",
+							Description: "In a private route set, the return traffic is private. In other words, in a public route set, anyone who imports this route set can also see other clients who are importing the route based on return traffic. ",
 						},
 						"prefixes": {
 							Type:     schema.TypeSet,
@@ -106,25 +106,25 @@ func resourceMarketplaceService() *schema.Resource {
 									"prefix": {
 										Type:        schema.TypeString,
 										Required:    true,
-										Description: "Single Prefix of this Route Set.",
+										Description: "A prefix, in CIDR format, to include in this route set.",
 									},
 									"match_type": {
 										Type:         schema.TypeString,
 										Required:     true,
 										ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
-										Description:  "The match type of this Route Set. Options are: exact and orlonger.",
+										Description:  "The match type for this prefix. Options are: `\"exact\"` and `\"orlonger\"`.",
 									},
 								},
 							},
 						},
 					},
 				},
-				Description: "The cloud route set (quick-connect-service only).",
+				Description: "The Cloud Router route set to export (Quick Connect service only).",
 			},
 			"connection_circuit_ids": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "The Cloud Router Connection circuit IDs. (quick-connect-service only).",
+				Description: "The circuit IDs of the Cloud Router connections that will be included in this service. (Quick Connect service only).",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
@@ -133,7 +133,7 @@ func resourceMarketplaceService() *schema.Resource {
 			"route_set_circuit_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The RouteSet circuit ID.",
+				Description: "The route set circuit ID.",
 			},
 			"service_uuid": {
 				Type:        schema.TypeString,
