@@ -31,12 +31,12 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Circuit ID of the Cloud Router third-party service import.",
+				Description:  "UUID of the Quick Connect import request you received.",
 			},
 			"rejection_reason": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The quick connect rejection reason.",
+				Description: "The reason that you are rejecting the request.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
