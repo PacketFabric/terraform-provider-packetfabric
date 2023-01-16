@@ -31,7 +31,7 @@ func resourceQuickConnectAcceptRequest() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Circuit ID of the Cloud Router third-party service import.",
+				Description:  "Circuit ID of the Quick Connect import.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
