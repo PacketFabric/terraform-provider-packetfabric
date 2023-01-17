@@ -109,7 +109,7 @@ func _callReadBgpSessionPrefixes(payload interface{}) (interface{}, error) {
 }
 
 func _callListBgpSessionSettings(payload interface{}) (interface{}, error) {
-	return cTest.ListBgpSessions()
+	return cTest.ListBgpSessions(_cID, _connID)
 }
 
 func _buildBgpSessionPayload() []byte {
