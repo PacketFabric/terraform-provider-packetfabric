@@ -72,14 +72,14 @@ Optional:
 
 Optional:
 
-- `as_prepend` (Number) The BGP prepend value of the bgp prefix
-- `bgp_prefix_uuid` (String) TThe UUID of the bgp prefix
-- `local_preference` (Number) The local_preference of the bgp prefix
-- `match_type` (String) The prefix match type
-- `med` (Number) The med of the bgp prefix
-- `order` (Number) The order of the bgp prefix against the others
+- `as_prepend` (Number) The BGP prepend value of the bgp prefix. It is used when type = out.
+- `bgp_prefix_uuid` (String) TThe UUID of the bgp prefix.
+- `local_preference` (Number) The local_preference of the bgp prefix. It is used when type = in.
+- `match_type` (String) The prefix match type.
+- `med` (Number) The med of the bgp prefix. It is used when type = out.
+- `order` (Number) The order of the bgp prefix against the others.
 - `prefix` (String) The actual IP Prefix of the bgp prefix.
-- `type` (String) Indicates whether the prefix is in or out
+- `type` (String) Indicates whether the prefix is in or out.
 
 
 

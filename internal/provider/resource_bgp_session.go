@@ -152,17 +152,17 @@ func resourceBgpSession() *schema.Resource {
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The BGP prepend value of this prefix.",
+							Description: "The BGP prepend value of this prefix. It is used when type = out.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The MED of this prefix.",
+							Description: "The MED of this prefix. It is used when type = out.",
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The local_preference of this prefix.",
+							Description: "The local_preference of this prefix. It is used when type = in.",
 						},
 						"type": {
 							Type:         schema.TypeString,
