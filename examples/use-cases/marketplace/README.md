@@ -23,8 +23,8 @@ to automate the creation of a Virtual Circuit between 2 ports owned by 2 differe
 **Z side**
 
 - "random_pet"
-- "packetfabric_marketplace_service_accept_request"
-- "packetfabric_marketplace_service_reject_request"
+- "packetfabric_marketplace_service_port_accept_request"
+- "packetfabric_marketplace_service_port_reject_request"
 
 ## Before you begin
 

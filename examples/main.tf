@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.5.1"
+      version = ">= 0.6.0"
     }
   }
 }
@@ -127,12 +127,22 @@ resource "random_pet" "name" {}
 
 # data "packetfabric_port_router_logs" "port_1a_logs" {
 #   provider        = packetfabric
-#   port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#   port_circuit_id = packetfabric_port.port_1a.id
 #   time_from       = "2022-11-30 00:00:00"
 #   time_to         = "2022-12-01 00:00:00"
+#   depends_on = [packetfabric_port.port_1]
 # }
 # output "packetfabric_port_router_logs" {
 #   value = data.packetfabric_port_router_logs.port_1a_logs
+# }
+
+# data "packetfabric_port_device_info" "port_1a_device_info" {
+#   provider        = packetfabric
+#   port_circuit_id = packetfabric_port.port_1a.id
+#   depends_on = [packetfabric_port.port_1]
+# }
+# output "packetfabric_port_device_info" {
+#   value = data.packetfabric_port_device_info.port_1a_device_info
 # }
 
 # #######################################
@@ -544,7 +554,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Accept the Request AWS
-# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_aws" {
+# resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request_aws" {
 #   provider       = packetfabric
 #   type           = "cloud"
 #   cloud_provider = "aws" # "aws, azure, google, oracle
@@ -557,7 +567,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Accept the Request Backbone VC
-# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_backbone" {
+# resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request_backbone" {
 #   provider    = packetfabric
 #   type        = "backbone"
 #   description = "${var.tag_name}-${random_pet.name.id}"
@@ -569,7 +579,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Reject the Request
-# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
+# resource "packetfabric_marketplace_service_port_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
@@ -742,6 +752,15 @@ resource "random_pet" "name" {}
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
 # }
 
+# data "packetfabric_cloud_router_bgp_session" "bgp_session_crbs_3" {
+#   provider = packetfabric
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_3.id
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_3_data" {
+#   value = data.packetfabric_cloud_router_bgp_session.bgp_session_crbs_3
+# }
+
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
@@ -791,13 +810,6 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cloud_router_connections" {
 #   value = data.packetfabric_cloud_router_connections.all_crc
-# }
-
-# data "packetfabric_cloud_router_bgp_session" "all_cr_bgp_sessions" {
-#   provider = packetfabric
-# }
-# output "packetfabric_cloud_router_bgp_session" {
-#   value = data.packetfabric_cloud_router_bgp_session.all_cr_bgp_sessions
 # }
 
 # #######################################
