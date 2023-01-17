@@ -24,11 +24,6 @@ func dataSourcePortDeviceInfo() *schema.Resource {
 				Optional:    true,
 				Description: "The adjcent router.",
 			},
-			"device_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "The device ID.",
-			},
 			"device_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -64,11 +59,6 @@ func dataSourcePortDeviceInfo() *schema.Resource {
 				Optional:    true,
 				Description: "The port speed.",
 			},
-			"site_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "The site ID.",
-			},
 			"optics_diagnostics_lane_tx_power_dbm": {
 				Type:        schema.TypeFloat,
 				Optional:    true,
@@ -80,7 +70,7 @@ func dataSourcePortDeviceInfo() *schema.Resource {
 				Description: "The optics diagnostics lane TX Power.",
 			},
 			"optics_diagnostics_lane_index": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The optics diagnostics lane Index.",
 			},
@@ -239,7 +229,6 @@ func dataSourcePortDeviceInfoRead(ctx context.Context, d *schema.ResourceData, m
 		if portInfo.AdjacentRouter != nil {
 			_ = d.Set("adjacent_router", portInfo.AdjacentRouter)
 		}
-		_ = d.Set("device_id", portInfo.DeviceID)
 		_ = d.Set("device_name", portInfo.DeviceName)
 		_ = d.Set("device_make", portInfo.DeviceMake)
 		_ = d.Set("admin_status", portInfo.AdminStatus)
@@ -247,7 +236,6 @@ func dataSourcePortDeviceInfoRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("auto_negotiation", portInfo.AutoNegotiation)
 		_ = d.Set("iface_name", portInfo.IfaceName)
 		_ = d.Set("speed", portInfo.Speed)
-		_ = d.Set("site_id", portInfo.SiteID)
 		for _, optics := range portInfo.OpticsDiagnosticsLaneValues {
 			_ = d.Set("optics_diagnostics_lane_tx_power_dbm", optics.TxPowerDbm)
 			_ = d.Set("optics_diagnostics_lane_tx_power", optics.TxPower)

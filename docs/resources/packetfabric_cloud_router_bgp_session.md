@@ -118,10 +118,10 @@ Required:
 
 Optional:
 
-- `as_prepend` (Number) The BGP prepend value of this prefix.
-- `local_preference` (Number) The local_preference of this prefix.
+- `as_prepend` (Number) The BGP prepend value of this prefix. It is used when type = out.
+- `local_preference` (Number) The local_preference of this prefix. It is used when type = in.
 - `match_type` (String) The match type of this prefix.
-- `med` (Number) The MED of this prefix.
+- `med` (Number) The MED of this prefix. It is used when type = out.
 - `order` (Number) The order of this prefix against the others.
 
 

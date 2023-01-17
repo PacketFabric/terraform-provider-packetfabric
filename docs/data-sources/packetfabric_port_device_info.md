@@ -35,7 +35,6 @@ output "packetfabric_port_device_info" {
 - `admin_status` (String) The current admin status.
 - `auto_negotiation` (Boolean) True if auto negotiation is on.
 - `device_can_lag` (Boolean) True if device can lag.
-- `device_id` (Number) The device ID.
 - `device_make` (String) The device make name.
 - `device_name` (String) The device name.
 - `iface_name` (String) The interface name.
@@ -50,7 +49,6 @@ output "packetfabric_port_device_info" {
 - `optics_diagnostics_lane_tx_power_dbm` (Number) The optics diagnostics lane TX Power dbm.
 - `optics_diagnostics_lane_tx_status` (String) The optics diagnostics lane tx status.
 - `polltime` (Number) The port pool time.
-- `site_id` (Number) The site ID.
 - `speed` (String) The port speed.
 - `time_flapped` (String) The port time flapped.
 - `traffic_rx_bps` (Number) The port traffic RX bps.

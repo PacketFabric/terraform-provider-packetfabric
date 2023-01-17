@@ -313,6 +313,21 @@ func dataSourceCloudConn() *schema.Resource {
 							Optional:    true,
 							Description: "Indicates whether this connection supports DNAT",
 						},
+						"zone": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The cloud router connection zone",
+						},
+						"vlan": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "The connection vlan for dedicated connections",
+						},
+						"desired_nat": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Indicates the user's choice of NAT type",
+						},
 					},
 				},
 			},
@@ -374,6 +389,8 @@ func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) [
 			flatten["cloud_router_circuit_id"] = conn.CloudRouterCircuitID
 			flatten["nat_capable"] = conn.NatCapable
 			flatten["dnat_capable"] = conn.DNatCapable
+			flatten["zone"] = conn.Zone
+			flatten["vlan"] = conn.Vlan
 			flattens[i] = flatten
 		}
 		return flattens
