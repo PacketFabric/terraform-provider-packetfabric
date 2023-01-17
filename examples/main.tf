@@ -127,12 +127,22 @@ resource "random_pet" "name" {}
 
 # data "packetfabric_port_router_logs" "port_1a_logs" {
 #   provider        = packetfabric
-#   port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#   port_circuit_id = packetfabric_port.port_1a.id
 #   time_from       = "2022-11-30 00:00:00"
 #   time_to         = "2022-12-01 00:00:00"
+#   depends_on = [packetfabric_port.port_1]
 # }
 # output "packetfabric_port_router_logs" {
 #   value = data.packetfabric_port_router_logs.port_1a_logs
+# }
+
+# data "packetfabric_port_device_info" "port_1a_device_info" {
+#   provider        = packetfabric
+#   port_circuit_id = packetfabric_port.port_1a.id
+#   depends_on = [packetfabric_port.port_1]
+# }
+# output "packetfabric_port_device_info" {
+#   value = data.packetfabric_port_device_info.port_1a_device_info
 # }
 
 # #######################################
@@ -723,14 +733,13 @@ resource "random_pet" "name" {}
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
 # }
 
-
-# data "packetfabric_cloud_router_bgp_session" "all_cr_bgp_sessions" {
+# data "packetfabric_cloud_router_bgp_session" "bgp_session_crbs_3" {
+#   provider = packetfabric
 #   circuit_id     = packetfabric_cloud_router.cr.id
 #   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_3.id
-#   provider = packetfabric
 # }
-# output "packetfabric_cloud_router_bgp_session" {
-#   value = data.packetfabric_cloud_router_bgp_session.all_cr_bgp_sessions
+# output "packetfabric_cloud_router_bgp_session_crbs_3_data" {
+#   value = data.packetfabric_cloud_router_bgp_session.bgp_session_crbs_3
 # }
 
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
@@ -782,13 +791,6 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cloud_router_connections" {
 #   value = data.packetfabric_cloud_router_connections.all_crc
-# }
-
-# data "packetfabric_cloud_router_bgp_session" "all_cr_bgp_sessions" {
-#   provider = packetfabric
-# }
-# output "packetfabric_cloud_router_bgp_session" {
-#   value = data.packetfabric_cloud_router_bgp_session.all_cr_bgp_sessions
 # }
 
 # #######################################

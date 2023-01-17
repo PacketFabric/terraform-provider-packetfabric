@@ -76,13 +76,17 @@ func dataSourceBgpPrefixRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenBgpPrefixes(prefixes *[]packetfabric.BgpSessionResponse) []interface{} {
+func flattenBgpPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{} {
 	if prefixes != nil {
 		flattens := make([]interface{}, len(*prefixes), len(*prefixes))
 		for i, prefix := range *prefixes {
 			flatten := make(map[string]interface{})
 			flatten["bgp_prefix_uuid"] = prefix.BgpPrefixUUID
 			flatten["prefix"] = prefix.Prefix
+			flatten["match_type"] = prefix.MatchType
+			flatten["as_prepend"] = prefix.AsPrepend
+			flatten["med"] = prefix.Med
+			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
 			flatten["order"] = prefix.Order
 			flattens[i] = flatten
