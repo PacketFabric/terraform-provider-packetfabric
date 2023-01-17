@@ -62,6 +62,12 @@ func datasourceActivityLog() *schema.Resource {
 							Optional:    true,
 							Description: "The log time created.",
 						},
+						"log_level_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "The log level name.",
+						},
 					},
 				},
 			},
@@ -96,6 +102,7 @@ func flattenActivityLogs(logs *[]packetfabric.ActivityLog) []interface{} {
 			flatten["event"] = log.Event
 			flatten["messge"] = log.Message
 			flatten["time_created"] = log.TimeCreated
+			flatten["log_level_name"] = log.LevelName
 			flattens[i] = flatten
 		}
 		return flattens
