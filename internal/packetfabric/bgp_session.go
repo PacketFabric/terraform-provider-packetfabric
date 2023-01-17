@@ -34,18 +34,18 @@ type BgpSession struct {
 }
 
 type BgpSessionUpdate struct {
-	AddressFamily   string               `json:"address_family"`
-	BgpSettingsUUID string               `json:"bgp_settings_uuid"`
-	Disabled        bool                 `json:"disabled"`
-	MultihopTTL     int                  `json:"multihop_ttl"`
-	Orlonger        bool                 `json:"orlonger"`
-	RemoteAddress   string               `json:"remote_address"`
-	RemoteAsn       int                  `json:"remote_asn"`
-	L3Address       string               `json:"l3_address"`
-	PrimarySubnet   string               `json:"primary_subnet"`
-	SecondarySubnet string               `json:"secondary_subnet"`
-	Prefixes        []BgpPrefix          `json:"prefixes"`
-	Nat             BgpNat               `json:"nat"`
+	AddressFamily   string      `json:"address_family"`
+	BgpSettingsUUID string      `json:"bgp_settings_uuid"`
+	Disabled        bool        `json:"disabled"`
+	MultihopTTL     int         `json:"multihop_ttl"`
+	Orlonger        bool        `json:"orlonger"`
+	RemoteAddress   string      `json:"remote_address"`
+	RemoteAsn       int         `json:"remote_asn"`
+	L3Address       string      `json:"l3_address"`
+	PrimarySubnet   string      `json:"primary_subnet"`
+	SecondarySubnet string      `json:"secondary_subnet"`
+	Prefixes        []BgpPrefix `json:"prefixes"`
+	Nat             BgpNat      `json:"nat"`
 }
 
 type BgpDnatMapping struct {
