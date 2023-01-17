@@ -733,6 +733,15 @@ resource "random_pet" "name" {}
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
 # }
 
+# data "packetfabric_cloud_router_bgp_session" "bgp_session_crbs_3" {
+#   provider = packetfabric
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_3.id
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_3_data" {
+#   value = data.packetfabric_cloud_router_bgp_session.bgp_session_crbs_3
+# }
+
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
 #   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
@@ -782,13 +791,6 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cloud_router_connections" {
 #   value = data.packetfabric_cloud_router_connections.all_crc
-# }
-
-# data "packetfabric_cloud_router_bgp_session" "all_cr_bgp_sessions" {
-#   provider = packetfabric
-# }
-# output "packetfabric_cloud_router_bgp_session" {
-#   value = data.packetfabric_cloud_router_bgp_session.all_cr_bgp_sessions
 # }
 
 # #######################################
