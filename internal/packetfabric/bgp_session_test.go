@@ -186,7 +186,7 @@ func _buildCreateBgpSessionPrefixes() []byte {
 	]`, _bgpPrefixOut, _bgpPrefixIn))
 }
 
-func _buildBgpSessionSettings(timeCreated, timeUpdated, bgpSettingsUUID string) []byte {
+func _buildBgpSessionSettings(timeCreated, timeUpdated, bgpSettingsUUID, _bgpPrefixOut, _bgpPrefixIn string) []byte {
 	return []byte(fmt.Sprintf(`[
 		{
 		  "bgp_settings_uuid": "%s",
@@ -203,7 +203,21 @@ func _buildBgpSessionSettings(timeCreated, timeUpdated, bgpSettingsUUID string) 
 		  "bfd_multiplier": 3,
 		  "disabled": false,
 		  "time_created": "%s",
-		  "time_updated": "%s"
+		  "time_updated": "%s",
+		  "prefixes": [
+			{
+				"prefix": "%s",
+				"type": "out",
+				"med": 2
+				"order": 1
+			},
+			{
+				"prefix": "%s",
+				"type": "in",
+				"local_preference": 100
+				"order": 1
+			},
+		  ]
 		}
 	  ]`, bgpSettingsUUID, _bgpRemoteAddress, timeCreated, timeUpdated))
 }
