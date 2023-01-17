@@ -127,12 +127,22 @@ resource "random_pet" "name" {}
 
 # data "packetfabric_port_router_logs" "port_1a_logs" {
 #   provider        = packetfabric
-#   port_circuit_id = "PF-AP-WDC1-1726464" #packetfabric_port.port_1a.id
+#   port_circuit_id = packetfabric_port.port_1a.id
 #   time_from       = "2022-11-30 00:00:00"
 #   time_to         = "2022-12-01 00:00:00"
+#   depends_on = [packetfabric_port.port_1]
 # }
 # output "packetfabric_port_router_logs" {
 #   value = data.packetfabric_port_router_logs.port_1a_logs
+# }
+
+# data "packetfabric_port_device_info" "port_1a_device_info" {
+#   provider        = packetfabric
+#   port_circuit_id = packetfabric_port.port_1a.id
+#   depends_on = [packetfabric_port.port_1]
+# }
+# output "packetfabric_port_device_info" {
+#   value = data.packetfabric_port_device_info.port_1a_device_info
 # }
 
 # #######################################
