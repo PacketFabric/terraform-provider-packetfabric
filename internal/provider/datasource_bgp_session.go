@@ -14,6 +14,16 @@ func dataSourceBgpSession() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBgpSessionRead,
 		Schema: map[string]*schema.Schema{
+			"circuit_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
+			},
+			"connection_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The circuit ID of the connection associated with the BGP session. This starts with \"PF-L3-CON-\".",
+			},
 			"bgp_sessions": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -174,6 +184,64 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "Time the instance was last updated.",
 						},
+						"prefixes": {
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Optional:    true,
+							Description: "A list of prefixes attached to the bgp session.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bgp_prefix_uuid": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: "TThe UUID of the bgp prefix.",
+									},
+									"prefix": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: "The actual IP Prefix of the bgp prefix.",
+									},
+									"match_type": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: "The prefix match type.",
+									},
+									"as_prepend": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Optional:    true,
+										Description: "The BGP prepend value of the bgp prefix. It is used when type = out.",
+									},
+									"med": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Optional:    true,
+										Description: "The med of the bgp prefix. It is used when type = out.",
+									},
+									"local_preference": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Optional:    true,
+										Description: "The local_preference of the bgp prefix. It is used when type = in.",
+									},
+									"type": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: "Indicates whether the prefix is in or out.",
+									},
+									"order": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Optional:    true,
+										Description: "The order of the bgp prefix against the others.",
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -185,7 +253,15 @@ func dataSourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	sessions, err := c.ListBgpSessions()
+	cID, ok := d.GetOk("circuit_id")
+	if !ok {
+		return diag.Errorf("please provide a valid Circuit ID")
+	}
+	connCID, ok := d.GetOk("connection_id")
+	if !ok {
+		return diag.Errorf("please provide a valid Cloud Router Connection ID")
+	}
+	sessions, err := c.ListBgpSessions(cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -218,6 +294,27 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["disabled"] = session.Disabled
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
+			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
+			flattens[i] = flatten
+		}
+		return flattens
+	}
+	return make([]interface{}, 0)
+}
+
+func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{} {
+	if prefixes != nil {
+		flattens := make([]interface{}, len(*prefixes), len(*prefixes))
+		for i, prefix := range *prefixes {
+			flatten := make(map[string]interface{})
+			flatten["bgp_prefix_uuid"] = prefix.BgpPrefixUUID
+			flatten["prefix"] = prefix.Prefix
+			flatten["match_type"] = prefix.MatchType
+			flatten["as_prepend"] = prefix.AsPrepend
+			flatten["med"] = prefix.Med
+			flatten["local_preference"] = prefix.LocalPreference
+			flatten["type"] = prefix.Type
+			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens
