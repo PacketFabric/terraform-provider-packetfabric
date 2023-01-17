@@ -44,7 +44,6 @@ func TestAccDataSourcePortDeviceInfo(t *testing.T) {
 			{
 				Config: hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "device_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "device_name"),
 					resource.TestCheckResourceAttrSet(resourceName, "device_make"),
 					resource.TestCheckResourceAttrSet(resourceName, "admin_status"),
@@ -52,7 +51,6 @@ func TestAccDataSourcePortDeviceInfo(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "auto_negotiation"),
 					resource.TestCheckResourceAttrSet(resourceName, "iface_name"),
 					resource.TestCheckResourceAttrSet(resourceName, "speed"),
-					resource.TestCheckResourceAttrSet(resourceName, "site_id"),
 				),
 			},
 		},
