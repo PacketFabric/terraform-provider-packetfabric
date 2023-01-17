@@ -14,7 +14,7 @@ resource "random_pet" "name" {}
 
 
 # Accept the Request Backbone VC
-resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request" {
+resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request" {
   provider    = packetfabric
   type        = "backbone"
   description = "${var.tag_name}-${random_pet.name.id}"
@@ -26,7 +26,7 @@ resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_r
 }
 
 # # Reject the Request
-# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
+# resource "packetfabric_marketplace_service_port_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
 #   vc_request_uuid = var.pf_a_side_vc_request_uuid
 # }

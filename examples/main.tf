@@ -554,7 +554,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Accept the Request AWS
-# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_aws" {
+# resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request_aws" {
 #   provider       = packetfabric
 #   type           = "cloud"
 #   cloud_provider = "aws" # "aws, azure, google, oracle
@@ -567,7 +567,7 @@ resource "random_pet" "name" {}
 # }
 
 # # Accept the Request Backbone VC
-# resource "packetfabric_marketplace_service_accept_request" "accept_marketplace_request_backbone" {
+# resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request_backbone" {
 #   provider    = packetfabric
 #   type        = "backbone"
 #   description = "${var.tag_name}-${random_pet.name.id}"
@@ -579,26 +579,26 @@ resource "random_pet" "name" {}
 # }
 
 # # Reject the Request
-# resource "packetfabric_marketplace_service_reject_request" "reject_marketplace_request" {
+# resource "packetfabric_marketplace_service_port_reject_request" "reject_marketplace_request" {
 #   provider        = packetfabric
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
 # # List all Marketplace Service Requests (not Cloud Router)
-# data "packetfabric_marketplace_service_requests" "sent" {
+# data "packetfabric_marketplace_service_port_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
 # }
-# output "packetfabric_marketplace_service_requests_sent" {
-#   value = data.packetfabric_marketplace_service_requests.sent
+# output "packetfabric_marketplace_service_port_requests_sent" {
+#   value = data.packetfabric_marketplace_service_port_requests.sent
 # }
 
-# data "packetfabric_marketplace_service_requests" "received" {
+# data "packetfabric_marketplace_service_port_requests" "received" {
 #   provider = packetfabric
 #   type     = "received" # sent or received
 # }
-# output "packetfabric_marketplace_service_requests_received" {
-#   value = data.packetfabric_marketplace_service_requests.received
+# output "packetfabric_marketplace_service_port_requests_received" {
+#   value = data.packetfabric_marketplace_service_port_requests.received
 # }
 
 # #######################################
