@@ -147,7 +147,6 @@ type PortVlanSummary struct {
 
 type PortDeviceInfo struct {
 	AdjacentRouter              interface{}                   `json:"adjacent_router,omitempty"`
-	DeviceID                    int                           `json:"device_id,omitempty"`
 	DeviceName                  string                        `json:"device_name,omitempty"`
 	DeviceMake                  string                        `json:"device_make,omitempty"`
 	AdminStatus                 string                        `json:"admin_status,omitempty"`
@@ -155,7 +154,6 @@ type PortDeviceInfo struct {
 	AutoNegotiation             bool                          `json:"auto_negotiation,omitempty"`
 	IfaceName                   string                        `json:"iface_name,omitempty"`
 	Speed                       string                        `json:"speed,omitempty"`
-	SiteID                      int                           `json:"site_id,omitempty"`
 	OpticsDiagnosticsLaneValues []OpticsDiagnosticsLaneValues `json:"optics_diagnostics_lane_values,omitempty"`
 	Polltime                    interface{}                   `json:"polltime,omitempty"`
 	TimeFlapped                 string                        `json:"time_flapped,omitempty"`
@@ -184,7 +182,7 @@ type PortDeviceInfo struct {
 type OpticsDiagnosticsLaneValues struct {
 	TxPowerDbm  float64 `json:"tx_power_dbm,omitempty"`
 	TxPower     float64 `json:"tx_power,omitempty"`
-	LaneIndex   float64 `json:"lane_index,omitempty"`
+	LaneIndex   string  `json:"lane_index,omitempty"`
 	RxPower     float64 `json:"rx_power,omitempty"`
 	RxPowerDbm  float64 `json:"rx_power_dbm,omitempty"`
 	BiasCurrent float64 `json:"bias_current,omitempty"`
