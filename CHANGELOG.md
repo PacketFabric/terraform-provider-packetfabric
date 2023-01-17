@@ -1,3 +1,22 @@
+## 0.6.0  (January 17, 2022)
+
+BREAKING CHANGES:	
+
+* resource: [RENAMED] packetfabric_marketplace_service_port_accept_request (was packetfabric_marketplace_service_accept_request) (#313)
+* resource: [RENAMED] packetfabric_marketplace_service_port_reject_request (was packetfabric_marketplace_service_reject_request) (#313)
+* data-source: [RENAMED] packetfabric_marketplace_service_port_requests (was packetfabric_marketplace_service_requests) (#313)
+* data-source: [UPDATED] packetfabric_cloud_router_bgp_session (require circuit_id and connection_id) (#302)
+
+BUG FIXES:
+
+* Update required/optional parameters packetfabric_backbone_virtual_circuit (#312)
+* Deprecate device_id and site_id and correct optics_diagnostics_lane_values.lane_index in packetfabric_port_device_info (#314)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add zone, desired_nat, vlan to Cloud Router Connection response in packetfabric_cloud_router_connections data-source (#302)
+* Add prefixes to create bgp response in packetfabric_cloud_router_bgp_session data-source (#302)
+
 ## 0.5.1  (December 7, 2022)
 
 IMPROVEMENTS/ENHANCEMENTS:

@@ -15,5 +15,5 @@ Closes #000
 
 - [ ] tested locally
 - [ ] added/updated acceptance tests
-- [ ] add examples (in example folder)
-- [ ] generate docs
+- [ ] added/updated examples (in example folder)
+- [ ] added/updated docs
