@@ -75,24 +75,25 @@ type BgpPrefix struct {
 }
 
 type BgpSessionCreateResp struct {
-	BgpSettingsUUID string `json:"bgp_settings_uuid"`
-	AddressFamily   string `json:"address_family"`
-	RemoteAddress   string `json:"remote_address"`
-	RemoteAsn       int    `json:"remote_asn"`
-	MultihopTTL     int    `json:"multihop_ttl"`
-	LocalPreference int    `json:"local_preference"`
-	Community       string `json:"community"`
-	AsPrepend       int    `json:"as_prepend"`
-	Med             int    `json:"med"`
-	Md5             string `json:"md5"`
-	Orlonger        bool   `json:"orlonger"`
-	BfdInterval     int    `json:"bfd_interval"`
-	BfdMultiplier   int    `json:"bfd_multiplier"`
-	Disabled        bool   `json:"disabled"`
-	Nat             BgpNat `json:"nat"`
-	BgpState        string `json:"bgp_state"`
-	TimeCreated     string `json:"time_created"`
-	TimeUpdated     string `json:"time_updated"`
+	BgpSettingsUUID string      `json:"bgp_settings_uuid"`
+	AddressFamily   string      `json:"address_family"`
+	RemoteAddress   string      `json:"remote_address"`
+	RemoteAsn       int         `json:"remote_asn"`
+	MultihopTTL     int         `json:"multihop_ttl"`
+	LocalPreference int         `json:"local_preference"`
+	Community       string      `json:"community"`
+	AsPrepend       int         `json:"as_prepend"`
+	Med             int         `json:"med"`
+	Md5             string      `json:"md5"`
+	Orlonger        bool        `json:"orlonger"`
+	BfdInterval     int         `json:"bfd_interval"`
+	BfdMultiplier   int         `json:"bfd_multiplier"`
+	Disabled        bool        `json:"disabled"`
+	Nat             BgpNat      `json:"nat"`
+	Prefixes        []BgpPrefix `json:"prefixes"`
+	BgpState        string      `json:"bgp_state"`
+	TimeCreated     string      `json:"time_created"`
+	TimeUpdated     string      `json:"time_updated"`
 }
 
 type BgpSessionBySettingsUUID struct {
@@ -138,6 +139,7 @@ type BgpSessionAssociatedResp struct {
 	TimeCreated     string      `json:"time_created"`
 	TimeUpdated     string      `json:"time_updated"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	Nat             BgpNat      `json:"nat"`
 }
 
 type BgpDeleteMessage struct {

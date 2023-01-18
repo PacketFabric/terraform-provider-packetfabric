@@ -113,22 +113,65 @@ func resourceBgpSession() *schema.Resource {
 				Optional:    true,
 				Description: "Whether this BGP session is disabled. Default is false.",
 			},
-			"pre_nat_sources": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
-				Elem: &schema.Schema{
-					Type:        schema.TypeString,
-					Description: "IP prefix using CIDR format.",
-				},
-			},
-			"pool_prefixes": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
-				Elem: &schema.Schema{
-					Type:        schema.TypeString,
-					Description: "IP prefix using CIDR format.",
+			"nat": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pre_nat_sources": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
+							Elem: &schema.Schema{
+								Type:        schema.TypeString,
+								Description: "IP prefix using CIDR format.",
+							},
+						},
+						"pool_prefixes": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
+							Elem: &schema.Schema{
+								Type:        schema.TypeString,
+								Description: "IP prefix using CIDR format.",
+							},
+						},
+						"direction": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Default:     "output",
+							Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input. ",
+						},
+						"nat_type": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Default:     "overload",
+							Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat. ",
+						},
+						"dnat_mappings": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"private_prefix": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The private prefix of this DNAT mapping.",
+									},
+									"public_prefix": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The public prefix of this DNAT mapping.",
+									},
+									"conditional_prefix": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The conditional prefix prefix of this DNAT mapping.",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 			"prefixes": {
@@ -394,6 +437,7 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
+	bgpSession.Nat = extractConnBgpSessionNat(d)
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
 }
@@ -415,4 +459,56 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 		return sessionPrefixes
 	}
 	return make([]packetfabric.BgpPrefix, 0)
+}
+
+func extractConnBgpSessionNat(d *schema.ResourceData) packetfabric.BgpNat {
+	nat := packetfabric.BgpNat{}
+	nat.PreNatSources = extractPreNatSources(d)
+	nat.PoolPrefixes = extractPoolPrefixes(d)
+	if direction, ok := d.GetOk("direction"); ok {
+		nat.Direction = direction.(string)
+	}
+	if natType, ok := d.GetOk("nat_type"); ok {
+		nat.NatType = natType.(string)
+	}
+	nat.DnatMappings = extractConnBgpSessionDnat(d)
+
+	return nat
+}
+
+func extractPreNatSources(d *schema.ResourceData) []string {
+	if PreNatSources, ok := d.GetOk("pre_nat_sources"); ok {
+		regs := make([]string, 0)
+		for _, reg := range PreNatSources.([]interface{}) {
+			regs = append(regs, reg.(string))
+		}
+		return regs
+	}
+	return make([]string, 0)
+}
+
+func extractPoolPrefixes(d *schema.ResourceData) []string {
+	if PoolPrefixes, ok := d.GetOk("pool_prefixes"); ok {
+		regs := make([]string, 0)
+		for _, reg := range PoolPrefixes.([]interface{}) {
+			regs = append(regs, reg.(string))
+		}
+		return regs
+	}
+	return make([]string, 0)
+}
+
+func extractConnBgpSessionDnat(d *schema.ResourceData) []packetfabric.BgpDnatMapping {
+	if nat, ok := d.GetOk("dnat_mappings"); ok {
+		sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
+		for _, dnat := range nat.(*schema.Set).List() {
+			sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
+				PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
+				PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
+				ConditionalPrefix: dnat.(map[string]interface{})["conditional_prefix"].(string),
+			})
+		}
+		return sessionDnat
+	}
+	return make([]packetfabric.BgpDnatMapping, 0)
 }

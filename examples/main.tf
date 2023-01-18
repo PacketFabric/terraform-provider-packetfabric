@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.6.0"
+      version = ">= 0.7.0"
     }
   }
 }
@@ -728,6 +728,24 @@ resource "random_pet" "name" {}
 #     type   = "in" # Allowed Prefixes from Cloud
 #     order  = 0
 #   }
+#   # nat { # example source NAT
+#   #   direction       = "output" # or input
+#   #   nat_type        = "overload"
+#   #   pre_nat_sources = ["10.1.1.0/24", "10.1.2.0/24"]
+#   #   pool_prefixes   = ["192.168.1.50/32", "192.168.1.51/32"]
+#   # }
+#   # nat { # example destination NAT
+#   #   nat_type = "inline_dnat"
+#   #   dnat_mappings {
+#   #     private_prefix = "192.168.1.50/32"
+#   #     public_prefix  = "192.167.1.50/32"
+#   #   }
+#   #   dnat_mappings {
+#   #     private_prefix     = "192.168.2.50/32"
+#   #     public_prefix      = "192.166.1.50/32"
+#   #     conditional_prefix = "10.1.1.0/24"
+#   #   }
+#   # }
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_3

@@ -93,13 +93,8 @@ output "packetfabric_cloud_router_bgp_session" {
 - `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
 - `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.
 - `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
+- `nat` (Block Set) (see [below for nested schema](#nestedblock--nat))
 - `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
-- `pool_prefixes` (List of String) If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.
-
-	Example: 10.0.0.0/32
-- `pre_nat_sources` (List of String) If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.
-
-	Example: 10.0.0.0/24
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.
 - `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
 - `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating an Azure cloud router connection.
@@ -125,6 +120,34 @@ Optional:
 - `order` (Number) The order of this prefix against the others.
 
 
+<a id="nestedblock--nat"></a>
+### Nested Schema for `nat`
+
+Optional:
+
+- `direction` (String) The direction of the NAT connection. Output is the default.
+		Enum: output, input. Defaults: output
+- `dnat_mappings` (Block Set) (see [below for nested schema](#nestedblock--nat--dnat_mappings))
+- `nat_type` (String) The NAT type of the NAT connection. 
+		Enum: overload, inline_dnat. Defaults: overload
+- `pool_prefixes` (List of String) If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.
+
+	Example: 10.0.0.0/32
+- `pre_nat_sources` (List of String) If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.
+
+	Example: 10.0.0.0/24
+
+<a id="nestedblock--nat--dnat_mappings"></a>
+### Nested Schema for `nat.dnat_mappings`
+
+Required:
+
+- `private_prefix` (String) The private prefix of this DNAT mapping.
+- `public_prefix` (String) The public prefix of this DNAT mapping.
+
+Optional:
+
+- `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
 
 
 ## Import

@@ -295,6 +295,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
 			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
+			flatten["nat"] = flattenBgpSessionsNat(&session.Nat)
 			flattens[i] = flatten
 		}
 		return flattens
@@ -315,6 +316,35 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
 			flatten["order"] = prefix.Order
+			flattens[i] = flatten
+		}
+		return flattens
+	}
+	return make([]interface{}, 0)
+}
+
+func flattenBgpSessionsNat(nat *packetfabric.BgpNat) []interface{} {
+	flattens := make([]interface{}, 0)
+	if nat != nil {
+		flatten := make(map[string]interface{})
+		flatten["pre_nat_sources"] = nat.PreNatSources
+		flatten["pool_prefixes"] = nat.PoolPrefixes
+		flatten["direction"] = nat.Direction
+		flatten["nat_type"] = nat.NatType
+		flatten["dnat_mappings"] = flattenBgpSessionsDnat(&nat.DnatMappings)
+		flattens = append(flattens, flatten)
+	}
+	return flattens
+}
+
+func flattenBgpSessionsDnat(dnats *[]packetfabric.BgpDnatMapping) []interface{} {
+	if dnats != nil {
+		flattens := make([]interface{}, len(*dnats), len(*dnats))
+		for i, dnat := range *dnats {
+			flatten := make(map[string]interface{})
+			flatten["private_prefix"] = dnat.PrivateIP
+			flatten["public_prefix"] = dnat.PublicIP
+			flatten["conditional_prefix"] = dnat.ConditionalPrefix
 			flattens[i] = flatten
 		}
 		return flattens
