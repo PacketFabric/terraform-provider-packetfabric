@@ -74,8 +74,12 @@ func init() {
 func Test_CreateAwsConn(t *testing.T) {
 	var payload AwsConnection
 	var expectedResp AwsConnectionCreateResponse
-	_ = json.Unmarshal(_buildMockCloudRouterConnectionCreate(), &payload)
-	_ = json.Unmarshal(_buildMockCloudRouterCreateResp(), &expectedResp)
+	if err := json.Unmarshal(_buildMockCloudRouterConnectionCreate(), &payload); err != nil {
+		t.Fatalf("Failed to unmarshal AwsConnection: %s", err)
+	}
+	if err := json.Unmarshal(_buildMockCloudRouterCreateResp(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal AwsConnectionCreateResponse: %s", err)
+	}
 	cTest.runFakeHttpServer(_callCreateAwsConn, payload, expectedResp, _buildMockCloudRouterCreateResp(), "-test-create-aws-conn", t)
 }
 
@@ -92,26 +96,33 @@ func Test_UpdateCloudRouterConnection(t *testing.T) {
 	payload := DescriptionUpdate{
 		Description: _cloudConnUpdateDesc,
 	}
-	_ = json.Unmarshal(_buildMockCloudRouterConnResp(_cloudConnUpdateDesc), &expectedResp)
+	if err := json.Unmarshal(_buildMockCloudRouterConnResp(_cloudConnUpdateDesc), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal CloudRouterConnectionReadResponse: %s", err)
+	}
 	cTest.runFakeHttpServer(_callUpdateAwsConn, payload, expectedResp, _buildMockCloudRouterConnResp(_cloudConnUpdateDesc), "aws-cloud-router-conn-update", t)
 }
 
 func Test_GetCloudConnectionStatus(t *testing.T) {
 	var expectedResp ServiceState
-	_ = json.Unmarshal(_buildMockCloudRouterConnStatus(), &expectedResp)
+	if err := json.Unmarshal(_buildMockCloudRouterConnStatus(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal ServiceState: %s", err)
+	}
 	cTest.runFakeHttpServer(_callGetClouConnectionStatus, nil, expectedResp, _buildMockCloudRouterConnStatus(), "aws-cloud-router-conn-get-status", t)
 }
 
 func Test_ListAwsRouterConnections(t *testing.T) {
 	var expectedResp []CloudRouterConnectionReadResponse
-	_ = json.Unmarshal(_buildMockCloudRouterConnResps(), &expectedResp)
+	if err := json.Unmarshal(_buildMockCloudRouterConnResps(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal []CloudRouterConnectionReadResponse: %s", err)
+	}
 	cTest.runFakeHttpServer(_callListAwsRouterConnections, nil, expectedResp, _buildMockCloudRouterConnResps(), "aws-cloud-router-conns", t)
-
 }
 
 func Test_DeleteCloudRouterConnection(t *testing.T) {
 	var expectedResp ConnectionDeleteResp
-	_ = json.Unmarshal(_buildConnDeleteResp(), &expectedResp)
+	if err := json.Unmarshal(_buildConnDeleteResp(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal ConnectionDeleteResp: %s", err)
+	}
 	cTest.runFakeHttpServer(_callDeleteAwsConn, nil, expectedResp, _buildConnDeleteResp(), "test-delete-aws-connection", t)
 }
 

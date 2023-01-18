@@ -60,8 +60,12 @@ func init() {
 func Test_CreateBgpSession(t *testing.T) {
 	expectedPayload := BgpSession{}
 	expectedResp := BgpSessionCreateResp{}
-	_ = json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload)
-	_ = json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp)
+	if err := json.Unmarshal(_buildBgpSessionPayload(), &expectedPayload); err != nil {
+		t.Fatalf("Failed to unmarshal BgpSession: %s", err)
+	}
+	if err := json.Unmarshal(_buildBgpSessionCreateResp(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal BgpSessionCreateResp: %s", err)
+	}
 	cTest.runFakeHttpServer(_callCreateBgpSession, expectedPayload, expectedResp, _buildBgpSessionCreateResp(), "bgp-session-create", t)
 }
 
@@ -96,8 +100,8 @@ func _buildBgpSessionPayload() []byte {
 				"type": "in",
 				"local_preference": 100,
 				"order": 1
-			},
-		],
+			}
+		]
 	}`, _bgpMd5, _bgpL3Prefix, _bgpRemoteAddress, _bgpRemoteAsn, _bgpPrefixOut, _bgpPrefixIn))
 }
 
