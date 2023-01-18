@@ -45,7 +45,7 @@ func TestAccCloudRouterConnectionAws(t *testing.T) {
 		description,
 		testutil.GetAccountUUID(),
 		os.Getenv("PF_AWS_ACCOUNT_ID"),
-		"SFO6",
+		"PDX2",
 		"B",
 		"50Mbps",
 	)
@@ -63,7 +63,7 @@ func TestAccCloudRouterConnectionAws(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 					resource.TestCheckResourceAttr(resourceName, "account_uuid", testutil.GetAccountUUID()),
-					resource.TestCheckResourceAttr(resourceName, "pop", "SFO6"),
+					resource.TestCheckResourceAttr(resourceName, "pop", "PDX2"),
 					resource.TestCheckResourceAttr(resourceName, "zone", "B"),
 					resource.TestCheckResourceAttr(resourceName, "speed", "50Mbps"),
 				),
