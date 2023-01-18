@@ -25,6 +25,7 @@ func hclCloudRouterConnectionAws(description, accountUUID, awsAccountID, pop, zo
 		account_uuid   = "%s"
 		aws_account_id = "%s"
 		maybe_nat      = false
+		maybe_dnat      = false
 		description    = "%s"
 		pop            = "%s"
 		zone           = "%s"

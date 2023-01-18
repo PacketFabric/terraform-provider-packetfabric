@@ -674,6 +674,7 @@ resource "random_pet" "name" {}
 #   zone           = var.pf_crc_zone1
 #   speed          = var.pf_crc_speed
 #   maybe_nat      = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 #   is_public      = var.pf_crc_is_public
 # }
 
@@ -686,6 +687,7 @@ resource "random_pet" "name" {}
 #   pop                         = var.pf_crc_pop2
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
@@ -767,6 +769,7 @@ resource "random_pet" "name" {}
 #   azure_service_key = var.pf_crc_azure_service_key
 #   speed             = var.pf_crc_speed
 #   maybe_nat         = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 #   is_public         = var.pf_crc_is_public
 # }
 
@@ -778,6 +781,7 @@ resource "random_pet" "name" {}
 #   pop            = var.pf_crc_pop4
 #   zone           = var.pf_crc_zone4
 #   maybe_nat      = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 #   speed          = var.pf_crc_speed
 # }
 
@@ -790,6 +794,7 @@ resource "random_pet" "name" {}
 #   pop         = var.pf_crc_pop5
 #   zone        = var.pf_crc_zone5
 #   maybe_nat   = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 # }
 
 # resource "packetfabric_cloud_router_connection_port" "crc_7" {
@@ -801,6 +806,7 @@ resource "random_pet" "name" {}
 #   speed           = var.pf_crc_speed
 #   is_public       = var.pf_crc_is_public
 #   maybe_nat       = var.pf_crc_maybe_nat
+#   maybe_dnat     = var.pf_crc_maybe_dnat
 # }
 
 # data "packetfabric_cloud_router_connections" "all_crc" {

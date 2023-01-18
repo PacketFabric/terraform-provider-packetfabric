@@ -351,7 +351,12 @@ variable "pf_cr_regions" {
 # Cloud Router Connections
 variable "pf_crc_maybe_nat" {
   type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
+  description = "Set this to true if you intend to use Source NAT on this connection"
+  default     = false
+}
+variable "pf_crc_maybe_dnat" {
+  type        = bool
+  description = "Set this to true if you intend to use Destination NAT on this connection"
   default     = false
 }
 variable "pf_crc_is_public" {

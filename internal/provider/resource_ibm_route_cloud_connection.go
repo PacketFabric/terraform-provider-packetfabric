@@ -33,6 +33,12 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
+			},
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -178,6 +184,9 @@ func extractIBMCloudRouterConn(d *schema.ResourceData) packetfabric.IBMCloudRout
 	ibmRouter := packetfabric.IBMCloudRouterConn{}
 	if maybeNat, ok := d.GetOk("maybe_nat"); ok {
 		ibmRouter.MaybeNat = maybeNat.(bool)
+	}
+	if maybeDNat, ok := d.GetOk("maybe_dnat"); ok {
+		ibmRouter.MaybeDNat = maybeDNat.(bool)
 	}
 	if ibmAccountID, ok := d.GetOk("ibm_account_id"); ok {
 		ibmRouter.IbmAccountID = ibmAccountID.(string)

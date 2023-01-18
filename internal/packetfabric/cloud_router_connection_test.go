@@ -144,6 +144,7 @@ func _buildMockCloudRouterConnectionCreate() []byte {
 		"aws_account_id": "%s",
 		"account_uuid": "%s",
 		"maybe_nat": false,
+		"maybe_dnat": false,
 		"description": "New AWS Cloud Router Connection",
 		"pop": "LAX1",
 		"zone": "c",
