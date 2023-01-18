@@ -476,26 +476,26 @@ func extractConnBgpSessionNat(d *schema.ResourceData) packetfabric.BgpNat {
 	return nat
 }
 
-func extractPreNatSources(d *schema.ResourceData) []string {
+func extractPreNatSources(d *schema.ResourceData) []interface{} {
 	if PreNatSources, ok := d.GetOk("pre_nat_sources"); ok {
-		regs := make([]string, 0)
+		regs := make([]interface{}, 0)
 		for _, reg := range PreNatSources.([]interface{}) {
 			regs = append(regs, reg.(string))
 		}
 		return regs
 	}
-	return make([]string, 0)
+	return make([]interface{}, 0)
 }
 
-func extractPoolPrefixes(d *schema.ResourceData) []string {
+func extractPoolPrefixes(d *schema.ResourceData) []interface{} {
 	if PoolPrefixes, ok := d.GetOk("pool_prefixes"); ok {
-		regs := make([]string, 0)
+		regs := make([]interface{}, 0)
 		for _, reg := range PoolPrefixes.([]interface{}) {
 			regs = append(regs, reg.(string))
 		}
 		return regs
 	}
-	return make([]string, 0)
+	return make([]interface{}, 0)
 }
 
 func extractConnBgpSessionDnat(d *schema.ResourceData) []packetfabric.BgpDnatMapping {

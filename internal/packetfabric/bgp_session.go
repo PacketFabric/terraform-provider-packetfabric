@@ -49,14 +49,14 @@ type BgpSessionUpdate struct {
 }
 
 type BgpDnatMapping struct {
-	PrivateIP         string `json:"private_ip,omitempty"`
-	PublicIP          string `json:"public_ip,omitempty"`
+	PrivateIP         string `json:"private_ip"`
+	PublicIP          string `json:"public_ip"`
 	ConditionalPrefix string `json:"conditional_prefix,omitempty"`
 }
 
 type BgpNat struct {
-	PreNatSources []string         `json:"pre_nat_sources,omitempty"`
-	PoolPrefixes  []string         `json:"pool_prefixes,omitempty"`
+	PreNatSources []interface{}    `json:"pre_nat_sources,omitempty"`
+	PoolPrefixes  []interface{}    `json:"pool_prefixes,omitempty"`
 	Direction     string           `json:"direction,omitempty"`
 	NatType       string           `json:"nat_type,omitempty"`
 	DnatMappings  []BgpDnatMapping `json:"dnat_mappings,omitempty"`
@@ -65,7 +65,7 @@ type BgpNat struct {
 // https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_create
 type BgpPrefix struct {
 	BgpPrefixUUID   string `json:"bgp_prefix_uuid,omitempty"`
-	Prefix          string `json:"prefix,omitempty"`
+	Prefix          string `json:"prefix"`
 	MatchType       string `json:"match_type,omitempty"`
 	AsPrepend       int    `json:"as_prepend,omitempty"`
 	Med             int    `json:"med,omitempty"`
