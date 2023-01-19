@@ -193,7 +193,7 @@ Optional:
 		Enum: output, input.
 - `dnat_mappings` (Block Set) (see [below for nested schema](#nestedblock--nat--dnat_mappings))
 - `nat_type` (String) The NAT type of the NAT connection. 
-		Enum: overload, inline_dnat. Defaults: overload
+		Enum: overload, inline_dnat.
 - `pool_prefixes` (List of String) If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.
 
 	Example: 10.0.0.0/32

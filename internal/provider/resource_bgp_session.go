@@ -140,13 +140,12 @@ func resourceBgpSession() *schema.Resource {
 						"direction": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input. ",
+							Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input.",
 						},
 						"nat_type": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Default:     "overload",
-							Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat. ",
+							Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat.",
 						},
 						"dnat_mappings": {
 							Type:     schema.TypeSet,
@@ -437,8 +436,10 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
-	for _, nat := range d.Get("nat").(*schema.Set).List() {
-		bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+	if nat, ok := d.GetOk("nat"); ok {
+		for _, nat := range nat.(*schema.Set).List() {
+			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+		}
 	}
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
