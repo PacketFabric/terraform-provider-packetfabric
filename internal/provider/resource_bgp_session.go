@@ -115,6 +115,7 @@ func resourceBgpSession() *schema.Resource {
 			},
 			"nat": {
 				Type:     schema.TypeSet,
+				MaxItems: 1,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -437,7 +438,9 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
-	bgpSession.Nat = extractConnBgpSessionNat(d)
+	for _, nat := range d.Get("nat").(*schema.Set).List() {
+		bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+	}
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
 }
@@ -461,25 +464,24 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 	return make([]packetfabric.BgpPrefix, 0)
 }
 
-func extractConnBgpSessionNat(d *schema.ResourceData) packetfabric.BgpNat {
+func extractConnBgpSessionNat(n map[string]interface{}) packetfabric.BgpNat {
 	nat := packetfabric.BgpNat{}
-	nat.PreNatSources = extractPreNatSources(d)
-	nat.PoolPrefixes = extractPoolPrefixes(d)
-	if direction, ok := d.GetOk("direction"); ok {
+	if direction := n["direction"]; direction != nil {
 		nat.Direction = direction.(string)
 	}
-	if natType, ok := d.GetOk("nat_type"); ok {
+	if natType := n["nat_type"]; natType != nil {
 		nat.NatType = natType.(string)
 	}
-	nat.DnatMappings = extractConnBgpSessionDnat(d)
-
+	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
+	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
+	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"])
 	return nat
 }
 
-func extractPreNatSources(d *schema.ResourceData) []interface{} {
-	if PreNatSources, ok := d.GetOk("pre_nat_sources"); ok {
+func extractPreNatSources(d interface{}) []interface{} {
+	if PreNatSources, ok := d.([]interface{}); ok {
 		regs := make([]interface{}, 0)
-		for _, reg := range PreNatSources.([]interface{}) {
+		for _, reg := range PreNatSources {
 			regs = append(regs, reg.(string))
 		}
 		return regs
@@ -487,10 +489,10 @@ func extractPreNatSources(d *schema.ResourceData) []interface{} {
 	return make([]interface{}, 0)
 }
 
-func extractPoolPrefixes(d *schema.ResourceData) []interface{} {
-	if PoolPrefixes, ok := d.GetOk("pool_prefixes"); ok {
+func extractPoolPrefixes(d interface{}) []interface{} {
+	if PoolPrefixes, ok := d.([]interface{}); ok {
 		regs := make([]interface{}, 0)
-		for _, reg := range PoolPrefixes.([]interface{}) {
+		for _, reg := range PoolPrefixes {
 			regs = append(regs, reg.(string))
 		}
 		return regs
@@ -498,10 +500,10 @@ func extractPoolPrefixes(d *schema.ResourceData) []interface{} {
 	return make([]interface{}, 0)
 }
 
-func extractConnBgpSessionDnat(d *schema.ResourceData) []packetfabric.BgpDnatMapping {
-	if nat, ok := d.GetOk("dnat_mappings"); ok {
+func extractConnBgpSessionDnat(d interface{}) []packetfabric.BgpDnatMapping {
+	if nat, ok := d.([]interface{}); ok {
 		sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
-		for _, dnat := range nat.(*schema.Set).List() {
+		for _, dnat := range nat {
 			sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
 				PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
 				PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
