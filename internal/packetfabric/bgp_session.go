@@ -45,7 +45,7 @@ type BgpSessionUpdate struct {
 	PrimarySubnet   string      `json:"primary_subnet"`
 	SecondarySubnet string      `json:"secondary_subnet"`
 	Prefixes        []BgpPrefix `json:"prefixes"`
-	Nat             BgpNat      `json:"nat"`
+	Nat             BgpNat      `json:"nat,omitempty"`
 }
 
 type BgpDnatMapping struct {
@@ -118,7 +118,7 @@ type BgpSessionBySettingsUUID struct {
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
 	Subnet          interface{} `json:"subnet"`
 	PublicIP        string      `json:"public_ip"`
-	Nat             BgpNat      `json:"nat"`
+	Nat             BgpNat      `json:"nat,omitempty"`
 }
 
 // This struct represents a Bgp Session create response
@@ -139,7 +139,7 @@ type BgpSessionAssociatedResp struct {
 	TimeCreated     string      `json:"time_created"`
 	TimeUpdated     string      `json:"time_updated"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
-	Nat             BgpNat      `json:"nat"`
+	Nat             BgpNat      `json:"nat,omitempty"`
 }
 
 type BgpDeleteMessage struct {
