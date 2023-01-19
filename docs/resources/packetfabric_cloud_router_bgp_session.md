@@ -126,7 +126,7 @@ Optional:
 Optional:
 
 - `direction` (String) The direction of the NAT connection. Output is the default.
-		Enum: output, input. Defaults: output
+		Enum: output, input.
 - `dnat_mappings` (Block Set) (see [below for nested schema](#nestedblock--nat--dnat_mappings))
 - `nat_type` (String) The NAT type of the NAT connection. 
 		Enum: overload, inline_dnat. Defaults: overload

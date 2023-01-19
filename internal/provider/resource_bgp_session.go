@@ -140,7 +140,6 @@ func resourceBgpSession() *schema.Resource {
 						"direction": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Default:     "output",
 							Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input. ",
 						},
 						"nat_type": {
