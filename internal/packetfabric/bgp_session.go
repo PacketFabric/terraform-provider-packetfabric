@@ -259,13 +259,13 @@ func (c *PFClient) ListBgpSessions(cID, connCID string) ([]BgpSessionAssociatedR
 	return expectedResp, nil
 }
 
-func (current *BgpSessionBySettingsUUID) BuildNewBgpSessionInstance() *BgpSessionUpdate {
+// Only used for sessionToDisable
+func (current *BgpSessionBySettingsUUID) DisableBgpSessionInstance() *BgpSessionUpdate {
 	return &BgpSessionUpdate{
+		// only includes required field + disabled
 		AddressFamily: current.AddressFamily,
-		Disabled:      current.Disabled,
-		MultihopTTL:   current.MultihopTTL,
-		Orlonger:      current.Orlonger,
-		RemoteAddress: current.RemoteAddress,
 		RemoteAsn:     current.RemoteAsn,
+		Prefixes:      current.Prefixes,
+		Disabled:      current.Disabled,
 	}
 }

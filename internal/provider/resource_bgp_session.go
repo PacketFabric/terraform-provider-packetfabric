@@ -342,7 +342,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
 		})
 	}
-	sessionToDisable := session.BuildNewBgpSessionInstance()
+	sessionToDisable := session.DisableBgpSessionInstance()
 	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
 	if err != nil || len(sessionPrefixes) <= 0 {
 		resp, err := c.DeleteBgpSession(cID.(string), connCID.(string), bgpSettingsUUID.(string))
