@@ -687,7 +687,7 @@ resource "random_pet" "name" {}
 #   pop                         = var.pf_crc_pop2
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
-#   maybe_dnat     = var.pf_crc_maybe_dnat
+#   maybe_dnat                  = var.pf_crc_maybe_dnat
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
