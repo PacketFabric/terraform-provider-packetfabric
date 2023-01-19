@@ -745,7 +745,7 @@ resource "random_pet" "name" {}
 #   #   dnat_mappings {
 #   #     private_prefix     = "192.168.2.50/32"
 #   #     public_prefix      = "192.166.1.50/32"
-#   #     conditional_prefix = "10.1.1.0/24"
+#   #     conditional_prefix = "192.168.2.0/24" # must be a subnet of private_prefix
 #   #   }
 #   # }
 # }

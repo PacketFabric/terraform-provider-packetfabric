@@ -473,7 +473,7 @@ func extractConnBgpSessionNat(n map[string]interface{}) packetfabric.BgpNat {
 	}
 	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
 	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
-	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"])
+	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"].(*schema.Set))
 	return nat
 }
 
@@ -499,17 +499,14 @@ func extractPoolPrefixes(d interface{}) []interface{} {
 	return make([]interface{}, 0)
 }
 
-func extractConnBgpSessionDnat(d interface{}) []packetfabric.BgpDnatMapping {
-	if nat, ok := d.([]interface{}); ok {
-		sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
-		for _, dnat := range nat {
-			sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
-				PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
-				PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
-				ConditionalPrefix: dnat.(map[string]interface{})["conditional_prefix"].(string),
-			})
-		}
-		return sessionDnat
+func extractConnBgpSessionDnat(d *schema.Set) []packetfabric.BgpDnatMapping {
+	sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
+	for _, dnat := range d.List() {
+		sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
+			PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
+			PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
+			ConditionalPrefix: dnat.(map[string]interface{})["conditional_prefix"].(string),
+		})
 	}
-	return make([]packetfabric.BgpDnatMapping, 0)
+	return sessionDnat
 }
