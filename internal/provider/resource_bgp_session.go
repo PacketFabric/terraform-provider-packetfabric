@@ -145,7 +145,7 @@ func resourceBgpSession() *schema.Resource {
 						"nat_type": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat.",
+							Description: "The NAT type of the NAT connection. Overload is the default.\n\t\tEnum: overload, inline_dnat.",
 						},
 						"dnat_mappings": {
 							Type:     schema.TypeSet,
