@@ -30,7 +30,7 @@ type BgpSession struct {
 	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
 	Disabled        bool        `json:"disabled,omitempty"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
-	Nat             BgpNat      `json:"nat,omitempty"`
+	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 
 type BgpSessionUpdate struct {
@@ -45,7 +45,7 @@ type BgpSessionUpdate struct {
 	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
 	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 	Prefixes        []BgpPrefix `json:"prefixes"`
-	Nat             BgpNat      `json:"nat,omitempty"`
+	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 
 type BgpDnatMapping struct {
@@ -89,7 +89,7 @@ type BgpSessionCreateResp struct {
 	BfdInterval     int         `json:"bfd_interval"`
 	BfdMultiplier   int         `json:"bfd_multiplier"`
 	Disabled        bool        `json:"disabled"`
-	Nat             BgpNat      `json:"nat"`
+	Nat             *BgpNat     `json:"nat"`
 	Prefixes        []BgpPrefix `json:"prefixes"`
 	BgpState        string      `json:"bgp_state"`
 	TimeCreated     string      `json:"time_created"`
@@ -118,7 +118,7 @@ type BgpSessionBySettingsUUID struct {
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
 	Subnet          interface{} `json:"subnet"`
 	PublicIP        string      `json:"public_ip"`
-	Nat             BgpNat      `json:"nat,omitempty"`
+	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 
 // This struct represents a Bgp Session create response
@@ -139,7 +139,7 @@ type BgpSessionAssociatedResp struct {
 	TimeCreated     string      `json:"time_created"`
 	TimeUpdated     string      `json:"time_updated"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
-	Nat             BgpNat      `json:"nat,omitempty"`
+	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 
 type BgpDeleteMessage struct {
@@ -264,7 +264,9 @@ func (current *BgpSessionBySettingsUUID) DisableBgpSessionInstance() *BgpSession
 	return &BgpSessionUpdate{
 		// only includes required field + disabled
 		AddressFamily: current.AddressFamily,
+		L3Address:     current.L3Address,
 		RemoteAsn:     current.RemoteAsn,
+		RemoteAddress: current.RemoteAddress,
 		Prefixes:      current.Prefixes,
 		Disabled:      current.Disabled,
 	}

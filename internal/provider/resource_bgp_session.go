@@ -341,35 +341,34 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 				"is associated with a Cloud Router Connection "+
 				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
 		})
+		d.SetId("")
+		return diags
 	}
 	sessionToDisable := session.DisableBgpSessionInstance()
 	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
 	if err != nil || len(sessionPrefixes) <= 0 {
-		resp, err := c.DeleteBgpSession(cID.(string), connCID.(string), bgpSettingsUUID.(string))
-		if err != nil {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "Can't find the BGP Settings.",
-				Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-					"is associated with a Cloud Router Connection "+
-					"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
-			})
-		} else {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "BGP Settings deleted",
-				Detail:   resp.Message,
-			})
-		}
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Can't find the BGP Settings.",
+			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
+				"is associated with a Cloud Router Connection "+
+				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
+		})
 		d.SetId("")
 		return diags
 	}
-
-	l3Address, ok := d.GetOk("l3_address")
-	if !ok {
-		return diag.Errorf("please provide a valid l3_address")
+	if l3Address, ok := d.GetOk("l3_address"); ok {
+		sessionToDisable.L3Address = l3Address.(string)
 	}
-	sessionToDisable.L3Address = l3Address.(string)
+	if addressFamily, ok := d.GetOk("address_family"); ok {
+		sessionToDisable.AddressFamily = addressFamily.(string)
+	}
+	if remoteAsn, ok := d.GetOk("remote_asn"); ok {
+		sessionToDisable.RemoteAsn = remoteAsn.(int)
+	}
+	if remoteAddress, ok := d.GetOk("remote_address"); ok {
+		sessionToDisable.RemoteAddress = remoteAddress.(string)
+	}
 	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
 	sessionToDisable.Disabled = true
 	sessionToDisable.Prefixes = make([]packetfabric.BgpPrefix, 0)
@@ -384,6 +383,14 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	err = c.DisableBgpSession(sessionToDisable, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "BGP session disabled.",
+			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
+				"has been disabled "+
+				"and will be deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
+		})
 	}
 	d.SetId("")
 	return diags
@@ -440,6 +447,8 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 		for _, nat := range nat.(*schema.Set).List() {
 			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
 		}
+	} else {
+		bgpSession.Nat = nil
 	}
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
@@ -464,7 +473,7 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 	return make([]packetfabric.BgpPrefix, 0)
 }
 
-func extractConnBgpSessionNat(n map[string]interface{}) packetfabric.BgpNat {
+func extractConnBgpSessionNat(n map[string]interface{}) *packetfabric.BgpNat {
 	nat := packetfabric.BgpNat{}
 	if direction := n["direction"]; direction != nil {
 		nat.Direction = direction.(string)
@@ -475,7 +484,7 @@ func extractConnBgpSessionNat(n map[string]interface{}) packetfabric.BgpNat {
 	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
 	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
 	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"].(*schema.Set))
-	return nat
+	return &nat
 }
 
 func extractPreNatSources(d interface{}) []interface{} {

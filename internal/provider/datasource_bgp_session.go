@@ -295,7 +295,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
 			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
-			flatten["nat"] = flattenBgpSessionsNat(&session.Nat)
+			flatten["nat"] = flattenBgpSessionsNat(session.Nat)
 			flattens[i] = flatten
 		}
 		return flattens
