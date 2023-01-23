@@ -1,3 +1,18 @@
+## 0.7.0  (January 24, 2023)
+
+FEATURES:
+
+* Add Destination NAT support to packetfabric_cloud_router_bgp_session and packetfabric_cloud_router_connection resources and data-sources (#306)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Improve BGP session update and delete operations in packetfabric_cloud_router_bgp_session resource (#306)
+
+BUG FIXES:
+
+* Fix packetfabric_activitylog data-source (#315)
+* Fix docs for marketplace service port resources & data-source (#316)
+
 ## 0.6.0  (January 17, 2023)
 
 BREAKING CHANGES:	
