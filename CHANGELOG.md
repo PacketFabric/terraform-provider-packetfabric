@@ -1,5 +1,9 @@
 ## 0.7.0  (January 24, 2023)
 
+BREAKING CHANGES:
+
+* resource: [UPDATED] packetfabric_cloud_router_bgp_session (pre_nat_sources and pool_prefixes moved under nat)
+
 FEATURES:
 
 * Add Destination NAT support to packetfabric_cloud_router_bgp_session and packetfabric_cloud_router_connection resources and data-sources (#306)
