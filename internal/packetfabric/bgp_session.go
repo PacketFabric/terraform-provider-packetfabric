@@ -223,17 +223,6 @@ func (c *PFClient) DeleteBgpPrefixes(prefixesUUID []string, bgpSettingsUUID stri
 	return expectedResp, nil
 }
 
-// This function represents the Action to Delete the list of existing Bgp Sessions by Bgp Settings UUID
-// https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_prefixes_delete
-func (c *PFClient) DisableBgpSession(bgpSession *BgpSessionUpdate, cID, cloudConnCID string) error {
-	formatedURI := fmt.Sprintf(bgpSessionCloudRouterURI, cID, cloudConnCID)
-	_, err := c.sendRequest(formatedURI, putMethod, bgpSession, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // This function represents the Action to Delete a single BGP Session by a Circuit ID,
 // Cloud Connection Circuit ID and BGP Settings UUID
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_bgp_delete_by_uuid
@@ -257,17 +246,4 @@ func (c *PFClient) ListBgpSessions(cID, connCID string) ([]BgpSessionAssociatedR
 		return nil, err
 	}
 	return expectedResp, nil
-}
-
-// Only used for sessionToDisable
-func (current *BgpSessionBySettingsUUID) DisableBgpSessionInstance() *BgpSessionUpdate {
-	return &BgpSessionUpdate{
-		// only includes required field + disabled
-		AddressFamily: current.AddressFamily,
-		L3Address:     current.L3Address,
-		RemoteAsn:     current.RemoteAsn,
-		RemoteAddress: current.RemoteAddress,
-		Prefixes:      current.Prefixes,
-		Disabled:      current.Disabled,
-	}
 }

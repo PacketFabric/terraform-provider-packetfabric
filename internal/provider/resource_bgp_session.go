@@ -251,33 +251,21 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
-	const warningSummary = "Retrieve BGP Session after create"
+	const warningSummary = "Retrieve BGP Session"
 	var diags diag.Diagnostics
 	var cID, connCID, bgpSettingsUUID string
 	if circuitID, ok := d.GetOk("circuit_id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract Circuit ID from Resource Data",
-		})
+		return diag.FromErr(errors.New("Cloud not extract Circuit ID from Resource Data"))
 	} else {
 		cID = circuitID.(string)
 	}
 	if connectionCID, ok := d.GetOk("connection_id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract Connection Circuit ID from Resource Data",
-		})
+		return diag.FromErr(errors.New("Cloud not extract Connection Circuit ID from Resource Data"))
 	} else {
 		connCID = connectionCID.(string)
 	}
 	if settingsUUID, ok := d.GetOk("id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract BGP Settings UUID from Resource Data",
-		})
+		return diag.FromErr(errors.New("Cloud not extract BGP Settings UUID from Resource Data"))
 	} else {
 		bgpSettingsUUID = settingsUUID.(string)
 	}
@@ -286,12 +274,7 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	_, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not retrieve BGP session after create",
-		})
-		return diags
+		return diag.FromErr(errors.New("Cloud not retrieve BGP session"))
 	}
 	return diags
 }
@@ -309,10 +292,11 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
 	session := extractBgpSession(d)
-	_, _, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
+	_, resp, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId(resp.BgpSettingsUUID)
 	return diags
 }
 
@@ -320,76 +304,27 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	bgpSettingsUUID, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid BGP Settings UUID")
-	}
 	cID, ok := d.GetOk("circuit_id")
 	if !ok {
-		return diag.Errorf("please provide a valid Circuit ID")
+		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
 	connCID, ok := d.GetOk("connection_id")
 	if !ok {
-		return diag.Errorf("please provide a valid Cloud Router Connection ID")
+		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
-	session, err := c.GetBgpSessionBy(cID.(string), connCID.(string), bgpSettingsUUID.(string))
-	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Can't find the BGP Settings.",
-			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-				"is associated with a Cloud Router Connection "+
-				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
-		})
-		d.SetId("")
-		return diags
-	}
-	sessionToDisable := session.DisableBgpSessionInstance()
-	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
-	if err != nil || len(sessionPrefixes) <= 0 {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Can't find the BGP Settings.",
-			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-				"is associated with a Cloud Router Connection "+
-				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
-		})
-		d.SetId("")
-		return diags
-	}
-	if l3Address, ok := d.GetOk("l3_address"); ok {
-		sessionToDisable.L3Address = l3Address.(string)
-	}
-	if addressFamily, ok := d.GetOk("address_family"); ok {
-		sessionToDisable.AddressFamily = addressFamily.(string)
-	}
-	if remoteAsn, ok := d.GetOk("remote_asn"); ok {
-		sessionToDisable.RemoteAsn = remoteAsn.(int)
-	}
-	if remoteAddress, ok := d.GetOk("remote_address"); ok {
-		sessionToDisable.RemoteAddress = remoteAddress.(string)
-	}
-	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
+	sessionToDisable := extractBgpSession(d)
 	sessionToDisable.Disabled = true
-	sessionToDisable.Prefixes = make([]packetfabric.BgpPrefix, 0)
-	for _, prefix := range sessionPrefixes {
-		sessionToDisable.Prefixes = append(sessionToDisable.Prefixes, packetfabric.BgpPrefix{
-			BgpPrefixUUID: prefix.BgpPrefixUUID,
-			Prefix:        prefix.Prefix,
-			Type:          prefix.Type,
-			Order:         prefix.Order,
-		})
-	}
-	err = c.DisableBgpSession(sessionToDisable, cID.(string), connCID.(string))
+	_, resp, err := c.UpdateBgpSession(sessionToDisable, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
-			Summary:  "BGP session disabled.",
+			Summary:  "BGP session disabled (it cannot be deleted).",
 			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-				"has been disabled "+
-				"and will be deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
+				"has been disabled and it will be deleted together with the Cloud Router Connection. "+
+				"If you decide not to delete the Cloud Router Connection, "+
+				"use terraform import to add it back under Terraform management. ", resp.BgpSettingsUUID),
 		})
 	}
 	d.SetId("")
