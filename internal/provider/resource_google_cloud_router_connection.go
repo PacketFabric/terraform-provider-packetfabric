@@ -41,12 +41,17 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection.",
+			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"google_pairing_key": {
 				Type:         schema.TypeString,
@@ -162,6 +167,9 @@ func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRout
 	}
 	if maybeNat, ok := d.GetOk("maybe_nat"); ok {
 		googleRoute.MaybeNat = maybeNat.(bool)
+	}
+	if maybeDNat, ok := d.GetOk("maybe_dnat"); ok {
+		googleRoute.MaybeDNat = maybeDNat.(bool)
 	}
 	if pairingKey, ok := d.GetOk("google_pairing_key"); ok {
 		googleRoute.GooglePairingKey = pairingKey.(string)

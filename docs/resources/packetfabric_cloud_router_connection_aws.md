@@ -54,6 +54,7 @@ output "packetfabric_cloud_router_connection_aws" {
 ### Optional
 
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. Defaults: false
+- `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `published_quote_line_uuid` (String) UUID of the published quote line which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))

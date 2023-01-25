@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceBgpSession() *schema.Resource {
@@ -106,6 +107,70 @@ func dataSourceBgpSession() *schema.Resource {
 							Computed:    true,
 							Optional:    true,
 							Description: "Whether this BGP session is disabled.\n\t\tDefault \"false\"",
+						},
+						"nat": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"pre_nat_sources": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										Description: "The source IP address + mask of the host before NAT translation.",
+										Elem: &schema.Schema{
+											Type:         schema.TypeString,
+											ValidateFunc: validation.StringIsNotEmpty,
+										},
+									},
+									"pool_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										Description: "The source IP address + mask of the NAT pool prefix.",
+										Elem: &schema.Schema{
+											Type:         schema.TypeString,
+											ValidateFunc: validation.StringIsNotEmpty,
+										},
+									},
+									"direction": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+										Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input",
+									},
+									"nat_type": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+										Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat",
+									},
+									"dnat_mappings": {
+										Type:     schema.TypeSet,
+										Computed: true,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"private_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The private prefix of this DNAT mapping.",
+												},
+												"public_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The public prefix of this DNAT mapping.",
+												},
+												"conditional_prefix": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: "The conditional prefix prefix of this DNAT mapping.",
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 						"time_created": {
 							Type:        schema.TypeString,
@@ -230,6 +295,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
 			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
+			flatten["nat"] = flattenBgpSessionsNat(session.Nat)
 			flattens[i] = flatten
 		}
 		return flattens
@@ -250,6 +316,35 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
 			flatten["order"] = prefix.Order
+			flattens[i] = flatten
+		}
+		return flattens
+	}
+	return make([]interface{}, 0)
+}
+
+func flattenBgpSessionsNat(nat *packetfabric.BgpNat) []interface{} {
+	flattens := make([]interface{}, 0)
+	if nat != nil {
+		flatten := make(map[string]interface{})
+		flatten["pre_nat_sources"] = nat.PreNatSources
+		flatten["pool_prefixes"] = nat.PoolPrefixes
+		flatten["direction"] = nat.Direction
+		flatten["nat_type"] = nat.NatType
+		flatten["dnat_mappings"] = flattenBgpSessionsDnat(&nat.DnatMappings)
+		flattens = append(flattens, flatten)
+	}
+	return flattens
+}
+
+func flattenBgpSessionsDnat(dnats *[]packetfabric.BgpDnatMapping) []interface{} {
+	if dnats != nil {
+		flattens := make([]interface{}, len(*dnats), len(*dnats))
+		for i, dnat := range *dnats {
+			flatten := make(map[string]interface{})
+			flatten["private_prefix"] = dnat.PrivateIP
+			flatten["public_prefix"] = dnat.PublicIP
+			flatten["conditional_prefix"] = dnat.ConditionalPrefix
 			flattens[i] = flatten
 		}
 		return flattens

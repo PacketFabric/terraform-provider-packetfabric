@@ -68,8 +68,8 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
 # Get the BGP Addresses using glcoud terraform module as a workaround
 module "gcloud_bgp_addresses" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source                            = "terraform-google-modules/gcloud/google"
-  version                           = "~> 2.0"
+  source  = "terraform-google-modules/gcloud/google"
+  version = "~> 2.0"
 
   use_tf_google_credentials_env_var = true
   # when running locally with gcloud already installed
@@ -151,9 +151,9 @@ output "packetfabric_cloud_router_bgp_session_crbs_2" {
 # Update BGP Peer in the BGP session's Google Cloud Router
 module "gcloud_bgp_peer_update" {
   # https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest
-  source                            = "terraform-google-modules/gcloud/google"
-  version                           = "~> 2.0"
-  
+  source  = "terraform-google-modules/gcloud/google"
+  version = "~> 2.0"
+
   use_tf_google_credentials_env_var = true
   # when running locally with gcloud already installed
   skip_download = true

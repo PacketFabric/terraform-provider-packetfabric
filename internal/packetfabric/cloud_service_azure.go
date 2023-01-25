@@ -135,6 +135,7 @@ type AzureExpressRoute struct {
 
 type AzureExpressRouteConn struct {
 	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
 	AzureServiceKey        string `json:"azure_service_key,omitempty"`
 	AccountUUID            string `json:"account_uuid,omitempty"`
 	Description            string `json:"description,omitempty"`
