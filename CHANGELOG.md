@@ -1,4 +1,4 @@
-## 0.7.0  (January 24, 2023)
+## 0.7.0  (January 25, 2023)
 
 BREAKING CHANGES:
 

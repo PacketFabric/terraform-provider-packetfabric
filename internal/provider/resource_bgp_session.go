@@ -244,6 +244,16 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
+	// check Cloud Router Connection status
+	createOkCh := make(chan bool)
+	defer close(createOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
+	}
+	go c.CheckServiceStatus(createOkCh, fn)
+	if !<-createOkCh {
+		return diag.FromErr(err)
+	}
 	d.SetId(resp.BgpSettingsUUID)
 	return diags
 }
@@ -251,21 +261,20 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
-	const warningSummary = "Retrieve BGP Session"
 	var diags diag.Diagnostics
 	var cID, connCID, bgpSettingsUUID string
 	if circuitID, ok := d.GetOk("circuit_id"); !ok {
-		return diag.FromErr(errors.New("Cloud not extract Circuit ID from Resource Data"))
+		return diag.FromErr(errors.New("could not extract cloud router circuit id from resource data"))
 	} else {
 		cID = circuitID.(string)
 	}
 	if connectionCID, ok := d.GetOk("connection_id"); !ok {
-		return diag.FromErr(errors.New("Cloud not extract Connection Circuit ID from Resource Data"))
+		return diag.FromErr(errors.New("could not extract cloud router connection circuit id from resource data"))
 	} else {
 		connCID = connectionCID.(string)
 	}
 	if settingsUUID, ok := d.GetOk("id"); !ok {
-		return diag.FromErr(errors.New("Cloud not extract BGP Settings UUID from Resource Data"))
+		return diag.FromErr(errors.New("could not extract bgp settings uuid from resource data"))
 	} else {
 		bgpSettingsUUID = settingsUUID.(string)
 	}
@@ -274,7 +283,7 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	_, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
 	if err != nil {
-		return diag.FromErr(errors.New("Cloud not retrieve BGP session"))
+		return diag.FromErr(errors.New("could not retrieve bgp session"))
 	}
 	return diags
 }
@@ -294,6 +303,16 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	session := extractBgpSession(d)
 	_, resp, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil {
+		return diag.FromErr(err)
+	}
+	// check Cloud Router Connection status
+	updateOkCh := make(chan bool)
+	defer close(updateOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
+	}
+	go c.CheckServiceStatus(updateOkCh, fn)
+	if !<-updateOkCh {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.BgpSettingsUUID)
@@ -326,6 +345,16 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 				"If you decide not to delete the Cloud Router Connection, "+
 				"use terraform import to add it back under Terraform management. ", resp.BgpSettingsUUID),
 		})
+	}
+	// check Cloud Router Connection status
+	disableOkCh := make(chan bool)
+	defer close(disableOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
+	}
+	go c.CheckServiceStatus(disableOkCh, fn)
+	if !<-disableOkCh {
+		return diag.FromErr(err)
 	}
 	d.SetId("")
 	return diags
