@@ -114,15 +114,16 @@ func resourceBgpSession() *schema.Resource {
 				Description: "Whether this BGP session is disabled. Default is false.",
 			},
 			"nat": {
-				Type:     schema.TypeSet,
-				MaxItems: 1,
-				Optional: true,
+				Type:        schema.TypeSet,
+				MaxItems:    1,
+				Optional:    true,
+				Description: "Translate the source or destination IP address.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"pre_nat_sources": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
+							Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
 							Elem: &schema.Schema{
 								Type:        schema.TypeString,
 								Description: "IP prefix using CIDR format.",
@@ -131,7 +132,7 @@ func resourceBgpSession() *schema.Resource {
 						"pool_prefixes": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
+							Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
 							Elem: &schema.Schema{
 								Type:        schema.TypeString,
 								Description: "IP prefix using CIDR format.",
@@ -140,16 +141,17 @@ func resourceBgpSession() *schema.Resource {
 						"direction": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input.",
+							Description: "If using NAT overload, the direction of the NAT connection. Output is the default.\n\t\tEnum: output, input.",
 						},
 						"nat_type": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "The NAT type of the NAT connection. Overload is the default.\n\t\tEnum: overload, inline_dnat.",
+							Description: "The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). Overload is the default.\n\t\tEnum: overload, inline_dnat.",
 						},
 						"dnat_mappings": {
-							Type:     schema.TypeSet,
-							Optional: true,
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Description: "Translate the destination IP address.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"private_prefix": {
