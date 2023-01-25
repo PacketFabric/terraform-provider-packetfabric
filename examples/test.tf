@@ -1,3 +1,8 @@
+##############################################################
+# THIS TF FILE IS USED TO TEST PACKETFABRIC TERRAFORM PROVIDER
+# LOOK FOR SPECIFIC USE CASES UNDER THE USE-CASES FOLDER
+##############################################################
+
 terraform {
   required_providers {
     packetfabric = {

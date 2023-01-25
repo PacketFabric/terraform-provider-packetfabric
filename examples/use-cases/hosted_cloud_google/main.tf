@@ -67,11 +67,27 @@ resource "google_compute_interconnect_attachment" "interconnect_1" {
   router        = google_compute_router.router_1.id
 }
 
+# Create a PacketFabric port
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
+}
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
+}
+
 # From the PacketFabric side: Create a GCP Hosted Connection 
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
-  port                        = var.pf_port_circuit_id
+  port                        = packetfabric_port.port_1.id
   speed                       = var.pf_cs_speed
   google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key
   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"

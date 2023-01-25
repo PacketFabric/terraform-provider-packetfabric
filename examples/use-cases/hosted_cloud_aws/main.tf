@@ -89,11 +89,27 @@ resource "aws_route_table_association" "route_association_1" {
   route_table_id = aws_route_table.route_table_1.id
 }
 
+# Create a PacketFabric port
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
+}
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
+}
+
 # From the PacketFabric side: Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
-  port        = var.pf_port_circuit_id
+  port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
@@ -106,10 +122,11 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 # From the AWS side: Accept the connection
 # Wait at least 90s for the connection to show up in AWS
-resource "null_resource" "previous" {}
 resource "time_sleep" "wait_90_seconds" {
-  depends_on      = [null_resource.previous]
   create_duration = "90s"
+  depends_on = [
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
+  ]
 }
 # This resource will create (at least) 90 seconds after null_resource.previous
 resource "null_resource" "next" {
@@ -161,7 +178,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   connection_id  = data.aws_dx_connection.current_1.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
   name           = "${var.tag_name}-${random_pet.name.id}"
-  vlan           = data.aws_dx_gateway.direct_connect_gw_1.vlan_id # provider version >= 4.35.0 https://github.com/hashicorp/terraform-provider-aws/issues/26461
+  vlan           = data.aws_dx_connection.current_1.vlan_id # provider version >= 4.35.0 https://github.com/hashicorp/terraform-provider-aws/issues/26461
   address_family = "ipv4"
   bgp_asn        = var.customer_side_asn1
   depends_on = [
