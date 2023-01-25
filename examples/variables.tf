@@ -348,7 +348,7 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
 
-# Cloud Router Connections
+# Cloud Router Connections Common
 variable "pf_crc_maybe_nat" {
   type        = bool
   description = "Set this to true if you intend to use Source NAT on this connection"
@@ -365,6 +365,24 @@ variable "pf_crc_is_public" {
   default     = false
 }
 
+
+# Cloud Router BGP Session Common
+variable "pf_crbs_af" {
+  type        = string
+  description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
+  default     = "v4"
+}
+variable "pf_crbs_mhttl" {
+  type        = number
+  description = "The TTL of this session. The default is 1."
+  default     = 1
+}
+variable "pf_crbs_orlonger" {
+  type        = bool
+  description = "Whether to use exact match or longer for all prefixes"
+  default     = true # Allow longer prefixes
+}
+
 # Cloud Router Connection AWS
 variable "pf_crc_speed" {
   type        = string
@@ -379,6 +397,23 @@ variable "pf_crc_pop1" {
 variable "pf_crc_zone1" {
   type    = string
   default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+}
+
+# Cloud Router BGP Session AWS
+variable "aws_side_asn1" {
+  type        = number
+  default     = 64535 # private (64512 to 65534)
+  description = "AWS Side ASN"
+}
+variable "aws_remote_address" {
+  type        = string
+  description = "The cloud-side router peer IP."
+  default     = "169.254.52.1/29"
+}
+variable "aws_l3_address" {
+  type        = string
+  description = "The L3 address of this instance."
+  default     = "169.254.52.2/29"
 }
 
 # Cloud Router Connection Google
@@ -470,23 +505,8 @@ variable "pf_crc_shared_key" {
   default     = "superCoolKey"
   sensitive   = true
 }
-# Cloud Router BGP Session IPsec
-variable "pf_crbs_af" {
-  type        = string
-  description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
-  default     = "v4"
-}
-variable "pf_crbs_mhttl" {
-  type        = number
-  description = "The TTL of this session. The default is 1."
-  default     = 1
-}
-variable "pf_crbs_orlonger" {
-  type        = bool
-  description = "Whether to use exact match or longer for all prefixes"
-  default     = true # Allow longer prefixes
-}
 
+# Cloud Router BGP Session IPsec
 variable "vpn_side_asn3" {
   type        = number
   default     = 64534 # private (64512 to 65534)
