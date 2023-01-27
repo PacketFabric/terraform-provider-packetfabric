@@ -39,6 +39,12 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
+			},
 			"vc_ocid": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -159,6 +165,9 @@ func extractOracleCloudRouterConn(d *schema.ResourceData) packetfabric.OracleClo
 	oracleRouter := packetfabric.OracleCloudRouterConn{}
 	if maybeNat, ok := d.GetOk("maybe_nat"); ok {
 		oracleRouter.MaybeNat = maybeNat.(bool)
+	}
+	if maybeDNat, ok := d.GetOk("maybe_dnat"); ok {
+		oracleRouter.MaybeDNat = maybeDNat.(bool)
 	}
 	if vcOcid, ok := d.GetOk("vc_ocid"); ok {
 		oracleRouter.VcOcid = vcOcid.(string)

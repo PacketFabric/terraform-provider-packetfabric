@@ -23,6 +23,7 @@ type GoogleMktCloudConn struct {
 type GoogleCloudRouterConn struct {
 	AccountUUID              string `json:"account_uuid,omitempty"`
 	MaybeNat                 bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat                bool   `json:"maybe_dnat,omitempty"`
 	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
 	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
 	Description              string `json:"description,omitempty"`

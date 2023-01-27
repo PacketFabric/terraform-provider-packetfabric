@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.6.0"
+      version = ">= 0.7.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -77,12 +77,28 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
   }
 }
 
+# Create a PacketFabric port
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
+}
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
+}
+
 # From the PacketFabric side: Create a PacketFabric Hosted Cloud Connection.
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
-  port              = var.pf_port_circuit_id
+  port              = packetfabric_port.port_1.id
   speed             = var.pf_cs_speed # will be deprecated
   vlan_private      = var.pf_cs_vlan_private
   #vlan_microsoft = var.pf_cs_vlan_microsoft

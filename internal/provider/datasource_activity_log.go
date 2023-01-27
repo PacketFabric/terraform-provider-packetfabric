@@ -62,6 +62,12 @@ func datasourceActivityLog() *schema.Resource {
 							Optional:    true,
 							Description: "The log time created.",
 						},
+						"log_level_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "The log level name.",
+						},
 					},
 				},
 			},
@@ -77,7 +83,7 @@ func datasourceActivityLogRead(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err = d.Set("activity_logs", flattenActivityLogs(activityLogs)); err != nil {
+	if err = d.Set("activity_logs", flattenActivityLogs(&activityLogs)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
@@ -94,8 +100,9 @@ func flattenActivityLogs(logs *[]packetfabric.ActivityLog) []interface{} {
 			flatten["level"] = log.Level
 			flatten["category"] = log.Category
 			flatten["event"] = log.Event
-			flatten["messge"] = log.Message
+			flatten["message"] = log.Message
 			flatten["time_created"] = log.TimeCreated
+			flatten["log_level_name"] = log.LevelName
 			flattens[i] = flatten
 		}
 		return flattens
