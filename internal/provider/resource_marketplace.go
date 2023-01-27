@@ -171,7 +171,7 @@ func resourceMarketplaceServiceCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	_ = d.Set("service_uuid", resp.UUID)
-	_ = d.Set("route_set_circuit_id", resp.BgpRouteSetCircuitID)
+	_ = d.Set("route_set_circuit_id", resp.RouteSetCircuitID)
 	d.SetId(resp.UUID)
 	return diags
 }

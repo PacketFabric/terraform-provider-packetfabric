@@ -49,7 +49,7 @@ type MarketplaceServiceResp struct {
 	State                string          `json:"state,omitempty"`
 	Sku                  string          `json:"sku,omitempty"`
 	CloudRouterCircuitID string          `json:"cloud_router_circuit_id,omitempty"`
-	BgpRouteSetCircuitID string          `json:"bgp_route_set_circuit_id,omitempty"`
+	RouteSetCircuitID    string          `json:"route_set_circuit_id,omitempty"`
 	Links                MktLinks        `json:"_links,omitempty"`
 }
 type MktCategories struct {
@@ -106,7 +106,7 @@ func (c *PFClient) CreateMarketplaceServiceWithRouteSet(service MarketplaceServi
 		return nil, err
 	}
 	if service.ServiceType == "cloud-router-service" && len(mktServiceRouteSet.ConnectionCircuitIDs) > 0 {
-		err = c.UpdateMarketPlaceConnection(mktServiceRouteSet.CloudRouterCircuitID, expectedResp.BgpRouteSetCircuitID, mktServiceRouteSet.ConnectionCircuitIDs)
+		err = c.UpdateMarketPlaceConnection(mktServiceRouteSet.CloudRouterCircuitID, expectedResp.RouteSetCircuitID, mktServiceRouteSet.ConnectionCircuitIDs)
 		if err != nil {
 			return nil, err
 		}
