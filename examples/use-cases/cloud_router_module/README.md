@@ -56,19 +56,19 @@ export PF_AWS_ACCOUNT_ID="123456789"
 
 ```sh
 terraform init
-terraform plan --var-file=tfvars.json
+terraform plan --var-file=tfvars_dev.json
 ```
 
 3. Apply the plan:
 
 ```sh
-terraform apply --var-file=tfvars.json
+terraform apply --var-file=tfvars_dev.json
 ```
 
-**Note:** you can update terraform variables in the ``tfvars.json``.
+**Note:** you can update terraform variables in the ``tfvars_dev.json``.
 
 4. Destroy all remote objects managed by the Terraform configuration.
 
 ```sh
-terraform destroy --var-file=tfvars.json
+terraform destroy --var-file=tfvars_dev.json
 ```
