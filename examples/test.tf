@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.7.0"
+      version = ">= 1.0.0"
     }
   }
 }
@@ -605,7 +605,6 @@ resource "random_pet" "name" {}
 # output "packetfabric_marketplace_service_port_requests_received" {
 #   value = data.packetfabric_marketplace_service_port_requests.received
 # }
-
 
 # # List all Marketplace Service Requests (Quick Connect)
 # data "packetfabric_quick_connect_requests" "quick_connect_sent" {
