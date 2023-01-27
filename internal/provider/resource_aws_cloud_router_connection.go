@@ -54,6 +54,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -195,6 +201,7 @@ func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 		AwsAccountID:           d.Get("aws_account_id").(string),
 		AccountUUID:            d.Get("account_uuid").(string),
 		MaybeNat:               d.Get("maybe_nat").(bool),
+		MaybeDNat:              d.Get("maybe_dnat").(bool),
 		Description:            d.Get("description").(string),
 		Pop:                    d.Get("pop").(string),
 		Zone:                   d.Get("zone").(string),

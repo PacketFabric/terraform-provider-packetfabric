@@ -7,6 +7,7 @@ const attachCustomerPortToCRURI = "/v2/services/cloud-routers/%s/connections/pac
 type CustomerOwnedPort struct {
 	AccountUUID            string `json:"account_uuid,omitempty"`
 	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
 	PortCircuitID          string `json:"port_circuit_id,omitempty"`
 	Description            string `json:"description,omitempty"`
 	Untagged               bool   `json:"untagged,omitempty"`

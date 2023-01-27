@@ -590,6 +590,7 @@ resource "random_pet" "name" {}
 # }
 
 # # List all Marketplace Service Requests (Port)
+
 # data "packetfabric_marketplace_service_port_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
@@ -635,7 +636,6 @@ resource "random_pet" "name" {}
 #   circuit_id       = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
 #   rejection_reason = "Return filters are too broad."
 # }
-
 
 # #######################################
 # ##### Dedicated Cloud Connections

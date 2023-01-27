@@ -40,6 +40,7 @@ Optional:
 - `category` (String) The log Category.
 - `event` (String) The log Event.
 - `level` (Number) The log level.
+- `log_level_name` (String) The log level name.
 - `log_uuid` (String) The log UUID.
 - `message` (String) The log Message.
 - `time_created` (String) The log time created.
