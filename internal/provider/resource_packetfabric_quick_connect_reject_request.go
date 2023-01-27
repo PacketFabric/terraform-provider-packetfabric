@@ -27,7 +27,7 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"circuit_id": {
+			"import_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
@@ -53,11 +53,11 @@ func resourceRejectRequestCreate(ctx context.Context, d *schema.ResourceData, m 
 	if reason, ok := d.GetOk("rejection_reason"); ok {
 		rejectionReason = reason.(string)
 	}
-	if circuitID, ok := d.GetOk("circuit_id"); ok {
-		if _, err := c.RejectCloudRouterService(circuitID.(string), rejectionReason); err != nil {
+	if importCircuitID, ok := d.GetOk("import_circuit_id"); ok {
+		if _, err := c.RejectCloudRouterService(importCircuitID.(string), rejectionReason); err != nil {
 			return diag.FromErr(err)
 		} else {
-			d.SetId(circuitID.(string))
+			d.SetId(importCircuitID.(string))
 		}
 	}
 	return diags
