@@ -49,7 +49,7 @@ resource "packetfabric_cloud_router_connection_google" "gcp" {
   circuit_id                  = packetfabric_cloud_router.cr.id
   description                 = "gcp-${each.key}-${lower(each.value.pop)}"
   google_pairing_key          = each.value.pairing_key
-  google_vlan_attachment_name = "aws-${each.value.vlan_attachment_name}-${lower(each.value.pop)}"
+  google_vlan_attachment_name = "gcp-${each.value.vlan_attachment_name}-${lower(each.value.pop)}"
   pop                         = each.value.pop
   speed                       = each.value.speed
 }
