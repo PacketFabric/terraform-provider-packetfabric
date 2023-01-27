@@ -113,22 +113,66 @@ func resourceBgpSession() *schema.Resource {
 				Optional:    true,
 				Description: "Whether this BGP session is disabled. Default is false.",
 			},
-			"pre_nat_sources": {
-				Type:        schema.TypeList,
+			"nat": {
+				Type:        schema.TypeSet,
+				MaxItems:    1,
 				Optional:    true,
-				Description: "If using NAT, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
-				Elem: &schema.Schema{
-					Type:        schema.TypeString,
-					Description: "IP prefix using CIDR format.",
-				},
-			},
-			"pool_prefixes": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "If using NAT, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
-				Elem: &schema.Schema{
-					Type:        schema.TypeString,
-					Description: "IP prefix using CIDR format.",
+				Description: "Translate the source or destination IP address.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pre_nat_sources": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
+							Elem: &schema.Schema{
+								Type:        schema.TypeString,
+								Description: "IP prefix using CIDR format.",
+							},
+						},
+						"pool_prefixes": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
+							Elem: &schema.Schema{
+								Type:        schema.TypeString,
+								Description: "IP prefix using CIDR format.",
+							},
+						},
+						"direction": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "If using NAT overload, the direction of the NAT connection. Output is the default.\n\t\tEnum: output, input.",
+						},
+						"nat_type": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). Overload is the default.\n\t\tEnum: overload, inline_dnat.",
+						},
+						"dnat_mappings": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Description: "Translate the destination IP address.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"private_prefix": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The private prefix of this DNAT mapping.",
+									},
+									"public_prefix": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The public prefix of this DNAT mapping.",
+									},
+									"conditional_prefix": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The conditional prefix prefix of this DNAT mapping.",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 			"prefixes": {
@@ -202,6 +246,16 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
+	// check Cloud Router Connection status
+	createOkCh := make(chan bool)
+	defer close(createOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
+	}
+	go c.CheckServiceStatus(createOkCh, fn)
+	if !<-createOkCh {
+		return diag.FromErr(err)
+	}
 	d.SetId(resp.BgpSettingsUUID)
 	return diags
 }
@@ -209,33 +263,20 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
-	const warningSummary = "Retrieve BGP Session after create"
 	var diags diag.Diagnostics
 	var cID, connCID, bgpSettingsUUID string
 	if circuitID, ok := d.GetOk("circuit_id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract Circuit ID from Resource Data",
-		})
+		return diag.FromErr(errors.New("could not extract cloud router circuit id from resource data"))
 	} else {
 		cID = circuitID.(string)
 	}
 	if connectionCID, ok := d.GetOk("connection_id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract Connection Circuit ID from Resource Data",
-		})
+		return diag.FromErr(errors.New("could not extract cloud router connection circuit id from resource data"))
 	} else {
 		connCID = connectionCID.(string)
 	}
 	if settingsUUID, ok := d.GetOk("id"); !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not extract BGP Settings UUID from Resource Data",
-		})
+		return diag.FromErr(errors.New("could not extract bgp settings uuid from resource data"))
 	} else {
 		bgpSettingsUUID = settingsUUID.(string)
 	}
@@ -244,12 +285,7 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	_, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  warningSummary,
-			Detail:   "Cloud not retrieve BGP session after create",
-		})
-		return diags
+		return diag.FromErr(errors.New("could not retrieve bgp session"))
 	}
 	return diags
 }
@@ -267,10 +303,21 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
 	session := extractBgpSession(d)
-	_, _, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
+	_, resp, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	// check Cloud Router Connection status
+	updateOkCh := make(chan bool)
+	defer close(updateOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
+	}
+	go c.CheckServiceStatus(updateOkCh, fn)
+	if !<-updateOkCh {
+		return diag.FromErr(err)
+	}
+	d.SetId(resp.BgpSettingsUUID)
 	return diags
 }
 
@@ -278,69 +325,37 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	bgpSettingsUUID, ok := d.GetOk("id")
-	if !ok {
-		return diag.Errorf("please provide a valid BGP Settings UUID")
-	}
 	cID, ok := d.GetOk("circuit_id")
 	if !ok {
-		return diag.Errorf("please provide a valid Circuit ID")
+		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
 	connCID, ok := d.GetOk("connection_id")
 	if !ok {
-		return diag.Errorf("please provide a valid Cloud Router Connection ID")
+		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
-	session, err := c.GetBgpSessionBy(cID.(string), connCID.(string), bgpSettingsUUID.(string))
+	sessionToDisable := extractBgpSession(d)
+	sessionToDisable.Disabled = true
+	_, resp, err := c.UpdateBgpSession(sessionToDisable, cID.(string), connCID.(string))
 	if err != nil {
+		return diag.FromErr(err)
+	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
-			Summary:  "Can't find the BGP Settings.",
+			Summary:  "BGP session disabled (it cannot be deleted).",
 			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-				"is associated with a Cloud Router Connection "+
-				"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
+				"has been disabled and it will be deleted together with the Cloud Router Connection. "+
+				"If you decide not to delete the Cloud Router Connection, "+
+				"use terraform import to add it back under Terraform management. ", resp.BgpSettingsUUID),
 		})
 	}
-	sessionToDisable := session.BuildNewBgpSessionInstance()
-	sessionPrefixes, err := c.ReadBgpSessionPrefixes(bgpSettingsUUID.(string))
-	if err != nil || len(sessionPrefixes) <= 0 {
-		resp, err := c.DeleteBgpSession(cID.(string), connCID.(string), bgpSettingsUUID.(string))
-		if err != nil {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "Can't find the BGP Settings.",
-				Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-					"is associated with a Cloud Router Connection "+
-					"and will be (or has been) deleted together with the Cloud Router Connection.", bgpSettingsUUID.(string)),
-			})
-		} else {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "BGP Settings deleted",
-				Detail:   resp.Message,
-			})
-		}
-		d.SetId("")
-		return diags
+	// check Cloud Router Connection status
+	disableOkCh := make(chan bool)
+	defer close(disableOkCh)
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
 	}
-
-	l3Address, ok := d.GetOk("l3_address")
-	if !ok {
-		return diag.Errorf("please provide a valid l3_address")
-	}
-	sessionToDisable.L3Address = l3Address.(string)
-	sessionToDisable.BgpSettingsUUID = bgpSettingsUUID.(string)
-	sessionToDisable.Disabled = true
-	sessionToDisable.Prefixes = make([]packetfabric.BgpPrefix, 0)
-	for _, prefix := range sessionPrefixes {
-		sessionToDisable.Prefixes = append(sessionToDisable.Prefixes, packetfabric.BgpPrefix{
-			BgpPrefixUUID: prefix.BgpPrefixUUID,
-			Prefix:        prefix.Prefix,
-			Type:          prefix.Type,
-			Order:         prefix.Order,
-		})
-	}
-	err = c.DisableBgpSession(sessionToDisable, cID.(string), connCID.(string))
-	if err != nil {
+	go c.CheckServiceStatus(disableOkCh, fn)
+	if !<-disableOkCh {
 		return diag.FromErr(err)
 	}
 	d.SetId("")
@@ -394,6 +409,13 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
+	if nat, ok := d.GetOk("nat"); ok {
+		for _, nat := range nat.(*schema.Set).List() {
+			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+		}
+	} else {
+		bgpSession.Nat = nil
+	}
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession
 }
@@ -415,4 +437,52 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 		return sessionPrefixes
 	}
 	return make([]packetfabric.BgpPrefix, 0)
+}
+
+func extractConnBgpSessionNat(n map[string]interface{}) *packetfabric.BgpNat {
+	nat := packetfabric.BgpNat{}
+	if direction := n["direction"]; direction != nil {
+		nat.Direction = direction.(string)
+	}
+	if natType := n["nat_type"]; natType != nil {
+		nat.NatType = natType.(string)
+	}
+	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
+	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
+	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"].(*schema.Set))
+	return &nat
+}
+
+func extractPreNatSources(d interface{}) []interface{} {
+	if PreNatSources, ok := d.([]interface{}); ok {
+		regs := make([]interface{}, 0)
+		for _, reg := range PreNatSources {
+			regs = append(regs, reg.(string))
+		}
+		return regs
+	}
+	return make([]interface{}, 0)
+}
+
+func extractPoolPrefixes(d interface{}) []interface{} {
+	if PoolPrefixes, ok := d.([]interface{}); ok {
+		regs := make([]interface{}, 0)
+		for _, reg := range PoolPrefixes {
+			regs = append(regs, reg.(string))
+		}
+		return regs
+	}
+	return make([]interface{}, 0)
+}
+
+func extractConnBgpSessionDnat(d *schema.Set) []packetfabric.BgpDnatMapping {
+	sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
+	for _, dnat := range d.List() {
+		sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
+			PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
+			PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
+			ConditionalPrefix: dnat.(map[string]interface{})["conditional_prefix"].(string),
+		})
+	}
+	return sessionDnat
 }

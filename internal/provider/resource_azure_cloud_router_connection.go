@@ -39,6 +39,12 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
+			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
 				Required:     true,

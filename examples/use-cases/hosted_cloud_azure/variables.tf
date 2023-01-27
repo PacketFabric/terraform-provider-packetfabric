@@ -6,12 +6,37 @@ variable "tag_name" {
 }
 
 ## PacketFabic VARs
+# Port
+variable "pf_port_pop1" {
+  type    = string
+  default = "PDX1"
+}
+variable "pf_port_avzone1" {
+  type    = string
+  default = "A" # check availability /v2/locations/PDX1/port-availability or login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+}
+variable "pf_port_media" {
+  type    = string
+  default = "LX"
+}
+variable "pf_port_subterm" {
+  type    = number
+  default = 1 # default 1 month
+}
+variable "pf_port_autoneg" {
+  type    = bool
+  default = false
+}
+variable "pf_port_speed" {
+  type    = string
+  default = "1Gbps"
+}
+variable "pf_port_nni" {
+  type    = bool
+  default = false
+}
 
 # Azure Hosted Connection
-variable "pf_port_circuit_id" {
-  type    = string
-  default = "PF-AP-WDC1-1726464"
-}
 variable "pf_cs_speed" {
   type    = string
   default = "50Mbps"

@@ -53,7 +53,6 @@ func resourceCloudRouter() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"regions": {
 				Type:        schema.TypeList,
 				Optional:    true,
