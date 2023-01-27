@@ -27,7 +27,7 @@ func resourceQuickConnectAcceptRequest() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"circuit_id": {
+			"import_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
@@ -44,11 +44,11 @@ func resourceAcceptRequestCreate(ctx context.Context, d *schema.ResourceData, m 
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if circuitID, ok := d.GetOk("circuit_id"); ok {
-		if _, err := c.AcceptCloudRouterService(circuitID.(string)); err != nil {
+	if importCircuitID, ok := d.GetOk("import_circuit_id"); ok {
+		if _, err := c.AcceptCloudRouterService(importCircuitID.(string)); err != nil {
 			return diag.FromErr(err)
 		} else {
-			d.SetId(circuitID.(string))
+			d.SetId(importCircuitID.(string))
 		}
 	}
 	return diags

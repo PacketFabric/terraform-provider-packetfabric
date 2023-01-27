@@ -14,8 +14,8 @@ description: |-
 
 ```terraform
 resource "packetfabric_quick_connect_accept_request" "accept_request_quick_connect" {
-  provider   = packetfabric
-  circuit_id = "PF-L3-IMP-2896010"
+  provider          = packetfabric
+  import_circuit_id = "PF-L3-IMP-2896010"
 }
 ```
 
@@ -24,7 +24,7 @@ resource "packetfabric_quick_connect_accept_request" "accept_request_quick_conne
 
 ### Required
 
-- `circuit_id` (String) Circuit ID of the Quick Connect import.
+- `import_circuit_id` (String) Circuit ID of the Quick Connect import.
 
 ### Optional
 

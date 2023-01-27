@@ -392,8 +392,8 @@ func (c *PFClient) DeleteVCRequest(vcUUID string) (*PortMessageResp, error) {
 	return expectedResp, nil
 }
 
-func (c *PFClient) AcceptCloudRouterService(circuitID string) (*PortMessageResp, error) {
-	formatedURI := fmt.Sprintf(acceptCloudRouterServiceURI, circuitID)
+func (c *PFClient) AcceptCloudRouterService(importCircuitID string) (*PortMessageResp, error) {
+	formatedURI := fmt.Sprintf(acceptCloudRouterServiceURI, importCircuitID)
 	response := &PortMessageResp{}
 	if _, err := c.sendRequest(formatedURI, postMethod, nil, response); err != nil {
 		return nil, err
