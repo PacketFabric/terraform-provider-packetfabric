@@ -571,6 +571,7 @@ variable "pf_crc_oracle_vc_ocid" {
   type      = string
   default   = "secret"
   sensitive = true
+}
 
 # Cloud Router Connection Quick Connect
 variable "pf_cr_circuit_id" {
