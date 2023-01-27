@@ -49,10 +49,10 @@ output "packetfabric_cloud_router_quick_connect" {
 
 ### Read-Only
 
-- `circuit_id` (String) The circuit ID of the Quick Connect.
 - `id` (String) The ID of this resource.
+- `import_circuit_id` (String) The Circuit ID of this Cloud Router Import.
 - `is_defunct` (Boolean) Whether the Quick Connect is defunct. This typically happens when the provider removes the service.
-- `route_set_circuit_id` (String) The circuit ID of the Quick Connect route set.
+- `route_set_circuit_id` (String) The Circuit ID of the Route Set selected for this Cloud Router Import.
 - `time_created` (String) The Quick Connect time created.
 - `time_updated` (String) The Quick Connect time updated.
 

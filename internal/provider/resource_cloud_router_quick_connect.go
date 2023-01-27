@@ -100,15 +100,15 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 					},
 				},
 			},
-			"circuit_id": {
+			"import_circuit_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The circuit ID of the Quick Connect.",
+				Description: "The Circuit ID of this Cloud Router Import.",
 			},
 			"route_set_circuit_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The circuit ID of the Quick Connect route set.",
+				Description: "The Circuit ID of the Route Set selected for this Cloud Router Import.",
 			},
 			"is_defunct": {
 				Type:        schema.TypeBool,
@@ -143,12 +143,12 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
-	_ = d.Set("circuit_id", resp.CircuitID)
+	_ = d.Set("import_circuit_id", resp.ImportCircuitID)
 	_ = d.Set("route_set_circuit_id", resp.RouteSetCircuitID)
 	_ = d.Set("is_defunct", resp.IsDefunct)
 	_ = d.Set("time_created", resp.TimeCreated)
 	_ = d.Set("time_updated", resp.TimeUpdated)
-	d.SetId(resp.CircuitID)
+	d.SetId(resp.ImportCircuitID)
 	return diags
 }
 
@@ -163,7 +163,6 @@ func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.Resour
 	crCID := d.Get("cr_circuit_id").(string)
 	connCID := d.Get("connection_circuit_id").(string)
 	quickConn := extractCloudRouterQuickConnectUpdate(d)
-	//OBS: We use Circuit ID as Import CID defined per design.
 	if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, d.Id(), quickConn); err != nil {
 		return diag.FromErr(err)
 	}
@@ -181,7 +180,6 @@ func resourceCloudRouterQuickConnectDelete(ctx context.Context, d *schema.Resour
 	if connCID, ok := d.GetOk("connection_circuit_id"); ok {
 		connCIDStr = connCID.(string)
 	}
-	//OBS: We use Circuit ID as Import CID defined per design.
 	warningMsg, err := c.DeleteCloudRouterQuickConnect(d.Id(), crCIDStr, connCIDStr, d.Id())
 	if err != nil {
 		return diag.FromErr(err)

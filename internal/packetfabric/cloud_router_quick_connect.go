@@ -34,7 +34,7 @@ type QuickConnectReturnFilters struct {
 }
 
 type CloudRouterQuickConnectResp struct {
-	CircuitID         string `json:"circuit_id,omitempty"`
+	ImportCircuitID   string `json:"import_circuit_id,omitempty"`
 	RouteSetCircuitID string `json:"route_set_circuit_id,omitempty"`
 	ServiceUUID       string `json:"service_uuid,omitempty"`
 	Name              string `json:"name,omitempty"`
@@ -54,12 +54,12 @@ func (c *PFClient) CreateCloudRouterQuickConnect(crCID, connCID string, quickCon
 	return quickConnectResp, nil
 }
 
-func (c *PFClient) GetCloudRouterQuickConnectState(circuitID string) (currentState string, err error) {
+func (c *PFClient) GetCloudRouterQuickConnectState(ImportCircuitID string) (currentState string, err error) {
 	type CloudRouterQuickConnectState struct {
 		State string `json:"state"`
 	}
 	resp := &CloudRouterQuickConnectState{}
-	if _, err = c.sendRequest(fmt.Sprintf(cloudRouterQuickConnectByCIDURI, circuitID), getMethod, nil, resp); err == nil {
+	if _, err = c.sendRequest(fmt.Sprintf(cloudRouterQuickConnectByCIDURI, ImportCircuitID), getMethod, nil, resp); err == nil {
 		currentState = resp.State
 	}
 	return
