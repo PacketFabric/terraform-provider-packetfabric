@@ -626,15 +626,15 @@ resource "random_pet" "name" {}
 
 # # Accept the Request Quick Connect
 # resource "packetfabric_quick_connect_accept_request" "accept_request_quick_connect" {
-#   provider   = packetfabric
-#   circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
 # }
 
 # # Reject the Request
 # resource "packetfabric_quick_connect_reject_request" "reject_request_quick_connect" {
-#   provider         = packetfabric
-#   circuit_id       = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
-#   rejection_reason = "Return filters are too broad."
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
+#   rejection_reason  = "Return filters are too broad."
 # }
 
 # #######################################
