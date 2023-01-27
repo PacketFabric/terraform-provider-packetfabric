@@ -1,3 +1,8 @@
+##############################################################
+# THIS TF FILE IS USED TO TEST PACKETFABRIC TERRAFORM PROVIDER
+# LOOK FOR SPECIFIC USE CASES UNDER THE USE-CASES FOLDER
+##############################################################
+
 ## General VARs
 variable "tag_name" {
   type        = string
@@ -348,16 +353,39 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["US"] or ["US", "UK"] or ["UK"]
 }
 
-# Cloud Router Connections
+# Cloud Router Connections Common
 variable "pf_crc_maybe_nat" {
   type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
+  description = "Set this to true if you intend to use Source NAT on this connection"
+  default     = false
+}
+variable "pf_crc_maybe_dnat" {
+  type        = bool
+  description = "Set this to true if you intend to use Destination NAT on this connection"
   default     = false
 }
 variable "pf_crc_is_public" {
   type        = bool
   description = "Whether PacketFabric should allocate a public IP address for this connection"
   default     = false
+}
+
+
+# Cloud Router BGP Session Common
+variable "pf_crbs_af" {
+  type        = string
+  description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
+  default     = "v4"
+}
+variable "pf_crbs_mhttl" {
+  type        = number
+  description = "The TTL of this session. The default is 1."
+  default     = 1
+}
+variable "pf_crbs_orlonger" {
+  type        = bool
+  description = "Whether to use exact match or longer for all prefixes"
+  default     = true # Allow longer prefixes
 }
 
 # Cloud Router Connection AWS
@@ -374,6 +402,23 @@ variable "pf_crc_pop1" {
 variable "pf_crc_zone1" {
   type    = string
   default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+}
+
+# Cloud Router BGP Session AWS
+variable "aws_side_asn1" {
+  type        = number
+  default     = 64535 # private (64512 to 65534)
+  description = "AWS Side ASN"
+}
+variable "aws_remote_address" {
+  type        = string
+  description = "The cloud-side router peer IP."
+  default     = "169.254.52.1/29"
+}
+variable "aws_l3_address" {
+  type        = string
+  description = "The L3 address of this instance."
+  default     = "169.254.52.2/29"
 }
 
 # Cloud Router Connection Google
@@ -465,23 +510,8 @@ variable "pf_crc_shared_key" {
   default     = "superCoolKey"
   sensitive   = true
 }
-# Cloud Router BGP Session IPsec
-variable "pf_crbs_af" {
-  type        = string
-  description = "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported"
-  default     = "v4"
-}
-variable "pf_crbs_mhttl" {
-  type        = number
-  description = "The TTL of this session. The default is 1."
-  default     = 1
-}
-variable "pf_crbs_orlonger" {
-  type        = bool
-  description = "Whether to use exact match or longer for all prefixes"
-  default     = true # Allow longer prefixes
-}
 
+# Cloud Router BGP Session IPsec
 variable "vpn_side_asn3" {
   type        = number
   default     = 64534 # private (64512 to 65534)
@@ -541,41 +571,4 @@ variable "pf_crc_oracle_vc_ocid" {
   type      = string
   default   = "secret"
   sensitive = true
-}
-
-# Cloud Router Connection Quick Connect
-variable "pf_cr_circuit_id" {
-  type        = string
-  description = "The circuit ID of the cloud router this service is associated with"
-  default     = "PF-L3-CUST-2839140"
-}
-variable "pf_connection_circuit_id" {
-  type        = string
-  description = "The connection circuit ID"
-  default     = "PF-L3-CON-2853999"
-}
-variable "pf_service_uuid" {
-  type        = string
-  description = "The service UUID associated with the cloud router quick connect."
-  default     = "64a41294-9e1a-4ab0-935c-a116e8870420"
-}
-variable "pf_return_filters_prefix1" {
-  type        = string
-  description = "The return filters prefix."
-  default     = "192.140.0.31/32"
-}
-variable "pf_return_filters_match_type1" {
-  type        = string
-  description = "The match type of this prefix."
-  default     = "orlonger" # orlonger
-}
-variable "pf_return_filters_prefix2" {
-  type        = string
-  description = "The return filters prefix."
-  default     = "192.141.0.32/32"
-}
-variable "pf_return_filters_match_type2" {
-  type        = string
-  description = "The match type of this prefix."
-  default     = "exact" # orlonger
 }
