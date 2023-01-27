@@ -1,8 +1,13 @@
+##############################################################
+# THIS TF FILE IS USED TO TEST PACKETFABRIC TERRAFORM PROVIDER
+# LOOK FOR SPECIFIC USE CASES UNDER THE USE-CASES FOLDER
+##############################################################
+
 terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.6.0"
+      version = ">= 0.7.0"
     }
   }
 }
@@ -25,7 +30,7 @@ resource "random_pet" "name" {}
 #   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
 # }
 # locals {
-#   zones_pop1= toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+#   zones_pop1 = toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
 # }
 # output "packetfabric_locations_port_availability_pop1_single_zone" {
 #   value = tolist(local.zones_pop1)[0]
@@ -130,7 +135,7 @@ resource "random_pet" "name" {}
 #   port_circuit_id = packetfabric_port.port_1a.id
 #   time_from       = "2022-11-30 00:00:00"
 #   time_to         = "2022-12-01 00:00:00"
-#   depends_on = [packetfabric_port.port_1]
+#   depends_on      = [packetfabric_port.port_1]
 # }
 # output "packetfabric_port_router_logs" {
 #   value = data.packetfabric_port_router_logs.port_1a_logs
@@ -139,7 +144,7 @@ resource "random_pet" "name" {}
 # data "packetfabric_port_device_info" "port_1a_device_info" {
 #   provider        = packetfabric
 #   port_circuit_id = packetfabric_port.port_1a.id
-#   depends_on = [packetfabric_port.port_1]
+#   depends_on      = [packetfabric_port.port_1]
 # }
 # output "packetfabric_port_device_info" {
 #   value = data.packetfabric_port_device_info.port_1a_device_info
@@ -335,13 +340,13 @@ resource "random_pet" "name" {}
 
 # # Create a AWS Hosted Connection 
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
-#   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}"
-#   port           = packetfabric_port.port_1a.id
-#   speed          = var.pf_cs_speed2
-#   pop            = var.pf_cs_pop2
-#   vlan           = var.pf_cs_vlan2
-#   zone           = var.pf_cs_zone2
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   port        = packetfabric_port.port_1a.id
+#   speed       = var.pf_cs_speed2
+#   pop         = var.pf_cs_pop2
+#   vlan        = var.pf_cs_vlan2
+#   zone        = var.pf_cs_zone2
 # }
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
@@ -496,13 +501,13 @@ resource "random_pet" "name" {}
 
 # # Create a AWS Hosted Marketplace Connection 
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
-#   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}"
-#   routing_id     = var.pf_routing_id
-#   market         = var.pf_market
-#   speed          = var.pf_cs_speed2
-#   pop            = var.pf_cs_pop2
-#   zone           = var.pf_cs_zone2
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}"
+#   routing_id  = var.pf_routing_id
+#   market      = var.pf_market
+#   speed       = var.pf_cs_speed2
+#   pop         = var.pf_cs_pop2
+#   zone        = var.pf_cs_zone2
 # }
 # output "packetfabric_cs_aws_hosted_marketplace_connection" {
 #   value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws
@@ -584,7 +589,7 @@ resource "random_pet" "name" {}
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
-# # List all Marketplace Service Requests (not Cloud Router)
+# # List all Marketplace Service Requests (Port)
 # data "packetfabric_marketplace_service_port_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
@@ -600,6 +605,7 @@ resource "random_pet" "name" {}
 # output "packetfabric_marketplace_service_port_requests_received" {
 #   value = data.packetfabric_marketplace_service_port_requests.received
 # }
+
 
 # # List all Marketplace Service Requests (Quick Connect)
 # data "packetfabric_quick_connect_requests" "quick_connect_sent" {
@@ -630,6 +636,7 @@ resource "random_pet" "name" {}
 #   circuit_id       = packetfabric_cloud_router_quick_connect.cr_quick_connect.circuit_id
 #   rejection_reason = "Return filters are too broad."
 # }
+
 
 # #######################################
 # ##### Dedicated Cloud Connections
@@ -697,14 +704,68 @@ resource "random_pet" "name" {}
 # }
 
 # resource "packetfabric_cloud_router_connection_aws" "crc_1" {
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+#   circuit_id  = packetfabric_cloud_router.cr.id
+#   pop         = var.pf_crc_pop1
+#   zone        = var.pf_crc_zone1
+#   speed       = var.pf_crc_speed
+#   maybe_nat   = var.pf_crc_maybe_nat
+#   maybe_dnat  = var.pf_crc_maybe_dnat
+#   is_public   = var.pf_crc_is_public
+# }
+
+# resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
 #   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id     = packetfabric_cloud_router.cr.id
-#   pop            = var.pf_crc_pop1
-#   zone           = var.pf_crc_zone1
-#   speed          = var.pf_crc_speed
-#   maybe_nat      = var.pf_crc_maybe_nat
-#   is_public      = var.pf_crc_is_public
+#   connection_id  = packetfabric_cloud_router_connection_aws.crc_1.id
+#   address_family = var.pf_crbs_af
+#   multihop_ttl   = var.pf_crbs_mhttl
+#   remote_asn     = var.aws_side_asn1
+#   remote_address = var.aws_remote_address # AWS side
+#   l3_address     = var.aws_l3_address     # PF side
+#   orlonger       = var.pf_crbs_orlonger
+#   # nat { # example source NAT
+#   #   direction       = "output" # or input
+#   #   nat_type        = "overload"
+#   #   pre_nat_sources = ["10.1.1.0/24", "10.1.2.0/24"]
+#   #   pool_prefixes   = ["192.168.1.50/32", "192.168.1.51/32"]
+#   # }
+#   # nat { # example destination NAT
+#   #   nat_type = "inline_dnat"
+#   #   dnat_mappings {
+#   #     private_prefix = "192.168.1.50/32"
+#   #     public_prefix  = "192.167.1.50/32"
+#   #   }
+#   #   dnat_mappings {
+#   #     private_prefix     = "192.168.2.50/32"
+#   #     public_prefix      = "192.166.1.50/32"
+#   #     conditional_prefix = "192.168.2.0/24" # must be a subnet of private_prefix
+#   #   }
+#   # }
+#   prefixes {
+#     prefix = "0.0.0.0/0"
+#     type   = "out" # Allowed Prefixes to Cloud
+#     order  = 0
+#   }
+#   prefixes {
+#     prefix = "0.0.0.0/0"
+#     type   = "in" # Allowed Prefixes from Cloud
+#     order  = 0
+#   }
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_1" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_1
+# }
+
+# data "packetfabric_cloud_router_bgp_session" "bgp_session_crbs_1" {
+#   provider      = packetfabric
+#   circuit_id    = packetfabric_cloud_router.cr.id
+#   connection_id = packetfabric_cloud_router_connection_aws.crc_1.id
+#   depends_on    = [packetfabric_cloud_router_bgp_session.crbs_1]
+# }
+# output "packetfabric_cloud_router_bgp_session_crbs_1_data" {
+#   value = data.packetfabric_cloud_router_bgp_session.bgp_session_crbs_1
 # }
 
 # resource "packetfabric_cloud_router_connection_google" "crc_2" {
@@ -716,6 +777,7 @@ resource "random_pet" "name" {}
 #   pop                         = var.pf_crc_pop2
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
+#   maybe_dnat                  = var.pf_crc_maybe_dnat
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
@@ -764,9 +826,10 @@ resource "random_pet" "name" {}
 # }
 
 # data "packetfabric_cloud_router_bgp_session" "bgp_session_crbs_3" {
-#   provider = packetfabric
-#   circuit_id     = packetfabric_cloud_router.cr.id
-#   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_3.id
+#   provider      = packetfabric
+#   circuit_id    = packetfabric_cloud_router.cr.id
+#   connection_id = packetfabric_cloud_router_connection_ipsec.crc_3.id
+#   depends_on    = [packetfabric_cloud_router_bgp_session.crbs_1]
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3_data" {
 #   value = data.packetfabric_cloud_router_bgp_session.bgp_session_crbs_3
@@ -779,18 +842,20 @@ resource "random_pet" "name" {}
 #   azure_service_key = var.pf_crc_azure_service_key
 #   speed             = var.pf_crc_speed
 #   maybe_nat         = var.pf_crc_maybe_nat
+#   maybe_dnat        = var.pf_crc_maybe_dnat
 #   is_public         = var.pf_crc_is_public
 # }
 
 # resource "packetfabric_cloud_router_connection_ibm" "crc_5" {
-#   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
-#   circuit_id     = packetfabric_cloud_router.cr.id
-#   ibm_bgp_asn    = var.pf_crc_ibm_bgp_asn
-#   pop            = var.pf_crc_pop4
-#   zone           = var.pf_crc_zone4
-#   maybe_nat      = var.pf_crc_maybe_nat
-#   speed          = var.pf_crc_speed
+#   provider    = packetfabric
+#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
+#   circuit_id  = packetfabric_cloud_router.cr.id
+#   ibm_bgp_asn = var.pf_crc_ibm_bgp_asn
+#   pop         = var.pf_crc_pop4
+#   zone        = var.pf_crc_zone4
+#   maybe_nat   = var.pf_crc_maybe_nat
+#   maybe_dnat  = var.pf_crc_maybe_dnat
+#   speed       = var.pf_crc_speed
 # }
 
 # resource "packetfabric_cloud_router_connection_oracle" "crc_6" {
@@ -802,6 +867,7 @@ resource "random_pet" "name" {}
 #   pop         = var.pf_crc_pop5
 #   zone        = var.pf_crc_zone5
 #   maybe_nat   = var.pf_crc_maybe_nat
+#   maybe_dnat  = var.pf_crc_maybe_dnat
 # }
 
 # resource "packetfabric_cloud_router_connection_port" "crc_7" {
@@ -813,6 +879,7 @@ resource "random_pet" "name" {}
 #   speed           = var.pf_crc_speed
 #   is_public       = var.pf_crc_is_public
 #   maybe_nat       = var.pf_crc_maybe_nat
+#   maybe_dnat      = var.pf_crc_maybe_dnat
 # }
 
 # data "packetfabric_cloud_router_connections" "all_crc" {
