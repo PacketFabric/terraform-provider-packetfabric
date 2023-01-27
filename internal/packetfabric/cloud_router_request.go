@@ -5,7 +5,7 @@ import "fmt"
 const cloudRouterRequestsURI = "/v2/services/cloud-routers/requests?request_type=%s"
 
 type CloudRouterRequest struct {
-	CircuitID       string          `json:"circuit_id,omitempty"`
+	ImportCircuitID string          `json:"import_circuit_id,omitempty"`
 	CustomerName    string          `json:"customer_name,omitempty"`
 	ServiceUUID     string          `json:"service_uuid,omitempty"`
 	State           string          `json:"state,omitempty"`

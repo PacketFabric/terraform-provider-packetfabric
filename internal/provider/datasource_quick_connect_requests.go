@@ -26,25 +26,25 @@ func datasourceQuickConnectRequests() *schema.Resource {
 				Description: "List of quick connect requests.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"circuit_id": {
+						"import_circuit_id": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The cloud circuit ID.",
+							Description: "The Circuit ID of this Cloud Router Import.",
 						},
 						"customer_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The customer name.",
+							Description: "The customer that initiated this Cloud Router Import Request.",
 						},
 						"service_uuid": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The service UUID.",
+							Description: "Service UUID of the third-party service associated with the Cloud Router.",
 						},
 						"state": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The request state.",
+							Description: "Shows the state of this import.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
@@ -59,7 +59,7 @@ func datasourceQuickConnectRequests() *schema.Resource {
 						"request_type": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "The request type.",
+							Description: "Type of the Cloud Router Import Request.",
 						},
 						"import_filters": {
 							Type:        schema.TypeSet,
@@ -70,17 +70,17 @@ func datasourceQuickConnectRequests() *schema.Resource {
 									"prefix": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The Quick Connect prefix.",
+										Description: "The prefix of the Import Filter.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The Quick Connect prefix match type.",
+										Description: "The match type of the Import Filter.",
 									},
 									"local_preference": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Description: "The Quick Connect prefix local preference.",
+										Description: "The localpref of the Import Filter.",
 									},
 								},
 							},
@@ -94,7 +94,7 @@ func datasourceQuickConnectRequests() *schema.Resource {
 									"prefix": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Description: "The Quick Connect prefix.",
+										Description: "The prefix of the Return Filter.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
@@ -146,7 +146,7 @@ func flattenQuickConnectRequests(requests *[]packetfabric.CloudRouterRequest) []
 		flattens := make([]interface{}, len(*requests))
 		for i, request := range *requests {
 			flatten := make(map[string]interface{})
-			flatten["circuit_id"] = request.CircuitID
+			flatten["import_circuit_id"] = request.ImportCircuitID
 			flatten["customer_name"] = request.CustomerName
 			flatten["service_uuid"] = request.ServiceUUID
 			flatten["state"] = request.State

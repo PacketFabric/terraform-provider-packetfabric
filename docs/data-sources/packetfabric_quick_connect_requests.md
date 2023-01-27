@@ -39,7 +39,7 @@ output "packetfabric_quick_connect_requests" {
 
 Read-Only:
 
-- `circuit_id` (String)
+- `import_circuit_id` (String)
 - `customer_name` (String)
 - `import_filters` (Set of Object) (see [below for nested schema](#nestedobjatt--quick_connect_requests--import_filters))
 - `request_type` (String)
