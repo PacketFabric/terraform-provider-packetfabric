@@ -19,6 +19,7 @@ type AwsConnection struct {
 	AwsAccountID           string `json:"aws_account_id,omitempty"`
 	AccountUUID            string `json:"account_uuid,omitempty"`
 	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
 	Description            string `json:"description,omitempty"`
 	Pop                    string `json:"pop,omitempty"`
 	Zone                   string `json:"zone,omitempty"`
@@ -168,6 +169,7 @@ type ConnectionDeleteResp struct {
 
 type IBMCloudRouterConn struct {
 	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
 	IbmAccountID           string `json:"ibm_account_id,omitempty"`
 	IbmBgpAsn              int    `json:"ibm_bgp_asn,omitempty"`
 	IbmBgpCerCidr          string `json:"ibm_bgp_cer_cidr,omitempty"`
@@ -202,6 +204,7 @@ type IPSecRouterConn struct {
 
 type OracleCloudRouterConn struct {
 	MaybeNat               bool   `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
 	VcOcid                 string `json:"vc_ocid,omitempty"`
 	Region                 string `json:"region,omitempty"`
 	Description            string `json:"description,omitempty"`

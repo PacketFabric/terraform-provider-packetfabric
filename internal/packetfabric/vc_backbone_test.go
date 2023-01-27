@@ -13,8 +13,12 @@ const _portCircuitIDTwo = "PF-AP-LAS1-2000"
 func Test_CreateBackbone(t *testing.T) {
 	expectedPayload := Backbone{}
 	expectedResp := BackboneResp{}
-	_ = json.Unmarshal(_buildCreateBackbonePayload(_backboneDesc), &expectedPayload)
-	_ = json.Unmarshal(_buildCreateBackBoneResp(_backboneDesc, _awsAccountID), &expectedResp)
+	if err := json.Unmarshal(_buildCreateBackbonePayload(_backboneDesc), &expectedPayload); err != nil {
+		t.Fatalf("Failed to unmarshal Backbone: %s", err)
+	}
+	if err := json.Unmarshal(_buildCreateBackBoneResp(_backboneDesc, _awsAccountID), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal BackboneResp: %s", err)
+	}
 	cTest.runFakeHttpServer(_callCreateBackbone, expectedPayload, expectedResp, _buildCreateBackBoneResp(_backboneDesc, _awsAccountID), "backbone-create", t)
 }
 

@@ -1,0 +1,54 @@
+{
+    "cloud_routers": {
+        "dev-environment": {
+            "asn": 4556,
+            "capacity": "500Mbps",
+            "regions": [
+                "US"
+            ]
+        }
+    },
+    "aws_connections": {
+        "dev-environment": {
+            "speed": "50Mbps",
+            "pop": "PDX2"
+        }
+    },
+    "gcp_connections": {
+        "dev-environment": {
+            "pairing_key": "redacted",
+            "vlan_attachment_name": "dev-env-interconnect",
+            "speed": "50Mbps",
+            "pop": "WDC1"
+        }
+    },
+    "aws_bgp_sessions": {
+        "dev-environment": {
+            "remote_asn": 64512,
+            "remote_address": "169.254.254.30/30",
+            "l3_address": "169.254.254.29/30",
+            "md5": "redacted",
+            "disabled": false
+        }
+    },
+    "gcp_bgp_sessions": {
+        "dev-environment": {
+            "remote_asn": 16550,
+            "remote_address": "169.254.13.170/29",
+            "l3_address": "169.254.13.169/29",
+            "disabled": false
+        }
+    },
+    "aws_outbound": {
+        "dev-environment": [
+            { "prefix": "198.168.1.0/24", "match_type": "orlonger" },
+            { "prefix": "198.168.2.0/24", "match_type": "orlonger" }
+        ]
+    },
+    "gcp_outbound": {
+        "dev-environment": [
+            { "prefix": "198.168.3.0/24", "match_type": "orlonger" },
+            { "prefix": "198.168.4.0/24", "match_type": "orlonger" }
+        ]
+    }
+}

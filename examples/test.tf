@@ -456,7 +456,6 @@ resource "random_pet" "name" {}
 # ##### MARKETPLACE
 # #######################################
 
-
 # # Create a Marketplace Service type port
 # resource "packetfabric_marketplace_service" "marketplace_port" {
 #   provider     = packetfabric
