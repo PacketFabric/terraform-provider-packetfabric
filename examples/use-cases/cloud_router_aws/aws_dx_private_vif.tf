@@ -9,8 +9,6 @@ data "packetfabric_cloud_router_connections" "current" {
   ]
 }
 locals {
-  # below may need to be updated
-  # check https://github.com/PacketFabric/terraform-provider-packetfabric/issues/23
   cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
