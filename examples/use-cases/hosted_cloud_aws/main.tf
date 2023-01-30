@@ -109,7 +109,7 @@ output "packetfabric_port_1" {
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
-  port        = "PF-AP-WDC1-1726464" # packetfabric_port.port_1.id
+  port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
