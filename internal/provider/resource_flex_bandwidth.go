@@ -49,8 +49,8 @@ func resourceFlexBandwidth() *schema.Resource {
 			"capacity": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Capacity of the flex bandwidth container. Must be in the format XXGbps or XXMbps.\n\n\tExample: [\"100Gbps\" \"150Gbps\" \"200Gbps\" \"250Gbps\" \"300Gbps\" \"350Gbps\" \"400Gbps\" \"450Gbps\" \"500Gbps\"]",
+				ValidateFunc: validation.StringInSlice(speedFlexOptions(), true),
+				Description:  "Capacity of the flex bandwidth container. Must be in the format XXGbps or XXMbps.\n\n\tEnum: [\"100Gbps\" \"150Gbps\" \"200Gbps\" \"250Gbps\" \"300Gbps\" \"350Gbps\" \"400Gbps\" \"450Gbps\" \"500Gbps\"]",
 			},
 			"po_number": {
 				Type:         schema.TypeString,
@@ -125,11 +125,34 @@ func resourceFlexBandwidthRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceFlexBandwidthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Flex Bandwidth Update.",
-		Detail:   "Warning: use packetfabric_billing_modify_order resource to modify the capacity.",
-	}}
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	flexID := d.Get("id").(string)
+	capacity, ok := d.GetOk("capacity")
+	if !ok {
+		return diag.Errorf("please provide a valid capacity")
+	}
+	if !d.HasChange("capacity") {
+		return diag.Errorf("only the capacity field can be updated")
+	}
+	billing := packetfabric.BillingUpgrade{
+		Capacity: capacity.(string),
+	}
+
+	if resp, err := c.ModifyBilling(flexID, billing); err != nil {
+		return diag.FromErr(err)
+	} else {
+		diags = make(diag.Diagnostics, 0)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Flex Bandwidth ID billing upgrade.",
+			Detail:   resp.Message,
+		})
+	}
+	_ = d.Set("capacity", capacity.(string))
+
+	return diags
 }
 
 func resourceFlexBandwidthDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -167,4 +190,11 @@ func extractFlexBandwidth(d *schema.ResourceData) packetfabric.FlexBandwidth {
 		flex.PoNumber = poNumber.(string)
 	}
 	return flex
+}
+
+func speedFlexOptions() []string {
+	return []string{
+		"50Gbps", "100Gbps", "150Gbps", "200Gbps",
+		"250Gbps", "300Gbps", "350Gbps", "400Gbps",
+		"450Gbps", "500Gbps"}
 }

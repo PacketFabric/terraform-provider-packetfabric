@@ -582,5 +582,5 @@ variable "pf_flex_subscription_term" {
 }
 variable "pf_flex_capacity" {
   type    = string
-  default = "50Gbps" # 100Gbps, 500Gbps
+  default = "50Gbps" # 50Gbps 100Gbps 150Gbps 200Gbps 250Gbps 300Gbps 350Gbps 400Gbps 450Gbps 500Gbps
 }
