@@ -37,6 +37,10 @@ Updating billing means modifying something that affects how much you are billed 
 
     ->**Note:** If you want to change the capacity or regions for the Cloud Router, then update the `packetfabric_cloud_router` resource.
 
+* **Flex Bandwidth**: (resources `packetfabric_flex_bandwidth`)
+
+    You can extend the capacity. 
+
 For information specific to each cloud provider, see [the PacketFabric cloud documentation](https://docs.packetfabric.com/cloud/general/upgrade/).
 
 For information specific to each virtual circuit, see [the PacketFabric Virtual Circuit documentation](https://docs.packetfabric.com/vc/manage/upgrade/).
