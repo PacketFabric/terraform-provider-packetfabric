@@ -14,7 +14,7 @@ type FlexBandwidth struct {
 	AccountUUID      string `json:"account_uuid"`
 	SubscriptionTerm int    `json:"subscription_term"`
 	Capacity         string `json:"capacity"`
-	PoNumber         string `json:"po_number",omitempty`
+	PoNumber         string `json:"po_number,omitempty"`
 }
 
 // This struct represents a Flex Bandwidth create response
@@ -27,7 +27,7 @@ type FlexBandwidthResponse struct {
 	CapacityMbps          int    `json:"capacity_mbps"`
 	UsedCapacityMbps      int    `json:"used_capacity_mbps"`
 	AvailableCapacityMbps int    `json:"available_capacity_mbps"`
-	PoNumber              string `json:"po_number",omitempty`
+	PoNumber              string `json:"po_number,omitempty"`
 	TimeCreated           string `json:"time_created"`
 	TimeUpdated           string `json:"time_updated"`
 }
