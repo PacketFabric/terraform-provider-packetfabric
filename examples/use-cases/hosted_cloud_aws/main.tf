@@ -133,19 +133,6 @@ resource "null_resource" "next" {
   depends_on = [time_sleep.wait_90_seconds]
 }
 
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current_1" {
-  provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}"
-  depends_on = [
-    null_resource.next,
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
-}
-output "aws_dx_connection_1" {
-  value = data.aws_dx_connection.current_1
-}
-
 # Vote for 26335 aws_dx_connection_confirmation add timeout and do not fail when state is available
 # https://github.com/hashicorp/terraform-provider-aws/issues/26335
 resource "aws_dx_connection_confirmation" "confirmation_1" {
@@ -164,34 +151,40 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 }
 
 # From the AWS side: Create and attach a VIF
-data "aws_dx_gateway" "direct_connect_gw_1" {
+# Retrieve the Direct Connect connections in AWS
+data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}"
-
   depends_on = [
-    aws_dx_gateway.direct_connect_gw_1
+    null_resource.next,
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
-
-resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-  provider       = aws
-  connection_id  = data.aws_dx_connection.current_1.id
-  dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}"
-  vlan           = data.aws_dx_connection.current_1.vlan_id # provider version >= 4.35.0 https://github.com/hashicorp/terraform-provider-aws/issues/26461
-  address_family = "ipv4"
-  bgp_asn        = var.customer_side_asn1
-  depends_on = [
-    aws_dx_connection_confirmation.confirmation_1
-  ]
+output "aws_dx_connection_current" {
+  value = data.aws_dx_connection.current_1
 }
 
-# provider version >= 4.37.0
-data "aws_dx_router_configuration" "router_config" {
-  provider               = aws
-  virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
-  router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
-}
+# Vote for 29165 [Bug]: aws_dx_connection data-source reports vlan_id null
+# https://github.com/hashicorp/terraform-provider-aws/issues/29165
+# resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
+#   provider       = aws
+#   connection_id  = data.aws_dx_connection.current_1.id
+#   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
+#   name           = "${var.tag_name}-${random_pet.name.id}"
+#   vlan           = data.aws_dx_connection.current_1.vlan_id # bug #29165
+#   address_family = "ipv4"
+#   bgp_asn        = var.customer_side_asn1
+#   depends_on = [
+#     aws_dx_connection_confirmation.confirmation_1
+#   ]
+# }
+
+# # provider version >= 4.37.0
+# data "aws_dx_router_configuration" "router_config" {
+#   provider               = aws
+#   virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
+#   router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+# }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router
