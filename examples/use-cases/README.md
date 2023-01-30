@@ -30,6 +30,8 @@ Use Cases | Description
 
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability (**impact**: PacketFabric AWS Dedicated Cloud)
 
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/29165)](https://github.com/hashicorp/terraform-provider-aws/issues/29165) [Bug]: aws_dx_connection data-source reports vlan_id null (**impact**: PacketFabric AWS Hosted Cloud)
+
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID (**impact**: PacketFabric AWS Hosted Cloud)
 
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26432)](https://github.com/hashicorp/terraform-provider-aws/issues/26432) New aws_dx_virtual_interface_router_configuration data source (**impact**: PacketFabric AWS Hosted Cloud)
