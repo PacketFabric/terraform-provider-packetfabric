@@ -75,7 +75,7 @@ func resourceAwsProvisionRead(ctx context.Context, d *schema.ResourceData, m int
 
 func resourceAwsProvisionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
 }
 
 func resourceAwsProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

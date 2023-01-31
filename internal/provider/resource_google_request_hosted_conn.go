@@ -130,7 +130,7 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 
 func resourceGoogeReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
 }
 
 func resourceGoogleReqHostConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

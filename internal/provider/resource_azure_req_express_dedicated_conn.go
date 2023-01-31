@@ -20,7 +20,7 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 		},
 		CreateContext: resourceAzureReqExpressDedicatedConnCreate,
 		ReadContext:   resourceAzureProvisionRead,
-		UpdateContext: resourceAzureProvisionUpdate,
+		UpdateContext: resourceAzureProvisionDedicatedUpdate,
 		DeleteContext: resourceAzureProvisionDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -135,6 +135,11 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 	return diags
+}
+
+func resourceAzureProvisionDedicatedUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
 }
 
 func extractAzureExpressDedicatedConn(d *schema.ResourceData) packetfabric.AzureExpressRouteDedicated {

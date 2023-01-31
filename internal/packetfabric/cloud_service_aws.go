@@ -12,7 +12,8 @@ const hostedConnURI = "/v2/services/cloud/hosted/aws"
 const hostedMktService = "/v2/services/cloud/%s"
 const hostedMktServiceRequestsURI = "/v2/services/requests/%s"
 const dedicatedConnURI = "/v2/services/cloud/dedicated/aws"
-const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
+const updateCloudConnHostedURI = "/v2/services/cloud/hosted/%s"
+const updateCloudConnDedicatedURI = "/v2/services/cloud/dedicated/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
 const cloudServicesURI = "/v2/services/cloud/%s"
 const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
@@ -397,6 +398,26 @@ func (c *PFClient) GetCloudServiceStatus(cloudCID string) (*ServiceState, error)
 
 func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
+}
+
+func (c *PFClient) UpdateServiceHostedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+	formatedURI := fmt.Sprintf(updateCloudConnHostedURI, cloudCID)
+	expectedResp := &CloudServiceConnCreateResp{}
+	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
+}
+
+func (c *PFClient) UpdateServiceDedicatedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+	formatedURI := fmt.Sprintf(updateCloudConnDedicatedURI, cloudCID)
+	expectedResp := &CloudServiceConnCreateResp{}
+	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
 }
 
 // Status can be [ pending, provisioned, rejected ]

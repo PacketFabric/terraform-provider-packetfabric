@@ -132,7 +132,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 
 func resourceAwsReqDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceDedicatedConn)
 }
 
 func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
