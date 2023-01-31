@@ -28,10 +28,9 @@ func resourcePointToPoint() *schema.Resource {
 				Computed: true,
 			},
 			"ptp_circuit_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The point-to-point connection ID.",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The point-to-point connection ID.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -96,7 +95,6 @@ func resourcePointToPoint() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
@@ -142,31 +140,47 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		d.Set("ptp_circuit_id", resp.PtpCircuitID)
 		d.SetId(resp.PtpUUID)
 	}
 	return diags
 }
 
 func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cID, ok := d.GetOk("ptp_circuit_id"); ok {
-		if _, err := c.GetPointToPointInfo(cID.(string)); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-	return diags
+	return diag.Diagnostics{}
 }
 
 func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+
+	if d.HasChange("speed") ||
+		d.HasChange("media") ||
+		d.HasChange("pop") ||
+		d.HasChange("zone") ||
+		d.HasChange("autoneg") ||
+		d.HasChange("published_quote_line_uuid") {
+		return diag.Errorf("only the description or subscription term field can be updated")
+	}
+
 	if desc, ok := d.GetOk("description"); ok {
 		if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
 			return diag.FromErr(err)
 		}
+	}
+
+	if subTerm, ok := d.GetOk("subscription_term"); ok {
+		return diag.Errorf("please provide a subscription term")
+	} else {
+		billing := packetfabric.BillingUpgrade{
+			SubscriptionTerm: subTerm.(int),
+		}
+		cID := d.Get("ptp_circuit_id").(string)
+		if _, err := c.ModifyBilling(cID, billing); err != nil {
+			return diag.FromErr(err)
+		}
+		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return diags
 }
@@ -175,8 +189,8 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if cID := d.Id(); cID != "" {
-		if err := c.DeletePointToPointService(cID); err != nil {
+	if ptpUUID := d.Id(); ptpUUID != "" {
+		if err := c.DeletePointToPointService(ptpUUID); err != nil {
 			return diag.FromErr(err)
 		} else {
 			deleteOk := make(chan bool)
@@ -184,7 +198,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 			ticker := time.NewTicker(10 * time.Second)
 			go func() {
 				for range ticker.C {
-					if c.IsPointToPointDeleteComplete(cID) {
+					if c.IsPointToPointDeleteComplete(ptpUUID) {
 						ticker.Stop()
 						deleteOk <- true
 					}

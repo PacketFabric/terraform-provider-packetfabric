@@ -162,47 +162,6 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 
 }
 
-func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		if desc, descOk := d.GetOk("description"); descOk {
-			descUpdate := packetfabric.DescriptionUpdate{
-				Description: desc.(string),
-			}
-			if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), descUpdate); err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	}
-	return diags
-}
-
-func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			deleteOk := make(chan bool)
-			defer close(deleteOk)
-			fn := func() (*packetfabric.ServiceState, error) {
-				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
-			}
-			go c.CheckServiceStatus(deleteOk, fn)
-			if !<-deleteOk {
-				return diag.FromErr(err)
-			}
-			d.SetId("")
-		}
-	}
-	return diags
-}
-
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	router := packetfabric.CloudRouter{}
 	if scope, ok := d.GetOk("scope"); ok {

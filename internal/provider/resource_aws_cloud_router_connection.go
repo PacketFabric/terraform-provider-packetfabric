@@ -149,51 +149,11 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceRouterConnectionAwsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
-	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
-	}
-	connCid := d.Get("id").(string)
-	description := d.Get("description").(string)
-	_, err := c.UpdateCloudRouterConnection(cID.(string), connCid, packetfabric.DescriptionUpdate{Description: description})
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
+	return resourceCloudRouterConnUpdate(ctx, d, m)
 }
 
 func resourceRouterConnectionAwsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
-	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
-	}
-	connCID := d.Get("id").(string)
-	resp, err := c.DeleteCloudRouterConnection(cID.(string), connCID)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	deleteOkCh := make(chan bool)
-	defer close(deleteOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID)
-	}
-	go c.CheckServiceStatus(deleteOkCh, fn)
-	if !<-deleteOkCh {
-		return diag.FromErr(err)
-	}
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "AWS Router connection result",
-		Detail:   resp.Message,
-	})
-	d.SetId("")
-	return diags
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {

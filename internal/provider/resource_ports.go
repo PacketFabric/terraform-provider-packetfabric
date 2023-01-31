@@ -35,7 +35,6 @@ func resourceInterfaces() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -130,6 +129,11 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+
+	if d.HasChange("speed") || d.HasChange("media") || d.HasChange("pop") || d.HasChange("zone") || d.HasChange("nni") {
+		return diag.Errorf("only the description or subscription term field can be updated")
+	}
+
 	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
@@ -174,6 +178,7 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
+
 	// Update if payload contains Autoneg and Description
 	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
 		if desc, descOk := d.GetOk("description"); descOk {
@@ -193,6 +198,15 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
 		_, enableChange := d.GetChange("enabled")
 		err = _togglePortStatus(c, enableChange.(bool), d.Id())
+	}
+
+	// Update port term
+	if subTerm, ok := d.GetOk("subscription_term"); ok {
+		billing := packetfabric.BillingUpgrade{
+			SubscriptionTerm: subTerm.(int),
+		}
+		_, err = c.ModifyBilling(d.Id(), billing)
+		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return
 }

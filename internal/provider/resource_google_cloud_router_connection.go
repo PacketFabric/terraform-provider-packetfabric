@@ -140,20 +140,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGoogleCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		desc := d.Get("description")
-		descUpdate := packetfabric.DescriptionUpdate{
-			Description: desc.(string),
-		}
-		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
-			diags = diag.FromErr(err)
-		}
-	}
-	return diags
+	return resourceCloudRouterConnUpdate(ctx, d, m)
 }
 
 func resourceGoogleCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

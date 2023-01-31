@@ -59,7 +59,6 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -127,35 +126,11 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAzureExpressRouteConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		desc := d.Get("description")
-		descUpdate := packetfabric.DescriptionUpdate{
-			Description: desc.(string),
-		}
-		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
-			diags = diag.FromErr(err)
-		}
-	}
-	return diags
+	return resourceCloudRouterConnUpdate(ctx, d, m)
 }
 
 func resourceAzureExpressRouteConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			d.SetId("")
-		}
-	}
-	return diags
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractAzureExpressRouteConn(d *schema.ResourceData) packetfabric.AzureExpressRouteConn {

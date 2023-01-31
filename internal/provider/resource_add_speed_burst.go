@@ -14,7 +14,7 @@ func resourceAddSpeedBurst() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAddSpeedBurstCreate,
 		ReadContext:   resourceAddSpeedBurstRead,
-		UpdateContext: resourceServiceSettingsUpdate,
+		UpdateContext: resourceAddSpeedBurstUpdate,
 		DeleteContext: resourceAddSpeedBurstDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -71,21 +71,12 @@ func resourceAddSpeedBurstRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	settings := extractServiceSettings(d)
-	if vcCID, ok := d.GetOk("vc_circuit_id"); ok {
-		if _, err := c.UpdateServiceSettings(vcCID.(string), settings); err != nil {
-			return diag.FromErr(err)
-		}
-	} else {
-		if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-	return diags
+func resourceAddSpeedBurstUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return diag.Diagnostics{diag.Diagnostic{
+		Severity: diag.Error,
+		Summary:  "Update a VC burst is not supported",
+		Detail:   "If you want to update a VC burst, please perform a destroy, change your burst settings, then re-apply.",
+	}}
 }
 
 func resourceAddSpeedBurstDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
