@@ -132,8 +132,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	awsBack := extractBack(d)
-	resp, err := fn(awsBack)
+	backboneVC := extractBack(d)
+	resp, err := fn(backboneVC)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -183,42 +183,35 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("bandwidth.0.longhaul_type") ||
-		d.HasChange("interface_a.0.port_circuit_id") ||
-		d.HasChange("interface_z.0.port_circuit_id") ||
-		d.HasChange("epl") {
-		return diag.Errorf("longhaul_type, port_circuit_id or epl cannot be updated")
+	if d.HasChange("epl") {
+		return diag.Errorf("epl cannot be updated")
 	}
 
 	settings := extractServiceSettings(d)
-	if vcCID, ok := d.GetOk("vc_circuit_id"); ok {
-		if _, err := c.UpdateServiceSettings(vcCID.(string), settings); err != nil {
-			return diag.FromErr(err)
-		}
+	backboneVC := extractBack(d)
 
-		if d.HasChange("bandwidth.0.speed") || d.HasChange("bandwidth.0.subscription_term") {
-			billing := packetfabric.BillingUpgrade{}
-			bandwidth := d.Get("bandwidth.0").(map[string]interface{})
-			if subTerm, ok := bandwidth["subscription_term"]; ok {
-				billing.SubscriptionTerm = subTerm.(int)
-			}
-			if speed, ok := bandwidth["speed"]; ok {
-				billing.Speed = speed.(string)
-			}
-			if _, err := c.ModifyBilling(vcCID.(string), billing); err != nil {
-				return diag.FromErr(err)
-			}
-			if subTerm, ok := bandwidth["subscription_term"]; ok {
-				_ = d.Set("bandwidth.0.subscription_term", subTerm.(int))
-			}
-			if speed, ok := bandwidth["speed"]; ok {
-				_ = d.Set("bandwidth.0.speed", speed.(string))
+	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
+		return diag.FromErr(err)
+	}
+	updateOk := make(chan bool)
+	defer close(updateOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(d.Id()); ok {
+				ticker.Stop()
+				updateOk <- true
 			}
 		}
-	} else {
-		if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
-			return diag.FromErr(err)
-		}
+	}()
+	<-updateOk
+
+	billing := packetfabric.BillingUpgrade{
+		Speed:            backboneVC.Bandwidth.Speed,
+		SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
+	}
+	if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+		return diag.FromErr(err)
 	}
 
 	return diags
@@ -253,26 +246,26 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func extractBack(d *schema.ResourceData) packetfabric.Backbone {
-	awsBack := packetfabric.Backbone{
+	backboneVC := packetfabric.Backbone{
 		Description: d.Get("description").(string),
 		Epl:         d.Get("epl").(bool),
 	}
 	for _, interfA := range d.Get("interface_a").(*schema.Set).List() {
-		awsBack.Interfaces = append(awsBack.Interfaces, extractBackboneInterface(interfA.(map[string]interface{})))
+		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfA.(map[string]interface{})))
 	}
 	for _, interfZ := range d.Get("interface_z").(*schema.Set).List() {
-		awsBack.Interfaces = append(awsBack.Interfaces, extractBackboneInterface(interfZ.(map[string]interface{})))
+		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfZ.(map[string]interface{})))
 	}
 	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
-		awsBack.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
+		backboneVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
 	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
-		awsBack.RateLimitIn = rateLimitIn.(int)
+		backboneVC.RateLimitIn = rateLimitIn.(int)
 	}
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
-		awsBack.RateLimitOut = rateLimitOut.(int)
+		backboneVC.RateLimitOut = rateLimitOut.(int)
 	}
-	return awsBack
+	return backboneVC
 }
 
 func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
