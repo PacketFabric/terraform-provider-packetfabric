@@ -47,10 +47,10 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 			billing := packetfabric.BillingUpgrade{
 				Speed: speed.(string),
 			}
-			if _, err := c.ModifyBilling(cid.(string), billing); err != nil {
+			if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 				return diag.FromErr(err)
 			}
-			_ = d.Set("speed", speed.(int))
+			_ = d.Set("speed", speed.(string))
 		}
 	}
 	return diags
