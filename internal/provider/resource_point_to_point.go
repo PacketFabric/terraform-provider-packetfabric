@@ -140,7 +140,7 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		d.Set("ptp_circuit_id", resp.PtpCircuitID)
+		_ = d.Set("ptp_circuit_id", resp.PtpCircuitID)
 		d.SetId(resp.PtpUUID)
 	}
 	return diags
