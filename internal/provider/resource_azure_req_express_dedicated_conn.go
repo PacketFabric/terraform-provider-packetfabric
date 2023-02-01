@@ -30,27 +30,30 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "A brief description of this connection.",
 			},
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired zone of the new connection.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the dedicated port should be provisioned (the cloud on-ramp).",
 			},
@@ -69,30 +72,35 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"10Gbps", "100Gbps"}, true),
 				Description:  "The capacity of the dedicated cloud port.\n\n\tEnum: [\"10Gbps\" \"100Gbps\"]",
 			},
 			"loa": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsBase64,
 				Description:  "A base64 encoded string of a PDF for the LOA that you generated from the Azure portal",
 			},
 			"encapsulation": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"dot1q", "qinq"}, true),
 				Description:  "Specify either QinQ and Dot1Q encapsulation.\n\n\tEnum: [\"dot1q\" \"qinq\"]",
 			},
 			"port_category": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"primary", "secondary"}, true),
 				Description:  "Whether you intend to use this port for the primary or secondary connection in your ExpressRoute Direct circuit.\n\n\tEnum: [\"primary\" \"secondary\"]",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},

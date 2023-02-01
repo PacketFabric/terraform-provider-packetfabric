@@ -23,6 +23,7 @@ func resourceAwsRequestHostConn() *schema.Resource {
 			"aws_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_AWS_ACCOUNT_ID", nil),
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description: "The AWS account ID to connect with. Must be 12 characters long. " +
@@ -31,6 +32,7 @@ func resourceAwsRequestHostConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -46,29 +48,34 @@ func resourceAwsRequestHostConn() *schema.Resource {
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the hosted connection should be provisioned (the cloud on-ramp).",
 			},
 			"port": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the PacketFabric port you want to connect to AWS. This starts with \"PF-AP-\".",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The desired zone of the new connection.",
 			},
 			"speed": {

@@ -24,22 +24,26 @@ func resourceProvision() map[string]*schema.Schema {
 		"vc_request_uuid": {
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 			Description: "UUID of the service request you received from the marketplace customer.",
 		},
 		"port_circuit_id": {
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 			Description: "The circuit ID of the port on which you want to provision the request. This starts with \"PF-AP-\".",
 		},
 		"vlan": {
 			Type:         schema.TypeInt,
 			Required:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.IntBetween(4, 4094),
 			Description:  "Valid VLAN range is from 4-4094, inclusive.",
 		},
 		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "A brief description of this connection.",
 		},
 	}

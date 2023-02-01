@@ -14,11 +14,9 @@ func resourceOracleMktCloudConn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceOracleMktCloudConnCreate,
 		ReadContext:   resourceOracleMktCloudConnRead,
-		UpdateContext: resourceOracleMktCloudConnUpdate,
 		DeleteContext: resourceOracleMktCloudConnDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
@@ -30,23 +28,27 @@ func resourceOracleMktCloudConn() *schema.Resource {
 			"routing_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The routing ID of the marketplace provider that will be receiving this request.\n\n\tExample: TR-1RI-OQ85",
 			},
 			"market": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The market code (e.g. \"ATL\" or \"DAL\") in which you would like the marketplace provider to provision their side of the connection.\n\n\tIf the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in \"DAL5\", enter \"DAL\" for the market).",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "A brief description of this connection.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -55,24 +57,28 @@ func resourceOracleMktCloudConn() *schema.Resource {
 			"vc_ocid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "OCID of the FastConnect virtual circuit that you created from the Oracle side.",
 			},
 			"region": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The region in which you created the FastConnect virtual circuit.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the connection should be provisioned (the cloud on-ramp).",
 			},
 			"service_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the marketplace service being requested.",
 			},
@@ -96,10 +102,6 @@ func resourceOracleMktCloudConnCreate(ctx context.Context, d *schema.ResourceDat
 func resourceOracleMktCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
-}
-
-func resourceOracleMktCloudConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceOracleMktCloudConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

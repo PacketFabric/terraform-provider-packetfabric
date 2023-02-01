@@ -15,13 +15,11 @@ func resourceRejectRequestedService() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceRejectRequestedServiceCreate,
 		ReadContext:   resourceRequestedServiceRead,
-		UpdateContext: resourceRequestedServiceUpdate,
 		DeleteContext: resourceRequestedServiceDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -31,6 +29,7 @@ func resourceRejectRequestedService() *schema.Resource {
 			"vc_request_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the connection request you received from the marketplace user.",
 			},

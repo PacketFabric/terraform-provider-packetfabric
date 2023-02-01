@@ -30,30 +30,35 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -74,12 +79,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). ",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},

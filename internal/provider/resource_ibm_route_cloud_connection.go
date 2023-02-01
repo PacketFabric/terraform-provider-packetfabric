@@ -30,24 +30,28 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -56,6 +60,7 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"ibm_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_IBM_ACCOUNT_ID", nil),
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description: "Your IBM account ID. " +
@@ -64,17 +69,20 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"ibm_bgp_asn": {
 				Type:        schema.TypeInt,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Enter an ASN to use with your BGP session. This should be the same ASN you used for your Cloud Router.",
 			},
 			"ibm_bgp_cer_cidr": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.",
 			},
 			"ibm_bgp_ibm_cidr": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.",
 			},
@@ -87,6 +95,7 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which you want to provision the connection (the on-ramp).",
 			},
@@ -99,12 +108,14 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired availability zone of the connection.",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},

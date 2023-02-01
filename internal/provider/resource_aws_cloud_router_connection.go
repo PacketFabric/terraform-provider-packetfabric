@@ -31,11 +31,13 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"circuit_id": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"aws_account_id": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PF_AWS_ACCOUNT_ID", nil),
 				Description: "The AWS account ID to connect with. Must be 12 characters long. " +
 					"Can also be set with the PF_AWS_ACCOUNT_ID environment variable.",
@@ -43,6 +45,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -51,12 +54,14 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
@@ -68,16 +73,19 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"pop": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The POP in which you want to provision the connection.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The desired AWS availability zone of the new connection.",
 			},
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. ",
 			},
@@ -89,6 +97,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line which this connection should be associated.",
 			},

@@ -29,6 +29,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"account_uuid": {
 						Type:         schema.TypeString,
 						Required:     true,
+						ForceNew:     true,
 						DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 						ValidateFunc: validation.IsUUID,
 						Description: "The UUID for the billing account that should be billed. " +
@@ -48,6 +49,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"longhaul_type": {
 						Type:        schema.TypeString,
 						Required:    true,
+						ForceNew:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
@@ -61,6 +63,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
+						ForceNew:    true,
 						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
@@ -90,6 +93,7 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
+						ForceNew:    true,
 						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
@@ -124,11 +128,13 @@ func resourceBackbone() map[string]*schema.Schema {
 		"epl": {
 			Type:        schema.TypeBool,
 			Required:    true,
+			ForceNew:    true,
 			Description: "If true, the circuit will be an EPL connection rather than an EVPL. Default is false.\n\n\tEPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.\n\n\tEVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.\n\n\tFor more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).",
 		},
 		"flex_bandwidth_id": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 		},
 	}
@@ -189,10 +195,6 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("epl") {
-		return diag.Errorf("epl cannot be updated")
-	}
-
 	settings := extractServiceSettings(d)
 	backboneVC := extractBack(d)
 
@@ -221,15 +223,6 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	return diags
-}
-
-// VC Marketplaces don't have an UPDATE mechanism (both backbone or hosted cloud marketplace)
-func resourceUpdateMarketplace(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Error,
-		Summary:  "Update a Marketplace Service Request is not supported",
-		Detail:   "If you want to update a Marketplace Service Request, please perform a destroy, change your Service Request, then re-apply.",
-	}}
 }
 
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string) (*packetfabric.BackboneDeleteResp, error)) diag.Diagnostics {

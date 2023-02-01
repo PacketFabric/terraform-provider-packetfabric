@@ -14,11 +14,9 @@ func resourceAddSpeedBurst() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAddSpeedBurstCreate,
 		ReadContext:   resourceAddSpeedBurstRead,
-		UpdateContext: resourceAddSpeedBurstUpdate,
 		DeleteContext: resourceAddSpeedBurstDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
@@ -30,12 +28,14 @@ func resourceAddSpeedBurst() *schema.Resource {
 			"vc_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the virtual circuit that you are bursting.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Speed in Mbps of the burst. This bandwidth will be added to the existing circuit speed. If an existing burst exists, this speed burst will replace the existing one. Must be a multiple of 100Mbps.",
 			},
@@ -51,9 +51,20 @@ func resourceAddSpeedBurstCreate(ctx context.Context, d *schema.ResourceData, m 
 		if speed, ok := d.GetOk("speed"); ok {
 			if _, err := c.AddSpeedBurstToCircuit(vcCID.(string), speed.(string)); err != nil {
 				return diag.FromErr(err)
-			} else {
-				d.SetId(vcCID.(string))
 			}
+			createOk := make(chan bool)
+			defer close(createOk)
+			ticker := time.NewTicker(10 * time.Second)
+			go func() {
+				for range ticker.C {
+					if ok := c.IsBackboneComplete(vcCID.(string)); ok {
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}()
+			<-createOk
+			d.SetId(vcCID.(string))
 		}
 	}
 	return diags
@@ -71,14 +82,6 @@ func resourceAddSpeedBurstRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func resourceAddSpeedBurstUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Error,
-		Summary:  "Update a VC burst is not supported",
-		Detail:   "If you want to update a VC burst, please perform a destroy, change your burst settings, then re-apply.",
-	}}
-}
-
 func resourceAddSpeedBurstDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -86,5 +89,18 @@ func resourceAddSpeedBurstDelete(ctx context.Context, d *schema.ResourceData, m 
 	if _, err := c.DeleteSpeedBurst(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(d.Id()); ok {
+				ticker.Stop()
+				createOk <- true
+			}
+		}
+	}()
+	<-createOk
+	d.SetId("")
 	return diags
 }

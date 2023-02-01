@@ -14,11 +14,9 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceThirdPartyVirtualCircuitCreate,
 		ReadContext:   resourceThirdPartyVirtualCircuitRead,
-		UpdateContext: resourceThirdPartyVirtualCircuitUpdate,
 		DeleteContext: resourceThirdPartyVirtualCircuitDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
@@ -30,39 +28,46 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 			"routing_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The routing ID of the marketplace provider that will be receiving this request.\n\n\tExample: TR-1RI-OQ85",
 			},
 			"market": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The market code (e.g. \"ATL\" or \"DAL\") in which you would like the marketplace provider to provision their side of the connection.\n\n\tIf the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in \"DAL5\", enter \"DAL\" for the market).",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "A brief description of this connection.",
 			},
 			"rate_limit_in": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The upper bound, in Mbps, to limit incoming data by.",
 			},
 			"rate_limit_out": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The upper bound, in Mbps, to limit outgoing data by.",
 			},
 			"bandwidth": {
 				Type:     schema.TypeSet,
 				Required: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"account_uuid": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 							ValidateFunc: validation.IsUUID,
 							Description: "The UUID for the billing account that should be billed. " +
@@ -71,18 +76,21 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 						"speed": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice(ixVcSpeedOptions(), true),
 							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 						},
 						"subscription_term": {
 							Type:         schema.TypeInt,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 							Description:  "The billing term in months. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
 							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
@@ -92,21 +100,25 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 			"interface": {
 				Type:     schema.TypeSet,
 				Required: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"port_circuit_id": {
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
 							Type:        schema.TypeInt,
 							Required:    true,
+							ForceNew:    true,
 							Description: "Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
 							Required:    true,
+							ForceNew:    true,
 							Description: "Whether the interface should be untagged.",
 						},
 					},
@@ -115,11 +127,13 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 			"service_uuid": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "UUID of the marketplace service being requested.",
 			},
 			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 			},
 		},
@@ -153,10 +167,6 @@ func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(err)
 	}
 	return diags
-}
-
-func resourceThirdPartyVirtualCircuitUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceUpdateMarketplace(ctx, d, m)
 }
 
 func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

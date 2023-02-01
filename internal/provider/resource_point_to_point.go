@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -42,12 +41,14 @@ func resourcePointToPoint() *schema.Resource {
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"1Gbps", "10Gbps", "40Gbps", "100Gbps"}, true),
 				Description:  "The capacity for this connection.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
 			},
 			"media": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice(pointToPointMediaOptions(), true),
 				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
@@ -59,29 +60,34 @@ func resourcePointToPoint() *schema.Resource {
 						"pop": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Point of presence in which the port should be located.",
 						},
 						"zone": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Availability zone of the port.",
 						},
 						"customer_site_code": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Unique site code of the customer's equipment.",
 						},
 						"autoneg": {
 							Type:        schema.TypeBool,
 							Required:    true,
+							ForceNew:    true,
 							Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with ports greater than 1Gbps.",
 						},
 						"loa": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsBase64,
 							Description:  "A base64 encoded string of a PDF of a LOA.",
 						},
@@ -91,6 +97,7 @@ func resourcePointToPoint() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -105,6 +112,7 @@ func resourcePointToPoint() *schema.Resource {
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
@@ -156,16 +164,6 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	err := checkUpdatableFieldsPTP(ctx, d, m)
-	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Error updating resource",
-			Detail:   err.Error(),
-		})
-		return diags
-	}
-
 	if desc, ok := d.GetOk("description"); ok {
 		if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
 			return diag.FromErr(err)
@@ -185,21 +183,6 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return diags
-}
-
-func checkUpdatableFieldsPTP(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-
-	if d.HasChange("speed") ||
-		d.HasChange("media") ||
-		d.HasChange("pop") ||
-		d.HasChange("zone") ||
-		d.HasChange("autoneg") ||
-		d.HasChange("published_quote_line_uuid") {
-		return errors.New("only the description or subscription term field can be updated")
-	}
-	return nil
 }
 
 func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

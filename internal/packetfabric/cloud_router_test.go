@@ -23,7 +23,6 @@ func init() {
 
 var clrExpectedResp = CloudRouterResponse{
 	CircuitID: "PF-L3-CUST-2",
-	Scope:     "private",
 	Asn:       4556,
 	Name:      "Super Cool Cloud router",
 	Capacity:  "10Gbps",
@@ -37,7 +36,6 @@ var clrExpectedResp = CloudRouterResponse{
 func Test_CreateCloudRouter(t *testing.T) {
 
 	router := CloudRouter{
-		Scope:       "private",
 		Asn:         4556,
 		Name:        "New Cloud Router",
 		AccountUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b",
@@ -110,7 +108,6 @@ func _callDeleteRouter(payload interface{}) (interface{}, error) {
 func _buildMockCloudRouterResp() []byte {
 	return []byte(`{
 		"circuit_id": "PF-L3-CUST-2",
-		"scope": "private",
 		"asn": 4556,
 		"name": "Super Cool Cloud router",
 		"capacity": "10Gbps",
@@ -128,7 +125,6 @@ func _buildMockCloudRouterResp() []byte {
 func _buildMockCloudRouterResps() []byte {
 	return []byte(`[{
 		"circuit_id": "PF-L3-CUST-2",
-		"scope": "private",
 		"asn": 4556,
 		"name": "Super Cool Cloud router",
 		"capacity": "10Gbps",
@@ -146,7 +142,6 @@ func _buildMockCloudRouterResps() []byte {
 func _buildMockCloudRouterUpdateResp() []byte {
 	return []byte(`{
 		"circuit_id": "PF-L3-CUST-2",
-		"scope": "private",
 		"asn": 4556,
 		"name": "Super Cool Cloud router",
 		"capacity": "10Gbps",

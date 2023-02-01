@@ -31,6 +31,7 @@ func resourceHostedIbmConn() *schema.Resource {
 			"ibm_account_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_IBM_ACCOUNT_ID", nil),
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description: "Your IBM account ID. " +
@@ -39,17 +40,20 @@ func resourceHostedIbmConn() *schema.Resource {
 			"ibm_bgp_asn": {
 				Type:        schema.TypeInt,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Enter an ASN to use with your BGP session. This should be the same ASN you used for your Cloud Router.",
 			},
 			"ibm_bgp_cer_cidr": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.",
 			},
 			"ibm_bgp_ibm_cidr": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.",
 			},
@@ -62,6 +66,7 @@ func resourceHostedIbmConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -70,24 +75,28 @@ func resourceHostedIbmConn() *schema.Resource {
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which you want to provision the connection (the on-ramp).",
 			},
 			"port": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The port to connect to IBM.",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {
@@ -99,12 +108,14 @@ func resourceHostedIbmConn() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired availability zone of the connection.",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},

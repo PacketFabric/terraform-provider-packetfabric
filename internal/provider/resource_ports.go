@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -31,6 +30,7 @@ func resourceInterfaces() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -50,23 +50,27 @@ func resourceInterfaces() *schema.Resource {
 			"media": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
 			"nni": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.\n\n\tBy default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Point of presence in which the port should be located.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Speed of the port.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
 			},
@@ -79,6 +83,7 @@ func resourceInterfaces() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Availability zone of the port.",
 			},
@@ -131,35 +136,11 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	err1 := checkUpdatableFieldsInterface(ctx, d, m)
-	if err1 != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Error updating resource",
-			Detail:   err1.Error(),
-		})
-		return diags
-	}
-
-	_, err2 := _extractUpdateFn(ctx, d, m)
-	if err2 != nil {
-		return diag.FromErr(err2)
+	_, err := _extractUpdateFn(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	return diags
-}
-
-func checkUpdatableFieldsInterface(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-
-	if d.HasChange("speed") ||
-		d.HasChange("media") ||
-		d.HasChange("pop") ||
-		d.HasChange("zone") ||
-		d.HasChange("nni") {
-		return errors.New("only the description or subscription term field can be updated")
-	}
-	return nil
 }
 
 func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

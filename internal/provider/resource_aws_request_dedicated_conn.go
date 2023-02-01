@@ -32,11 +32,13 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			"aws_region": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The region that the new connection will connect to.\n\n\tExample: us-west-1",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -45,16 +47,19 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "A brief description of this connection.",
 			},
 			"zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The desired AWS availability zone of the new connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The POP in which the dedicated port should be provisioned (the cloud on-ramp).\n\n\tExample: DAL1",
 			},
 			"subscription_term": {
@@ -70,21 +75,25 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
 			},
 			"speed": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The desired capacity of the port.\n\n\tEnum: [\"1Gps\", \"10Gbps\"]",
 			},
 			"should_create_lag": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Create the dedicated connection as a LAG interface.",
 			},
 			"loa": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "A base64 encoded string of a PDF of the LOA that AWS provided.\n\n\tExample: SSBhbSBhIFBERg==",
 			},
 		},

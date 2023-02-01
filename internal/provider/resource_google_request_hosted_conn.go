@@ -30,21 +30,23 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"google_pairing_key": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.",
 			},
 			"google_vlan_attachment_name": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The name you used for your VLAN attachment in Google.",
 			},
@@ -57,22 +59,26 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			"port": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The circuit ID of the PacketFabric port you wish to connect to Google. This starts with \"PF-AP-\".",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the hosted connection should be provisioned (the cloud on-ramp).",
 			},
