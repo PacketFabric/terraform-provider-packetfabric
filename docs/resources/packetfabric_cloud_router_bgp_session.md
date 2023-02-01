@@ -157,7 +157,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 - `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
 - `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.
 - `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
-- `nat` (Block Set) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--nat))
+- `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--nat))
 - `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.
 - `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
@@ -212,6 +212,9 @@ Required:
 Optional:
 
 - `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
+
+
+
 
 
 ## Import
