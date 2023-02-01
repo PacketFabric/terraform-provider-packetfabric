@@ -40,7 +40,6 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 		}
 		_ = d.Set("description", resp.Description)
 	}
-	// speed only for hosted cloud
 	if d.HasChange("speed") {
 		billing := packetfabric.BillingUpgrade{}
 		if speed, ok := d.GetOk("speed"); ok {
@@ -75,17 +74,6 @@ func resourceServicesDedicatedUpdate(ctx context.Context, d *schema.ResourceData
 		d.HasChange("zone") {
 		return diag.Errorf("only the subscription_term or service_class field can be updated")
 	}
-	// Updating the description for Dedicated Cloud is not supported a this time
-	// if desc, ok := d.GetOk("description"); !ok {
-	// 	return diag.Errorf("please provide a valid description for Cloud Service")
-	// } else {
-	// 	resp, err := fn(desc.(string), cloudCID.(string))
-	// 	if err != nil {
-	// 		return diag.FromErr(err)
-	// 	}
-	// 	_ = d.Set("description", resp.Description)
-	// }
-	// subscription_term and service_class only for dedicated cloud
 	if d.HasChange("subscription_term") || d.HasChange("service_class") {
 		billing := packetfabric.BillingUpgrade{}
 		if subTerm, ok := d.GetOk("subscription_term"); ok {
