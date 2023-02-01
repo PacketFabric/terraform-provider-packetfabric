@@ -47,6 +47,7 @@ Read-Only:
 - `customer_uuid` (String) The Customer UUID.
 - `description` (String) The service description.
 - `interfaces` (List of Object) (see [below for nested schema](#nestedatt--backbone_services--interfaces))
+- `flex_bandwidth_id` (String) The flex bandwidth ID.
 - `mode` (String) The service mode.
 - `rate_limit_in` (Number) The rate limit in.
 - `rate_limit_out` (Number) The rate limit out.

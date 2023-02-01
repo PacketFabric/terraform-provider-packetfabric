@@ -98,6 +98,11 @@ func datasourceBackboneServices() *schema.Resource {
 							Computed:    true,
 							Description: "The rate limit out.",
 						},
+						"flex_bandwidth_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The flex bandwidth ID.",
+						},
 						"time_created": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -263,6 +268,7 @@ func flattenBackboneService(services *[]packetfabric.Services) []interface{} {
 		flatten["description"] = service.Description
 		flatten["rate_limit_in"] = service.RateLimitIn
 		flatten["rate_limit_out"] = service.RateLimitOut
+		flatten["flex_bandwidth_id"] = service.FlexBandwidthID
 		flatten["time_created"] = service.TimeCreated
 		flatten["time_updated"] = service.TimeUpdated
 		flatten["interfaces"] = flattenBackBoneInterfaces(&service.Interfaces)

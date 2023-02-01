@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.7.0"
+      version = ">= 0.8.0"
     }
   }
 }
@@ -124,4 +124,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
     speed             = var.pf_vc_speed
     subscription_term = var.pf_vc_subterm
   }
+}
+output "packetfabric_backbone_virtual_circuit_1" {
+  value = packetfabric_backbone_virtual_circuit.vc_1
 }

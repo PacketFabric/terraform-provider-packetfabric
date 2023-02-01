@@ -94,6 +94,8 @@ Read-Only:
 - `private_prefix` (String) The private prefix of this DNAT mapping.
 - `public_prefix` (String) The public prefix of this DNAT mapping.
 
+
+
 <a id="nestedblock--bgp_sessions--prefixes"></a>
 ### Nested Schema for `bgp_sessions.prefixes`
 
@@ -107,4 +109,6 @@ Optional:
 - `order` (Number) The order of the bgp prefix against the others.
 - `prefix` (String) The actual IP Prefix of the bgp prefix.
 - `type` (String) Indicates whether the prefix is in or out.
+
+
 
