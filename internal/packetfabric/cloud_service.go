@@ -19,12 +19,13 @@ const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
 
 type Backbone struct {
-	Description  string              `json:"description"`
-	Bandwidth    Bandwidth           `json:"bandwidth"`
-	Interfaces   []BackBoneInterface `json:"interfaces"`
-	RateLimitIn  int                 `json:"rate_limit_in"`
-	RateLimitOut int                 `json:"rate_limit_out"`
-	Epl          bool                `json:"epl"`
+	Description     string              `json:"description"`
+	Bandwidth       Bandwidth           `json:"bandwidth"`
+	Interfaces      []BackBoneInterface `json:"interfaces"`
+	RateLimitIn     int                 `json:"rate_limit_in"`
+	RateLimitOut    int                 `json:"rate_limit_out"`
+	Epl             bool                `json:"epl"`
+	FlexBandwidthID string              `json:"flex_bandwidth_id,omitempty"`
 }
 
 type BackBoneInterface struct {
@@ -132,7 +133,7 @@ type Services struct {
 	Description     string             `json:"description,omitempty"`
 	TimeCreated     string             `json:"time_created,omitempty"`
 	TimeUpdated     string             `json:"time_updated,omitempty"`
-	FlexBandwidthID interface{}        `json:"flex_bandwidth_id,omitempty"`
+	FlexBandwidthID string             `json:"flex_bandwidth_id,omitempty"`
 	AccountUUID     string             `json:"account_uuid,omitempty"`
 	RateLimitIn     int                `json:"rate_limit_in,omitempty"`
 	RateLimitOut    int                `json:"rate_limit_out,omitempty"`

@@ -117,7 +117,7 @@ func resourceIxVC() *schema.Resource {
 			"flex_bandwidth_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "If you are using flex bandwidth for the connection, enter the connection ID of the flex bandwidth container. This starts with \"PF-AB-\"",
+				Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 			},
 		},
 	}
