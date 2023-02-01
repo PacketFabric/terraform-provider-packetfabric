@@ -10,23 +10,23 @@ variable "tag_name" {
 # Port
 variable "pf_port_pop1" {
   type    = string
-  default = "PDX1"
+  default = "BOS1"
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A" # login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+  default = "D"
 }
 variable "pf_port_pop2" {
   type    = string
-  default = "NYC4"
+  default = "LAX2"
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "A"
+  default = "D"
 }
 variable "pf_port_media" {
   type    = string
-  default = "LX"
+  default = "LR"
 }
 variable "pf_port_subterm" {
   type    = number
@@ -38,24 +38,37 @@ variable "pf_port_autoneg" {
 }
 variable "pf_port_speed" {
   type    = string
-  default = "1Gbps"
+  default = "10Gbps"
 }
 variable "pf_port_nni" {
   type    = bool
   default = false
 }
 
-# Cross connect
-variable "pf_document_uuid1" {
-  type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e" # use API /v2/documents to get UUID
+# Flex Bandwidth container
+variable "pf_flex_subscription_term" {
+  type    = number
+  default = 1 # default 1 month
 }
-variable "pf_document_uuid2" {
+variable "pf_flex_capacity" {
   type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
+  default = "100Gbps" # 50Gbps 100Gbps 150Gbps 200Gbps 250Gbps 300Gbps 350Gbps 400Gbps 450Gbps 500Gbps
 }
 
-# Virtual Circuit
+# Virtual Circuits 
+variable "pf_vc_longhaul_type" {
+  type    = string
+  default = "dedicated"
+}
+variable "pf_vc_speed" {
+  type    = string
+  default = "1Gbps" # 1Gbps - 2Gbps
+}
+variable "pf_vc_subterm" {
+  type    = number
+  default = 1 # default 1 month
+}
+# VLANs for VC1
 variable "pf_vc_vlan1" {
   type    = number
   default = 145
@@ -64,15 +77,12 @@ variable "pf_vc_vlan2" {
   type    = number
   default = 146
 }
-variable "pf_vc_longhaul_type" {
-  type    = string
-  default = "dedicated"
-}
-variable "pf_vc_speed" {
-  type    = string
-  default = "200Mbps"
-}
-variable "pf_vc_subterm" {
+# VLANs for VC2
+variable "pf_vc_vlan1" {
   type    = number
-  default = 1 # default 1 month
+  default = 147
+}
+variable "pf_vc_vlan2" {
+  type    = number
+  default = 148
 }

@@ -11,6 +11,7 @@ Use Cases | Description
 [cloud_router_google_azure](./cloud_router_google_azure) | Connect Google and Azure Clouds using a Cloud Router
 [cloud_router_ibm_oracle](./cloud_router_ibm_oracle) | Connect Oracle and IBM Clouds using a Cloud Router
 [dedicated_cloud_aws](./dedicated_cloud_aws) | Create Dedicated Cloud Connection on AWS
+[flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
 [hosted_cloud_aws](./hosted_cloud_aws) | Create a Port and an AWS Hosted Cloud Connection
 [hosted_cloud_google](./hosted_cloud_google) | Create a Port and a Google Hosted Cloud Connection
 [hosted_cloud_azure](./hosted_cloud_azure) | Create a Port and an Azure Hosted Cloud Connection
