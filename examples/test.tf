@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.0.0"
+      version = ">= 0.9.0"
     }
   }
 }
@@ -891,4 +891,19 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_billing_modify_order_upgrade_backbone_vc" {
 #   value = packetfabric_billing_modify_order.upgrade_backbone_vc
+# }
+
+# #######################################
+# ##### Flex Bandwidth
+# #######################################
+
+# resource "packetfabric_flex_bandwidth" "flex1" {
+#   provider          = packetfabric
+#   description       = "${var.tag_name}-${random_pet.name.id}-2"
+#   subscription_term = var.pf_flex_subscription_term
+#   capacity          = var.pf_flex_capacity
+# }
+
+# output "packetfabric_flex_bandwidth" {
+#   value = packetfabric_flex_bandwidth.flex1
 # }
