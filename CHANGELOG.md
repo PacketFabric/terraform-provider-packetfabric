@@ -1,3 +1,13 @@
+## 0.8.0  (February 1, 2023)
+
+FEATURES:
+
+* resource: packetfabric_flex_bandwidth (#318)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add FlexBandwith attribute to Backbone Virtual Circuit resource and data-source (#319)
+
 ## 0.7.0  (January 25, 2023)
 
 BREAKING CHANGES:
