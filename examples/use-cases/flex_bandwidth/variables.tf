@@ -2,7 +2,7 @@
 variable "tag_name" {
   type        = string
   description = "Used to name all resources created in this example"
-  default     = "demo-pf"
+  default     = "demo-pf-flex"
 }
 
 ## PacketFabic VARs
@@ -10,19 +10,19 @@ variable "tag_name" {
 # Port
 variable "pf_port_pop1" {
   type    = string
-  default = "BOS1"
+  default = "DEN1"
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "D"
+  default = "F"
 }
 variable "pf_port_pop2" {
   type    = string
-  default = "LAX2"
+  default = "CHI6"
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "D"
+  default = "B"
 }
 variable "pf_port_media" {
   type    = string
