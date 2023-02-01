@@ -30,12 +30,14 @@ func resourceFlexBandwidth() *schema.Resource {
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Description of the flex bandwidth container.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -44,6 +46,7 @@ func resourceFlexBandwidth() *schema.Resource {
 			"subscription_term": {
 				Type:        schema.TypeInt,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The billing term, in months, of the flex bandwidth container.\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 			},
 			"capacity": {
@@ -55,6 +58,7 @@ func resourceFlexBandwidth() *schema.Resource {
 			"po_number": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
@@ -132,9 +136,6 @@ func resourceFlexBandwidthUpdate(ctx context.Context, d *schema.ResourceData, m 
 	capacity, ok := d.GetOk("capacity")
 	if !ok {
 		return diag.Errorf("please provide a valid capacity")
-	}
-	if !d.HasChange("capacity") {
-		return diag.Errorf("only the capacity field can be updated")
 	}
 	billing := packetfabric.BillingUpgrade{
 		Capacity: capacity.(string),
