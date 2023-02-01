@@ -13,7 +13,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A" # check availability /v2/locations/PDX1/port-availability or login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+  default = "A" 
 }
 variable "pf_port_media" {
   type    = string
@@ -43,7 +43,7 @@ variable "pf_cs_pop1" {
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
+  default = "A"
 }
 variable "pf_cs_speed" {
   type    = string
