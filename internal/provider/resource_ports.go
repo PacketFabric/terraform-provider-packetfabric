@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -130,15 +131,35 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if d.HasChange("speed") || d.HasChange("media") || d.HasChange("pop") || d.HasChange("zone") || d.HasChange("nni") {
-		return diag.Errorf("only the description or subscription term field can be updated")
+	err1 := checkUpdatableFieldsInterface(ctx, d, m)
+	if err1 != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Error updating resource",
+			Detail:   err1.Error(),
+		})
+		return diags
 	}
 
-	_, err := _extractUpdateFn(ctx, d, m)
-	if err != nil {
-		return diag.FromErr(err)
+	_, err2 := _extractUpdateFn(ctx, d, m)
+	if err2 != nil {
+		return diag.FromErr(err2)
 	}
 	return diags
+}
+
+func checkUpdatableFieldsInterface(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+
+	if d.HasChange("speed") ||
+		d.HasChange("media") ||
+		d.HasChange("pop") ||
+		d.HasChange("zone") ||
+		d.HasChange("nni") {
+		return errors.New("only the description or subscription term field can be updated")
+	}
+	return nil
 }
 
 func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

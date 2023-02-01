@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -155,13 +156,14 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("speed") ||
-		d.HasChange("media") ||
-		d.HasChange("pop") ||
-		d.HasChange("zone") ||
-		d.HasChange("autoneg") ||
-		d.HasChange("published_quote_line_uuid") {
-		return diag.Errorf("only the description or subscription term field can be updated")
+	err := checkUpdatableFieldsPTP(ctx, d, m)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Error updating resource",
+			Detail:   err.Error(),
+		})
+		return diags
 	}
 
 	if desc, ok := d.GetOk("description"); ok {
@@ -183,6 +185,21 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return diags
+}
+
+func checkUpdatableFieldsPTP(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+
+	if d.HasChange("speed") ||
+		d.HasChange("media") ||
+		d.HasChange("pop") ||
+		d.HasChange("zone") ||
+		d.HasChange("autoneg") ||
+		d.HasChange("published_quote_line_uuid") {
+		return errors.New("only the description or subscription term field can be updated")
+	}
+	return nil
 }
 
 func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

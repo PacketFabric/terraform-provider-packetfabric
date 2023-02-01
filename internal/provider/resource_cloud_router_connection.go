@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -15,23 +16,14 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("aws_account_id") ||
-		d.HasChange("google_pairing_key") ||
-		d.HasChange("google_vlan_attachment_name") ||
-		d.HasChange("azure_service_key") ||
-		d.HasChange("ibm_account_id") ||
-		d.HasChange("ibm_bgp_asn") ||
-		d.HasChange("ibm_bgp_cer_cidr") ||
-		d.HasChange("ibm_bgp_ibm_cidr") ||
-		d.HasChange("vc_ocid") ||
-		d.HasChange("region") ||
-		d.HasChange("maybe_nat") ||
-		d.HasChange("maybe_dnat") ||
-		d.HasChange("pop") ||
-		d.HasChange("zone") ||
-		d.HasChange("is_public") ||
-		d.HasChange("published_quote_line_uuid") {
-		return diag.Errorf("only the description or speed field can be updated")
+	err := checkUpdatableFieldsCloudRouterConnection(ctx, d, m)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Error updating resource",
+			Detail:   err.Error(),
+		})
+		return diags
 	}
 
 	if cid, ok := d.GetOk("circuit_id"); ok {
@@ -54,6 +46,31 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 	}
 	return diags
+}
+
+func checkUpdatableFieldsCloudRouterConnection(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+
+	if d.HasChange("aws_account_id") ||
+		d.HasChange("google_pairing_key") ||
+		d.HasChange("google_vlan_attachment_name") ||
+		d.HasChange("azure_service_key") ||
+		d.HasChange("ibm_account_id") ||
+		d.HasChange("ibm_bgp_asn") ||
+		d.HasChange("ibm_bgp_cer_cidr") ||
+		d.HasChange("ibm_bgp_ibm_cidr") ||
+		d.HasChange("vc_ocid") ||
+		d.HasChange("region") ||
+		d.HasChange("maybe_nat") ||
+		d.HasChange("maybe_dnat") ||
+		d.HasChange("pop") ||
+		d.HasChange("zone") ||
+		d.HasChange("is_public") ||
+		d.HasChange("published_quote_line_uuid") {
+		return errors.New("only the description or speed field can be updated")
+	}
+	return nil
 }
 
 func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
