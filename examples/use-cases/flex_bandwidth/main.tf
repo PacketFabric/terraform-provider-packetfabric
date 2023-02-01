@@ -44,7 +44,7 @@ output "packetfabric_port_2" {
 
 resource "packetfabric_flex_bandwidth" "flex1" {
   provider          = packetfabric
-  description       = var.pf_description
+  description       = "${var.tag_name}-${random_pet.name.id}"
   subscription_term = var.pf_flex_subscription_term
   capacity          = var.pf_flex_capacity
 }
@@ -74,6 +74,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
   }
   flex_bandwidth_id = packetfabric_flex_bandwidth.flex1.id
 }
+output "packetfabric_backbone_virtual_circuit_1" {
+  value = packetfabric_backbone_virtual_circuit.vc_1
+}
 
 # Create backbone Virtual Circuit 2
 resource "packetfabric_backbone_virtual_circuit" "vc_2" {
@@ -96,4 +99,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc_2" {
     subscription_term = var.pf_vc_subterm
   }
   flex_bandwidth_id = packetfabric_flex_bandwidth.flex1.id
+}
+output "packetfabric_backbone_virtual_circuit_2" {
+  value = packetfabric_backbone_virtual_circuit.vc_2
 }

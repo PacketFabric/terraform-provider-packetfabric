@@ -78,11 +78,11 @@ variable "pf_vc_vlan2" {
   default = 146
 }
 # VLANs for VC2
-variable "pf_vc_vlan1" {
+variable "pf_vc_vlan3" {
   type    = number
   default = 147
 }
-variable "pf_vc_vlan2" {
+variable "pf_vc_vlan4" {
   type    = number
   default = 148
 }
