@@ -73,6 +73,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 	EVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.
 
 	For more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).
+- `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
 - `interface_a` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_a))
 - `interface_z` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_z))
 

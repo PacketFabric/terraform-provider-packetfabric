@@ -126,6 +126,11 @@ func resourceBackbone() map[string]*schema.Schema {
 			Required:    true,
 			Description: "If true, the circuit will be an EPL connection rather than an EVPL. Default is false.\n\n\tEPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.\n\n\tEVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.\n\n\tFor more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).",
 		},
+		"flex_bandwidth_id": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
+		},
 	}
 }
 
@@ -250,6 +255,9 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 	}
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
 		awsBack.RateLimitOut = rateLimitOut.(int)
+	}
+	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
+		awsBack.FlexBandwidthID = flexBandID.(string)
 	}
 	return awsBack
 }
