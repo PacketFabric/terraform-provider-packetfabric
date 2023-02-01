@@ -65,7 +65,7 @@ output "packetfabric_ix_virtual_circuit_marketplace" {
 ### Optional
 
 - `description` (String) A brief description of this connection.
-- `flex_bandwidth_id` (String) If you are using flex bandwidth for the connection, enter the connection ID of the flex bandwidth container. This starts with "PF-AB-"
+- `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
 - `rate_limit_in` (Number) The upper bound, in Mbps, to limit incoming data by.
 - `rate_limit_out` (Number) The upper bound, in Mbps, to limit outgoing data by.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
