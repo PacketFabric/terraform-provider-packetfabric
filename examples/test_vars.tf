@@ -332,7 +332,6 @@ variable "pf_cs_subterm" {
   default = 1 # default 1 month
 }
 
-
 ########################################
 ###### CLOUD ROUTER
 ########################################
@@ -369,7 +368,6 @@ variable "pf_crc_is_public" {
   description = "Whether PacketFabric should allocate a public IP address for this connection"
   default     = false
 }
-
 
 # Cloud Router BGP Session Common
 variable "pf_crbs_af" {
@@ -608,4 +606,17 @@ variable "pf_return_filters_match_type2" {
   type        = string
   description = "The match type of this prefix."
   default     = "exact" # exact or orlonger
+}
+
+########################################
+###### FLEX BANDWIDTH
+########################################
+
+variable "pf_flex_subscription_term" {
+  type    = number
+  default = 1 # default 1 month
+}
+variable "pf_flex_capacity" {
+  type    = string
+  default = "50Gbps" # 50Gbps 100Gbps 150Gbps 200Gbps 250Gbps 300Gbps 350Gbps 400Gbps 450Gbps 500Gbps
 }

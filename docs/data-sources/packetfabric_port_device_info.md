@@ -41,7 +41,7 @@ output "packetfabric_port_device_info" {
 - `lag_speed` (Number) The port lag speed.
 - `oper_status` (String) The current oerational status.
 - `optics_diagnostics_lane_bias_current` (Number) The optics diagnostics lane bias current.
-- `optics_diagnostics_lane_index` (Number) The optics diagnostics lane Index.
+- `optics_diagnostics_lane_index` (String) The optics diagnostics lane Index.
 - `optics_diagnostics_lane_rx_power` (Number) The optics diagnostics lane RX Power.
 - `optics_diagnostics_lane_rx_power_dbm` (Number) The optics diagnostics lane RX Power dbm.
 - `optics_diagnostics_lane_rx_status` (String) The optics diagnostics lane rx status.
