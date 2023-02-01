@@ -125,3 +125,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
     subscription_term = var.pf_vc_subterm
   }
 }
+output "packetfabric_backbone_virtual_circuit_1" {
+  value = packetfabric_backbone_virtual_circuit.vc_1
+}
