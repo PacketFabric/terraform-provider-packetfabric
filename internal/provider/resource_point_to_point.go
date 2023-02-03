@@ -164,23 +164,27 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if desc, ok := d.GetOk("description"); ok {
-		if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
-			return diag.FromErr(err)
+	if d.HasChange("description") {
+		if desc, ok := d.GetOk("description"); ok {
+			if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	}
+	if d.HasChange("subscription_term") {
 
-	if subTerm, ok := d.GetOk("subscription_term"); ok {
-		return diag.Errorf("please provide a subscription term")
-	} else {
-		billing := packetfabric.BillingUpgrade{
-			SubscriptionTerm: subTerm.(int),
+		if subTerm, ok := d.GetOk("subscription_term"); ok {
+			return diag.Errorf("please provide a subscription term")
+		} else {
+			billing := packetfabric.BillingUpgrade{
+				SubscriptionTerm: subTerm.(int),
+			}
+			cID := d.Get("ptp_circuit_id").(string)
+			if _, err := c.ModifyBilling(cID, billing); err != nil {
+				return diag.FromErr(err)
+			}
+			_ = d.Set("subscription_term", subTerm.(int))
 		}
-		cID := d.Get("ptp_circuit_id").(string)
-		if _, err := c.ModifyBilling(cID, billing); err != nil {
-			return diag.FromErr(err)
-		}
-		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return diags
 }

@@ -203,12 +203,14 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	}
 
 	// Update port term
-	if subTerm, ok := d.GetOk("subscription_term"); ok {
-		billing := packetfabric.BillingUpgrade{
-			SubscriptionTerm: subTerm.(int),
+	if d.HasChange("subscription_term") {
+		if subTerm, ok := d.GetOk("subscription_term"); ok {
+			billing := packetfabric.BillingUpgrade{
+				SubscriptionTerm: subTerm.(int),
+			}
+			_, err = c.ModifyBilling(d.Id(), billing)
+			_ = d.Set("subscription_term", subTerm.(int))
 		}
-		_, err = c.ModifyBilling(d.Id(), billing)
-		_ = d.Set("subscription_term", subTerm.(int))
 	}
 	return
 }

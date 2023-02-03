@@ -16,22 +16,26 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 
 	if cid, ok := d.GetOk("circuit_id"); ok {
-		if desc, descOk := d.GetOk("description"); descOk {
-			descUpdate := packetfabric.DescriptionUpdate{
-				Description: desc.(string),
-			}
-			if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), descUpdate); err != nil {
-				return diag.FromErr(err)
+		if d.HasChange("description") {
+			if desc, descOk := d.GetOk("description"); descOk {
+				descUpdate := packetfabric.DescriptionUpdate{
+					Description: desc.(string),
+				}
+				if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), descUpdate); err != nil {
+					return diag.FromErr(err)
+				}
 			}
 		}
-		if speed, ok := d.GetOk("speed"); ok {
-			billing := packetfabric.BillingUpgrade{
-				Speed: speed.(string),
+		if d.HasChange("speed") {
+			if speed, ok := d.GetOk("speed"); ok {
+				billing := packetfabric.BillingUpgrade{
+					Speed: speed.(string),
+				}
+				if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+					return diag.FromErr(err)
+				}
+				_ = d.Set("speed", speed.(string))
 			}
-			if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
-				return diag.FromErr(err)
-			}
-			_ = d.Set("speed", speed.(string))
 		}
 	}
 	return diags

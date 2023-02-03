@@ -213,13 +213,14 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 	}()
 	<-updateOk
-
-	billing := packetfabric.BillingUpgrade{
-		Speed:            backboneVC.Bandwidth.Speed,
-		SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
-	}
-	if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
-		return diag.FromErr(err)
+	if d.HasChange("speed") || d.HasChange("subscription_term") {
+		billing := packetfabric.BillingUpgrade{
+			Speed:            backboneVC.Bandwidth.Speed,
+			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
+		}
+		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return diags

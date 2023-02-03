@@ -17,15 +17,16 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	if !ok {
 		return diag.Errorf("please provide a valid cloud service id")
 	}
-
-	if desc, ok := d.GetOk("description"); !ok {
-		return diag.Errorf("please provide a valid description for Cloud Service")
-	} else {
-		resp, err := fn(desc.(string), cloudCID.(string))
-		if err != nil {
-			return diag.FromErr(err)
+	if d.HasChange("description") {
+		if desc, ok := d.GetOk("description"); !ok {
+			return diag.Errorf("please provide a valid description for Cloud Service")
+		} else {
+			resp, err := fn(desc.(string), cloudCID.(string))
+			if err != nil {
+				return diag.FromErr(err)
+			}
+			_ = d.Set("description", resp.Description)
 		}
-		_ = d.Set("description", resp.Description)
 	}
 	if d.HasChange("speed") {
 		billing := packetfabric.BillingUpgrade{}
