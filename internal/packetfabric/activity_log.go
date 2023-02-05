@@ -10,13 +10,14 @@ type ActivityLog struct {
 	Event       string `json:"event,omitempty"`
 	Message     string `json:"message,omitempty"`
 	TimeCreated string `json:"time_created,omitempty"`
+	LevelName   string `json:"log_level_name,omitempty"`
 }
 
-func (c *PFClient) GetActivityLogs() (*[]ActivityLog, error) {
+func (c *PFClient) GetActivityLogs() ([]ActivityLog, error) {
 	expectedResp := make([]ActivityLog, 0)
-	_, err := c.sendRequest(activityLogsURI, getMethod, nil, expectedResp)
+	_, err := c.sendRequest(activityLogsURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}
-	return &expectedResp, nil
+	return expectedResp, nil
 }

@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.6.0"
+      version = ">= 0.8.0"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.37.0"
+      version = ">= 4.52.0"
     }
   }
 }
@@ -89,11 +89,27 @@ resource "aws_route_table_association" "route_association_1" {
   route_table_id = aws_route_table.route_table_1.id
 }
 
+# Create a PacketFabric port
+resource "packetfabric_port" "port_1" {
+  provider          = packetfabric
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = var.pf_port_avzone1
+}
+output "packetfabric_port_1" {
+  value = packetfabric_port.port_1
+}
+
 # From the PacketFabric side: Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
-  port        = var.pf_port_circuit_id
+  port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
@@ -106,27 +122,15 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 # From the AWS side: Accept the connection
 # Wait at least 90s for the connection to show up in AWS
-resource "null_resource" "previous" {}
 resource "time_sleep" "wait_90_seconds" {
-  depends_on      = [null_resource.previous]
   create_duration = "90s"
+  depends_on = [
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
+  ]
 }
 # This resource will create (at least) 90 seconds after null_resource.previous
 resource "null_resource" "next" {
   depends_on = [time_sleep.wait_90_seconds]
-}
-
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current_1" {
-  provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}"
-  depends_on = [
-    null_resource.next,
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
-}
-output "aws_dx_connection_1" {
-  value = data.aws_dx_connection.current_1
 }
 
 # Vote for 26335 aws_dx_connection_confirmation add timeout and do not fail when state is available
@@ -147,34 +151,40 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 }
 
 # From the AWS side: Create and attach a VIF
-data "aws_dx_gateway" "direct_connect_gw_1" {
+# Retrieve the Direct Connect connections in AWS
+data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}"
-
   depends_on = [
-    aws_dx_gateway.direct_connect_gw_1
+    null_resource.next,
+    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
-
-resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-  provider       = aws
-  connection_id  = data.aws_dx_connection.current_1.id
-  dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}"
-  vlan           = data.aws_dx_gateway.direct_connect_gw_1.vlan_id # provider version >= 4.35.0 https://github.com/hashicorp/terraform-provider-aws/issues/26461
-  address_family = "ipv4"
-  bgp_asn        = var.customer_side_asn1
-  depends_on = [
-    aws_dx_connection_confirmation.confirmation_1
-  ]
+output "aws_dx_connection_current" {
+  value = data.aws_dx_connection.current_1
 }
 
-# provider version >= 4.37.0
-data "aws_dx_router_configuration" "router_config" {
-  provider               = aws
-  virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
-  router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
-}
+# Vote for 29165 [Bug]: aws_dx_connection data-source reports vlan_id null
+# https://github.com/hashicorp/terraform-provider-aws/issues/29165
+# resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
+#   provider       = aws
+#   connection_id  = data.aws_dx_connection.current_1.id
+#   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
+#   name           = "${var.tag_name}-${random_pet.name.id}"
+#   vlan           = data.aws_dx_connection.current_1.vlan_id # bug #29165
+#   address_family = "ipv4"
+#   bgp_asn        = var.customer_side_asn1
+#   depends_on = [
+#     aws_dx_connection_confirmation.confirmation_1
+#   ]
+# }
+
+# # provider version >= 4.37.0
+# data "aws_dx_router_configuration" "router_config" {
+#   provider               = aws
+#   virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
+#   router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+# }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router

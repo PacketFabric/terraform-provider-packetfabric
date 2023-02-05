@@ -11,9 +11,10 @@ Use Cases | Description
 [cloud_router_google_azure](./cloud_router_google_azure) | Connect Google and Azure Clouds using a Cloud Router
 [cloud_router_ibm_oracle](./cloud_router_ibm_oracle) | Connect Oracle and IBM Clouds using a Cloud Router
 [dedicated_cloud_aws](./dedicated_cloud_aws) | Create Dedicated Cloud Connection on AWS
-[hosted_cloud_aws](./hosted_cloud_aws) | Create an AWS Hosted Cloud Connection
-[hosted_cloud_google](./hosted_cloud_google) | Create a Google Hosted Cloud Connection
-[hosted_cloud_azure](./hosted_cloud_azure) | Create an Azure Hosted Cloud Connection
+[flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
+[hosted_cloud_aws](./hosted_cloud_aws) | Create a Port and an AWS Hosted Cloud Connection
+[hosted_cloud_google](./hosted_cloud_google) | Create a Port and a Google Hosted Cloud Connection
+[hosted_cloud_azure](./hosted_cloud_azure) | Create a Port and an Azure Hosted Cloud Connection
 [marketplace](./marketplace) | Create a Marketplace Request and Accept/Reject it
 
 # List of known issues on other terraform providers, please up vote!
@@ -29,6 +30,8 @@ Use Cases | Description
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26436)](https://github.com/hashicorp/terraform-provider-aws/issues/26436) aws_dx_connection data source: add PDF LOA in base64 encoded (**impact**: PacketFabric AWS Dedicated Cloud
 
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26438)](https://github.com/hashicorp/terraform-provider-aws/issues/26438) aws_dx_locations: add Direct Connect Locations & Speed + filter capability (**impact**: PacketFabric AWS Dedicated Cloud)
+
+- [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/29165)](https://github.com/hashicorp/terraform-provider-aws/issues/29165) [Bug]: aws_dx_connection data-source reports vlan_id null (**impact**: PacketFabric AWS Hosted Cloud)
 
 - [![Issues](https://img.shields.io/github/issues/detail/state/hashicorp/terraform-provider-aws/26461)](https://github.com/hashicorp/terraform-provider-aws/issues/26461) aws_dx_connection data source: add VLAN ID (**impact**: PacketFabric AWS Hosted Cloud)
 

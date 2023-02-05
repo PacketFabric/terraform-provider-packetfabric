@@ -28,7 +28,6 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -40,6 +39,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
+			},
+			"maybe_dnat": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"port_circuit_id": {
 				Type:         schema.TypeString,
@@ -121,6 +126,9 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 	}
 	if maybeNat, ok := d.GetOk("maybe_nat"); ok {
 		ownedPort.MaybeNat = maybeNat.(bool)
+	}
+	if maybeDNat, ok := d.GetOk("maybe_dnat"); ok {
+		ownedPort.MaybeDNat = maybeDNat.(bool)
 	}
 	if portCircuitID, ok := d.GetOk("port_circuit_id"); ok {
 		ownedPort.PortCircuitID = portCircuitID.(string)

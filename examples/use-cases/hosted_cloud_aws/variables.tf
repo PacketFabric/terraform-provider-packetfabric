@@ -6,18 +6,44 @@ variable "tag_name" {
 }
 
 ## PacketFabic VARs
-# AWS Hosted Connection
-variable "pf_port_circuit_id" {
+# Port
+variable "pf_port_pop1" {
   type    = string
-  default = "PF-AP-WDC1-1726464"
+  default = "PDX1"
 }
+variable "pf_port_avzone1" {
+  type    = string
+  default = "A" 
+}
+variable "pf_port_media" {
+  type    = string
+  default = "LX"
+}
+variable "pf_port_subterm" {
+  type    = number
+  default = 1 # default 1 month
+}
+variable "pf_port_autoneg" {
+  type    = bool
+  default = false
+}
+variable "pf_port_speed" {
+  type    = string
+  default = "1Gbps"
+}
+variable "pf_port_nni" {
+  type    = bool
+  default = false
+}
+
+# AWS Hosted Connection
 variable "pf_cs_pop1" {
   type    = string
   default = "SFO6"
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A" # check availability /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
+  default = "A"
 }
 variable "pf_cs_speed" {
   type    = string

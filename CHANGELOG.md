@@ -1,4 +1,33 @@
-## 0.6.0  (January 17, 2022)
+## 0.8.0  (February 1, 2023)
+
+FEATURES:
+
+* resource: packetfabric_flex_bandwidth (#318)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add FlexBandwith attribute to Backbone Virtual Circuit resource and data-source (#319)
+
+## 0.7.0  (January 25, 2023)
+
+BREAKING CHANGES:
+
+* resource: [UPDATED] packetfabric_cloud_router_bgp_session (pre_nat_sources and pool_prefixes moved under nat)
+
+FEATURES:
+
+* Add Destination NAT support to packetfabric_cloud_router_bgp_session and packetfabric_cloud_router_connection resources and data-sources (#306)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Improve BGP session update and delete operations in packetfabric_cloud_router_bgp_session resource (#306)
+
+BUG FIXES:
+
+* Fix packetfabric_activitylog data-source (#315)
+* Fix docs for marketplace service port resources & data-source (#316)
+
+## 0.6.0  (January 17, 2023)
 
 BREAKING CHANGES:	
 
