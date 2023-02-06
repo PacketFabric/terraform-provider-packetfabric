@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 0.8.0"
+      version = ">= 0.9.0"
     }
   }
 }
@@ -456,6 +456,49 @@ resource "random_pet" "name" {}
 # ##### MARKETPLACE
 # #######################################
 
+# # Create a Marketplace Service type port
+# resource "packetfabric_marketplace_service" "marketplace_port" {
+#   provider     = packetfabric
+#   name         = "${var.tag_name}-${random_pet.name.id}-port"
+#   description  = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lobortis mattis aliquam faucibus purus in massa tempor nec."
+#   service_type = "port-service"
+#   sku          = var.pf_sku
+#   categories   = var.pf_categories
+#   published    = var.pf_published
+#   locations    = var.pf_locations
+# }
+# output "packetfabric_marketplace_service_port" {
+#   value = packetfabric_marketplace_service.marketplace_port
+# }
+
+# # Create a Marketplace Service type quick-connect
+# resource "packetfabric_marketplace_service" "marketplace_quick_connect" {
+#   provider                = packetfabric
+#   name                    = "${var.tag_name}-${random_pet.name.id}-quick-connect"
+#   description             = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lobortis mattis aliquam faucibus purus in massa tempor nec."
+#   service_type            = "quick-connect-service"
+#   sku                     = var.pf_sku
+#   categories              = var.pf_categories
+#   published               = var.pf_published
+#   cloud_router_circuit_id = var.pf_cloud_router_circuit_id
+#   connection_circuit_ids  = var.pf_connection_circuit_ids
+#   route_set {
+#     description = var.pf_route_set_description
+#     is_private  = var.pf_route_set_is_private
+#     prefixes {
+#       prefix     = var.pf_route_set_prefix1
+#       match_type = var.pf_route_set_match_type1
+#     }
+#     prefixes {
+#       prefix     = var.pf_route_set_prefix2
+#       match_type = var.pf_route_set_match_type2
+#     }
+#   }
+# }
+# output "packetfabric_marketplace_service_quick_connect" {
+#   value = packetfabric_marketplace_service.marketplace_quick_connect
+# }
+
 # # Create a VC Marketplace Connection 
 # resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
 #   provider    = packetfabric
@@ -589,7 +632,8 @@ resource "random_pet" "name" {}
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
-# # List all Marketplace Service Requests (not Cloud Router)
+# # List all Marketplace Service Requests (Port)
+
 # data "packetfabric_marketplace_service_port_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
@@ -604,6 +648,36 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_marketplace_service_port_requests_received" {
 #   value = data.packetfabric_marketplace_service_port_requests.received
+# }
+
+# # List all Marketplace Service Requests (Quick Connect)
+# data "packetfabric_quick_connect_requests" "quick_connect_sent" {
+#   provider = packetfabric
+#   type     = "sent" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_sent" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_sent
+# }
+
+# data "packetfabric_quick_connect_requests" "quick_connect_received" {
+#   provider = packetfabric
+#   type     = "received" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_received" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_received
+# }
+
+# # Accept the Request Quick Connect
+# resource "packetfabric_quick_connect_accept_request" "accept_request_quick_connect" {
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
+# }
+
+# # Reject the Request
+# resource "packetfabric_quick_connect_reject_request" "reject_request_quick_connect" {
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
+#   rejection_reason  = "Return filters are too broad."
 # }
 
 # #######################################
@@ -856,6 +930,25 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cloud_router_connections" {
 #   value = data.packetfabric_cloud_router_connections.all_crc
+# }
+
+# # Create a Quick Connect Cloud Router Marketplace Connection
+# resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
+#   provider              = packetfabric
+#   cr_circuit_id         = var.pf_cr_circuit_id
+#   connection_circuit_id = var.pf_connection_circuit_id
+#   service_uuid          = var.pf_service_uuid
+#   return_filters {
+#     prefix     = var.pf_return_filters_prefix1
+#     match_type = var.pf_return_filters_match_type1
+#   }
+#   return_filters {
+#     prefix     = var.pf_return_filters_prefix2
+#     match_type = var.pf_return_filters_match_type2
+#   }
+# }
+# output "packetfabric_cloud_router_quick_connect" {
+#   value = packetfabric_cloud_router_quick_connect.cr_quick_connect
 # }
 
 # #######################################
