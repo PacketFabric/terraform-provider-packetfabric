@@ -107,6 +107,7 @@ func Provider() *schema.Provider {
 			"packetfabric_marketplace_service_port_reject_request": resourceRejectRequestedService(),
 			"packetfabric_port_loa":                                resourcePortLoa(),
 			"packetfabric_billing_modify_order":                    resourceBilling(),
+			"packetfabric_cloud_router_quick_connect":              resourceCloudRouterQuickConnect(),
 			"packetfabric_quick_connect_accept_request":            resourceQuickConnectAcceptRequest(),
 			"packetfabric_quick_connect_reject_request":            resourceQuickConnectRejectRequest(),
 			"packetfabric_flex_bandwidth":                          resourceFlexBandwidth(),
