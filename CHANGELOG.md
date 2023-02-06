@@ -1,4 +1,28 @@
-## 0.9.0  (February 8, 2023)
+## 1.0.0  (February 14, 2023)
+
+BREAKING CHANGES:
+
+* resource: [REMOVED] packetfabric_billing_modify_order (updates handled within each resources)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Handle subscription_term, speed, service_class changes in existing resources (#324)
+    * packetfabric_port
+    * packetfabric_backbone_virtual_circuit
+    * packetfabric_point_to_point
+    * packetfabric_cs_<aws/azure/google/oracle/ibm>_hosted_connection
+    * packetfabric_cs_<aws/azure/google>_dedicated_connection
+    * packetfabric_cloud_router_connection_<aws/google/azure/ibm/ipsec/port>
+* Add Virtual Circuit Burst status check (#324)
+* Implement user inputs checks & validation in all resources (#324)
+* Removed deprecated scope attribute in packetfabric_cloud_router resource and data-source (#324)
+* Add missing computed ptp_circuit_id attribute in packetfabric_point_to_point (#324)
+
+BUG FIXES:
+
+* Fix packetfabric_cs_<aws/azure/google>_dedicated_connection update (#324)
+
+## 0.9.0  (February 6, 2023)
 
 FEATURES:
 
