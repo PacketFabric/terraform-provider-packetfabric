@@ -35,7 +35,7 @@ output "packetfabric_flex_bandwidth" {
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `capacity` (String) Capacity of the flex bandwidth container. Must be in the format XXGbps or XXMbps.
 
-	Example: ["100Gbps" "150Gbps" "200Gbps" "250Gbps" "300Gbps" "350Gbps" "400Gbps" "450Gbps" "500Gbps"]
+	Enum: ["100Gbps" "150Gbps" "200Gbps" "250Gbps" "300Gbps" "350Gbps" "400Gbps" "450Gbps" "500Gbps"]
 - `description` (String) Description of the flex bandwidth container.
 - `subscription_term` (Number) The billing term, in months, of the flex bandwidth container.
 
@@ -48,10 +48,10 @@ output "packetfabric_flex_bandwidth" {
 
 ### Read-Only
 
-- `available_capacity_mbps` (Number) Available capacity in Mbps of the flex bandwidth container.
-- `capacity_mbps` (Number) Capacity in Mbps of the flex bandwidth container.
+- `available_capacity_mbps` (String) Available capacity in Mbps of the flex bandwidth container.
+- `capacity_mbps` (String) Capacity in Mbps of the flex bandwidth container.
 - `id` (String) The ID of this resource.
-- `used_capacity_mbps` (Number) Used capacity in Mbps of the flex bandwidth container.
+- `used_capacity_mbps` (String) Used capacity in Mbps of the flex bandwidth container.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
