@@ -17,6 +17,7 @@ const vcSentRequestsURI = "/v2/services/requests?type=%s"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
+const rejectCloudRouterService = "/v2/services/cloud-routers/requests/%s/reject"
 
 type Backbone struct {
 	Description     string              `json:"description"`
@@ -229,6 +230,10 @@ type ServiceMessage struct {
 	Message string `json:"message"`
 }
 
+type ServiceRejectionReson struct {
+	RejectionReason string `json:"rejection_reason"`
+}
+
 func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 	backboneResp := &BackboneResp{}
 	_, err := c.sendRequest(backboneURI, postMethod, backbone, backboneResp)
@@ -417,4 +422,18 @@ func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteR
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) RejectCloudRouterService(importCircuitID, rejectionReason string) (*ServiceRejectionReson, error) {
+	formatedURI := fmt.Sprintf(rejectCloudRouterService, importCircuitID)
+	rejectionResp := &ServiceRejectionReson{}
+	type RejectionReasonMsg struct {
+		RejectionReason string `json:"rejection_reason"`
+	}
+	reason := &RejectionReasonMsg{RejectionReason: rejectionReason}
+	_, err := c.sendRequest(formatedURI, postMethod, reason, rejectionResp)
+	if err != nil {
+		return nil, err
+	}
+	return rejectionResp, nil
 }
