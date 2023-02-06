@@ -1,3 +1,13 @@
+## 0.9.0  (February 8, 2023)
+
+FEATURES:
+
+* resource: packetfabric_marketplace_service
+* resource: packetfabric_cloud_router_quick_connect
+* resource: packetfabric_quick_connect_accept_request
+* resource: packetfabric_quick_connect_reject_request
+* data-source: packetfabric_quick_connect_requests
+
 ## 0.8.0  (February 1, 2023)
 
 FEATURES:
