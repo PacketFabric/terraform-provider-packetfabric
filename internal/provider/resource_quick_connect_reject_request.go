@@ -14,14 +14,12 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceRejectRequestCreate,
-		ReadContext:   resourceRejectRequestRead,
-		UpdateContext: resourceRejectRequestUpdate,
-		DeleteContext: resourceRejectRequestDelete,
+		ReadContext:   resourceRequestedServiceRead,
+		DeleteContext: resourceRequestedServiceDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -30,12 +28,14 @@ func resourceQuickConnectRejectRequest() *schema.Resource {
 			"import_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the Quick Connect import.",
 			},
 			"rejection_reason": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The reason that you are rejecting the request.",
 			},
 		},
@@ -61,17 +61,4 @@ func resourceRejectRequestCreate(ctx context.Context, d *schema.ResourceData, m 
 		}
 	}
 	return diags
-}
-
-func resourceRejectRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{}
-}
-
-func resourceRejectRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{}
-}
-
-func resourceRejectRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	d.SetId("")
-	return diag.Diagnostics{}
 }

@@ -135,13 +135,14 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 func resourceRequestedServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return diag.Diagnostics{diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "Marketplace Request read.",
+		Summary:  "Marketplace Request.",
 		Detail:   "Warning: the Marketplace connection request has been either accepted or rejected.",
 	}}
 }
 
 func resourceRequestedServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
+	d.SetId("")
+	return diag.Diagnostics{}
 }
 
 func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvision {
