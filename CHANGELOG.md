@@ -21,6 +21,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 BUG FIXES:
 
 * Fix packetfabric_cs_<aws/azure/google>_dedicated_connection update (#324)
+* Fix packetfabric_link_aggregation_group update (#324)
 
 ## 0.9.0  (February 6, 2023)
 
