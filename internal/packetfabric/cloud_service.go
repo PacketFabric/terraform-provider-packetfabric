@@ -17,6 +17,7 @@ const vcSentRequestsURI = "/v2/services/requests?type=%s"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
+const acceptCloudRouterServiceURI = "/v2/services/cloud-routers/requests/%s/accept"
 const rejectCloudRouterService = "/v2/services/cloud-routers/requests/%s/reject"
 
 type Backbone struct {
@@ -395,6 +396,15 @@ func (c *PFClient) DeleteVCRequest(vcUUID string) (*PortMessageResp, error) {
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) AcceptCloudRouterService(importCircuitID string) (*PortMessageResp, error) {
+	formatedURI := fmt.Sprintf(acceptCloudRouterServiceURI, importCircuitID)
+	response := &PortMessageResp{}
+	if _, err := c.sendRequest(formatedURI, postMethod, nil, response); err != nil {
+		return nil, err
+	}
+	return response, nil
 }
 
 func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteResp, error) {
