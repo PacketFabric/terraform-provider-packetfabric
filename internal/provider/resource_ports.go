@@ -182,19 +182,16 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	c.Ctx = ctx
 
 	// Update if payload contains Autoneg and Description
-	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
-		if desc, descOk := d.GetOk("description"); descOk {
-			resp, err = c.UpdatePort(autoneg.(bool), d.Id(), desc.(string))
-		} else {
-			// Update if payload contains Autoneg only
-			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), d.Id())
-		}
+	if d.HasChange("description") && d.HasChange("autoneg") {
+		resp, err = c.UpdatePort(d.Get("autoneg").(bool), d.Id(), d.Get("description").(string))
 	}
 	// Update if payload contains Description only
-	if desc, descOk := d.GetOk("description"); descOk {
-		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
-			resp, err = c.UpdatePortDescriptionOnly(d.Id(), desc.(string))
-		}
+	if d.HasChange("description") && !d.HasChange("autoneg") {
+		resp, err = c.UpdatePortDescriptionOnly(d.Id(), d.Get("description").(string))
+	}
+	// Update if payload contains Autoneg only
+	if !d.HasChange("description") && d.HasChange("autoneg") {
+		resp, err = c.UpdatePortAutoNegOnly(d.Get("autoneg").(bool), d.Id())
 	}
 	// Update port status
 	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
