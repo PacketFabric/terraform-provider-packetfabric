@@ -589,7 +589,8 @@ resource "random_pet" "name" {}
 #   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws.id
 # }
 
-# # List all Marketplace Service Requests (not Cloud Router)
+# # List all Marketplace Service Requests (Port)
+
 # data "packetfabric_marketplace_service_port_requests" "sent" {
 #   provider = packetfabric
 #   type     = "sent" # sent or received
@@ -604,6 +605,36 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_marketplace_service_port_requests_received" {
 #   value = data.packetfabric_marketplace_service_port_requests.received
+# }
+
+# # List all Marketplace Service Requests (Quick Connect)
+# data "packetfabric_quick_connect_requests" "quick_connect_sent" {
+#   provider = packetfabric
+#   type     = "sent" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_sent" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_sent
+# }
+
+# data "packetfabric_quick_connect_requests" "quick_connect_received" {
+#   provider = packetfabric
+#   type     = "received" # sent or received
+# }
+# output "packetfabric_quick_connect_requests_quick_connect_received" {
+#   value = data.packetfabric_quick_connect_requests.quick_connect_received
+# }
+
+# # Accept the Request Quick Connect
+# resource "packetfabric_quick_connect_accept_request" "accept_request_quick_connect" {
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
+# }
+
+# # Reject the Request
+# resource "packetfabric_quick_connect_reject_request" "reject_request_quick_connect" {
+#   provider          = packetfabric
+#   import_circuit_id = packetfabric_cloud_router_quick_connect.cr_quick_connect.import_circuit_id
+#   rejection_reason  = "Return filters are too broad."
 # }
 
 # #######################################
