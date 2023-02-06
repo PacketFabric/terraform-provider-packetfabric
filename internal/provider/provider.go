@@ -106,6 +106,10 @@ func Provider() *schema.Provider {
 			"packetfabric_marketplace_service_port_accept_request": resourceProvisionRequestedService(),
 			"packetfabric_marketplace_service_port_reject_request": resourceRejectRequestedService(),
 			"packetfabric_port_loa":                                resourcePortLoa(),
+			"packetfabric_marketplace_service":                     resourceMarketplaceService(),
+			"packetfabric_cloud_router_quick_connect":              resourceCloudRouterQuickConnect(),
+			"packetfabric_quick_connect_accept_request":            resourceQuickConnectAcceptRequest(),
+			"packetfabric_quick_connect_reject_request":            resourceQuickConnectRejectRequest(),
 			"packetfabric_flex_bandwidth":                          resourceFlexBandwidth(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
@@ -144,6 +148,7 @@ func Provider() *schema.Provider {
 			"packetfabric_port_device_info":                  dataSourcePortDeviceInfo(),
 			"packetfabric_port_router_logs":                  datasourcePortRouterLogs(),
 			"packetfabric_locations_cloud":                   datasourceCloudLocations(),
+			"packetfabric_quick_connect_requests":            datasourceQuickConnectRequests(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

@@ -17,6 +17,8 @@ const vcSentRequestsURI = "/v2/services/requests?type=%s"
 const servicesURI = "/v2/services"
 const serviceIxURI = "/v2/services/ix"
 const thirdPartyVCURI = "/v2/services/third-party"
+const acceptCloudRouterServiceURI = "/v2/services/cloud-routers/requests/%s/accept"
+const rejectCloudRouterService = "/v2/services/cloud-routers/requests/%s/reject"
 
 type Backbone struct {
 	Description     string              `json:"description"`
@@ -234,6 +236,10 @@ type ServiceMessage struct {
 	Message string `json:"message"`
 }
 
+type ServiceRejectionReson struct {
+	RejectionReason string `json:"rejection_reason"`
+}
+
 func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 	backboneResp := &BackboneResp{}
 	_, err := c.sendRequest(backboneURI, postMethod, backbone, backboneResp)
@@ -384,6 +390,15 @@ func (c *PFClient) DeleteVCRequest(vcUUID string) (*PortMessageResp, error) {
 	return expectedResp, nil
 }
 
+func (c *PFClient) AcceptCloudRouterService(importCircuitID string) (*PortMessageResp, error) {
+	formatedURI := fmt.Sprintf(acceptCloudRouterServiceURI, importCircuitID)
+	response := &PortMessageResp{}
+	if _, err := c.sendRequest(formatedURI, postMethod, nil, response); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteResp, error) {
 	_, uuidParseErr := uuid.Parse(vcCircuitID)
 	if uuidParseErr == nil {
@@ -409,4 +424,18 @@ func (c *PFClient) _deleteService(vcCircuitID, baseURI string) (*BackboneDeleteR
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) RejectCloudRouterService(importCircuitID, rejectionReason string) (*ServiceRejectionReson, error) {
+	formatedURI := fmt.Sprintf(rejectCloudRouterService, importCircuitID)
+	rejectionResp := &ServiceRejectionReson{}
+	type RejectionReasonMsg struct {
+		RejectionReason string `json:"rejection_reason"`
+	}
+	reason := &RejectionReasonMsg{RejectionReason: rejectionReason}
+	_, err := c.sendRequest(formatedURI, postMethod, reason, rejectionResp)
+	if err != nil {
+		return nil, err
+	}
+	return rejectionResp, nil
 }
