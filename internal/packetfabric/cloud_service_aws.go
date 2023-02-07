@@ -1,7 +1,6 @@
 package packetfabric
 
 import (
-	"errors"
 	"fmt"
 	"time"
 )
@@ -438,7 +437,7 @@ func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message stri
 		Terraform and update your Terraform configuration.`
 	}
 	if vcReq.Status == "rejected" {
-		err = errors.New("the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed")
+		message = "the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed"
 	}
 	if vcReq.Status == "pending" {
 		err = c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
