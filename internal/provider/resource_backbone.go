@@ -29,7 +29,6 @@ func resourceBackbone() map[string]*schema.Schema {
 					"account_uuid": {
 						Type:         schema.TypeString,
 						Required:     true,
-						ForceNew:     true,
 						DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 						ValidateFunc: validation.IsUUID,
 						Description: "The UUID for the billing account that should be billed. " +
@@ -49,7 +48,6 @@ func resourceBackbone() map[string]*schema.Schema {
 					"longhaul_type": {
 						Type:        schema.TypeString,
 						Required:    true,
-						ForceNew:    true,
 						Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 					},
 				},
@@ -63,7 +61,6 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
-						ForceNew:    true,
 						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
@@ -93,7 +90,6 @@ func resourceBackbone() map[string]*schema.Schema {
 					"port_circuit_id": {
 						Type:        schema.TypeString,
 						Required:    true,
-						ForceNew:    true,
 						Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 					},
 					"vlan": {
@@ -213,7 +209,7 @@ func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 	}()
 	<-updateOk
-	if d.HasChange("speed") || d.HasChange("subscription_term") {
+	if d.HasChange("bandwidth") {
 		billing := packetfabric.BillingUpgrade{
 			Speed:            backboneVC.Bandwidth.Speed,
 			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
