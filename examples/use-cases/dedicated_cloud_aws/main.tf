@@ -232,7 +232,7 @@ resource "aws_dx_connection" "current_1" {
 #   address_family = "ipv4"
 #   bgp_asn        = var.customer_side_asn1
 #   depends_on = [
-#     data.packetfabric_cloud_router_connection_aws.current
+#     data.packetfabric_cloud_router_connection.current
 #   ]
 # }
 
