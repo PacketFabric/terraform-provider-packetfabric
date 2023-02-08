@@ -172,10 +172,7 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 		}
 	}
 	if d.HasChange("subscription_term") {
-
 		if subTerm, ok := d.GetOk("subscription_term"); ok {
-			return diag.Errorf("please provide a subscription term")
-		} else {
 			billing := packetfabric.BillingUpgrade{
 				SubscriptionTerm: subTerm.(int),
 			}
@@ -184,6 +181,8 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 				return diag.FromErr(err)
 			}
 			_ = d.Set("subscription_term", subTerm.(int))
+		} else {
+			return diag.Errorf("please provide a subscription term")
 		}
 	}
 	return diags
