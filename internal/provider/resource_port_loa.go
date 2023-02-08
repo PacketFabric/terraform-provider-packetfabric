@@ -14,11 +14,9 @@ func resourcePortLoa() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePortLoaCreate,
 		ReadContext:   resourcePortLoaRead,
-		UpdateContext: resourcePortLoaCreate,
 		DeleteContext: resourcePortLoaDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
@@ -30,18 +28,21 @@ func resourcePortLoa() *schema.Resource {
 			"port_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The port circuit ID.",
 			},
 			"loa_customer_name": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The LOA customer name.",
 			},
 			"destination_email": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The LOA destination e-mail.",
 			},

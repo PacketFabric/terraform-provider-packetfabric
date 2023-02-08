@@ -28,10 +28,9 @@ func resourcePointToPoint() *schema.Resource {
 				Computed: true,
 			},
 			"ptp_circuit_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The point-to-point connection ID.",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The point-to-point connection ID.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -42,12 +41,14 @@ func resourcePointToPoint() *schema.Resource {
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"1Gbps", "10Gbps", "40Gbps", "100Gbps"}, true),
 				Description:  "The capacity for this connection.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
 			},
 			"media": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice(pointToPointMediaOptions(), true),
 				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
@@ -59,29 +60,34 @@ func resourcePointToPoint() *schema.Resource {
 						"pop": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Point of presence in which the port should be located.",
 						},
 						"zone": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Availability zone of the port.",
 						},
 						"customer_site_code": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "Unique site code of the customer's equipment.",
 						},
 						"autoneg": {
 							Type:        schema.TypeBool,
 							Required:    true,
+							ForceNew:    true,
 							Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with ports greater than 1Gbps.",
 						},
 						"loa": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsBase64,
 							Description:  "A base64 encoded string of a PDF of a LOA.",
 						},
@@ -91,12 +97,12 @@ func resourcePointToPoint() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
@@ -106,6 +112,7 @@ func resourcePointToPoint() *schema.Resource {
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
@@ -142,30 +149,40 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		_ = d.Set("ptp_circuit_id", resp.PtpCircuitID)
 		d.SetId(resp.PtpUUID)
 	}
 	return diags
 }
 
 func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cID, ok := d.GetOk("ptp_circuit_id"); ok {
-		if _, err := c.GetPointToPointInfo(cID.(string)); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-	return diags
+	return diag.Diagnostics{}
 }
 
 func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if desc, ok := d.GetOk("description"); ok {
-		if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
-			return diag.FromErr(err)
+
+	if d.HasChange("description") {
+		if desc, ok := d.GetOk("description"); ok {
+			if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	}
+	if d.HasChange("subscription_term") {
+		if subTerm, ok := d.GetOk("subscription_term"); ok {
+			billing := packetfabric.BillingUpgrade{
+				SubscriptionTerm: subTerm.(int),
+			}
+			cID := d.Get("ptp_circuit_id").(string)
+			if _, err := c.ModifyBilling(cID, billing); err != nil {
+				return diag.FromErr(err)
+			}
+			_ = d.Set("subscription_term", subTerm.(int))
+		} else {
+			return diag.Errorf("please provide a subscription term")
 		}
 	}
 	return diags
@@ -175,8 +192,8 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if cID := d.Id(); cID != "" {
-		if err := c.DeletePointToPointService(cID); err != nil {
+	if ptpUUID := d.Id(); ptpUUID != "" {
+		if err := c.DeletePointToPointService(ptpUUID); err != nil {
 			return diag.FromErr(err)
 		} else {
 			deleteOk := make(chan bool)
@@ -184,7 +201,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 			ticker := time.NewTicker(10 * time.Second)
 			go func() {
 				for range ticker.C {
-					if c.IsPointToPointDeleteComplete(cID) {
+					if c.IsPointToPointDeleteComplete(ptpUUID) {
 						ticker.Stop()
 						deleteOk <- true
 					}

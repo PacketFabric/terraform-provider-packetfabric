@@ -227,6 +227,11 @@ type CloudConnInfo struct {
 	IsCloudRouterConnection bool             `json:"is_cloud_router_connection,omitempty"`
 }
 
+// hosted and dedicated cloud
+type UpdateServiceConn struct {
+	Description string `json:"description"`
+}
+
 type ServiceMessage struct {
 	Message string `json:"message"`
 }
@@ -293,19 +298,6 @@ func (c *PFClient) GetVCRequest(vcUUID string) (*VcRequest, error) {
 		return nil, err
 	}
 	return expectedResp, nil
-}
-
-func (c *PFClient) UpdateServiceConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
-	formatedURI := fmt.Sprintf(updateCloudConnURI, cloudCID)
-	type UpdateServiceConn struct {
-		Description string `json:"description"`
-	}
-	expectedResp := &CloudServiceConnCreateResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	return expectedResp, err
 }
 
 func (c *PFClient) UpdateServiceSettings(vcCID string, serviceSettings ServiceSettingsUpdate) (*BackboneResp, error) {

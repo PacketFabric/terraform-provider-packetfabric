@@ -18,12 +18,6 @@ func dataSourceCloudRouter() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"scope": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: "Whether the cloud router is private or public. Deprecated.",
-						},
 						"asn": {
 							Type:        schema.TypeInt,
 							Computed:    true,
@@ -101,7 +95,6 @@ func flattenCloudRouters(routers *[]packetfabric.CloudRouterResponse) []interfac
 
 		for i, router := range *routers {
 			flatten := make(map[string]interface{})
-			flatten["scope"] = router.Scope
 			flatten["asn"] = router.Asn
 			flatten["name"] = router.Name
 			flatten["capacity"] = router.Capacity

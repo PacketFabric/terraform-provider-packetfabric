@@ -25,11 +25,13 @@ func resourceBgpSession() *schema.Resource {
 			"circuit_id": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"connection_id": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "The circuit ID of the connection associated with the BGP session. This starts with \"PF-L3-CON-\".",
 			},
 			"md5": {
@@ -212,7 +214,7 @@ func resourceBgpSession() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
-							Description:  "Whether this prefix is in or out.",
+							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud)..\n\t\tEnum: in, out.",
 						},
 						"order": {
 							Type:        schema.TypeInt,

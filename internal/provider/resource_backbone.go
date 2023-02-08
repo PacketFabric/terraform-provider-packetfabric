@@ -124,11 +124,13 @@ func resourceBackbone() map[string]*schema.Schema {
 		"epl": {
 			Type:        schema.TypeBool,
 			Required:    true,
+			ForceNew:    true,
 			Description: "If true, the circuit will be an EPL connection rather than an EVPL. Default is false.\n\n\tEPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.\n\n\tEVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.\n\n\tFor more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).",
 		},
 		"flex_bandwidth_id": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 		},
 	}
@@ -138,8 +140,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	awsBack := extractBack(d)
-	resp, err := fn(awsBack)
+	backboneVC := extractBack(d)
+	resp, err := fn(backboneVC)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -183,38 +185,41 @@ func resourceServicesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func resourceServicesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string, string) (*packetfabric.CloudServiceConnCreateResp, error)) diag.Diagnostics {
+// used for Backbone VC
+func resourceServiceSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cloudCID, ok := d.GetOk("id")
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Cloud Service Create",
-			Detail:   cloudCidNotFoundDetailsMsg,
-		})
-		return diags
-	}
-	desc, ok := d.GetOk("description")
-	if !ok {
-		return diag.Errorf("please provide a valid description for Cloud Service")
-	}
-	resp, err := fn(desc.(string), cloudCID.(string))
-	if err != nil {
+
+	settings := extractServiceSettings(d)
+	backboneVC := extractBack(d)
+
+	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
-	_ = d.Set("description", resp.Description)
-	return diags
-}
+	updateOk := make(chan bool)
+	defer close(updateOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(d.Id()); ok {
+				ticker.Stop()
+				updateOk <- true
+			}
+		}
+	}()
+	<-updateOk
+	if d.HasChange("bandwidth") {
+		billing := packetfabric.BillingUpgrade{
+			Speed:            backboneVC.Bandwidth.Speed,
+			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
+		}
+		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+			return diag.FromErr(err)
+		}
+	}
 
-// VC Marketplaces doesn't have an UPDATE mechanism.
-func resourceUpdateMarketplace(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{diag.Diagnostic{
-		Severity: diag.Error,
-		Summary:  "Update a Marketplace Service Request is not supported",
-		Detail:   "If you want to update a Marketplace Service Request, please perform a destroy, change your Service Request, then re-apply.",
-	}}
+	return diags
 }
 
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string) (*packetfabric.BackboneDeleteResp, error)) diag.Diagnostics {
@@ -237,29 +242,29 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func extractBack(d *schema.ResourceData) packetfabric.Backbone {
-	awsBack := packetfabric.Backbone{
+	backboneVC := packetfabric.Backbone{
 		Description: d.Get("description").(string),
 		Epl:         d.Get("epl").(bool),
 	}
 	for _, interfA := range d.Get("interface_a").(*schema.Set).List() {
-		awsBack.Interfaces = append(awsBack.Interfaces, extractBackboneInterface(interfA.(map[string]interface{})))
+		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfA.(map[string]interface{})))
 	}
 	for _, interfZ := range d.Get("interface_z").(*schema.Set).List() {
-		awsBack.Interfaces = append(awsBack.Interfaces, extractBackboneInterface(interfZ.(map[string]interface{})))
+		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfZ.(map[string]interface{})))
 	}
 	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
-		awsBack.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
+		backboneVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
 	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
-		awsBack.RateLimitIn = rateLimitIn.(int)
+		backboneVC.RateLimitIn = rateLimitIn.(int)
 	}
 	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
-		awsBack.RateLimitOut = rateLimitOut.(int)
+		backboneVC.RateLimitOut = rateLimitOut.(int)
 	}
 	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
-		awsBack.FlexBandwidthID = flexBandID.(string)
+		backboneVC.FlexBandwidthID = flexBandID.(string)
 	}
-	return awsBack
+	return backboneVC
 }
 
 func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {

@@ -30,12 +30,14 @@ func resourceAzureReqExpressConn() *schema.Resource {
 			"azure_service_key": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -51,24 +53,28 @@ func resourceAzureReqExpressConn() *schema.Resource {
 			"port": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the PacketFabric port you wish to connect to Azure. This starts with \"PF-AP-\".",
 			},
 			"vlan_private": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "The VLAN ID you are using for private peering. You will use this when you configure peering in the Azure portal.\n\n\tThe VLAN ID must be unique within the circuit (not used for any other peerings).\n\n\tValid VLAN range is from 4-4094, inclusive.\n\n\tYou must provide at least one VLAN (`vlan_microsoft`, `vlan_private`, or both).",
 			},
 			"vlan_microsoft": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "The VLAN ID you are using for Microsoft peering. This is optional and is used to connect to Office 365.\n\n\tThe VLAN ID must be unique within the circuit (not used for any other peerings).\n\n\tValid VLAN range is from 4-4094, inclusive. ",
 			},
 			"src_svlan": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {

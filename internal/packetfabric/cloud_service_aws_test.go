@@ -100,7 +100,7 @@ func _callCreateDedicadedAWSConn(payload interface{}) (interface{}, error) {
 }
 
 func _callUpdateAwsServiceConn(payload interface{}) (interface{}, error) {
-	return cTest.UpdateServiceConn(_awsServiceConnDesc, _cloudCircuitID)
+	return cTest.UpdateServiceHostedConn(_awsServiceConnDesc, _cloudCircuitID)
 }
 
 func _callGetCloudConnInfo(payload interface{}) (interface{}, error) {

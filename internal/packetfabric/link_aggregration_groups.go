@@ -40,17 +40,14 @@ func (c *PFClient) CreateLinkAggregationGroup(lag LinkAggregationGroup) (*LinkAg
 	return expectedResp, nil
 }
 
-func (c *PFClient) UpdateLinkAggregationGroup(portCircuitID, description, interval string) (*LinkAggregationGroupCreateResp, error) {
+func (c *PFClient) UpdateLinkAggregationGroup(portCircuitID string, description string, interval string) (*LinkAggregationGroupCreateResp, error) {
+	formatedURI := fmt.Sprintf(lagPortCircuitURI, portCircuitID)
 	expectedResp := &LinkAggregationGroupCreateResp{}
 	type UpdateLag struct {
 		Description string `json:"description"`
 		Interval    string `json:"interval"`
 	}
-	payload := UpdateLag{
-		Description: description,
-		Interval:    interval,
-	}
-	_, err := c.sendRequest(lagPortCircuitURI, putMethod, payload, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, &UpdateLag{Description: description, Interval: interval}, expectedResp)
 	if err != nil {
 		return nil, err
 	}

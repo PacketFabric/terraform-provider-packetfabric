@@ -30,12 +30,12 @@ func resourceInterfaces() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -50,23 +50,27 @@ func resourceInterfaces() *schema.Resource {
 			"media": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
 			"nni": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.\n\n\tBy default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Point of presence in which the port should be located.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Speed of the port.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
 			},
@@ -79,6 +83,7 @@ func resourceInterfaces() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Availability zone of the port.",
 			},
@@ -130,6 +135,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+
 	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
@@ -174,25 +180,34 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}) (resp *packetfabric.InterfaceReadResp, err error) {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
+
 	// Update if payload contains Autoneg and Description
-	if autoneg, autoNegOk := d.GetOk("autoneg"); autoNegOk {
-		if desc, descOk := d.GetOk("description"); descOk {
-			resp, err = c.UpdatePort(autoneg.(bool), d.Id(), desc.(string))
-		} else {
-			// Update if payload contains Autoneg only
-			resp, err = c.UpdatePortAutoNegOnly(autoneg.(bool), d.Id())
-		}
+	if d.HasChange("description") && d.HasChange("autoneg") {
+		resp, err = c.UpdatePort(d.Get("autoneg").(bool), d.Id(), d.Get("description").(string))
 	}
 	// Update if payload contains Description only
-	if desc, descOk := d.GetOk("description"); descOk {
-		if _, autoNegOk := d.GetOk("autoneg"); !autoNegOk {
-			resp, err = c.UpdatePortDescriptionOnly(d.Id(), desc.(string))
-		}
+	if d.HasChange("description") && !d.HasChange("autoneg") {
+		resp, err = c.UpdatePortDescriptionOnly(d.Id(), d.Get("description").(string))
+	}
+	// Update if payload contains Autoneg only
+	if !d.HasChange("description") && d.HasChange("autoneg") {
+		resp, err = c.UpdatePortAutoNegOnly(d.Get("autoneg").(bool), d.Id())
 	}
 	// Update port status
 	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
 		_, enableChange := d.GetChange("enabled")
 		err = _togglePortStatus(c, enableChange.(bool), d.Id())
+	}
+
+	// Update port term
+	if d.HasChange("subscription_term") {
+		if subTerm, ok := d.GetOk("subscription_term"); ok {
+			billing := packetfabric.BillingUpgrade{
+				SubscriptionTerm: subTerm.(int),
+			}
+			_, err = c.ModifyBilling(d.Id(), billing)
+			_ = d.Set("subscription_term", subTerm.(int))
+		}
 	}
 	return
 }
