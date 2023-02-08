@@ -47,7 +47,6 @@ output "packetfabric_cloud_router" {
 	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.
 
 	Defaults to 4556 if unspecified.
-- `circuit_id` (String)
 - `regions` (List of String) The regions in which the Cloud Router connections will be located.
 		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
 

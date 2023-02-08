@@ -1,4 +1,4 @@
-## 1.0.0  (February 14, 2023)
+## 1.0.0  (February 8, 2023)
 
 BREAKING CHANGES:
 

@@ -8,8 +8,25 @@ description: |-
 
 # packetfabric_cs_azure_hosted_connection (Resource)
 
- A hosted cloud connection to your Microsoft Azure environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
+A hosted cloud connection to your Microsoft Azure environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/).
 
+For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
+
+To retrieve the VLAN ID for establishing Azure peering via [`express_route_circuit_peering`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/express_route_circuit_peering), utilize the [`packetfabric_cloud_router_connections (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_cloud_router_connections) and loop through its output in a `locals` block. 
+
+The code to do this is provided below:
+
+```terraform
+locals {
+  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
+  helper_map = { for val in local.cloud_connections :
+  val["description"] => val }
+  cc1 = local.helper_map["${var.pf_crc_description}-primary"]
+}
+output "cc1_vlan_private" {
+  value = one(local.cc1.cloud_settings[*].vlan_id_private)
+}
+```
 
 ## Example Usage
 
