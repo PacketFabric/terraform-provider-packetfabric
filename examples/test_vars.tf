@@ -25,7 +25,7 @@ variable "pf_port_pop1" {
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "B" # check location /v2/locations/DEN2/port-availability
+  default = "B"
 }
 variable "pf_port_pop2" {
   type    = string
@@ -33,7 +33,7 @@ variable "pf_port_pop2" {
 }
 variable "pf_port_avzone2" {
   type    = string
-  default = "E" # check location /v2/locations/WDC1/port-availability
+  default = "E"
 }
 variable "pf_port_subterm" {
   type    = number
@@ -116,7 +116,7 @@ variable "pf_ptp_pop1" {
 }
 variable "pf_ptp_zone1" {
   type    = string
-  default = "A" # check location /v2/locations/SEA1/port-availability
+  default = "A"
 }
 variable "pf_ptp_pop2" {
   type    = string
@@ -124,7 +124,7 @@ variable "pf_ptp_pop2" {
 }
 variable "pf_ptp_zone2" {
   type    = string
-  default = "A" # check location /v2/locations/CHI1/port-availability
+  default = "A"
 }
 
 ########################################
@@ -178,7 +178,7 @@ variable "pf_cs_pop2" {
 }
 variable "pf_cs_zone2" {
   type    = string
-  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=aws&pop=SFO6
+  default = "A"
 }
 variable "pf_cs_speed2" {
   type    = string
@@ -196,7 +196,7 @@ variable "pf_cs_pop6" {
 }
 variable "pf_cs_zone6" {
   type    = string
-  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&cloud_provider=oracle&pop=SFO6
+  default = "A"
 }
 variable "pf_cs_vlan6" {
   type    = number
@@ -344,7 +344,7 @@ variable "pf_cs_pop3" {
 }
 variable "pf_cs_zone3" {
   type    = string
-  default = "D" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=aws&pop=NYC6
+  default = "D"
 }
 variable "pf_cs_speed3" {
   type    = string
@@ -363,7 +363,7 @@ variable "pf_cs_pop4" {
 }
 variable "pf_cs_zone4" {
   type    = string
-  default = "C" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=google&pop=ATL1
+  default = "C"
 }
 variable "pf_cs_speed4" {
   type    = string
@@ -377,7 +377,7 @@ variable "pf_cs_pop5" {
 }
 variable "pf_cs_zone5" {
   type    = string
-  default = "E" # check location /v2/locations/cloud?cloud_connection_type=dedicated&cloud_provider=azure&pop=SFO6
+  default = "E"
 }
 variable "pf_cs_speed5" {
   type    = string
@@ -477,7 +477,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "A" # check location /v2/locations/cloud?cloud_connection_type=hosted&has_cloud_router: true=true&cloud_provider=aws&pop=PDX2
+  default = "A"
 }
 
 # Cloud Router BGP Session AWS
@@ -514,10 +514,6 @@ variable "pf_crc_google_vlan_attachment_name" {
 }
 
 # Cloud Router Connection Azure
-variable "pf_crc_pop3" {
-  type    = string
-  default = "SFO6"
-}
 variable "pf_crc_azure_service_key" {
   type      = string
   default   = "secret"
@@ -525,6 +521,10 @@ variable "pf_crc_azure_service_key" {
 }
 
 # Cloud Router Connection IPsec
+variable "pf_crc_pop3" {
+  type    = string
+  default = "SFO6"
+}
 variable "pf_crc_ike_version" {
   type        = number
   description = "The Internet Key Exchange (IKE) version supported by your device"

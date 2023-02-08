@@ -42,12 +42,14 @@ func resourceLinkAggregationGroups() *schema.Resource {
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Point of presence in which the LAG should be located.",
 			},
 			"members": {
 				Type:        schema.TypeList,
 				Required:    true,
+				ForceNew:    true,
 				Description: "A list of port circuit IDs to include in the LAG. To be included in a LAG, the ports must be at the same site, in the same zone, and have the same speed and media.",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,

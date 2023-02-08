@@ -10,6 +10,7 @@ description: |-
 
 A connection from your cloud router to your IBM environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/).
 
+For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
 ## Example Usage
 

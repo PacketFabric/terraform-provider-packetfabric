@@ -37,7 +37,7 @@ func resourceGoogleProvisionRead(ctx context.Context, d *schema.ResourceData, m 
 
 func resourceGoogleProvisionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
 }
 
 func resourceGoogleProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

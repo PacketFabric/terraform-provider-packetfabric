@@ -42,7 +42,6 @@ Optional:
 - `create` (String)
 - `delete` (String)
 - `read` (String)
-- `update` (String)
 
 
 

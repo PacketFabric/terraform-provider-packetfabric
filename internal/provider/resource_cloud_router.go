@@ -27,16 +27,10 @@ func resourceCloudRouter() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scope": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Whether the cloud router is private or public.",
-				Deprecated:   "Deprecated. Remove this attribute's configuration as it is no longer used, and the attribute will be removed in the next major version of the provider.",
-			},
 			"asn": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "The ASN of the cloud router.\n\n\tThis can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.\n\n\tDefaults to 4556 if unspecified.",
 			},
 			"name": {
@@ -48,6 +42,7 @@ func resourceCloudRouter() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -67,10 +62,6 @@ func resourceCloudRouter() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The cloud router capacity.\n\n\tEnum: \"100Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\" \">100Gbps\"",
-			},
-			"circuit_id": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -92,7 +83,6 @@ func resourceCloudRouterCreate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -111,7 +101,6 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("scope", resp.Scope)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
@@ -138,8 +127,6 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 
-	_ = d.Set("scope", resp.Scope)
-	_ = d.Set("asn", resp.Asn)
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
 	return diags
@@ -162,52 +149,8 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 
 }
 
-func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		if desc, descOk := d.GetOk("description"); descOk {
-			descUpdate := packetfabric.DescriptionUpdate{
-				Description: desc.(string),
-			}
-			if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), descUpdate); err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	}
-	return diags
-}
-
-func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			deleteOk := make(chan bool)
-			defer close(deleteOk)
-			fn := func() (*packetfabric.ServiceState, error) {
-				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
-			}
-			go c.CheckServiceStatus(deleteOk, fn)
-			if !<-deleteOk {
-				return diag.FromErr(err)
-			}
-			d.SetId("")
-		}
-	}
-	return diags
-}
-
 func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	router := packetfabric.CloudRouter{}
-	if scope, ok := d.GetOk("scope"); ok {
-		router.Scope = scope.(string)
-	}
 	if asn, ok := d.GetOk("asn"); ok {
 		router.Asn = asn.(int)
 	}

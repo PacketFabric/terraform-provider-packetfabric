@@ -23,6 +23,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -31,24 +32,28 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"port_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the port to connect to the cloud router. This starts with \"PF-AP-\".",
 			},
@@ -61,6 +66,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 			"vlan": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"untagged": {
@@ -78,12 +84,14 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Whether PacketFabric should allocate a public IP address for this connection. ",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},

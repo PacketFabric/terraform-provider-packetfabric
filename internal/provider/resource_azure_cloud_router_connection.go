@@ -30,36 +30,40 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
 			"maybe_nat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -75,12 +79,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 			"is_public": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 				Default:     false,
 				Description: "Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). ",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
@@ -127,35 +133,11 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAzureExpressRouteConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		desc := d.Get("description")
-		descUpdate := packetfabric.DescriptionUpdate{
-			Description: desc.(string),
-		}
-		if _, err := c.UpdateCloudRouterConnection(cid.(string), cloudConnCID.(string), descUpdate); err != nil {
-			diags = diag.FromErr(err)
-		}
-	}
-	return diags
+	return resourceCloudRouterConnUpdate(ctx, d, m)
 }
 
 func resourceAzureExpressRouteConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
-			diags = diag.FromErr(err)
-		} else {
-			d.SetId("")
-		}
-	}
-	return diags
+	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
 func extractAzureExpressRouteConn(d *schema.ResourceData) packetfabric.AzureExpressRouteConn {

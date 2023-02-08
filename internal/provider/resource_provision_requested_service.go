@@ -15,11 +15,9 @@ func resourceProvisionRequestedService() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceProvisionRequestedServiceCreate,
 		ReadContext:   resourceRequestedServiceRead,
-		UpdateContext: resourceRequestedServiceUpdate,
 		DeleteContext: resourceRequestedServiceDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
@@ -31,65 +29,76 @@ func resourceProvisionRequestedService() *schema.Resource {
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"backbone", "ix", "cloud"}, true),
 				Description:  "The service type: \"backbone\", \"ix\", or \"cloud\".\n\n\tMost requests will be \"backbone\". Connections to the requesting side's cloud environment are \"cloud\".",
 			},
 			"cloud_provider": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"aws", "google", "oracle", "azure"}, true),
 				Description:  "For cloud connections, this is the cloud provider: \"aws\", \"google\", \"oracle\", \"azure\"",
 			},
 			"vc_request_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the connection request you received from the marketplace user.",
 			},
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "A brief description for the connection.",
 			},
 			"interface": {
 				Type:     schema.TypeSet,
 				Required: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"port_circuit_id": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "The circuit ID of the port on which you want to provision the request. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
 							Type:         schema.TypeInt,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.IntBetween(4, 4094),
 							Description:  "Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"svlan": {
 							Type:         schema.TypeInt,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.IntBetween(4, 4094),
 							Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 						},
 						"vlan_private": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.IntBetween(4, 4094),
 							Description:  "For Microsoft Azure connections with private peerings. Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"vlan_microsoft": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							ForceNew:     true,
 							ValidateFunc: validation.IntBetween(4, 4094),
 							Description:  "For Microsoft Azure connections with Microsoft (public) peerings. Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							ForceNew:    true,
 							Description: "Whether the interface should be untagged.",
 						},
 					},
@@ -126,17 +135,14 @@ func resourceProvisionRequestedServiceCreate(ctx context.Context, d *schema.Reso
 func resourceRequestedServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return diag.Diagnostics{diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "Marketplace Request read.",
+		Summary:  "Marketplace Request.",
 		Detail:   "Warning: the Marketplace connection request has been either accepted or rejected.",
 	}}
 }
 
-func resourceRequestedServiceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceUpdateMarketplace(ctx, d, m)
-}
-
 func resourceRequestedServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
+	d.SetId("")
+	return diag.Diagnostics{}
 }
 
 func extractProvisionRequest(d *schema.ResourceData) packetfabric.ServiceProvision {

@@ -12,6 +12,8 @@ Flex bandwidth allows you to purchase capacity at a bulk discount. You can then 
 
 For more information, see the [PacketFabric Flex bandwidth documentation](https://docs.packetfabric.com/billing/pages/flex_bandwidth/).
 
+Check example on how to use a flex bandwith container alongside [`packetfabric_backbone_virtual_circuit`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/resources/packetfabric_backbone_virtual_circuit) resource, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases/flex_bandwidth).
+
 ## Example Usage
 
 ```terraform

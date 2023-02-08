@@ -1,7 +1,6 @@
 package packetfabric
 
 import (
-	"errors"
 	"fmt"
 	"time"
 )
@@ -12,7 +11,8 @@ const hostedConnURI = "/v2/services/cloud/hosted/aws"
 const hostedMktService = "/v2/services/cloud/%s"
 const hostedMktServiceRequestsURI = "/v2/services/requests/%s"
 const dedicatedConnURI = "/v2/services/cloud/dedicated/aws"
-const updateCloudConnURI = "/v2/services/cloud/hosted/%s"
+const updateCloudConnHostedURI = "/v2/services/cloud/hosted/%s"
+const updateCloudConnDedicatedURI = "/v2/services/cloud/dedicated/%s"
 const cloudServiceStatusURI = "/v2.1/services/cloud/connections/%s/status"
 const cloudServicesURI = "/v2/services/cloud/%s"
 const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
@@ -399,31 +399,50 @@ func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
 }
 
+func (c *PFClient) UpdateServiceHostedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+	formatedURI := fmt.Sprintf(updateCloudConnHostedURI, cloudCID)
+	expectedResp := &CloudServiceConnCreateResp{}
+	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
+}
+
+func (c *PFClient) UpdateServiceDedicatedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+	formatedURI := fmt.Sprintf(updateCloudConnDedicatedURI, cloudCID)
+	expectedResp := &CloudServiceConnCreateResp{}
+	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
+}
+
 // Status can be [ pending, provisioned, rejected ]
 // if rejected or provisioned, we skip the delete, if pending, we do the delete as you already implemented it.
 func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message string, err error) {
-	if vcReq, e := c.GetVCRequest(vcRequestUUID); e != nil {
-		if vcReq == nil {
-			message = "The Marketplace connection request has been either accepted or rejected."
-			return
-		}
-		if e != nil {
-			err = e
-		} else {
-			if vcReq.Status == "provisioned" {
-				message = `The Z side has approved the request and provisioned the connection.
-				Please import the new resource created to manage it with 
-				Terraform and update your Terraform configuration.`
-			}
-			if vcReq.Status == "rejected" {
-				err = errors.New("the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed")
-			}
-			if vcReq.Status == "pending" {
-				err = c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
-			}
-		}
+	vcReq, e := c.GetVCRequest(vcRequestUUID)
+	if e != nil {
+		err = e
+		return
 	}
-	return
+	if vcReq == nil {
+		message = "The Marketplace connection request has been either accepted or rejected."
+		return message, err
+	}
+	if vcReq.Status == "provisioned" {
+		message = `The Z side has approved the request and provisioned the connection.
+		Please import the new resource created to manage it with 
+		Terraform and update your Terraform configuration.`
+	}
+	if vcReq.Status == "rejected" {
+		message = "the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed"
+	}
+	if vcReq.Status == "pending" {
+		err = c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
+	}
+	return message, err
 }
 
 func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {

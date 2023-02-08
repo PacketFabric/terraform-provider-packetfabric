@@ -30,12 +30,14 @@ func resourceOracleHostedConn() *schema.Resource {
 			"vc_ocid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "OCID of the FastConnect virtual circuit that you created from the Oracle side.",
 			},
 			"region": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The region in which you created the FastConnect virtual circuit.",
 			},
@@ -48,6 +50,7 @@ func resourceOracleHostedConn() *schema.Resource {
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
 				ValidateFunc: validation.IsUUID,
 				Description: "The UUID for the billing account that should be billed. " +
@@ -56,36 +59,42 @@ func resourceOracleHostedConn() *schema.Resource {
 			"pop": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the connection should be provisioned (the cloud on-ramp).",
 			},
 			"port": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the PacketFabric port you wish to connect to Oracle. This starts with \"PF-AP-\".",
 			},
 			"zone": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The desired availability zone of the connection.",
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with this connection should be associated.",
 			},
@@ -116,7 +125,7 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 
 func resourceOracleHostedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesUpdate(ctx, d, m, c.UpdateServiceConn)
+	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
 }
 
 func resourceOracleHostedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

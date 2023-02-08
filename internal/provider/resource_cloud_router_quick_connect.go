@@ -30,18 +30,21 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 			"cr_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of your Cloud Router.",
 			},
 			"connection_circuit_id": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The circuit ID of the Cloud Router connection that will be importing the routes.",
 			},
 			"service_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "The service UUID associated with the service provider's Quick Connect.",
 			},
