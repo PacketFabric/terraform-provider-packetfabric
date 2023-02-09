@@ -12,6 +12,15 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
+Use the [`google_compute_interconnect_attachment`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_interconnect_attachment) resource to create the VLAN attachment prior the PacketFabric Cloud Router Connection.
+
+Reference the `google_vlan_attachment_name` and `google_pairing_key` as below:
+
+```terraform
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect_1.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect_1.name
+```
+
 ## Example Usage
 
 {{tffile "examples/resources/packetfabric_cloud_router_connection_google/resource.tf"}}
