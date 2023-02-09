@@ -63,7 +63,7 @@ resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
   peer_asn                      = var.pf_cr_asn
   primary_peer_address_prefix   = var.azure_primary_peer_address_prefix
   secondary_peer_address_prefix = var.azure_secondary_peer_address_prefix
-  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection_aws data source. 
+  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection data source. 
   # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to setup the ExpressRoute Peering
   vlan_id    = one(local.cc1.cloud_settings[*].vlan_id_private)
   shared_key = var.azure_bgp_shared_key
