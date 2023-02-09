@@ -31,26 +31,17 @@ resource "time_sleep" "wait_aws_connection" {
     packetfabric_cloud_router_connection_aws.crc_2
   ]
 }
-resource "null_resource" "next_aws_connection" {
-  depends_on = [time_sleep.wait_aws_connection]
-}
 
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  depends_on = [
-    null_resource.next_aws_connection,
-    packetfabric_cloud_router_connection_aws.crc_1
-  ]
+  depends_on = [time_sleep.wait_aws_connection]
 }
 data "aws_dx_connection" "current_2" {
   provider = aws.region2
   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  depends_on = [
-    null_resource.next_aws_connection,
-    packetfabric_cloud_router_connection_aws.crc_2
-  ]
+  depends_on = [time_sleep.wait_aws_connection]
 }
 output "aws_dx_connection_1" {
   value = data.aws_dx_connection.current_1

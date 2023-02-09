@@ -121,49 +121,50 @@ output "packetfabric_cs_aws_hosted_connection" {
 }
 
 # From the AWS side: Accept the connection
-# Wait at least 90s for the connection to show up in AWS
-resource "time_sleep" "wait_90_seconds" {
-  create_duration = "90s"
-  depends_on = [
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
-}
-# This resource will create (at least) 90 seconds after null_resource.previous
-resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_90_seconds]
-}
-
-# Vote for 26335 aws_dx_connection_confirmation add timeout and do not fail when state is available
-# https://github.com/hashicorp/terraform-provider-aws/issues/26335
-resource "aws_dx_connection_confirmation" "confirmation_1" {
-  provider      = aws
-  connection_id = data.aws_dx_connection.current_1.id
-}
-
-# From the AWS side: Create a gateway
-resource "aws_dx_gateway" "direct_connect_gw_1" {
-  provider        = aws
-  name            = "${var.tag_name}-${random_pet.name.id}"
-  amazon_side_asn = var.amazon_side_asn1
+# Wait for the connection to show up in AWS
+resource "time_sleep" "wait_aws_connection" {
+  create_duration = "2m"
   depends_on = [
     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
   ]
 }
 
-# From the AWS side: Create and attach a VIF
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current_1" {
   provider = aws
   name     = "${var.tag_name}-${random_pet.name.id}"
-  depends_on = [
-    null_resource.next,
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
+  depends_on = [time_sleep.wait_aws_connection]
 }
-output "aws_dx_connection_current" {
+output "aws_dx_connection_1" {
   value = data.aws_dx_connection.current_1
 }
 
+# Sometimes, it takes more than 10min for the connection to become available
+# Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
+# https://github.com/hashicorp/terraform-provider-aws/issues/26335
+
+resource "aws_dx_connection_confirmation" "confirmation_1" {
+  provider      = aws
+  connection_id = data.aws_dx_connection.current_1.id
+
+  lifecycle {
+    ignore_changes = [
+      connection_id
+    ]
+  }
+}
+
+# # From the AWS side: Create a gateway
+# resource "aws_dx_gateway" "direct_connect_gw_1" {
+#   provider        = aws
+#   name            = "${var.tag_name}-${random_pet.name.id}"
+#   amazon_side_asn = var.amazon_side_asn1
+#   depends_on = [
+#     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
+#   ]
+# }
+
+# From the AWS side: Create and attach a VIF
 # Vote for 29165 [Bug]: aws_dx_connection data-source reports vlan_id null
 # https://github.com/hashicorp/terraform-provider-aws/issues/29165
 # resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
