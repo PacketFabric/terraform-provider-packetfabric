@@ -183,7 +183,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 Required:
 
 - `prefix` (String) The actual IP Prefix of this instance.
-- `type` (String) Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud)..
+- `type` (String) Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).
 		Enum: in, out.
 
 Optional:

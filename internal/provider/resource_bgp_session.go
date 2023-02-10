@@ -214,7 +214,7 @@ func resourceBgpSession() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
-							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud)..\n\t\tEnum: in, out.",
+							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
 						},
 						"order": {
 							Type:        schema.TypeInt,
