@@ -18,7 +18,7 @@ type BgpSession struct {
 	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
 	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 	AddressFamily   string      `json:"address_family"`
-	RemoteAddress   string      `json:"remote_address"`
+	RemoteAddress   string      `json:"remote_address,omitempty"`
 	RemoteAsn       int         `json:"remote_asn"`
 	MultihopTTL     int         `json:"multihop_ttl,omitempty"`
 	LocalPreference int         `json:"local_preference,omitempty"`
