@@ -1,3 +1,13 @@
+## 1.0.1  (February 10, 2023)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Cloud Router documentation updates
+
+BUG FIXES:
+
+* Set remote_address to omitempty in the BGP session schema to prevent sending and empty value
+
 ## 1.0.0  (February 8, 2023)
 
 BREAKING CHANGES:
