@@ -17,6 +17,16 @@
 
 See the [PacketFabric Provider documentation](https://registry.terraform.io/providers/packetfabric/packetfabric/latest/docs) for resource definition and data-source structure and examples.
 
+## Versioning policy
+
+    0.0.0
+    | | |
+    | | +-- backward compatible changes (bug fixes)
+    | +---- backward compatible changes (new features)
+    +------ backward incompatible changes
+
+We are following a version numbering system (e.g. v1.2.4) and will not make breaking changes to major version (e.g. v1.0.0) except in exceptional circumstances. If a breaking change is necessary, we will release a new major version (e.g. v2.0.0) and provide at least three months of bug fixes for the previous major version to allow users time to make necessary changes to their code. 
+
 ## Building and installing the Provider locally
 
 ```sh
