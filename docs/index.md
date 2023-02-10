@@ -57,12 +57,16 @@ provider "packetfabric" {}
 
 Credentials can be provided by using the `PF_TOKEN`, and optionally `PF_USER` and `PF_PASSWORD` environment variables.
 
-For example:
+For example (Mac/Linux):
 
 ```sh
 $ export PF_TOKEN="secret"
-$ terraform init
-$ terraform plan
+```
+
+For example (Windows PowerShell):
+
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
 ```
 
 Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.

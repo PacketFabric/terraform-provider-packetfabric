@@ -52,6 +52,12 @@ export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
 ```
 
+Windows PowerShell:
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
+PS C:\> $Env:PF_ACCOUNT_ID="123456789"
+```
+
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 **A side** in `a_side` folder:
@@ -78,6 +84,12 @@ export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
 ```
 
+Windows PowerShell:
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
+PS C:\> $Env:PF_ACCOUNT_ID="123456789"
+```
+
 5. Then run:
 
 ```sh
@@ -93,6 +105,12 @@ You can either Accept or Reject the request (comment/comment out as desire).
 ```sh
 export PF_TOKEN="secret"
 export PF_ACCOUNT_ID="123456789"
+```
+
+Windows PowerShell:
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
+PS C:\> $Env:PF_ACCOUNT_ID="123456789"
 ```
 
 8. Apply the plan

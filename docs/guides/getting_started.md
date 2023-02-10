@@ -26,10 +26,16 @@ For more information, see [API Keys in the PacketFabric documentation](https://d
 
 API Key can be provided by using the `PF_TOKEN` environment variable.
 
-For example:
+For example (Mac/Linux):
 
 ```sh
 $ export PF_TOKEN="secret"
+```
+
+For example (Windows PowerShell):
+
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
 ```
 
 ## Account ID
@@ -45,10 +51,16 @@ For more information, see [Get the Account UUID in the PacketFabric documentatio
 
 Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.
 
-For example:
+For example (Mac/Linux):
 
 ```sh
 $ export PF_ACCOUNT_ID="123456789"
+```
+
+For example (Windows PowerShell):
+
+```powershell
+PS C:\> $Env:PF_ACCOUNT_ID="123456789"
 ```
 
 ## Getting location information

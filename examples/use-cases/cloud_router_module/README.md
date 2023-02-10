@@ -52,6 +52,13 @@ export PF_ACCOUNT_ID="123456789"
 export PF_AWS_ACCOUNT_ID="123456789"
 ```
 
+Windows PowerShell:
+```powershell
+PS C:\> $Env:PF_TOKEN="secret"
+PS C:\> $Env:PF_ACCOUNT_ID="123456789"
+PS C:\> $Env:PF_AWS_ACCOUNT_ID="123456789"
+```
+
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
