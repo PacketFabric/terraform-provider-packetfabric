@@ -1,3 +1,9 @@
+## 1.0.2  (February 12, 2023)
+
+BUG FIXES:
+
+* Add missing status check for Azure and Port Cloud Router Connection (#332)
+
 ## 1.0.1  (February 10, 2023)
 
 IMPROVEMENTS/ENHANCEMENTS:
@@ -6,7 +12,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 
 BUG FIXES:
 
-* Set remote_address to omitempty in the BGP session schema to prevent sending and empty value
+* Set remote_address to omitempty in the BGP session schema to prevent sending and empty value (#331)
 
 ## 1.0.0  (February 8, 2023)
 
