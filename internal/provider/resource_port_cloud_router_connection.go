@@ -121,7 +121,6 @@ func resourceCustomerOwnedPortConnCreate(ctx context.Context, d *schema.Resource
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
 		}
-		d.SetId(resp.CloudCircuitID)
 	}
 	return diags
 }
