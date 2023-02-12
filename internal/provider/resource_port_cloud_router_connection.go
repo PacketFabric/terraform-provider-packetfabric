@@ -112,7 +112,7 @@ func resourceCustomerOwnedPortConnCreate(ctx context.Context, d *schema.Resource
 		createOkCh := make(chan bool)
 		defer close(createOkCh)
 		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
+			return c.GetCloudConnectionStatus(cID.(string), resp.CloudCircuitID)
 		}
 		go c.CheckServiceStatus(createOkCh, fn)
 		if !<-createOkCh {
