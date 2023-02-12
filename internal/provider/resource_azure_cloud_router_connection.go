@@ -105,9 +105,6 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		if resp != nil {
-			d.SetId(resp.CloudCircuitID)
-		}
 		createOkCh := make(chan bool)
 		defer close(createOkCh)
 		fn := func() (*packetfabric.ServiceState, error) {
