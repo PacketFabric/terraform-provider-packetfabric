@@ -47,12 +47,12 @@ func resourceBgpSession() *schema.Resource {
 			"primary_subnet": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.",
+				Description: "Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.",
 			},
 			"secondary_subnet": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Currently for Azure use only. Provide this as the secondary subnet when creating an Azure cloud router connection.",
+				Description: "Currently for Azure use only. Provide this as the secondary subnet when creating the secondary Azure cloud router connection.",
 			},
 			"address_family": {
 				Type:        schema.TypeString,
@@ -242,7 +242,7 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
 	var diags diag.Diagnostics
-	session := extractBgpSession(d)
+	session := extractBgpSessionCreate(d)
 	resp, err := c.CreateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
@@ -303,7 +303,10 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	if !ok {
 		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
-	session := extractBgpSession(d)
+	if d.HasChange("primary_subnet") && d.HasChange("secondary_subnet") {
+		return diag.FromErr(errors.New("cannot modify both primary_subnet and secondary_subnet at the same time"))
+	}
+	session := extractBgpSessionUpdate(d)
 	_, resp, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
@@ -335,7 +338,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
+func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	bgpSession := packetfabric.BgpSession{}
 	if l3Address, ok := d.GetOk("l3_address"); ok {
 		bgpSession.L3Address = l3Address.(string)
@@ -345,6 +348,71 @@ func extractBgpSession(d *schema.ResourceData) packetfabric.BgpSession {
 	}
 	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
 		bgpSession.SecondarySubnet = secondarySubnet.(string)
+	}
+	if addressFamily, ok := d.GetOk("address_family"); ok {
+		bgpSession.AddressFamily = addressFamily.(string)
+	}
+	if remoteAddress, ok := d.GetOk("remote_address"); ok {
+		bgpSession.RemoteAddress = remoteAddress.(string)
+	}
+	if remoteAsn, ok := d.GetOk("remote_asn"); ok {
+		bgpSession.RemoteAsn = remoteAsn.(int)
+	}
+	if multihopTTL, ok := d.GetOk("multihop_ttl"); ok {
+		bgpSession.MultihopTTL = multihopTTL.(int)
+	}
+	if localPreference, ok := d.GetOk("local_preference"); ok {
+		bgpSession.LocalPreference = localPreference.(int)
+	}
+	if med, ok := d.GetOk("med"); ok {
+		bgpSession.Med = med.(int)
+	}
+	if community, ok := d.GetOk("community"); ok {
+		bgpSession.Community = community.(int)
+	}
+	if asPrepend, ok := d.GetOk("as_prepend"); ok {
+		bgpSession.AsPrepend = asPrepend.(int)
+	}
+	if orlonger, ok := d.GetOk("orlonger"); ok {
+		bgpSession.Orlonger = orlonger.(bool)
+	}
+	if bfdInterval, ok := d.GetOk("bfd_interval"); ok {
+		bgpSession.BfdInterval = bfdInterval.(int)
+	}
+	if bfdMultiplier, ok := d.GetOk("bfd_multiplier"); ok {
+		bgpSession.BfdMultiplier = bfdMultiplier.(int)
+	}
+	if md5, ok := d.GetOk("md5"); ok {
+		bgpSession.Md5 = md5.(string)
+	}
+	if nat, ok := d.GetOk("nat"); ok {
+		for _, nat := range nat.(*schema.Set).List() {
+			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+		}
+	} else {
+		bgpSession.Nat = nil
+	}
+	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
+	return bgpSession
+}
+
+func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
+	bgpSession := packetfabric.BgpSession{}
+	if l3Address, ok := d.GetOk("l3_address"); ok {
+		bgpSession.L3Address = l3Address.(string)
+	}
+	// https://docs.packetfabric.com/api/v2/swagger/#/Cloud%20Router%20BGP%20Session%20Settings/cloud_routers_bgp_update
+	// Azure BGP session Update: set l3Address based on the values of primarySubnet and secondarySubnet when modified
+	// This is a temporary solution until the BGP API is refactored.
+	if d.HasChange("primary_subnet") {
+		if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+			bgpSession.L3Address = primarySubnet.(string)
+		}
+	}
+	if d.HasChange("secondary_subnet") {
+		if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+			bgpSession.L3Address = secondarySubnet.(string)
+		}
 	}
 	if addressFamily, ok := d.GetOk("address_family"); ok {
 		bgpSession.AddressFamily = addressFamily.(string)

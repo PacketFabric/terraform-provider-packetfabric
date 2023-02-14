@@ -77,8 +77,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   multihop_ttl     = var.pf_crbs_mhttl
   remote_asn       = var.azure_side_asn1
   orlonger         = var.pf_crbs_orlonger
+  # Only specify either the primary_subnet OR the secondary_subnet
   primary_subnet   = var.azure_primary_peer_address_prefix
-  secondary_subnet = var.azure_secondary_peer_address_prefix
   prefixes {
     prefix = var.gcp_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
