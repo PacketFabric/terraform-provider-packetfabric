@@ -48,6 +48,11 @@ func TestAccCloudRouter(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "asn", "4556"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

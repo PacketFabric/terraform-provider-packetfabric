@@ -12,7 +12,7 @@ The BGP session information for a cloud router connection.
 
 For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
 
-->**Note:** When creating a BGP session, ensure you are also adding the associated prefixes.
+->**Note:** When creating a BGP session, ensure you are also adding the associated prefixes. For Azure, only specify either the `primary_subnet` or the `secondary_subnet`.
 
 ## Example Usage
 
@@ -169,9 +169,9 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 - `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
 - `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--nat))
 - `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
-- `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating an Azure cloud router connection.
+- `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.
 - `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
-- `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating an Azure cloud router connection.
+- `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating the secondary Azure cloud router connection.
 
 ### Read-Only
 
