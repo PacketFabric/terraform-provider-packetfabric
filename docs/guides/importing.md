@@ -45,7 +45,6 @@ packetfabric_cloud_router.awesome_cloud_routers
 $ terraform state show packetfabric_cloud_router.awesome_cloud_routers
 # packetfabric_cloud_router.awesome_cloud_routers:
 resource "packetfabric_cloud_router" "awesome_cloud_routers" {
-resource "packetfabric_cloud_router" "awesome_cloud_routers" {
     account_uuid = "a2115890-ed02-4795-a6dd-c485bec3529c"
     asn          = 4556
     capacity     = "5Gbps"
