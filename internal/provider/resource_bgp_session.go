@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -327,39 +326,11 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
-	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
-	}
-	connCID, ok := d.GetOk("connection_id")
-	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
-	}
-	sessionToDisable := extractBgpSession(d)
-	sessionToDisable.Disabled = true
-	_, resp, err := c.UpdateBgpSession(sessionToDisable, cID.(string), connCID.(string))
-	if err != nil {
-		return diag.FromErr(err)
-	} else {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "BGP session disabled (it cannot be deleted).",
-			Detail: fmt.Sprintf("BGP with Settings UUID (%s) "+
-				"has been disabled and it will be deleted together with the Cloud Router Connection. "+
-				"If you decide not to delete the Cloud Router Connection, "+
-				"use terraform import to add it back under Terraform management. ", resp.BgpSettingsUUID),
-		})
-	}
-	// check Cloud Router Connection status
-	disableOkCh := make(chan bool)
-	defer close(disableOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
-	}
-	go c.CheckServiceStatus(disableOkCh, fn)
-	if !<-disableOkCh {
-		return diag.FromErr(err)
-	}
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "BGP session cannot be deleted.",
+		Detail:   "It will be deleted together with the Cloud Router Connection.",
+	})
 	d.SetId("")
 	return diags
 }

@@ -1,3 +1,10 @@
+## 1.0.3  (February 14, 2023)
+
+BUG FIXES:
+
+* Remove unecessary disable BGP session when deleting packetfabric_cloud_router_bgp_session (#334)
+* Add delay after Azure Cloud Router Connection is created (#334)
+
 ## 1.0.2  (February 12, 2023)
 
 BUG FIXES:
