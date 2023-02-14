@@ -13,7 +13,7 @@ import (
 func resourceGoogleHostedMktConn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceGoogleHostedMktConnCreate,
-		ReadContext:   resourceGoogleHostedMktConnRead,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
 		DeleteContext: resourceGoogleHostedMktConnDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -98,10 +98,6 @@ func resourceGoogleHostedMktConnCreate(ctx context.Context, d *schema.ResourceDa
 	}
 	d.SetId(resp.VcRequestUUID)
 	return diags
-}
-
-func resourceGoogleHostedMktConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

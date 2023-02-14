@@ -250,6 +250,16 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	settings := extractServiceSettings(d)
 	backboneVC := extractBack(d)
 
+	if d.HasChange("bandwidth") {
+		billing := packetfabric.BillingUpgrade{
+			Speed:            backboneVC.Bandwidth.Speed,
+			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
+		}
+		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
@@ -265,15 +275,6 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		}
 	}()
 	<-updateOk
-	if d.HasChange("bandwidth") {
-		billing := packetfabric.BillingUpgrade{
-			Speed:            backboneVC.Bandwidth.Speed,
-			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
-		}
-		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
-			return diag.FromErr(err)
-		}
-	}
 
 	return diags
 }
@@ -321,6 +322,40 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 		backboneVC.FlexBandwidthID = flexBandID.(string)
 	}
 	return backboneVC
+}
+
+func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettingsUpdate {
+	settUpdate := packetfabric.ServiceSettingsUpdate{}
+
+	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
+		settUpdate.RateLimitIn = rateLimitIn.(int)
+	}
+	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
+		settUpdate.RateLimitOut = rateLimitOut.(int)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		settUpdate.Description = description.(string)
+	}
+	if _, ok := d.GetOk("interface"); ok {
+		for _, interf := range d.Get("interface").(*schema.Set).List() {
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+		}
+	}
+	if _, ok := d.GetOk("interface_a"); ok {
+		for _, interf := range d.Get("interface_a").(*schema.Set).List() {
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+		}
+	}
+	if _, ok := d.GetOk("interface_z"); ok {
+		for _, interf := range d.Get("interface_z").(*schema.Set).List() {
+			// Only include interface_z if it was modified
+			if d.HasChange("interface_z") {
+				settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+			}
+		}
+	}
+
+	return settUpdate
 }
 
 func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
