@@ -31,8 +31,7 @@ func resourceOracleProvisionCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceOracleProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceOracleProvisionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -42,5 +41,4 @@ func resourceOracleProvisionUpdate(ctx context.Context, d *schema.ResourceData, 
 
 func resourceOracleProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return resourceCloudSourceDelete(ctx, d, m, "Oracle Service Delete")
-
 }

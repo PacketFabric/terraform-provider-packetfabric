@@ -84,6 +84,7 @@ type BackboneInterfResp struct {
 	Zone               string `json:"zone,omitempty"`
 	Description        string `json:"description,omitempty"`
 	Vlan               int    `json:"vlan,omitempty"`
+	Svlan              int    `json:"svlan,omitempty"`
 	Untagged           bool   `json:"untagged,omitempty"`
 	ProvisioningStatus string `json:"provisioning_status,omitempty"`
 	AdminStatus        string `json:"admin_status,omitempty"`
@@ -131,7 +132,7 @@ type Services struct {
 	ServiceClass    string             `json:"service_class,omitempty"`
 	Mode            string             `json:"mode,omitempty"`
 	Connected       bool               `json:"connected,omitempty"`
-	Bandwidth       ServiceBandwidth   `json:"bandwidth,omitempty"`
+	Bandwidth       Bandwidth          `json:"bandwidth,omitempty"`
 	Description     string             `json:"description,omitempty"`
 	TimeCreated     string             `json:"time_created,omitempty"`
 	TimeUpdated     string             `json:"time_updated,omitempty"`
@@ -142,11 +143,7 @@ type Services struct {
 	CustomerUUID    string             `json:"customer_uuid,omitempty"`
 	Interfaces      []ServiceInterface `json:"interfaces,omitempty"`
 }
-type ServiceBandwidth struct {
-	AccountUUID      string `json:"account_uuid,omitempty"`
-	SubscriptionTerm int    `json:"subscription_term,omitempty"`
-	Speed            string `json:"speed,omitempty"`
-}
+
 type ServiceInterface struct {
 	TimeCreated        string `json:"time_created,omitempty"`
 	TimeUpdated        string `json:"time_updated,omitempty"`
@@ -247,6 +244,15 @@ func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 		return nil, err
 	}
 	return backboneResp, nil
+}
+
+func (c *PFClient) GetCurrentCustomersBackbone() ([]Services, error) {
+	expectedResp := make([]Services, 0)
+	_, err := c.sendRequest(backboneURI, getMethod, nil, &expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, err
 }
 
 func (c *PFClient) CreateIXVirtualCircuit(ixVc IxVirtualCircuit) (*VcRequest, error) {

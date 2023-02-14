@@ -12,6 +12,10 @@ Request a connection from one of your access ports to a PacketFabric marketplace
 
 The connection will not be fully provisioned until the marketplace provider accepts the connection.
 
+Once your request has been approved, [import the resource](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/guides/importing) as [`packetfabric_backbone_virtual_circuit`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/resources/packetfabric_backbone_virtual_circuit) into Terraform.
+
+For information on automating marketplace flows, refer to the [examples/use-case](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases/marketplace).
+
 ## Example Usage
 
 {{tffile "examples/resources/packetfabric_backbone_virtual_circuit_marketplace/resource.tf"}}

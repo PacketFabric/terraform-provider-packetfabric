@@ -10,6 +10,9 @@ description: |-
 
 Request a connection from one of your access ports to an Internet Exchange provider. For more information, see [Marketplace and IX in the PacketFabric documentation](https://docs.packetfabric.com/eco/).
 
+Once your request has been approved, [import the resource](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/guides/importing) as [`packetfabric_backbone_virtual_circuit`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/resources/packetfabric_backbone_virtual_circuit) into Terraform. 
+
+You can obtain the `port_circuit_id`, `vlan`, and other relevant details about the Z side interface of your Virutal Circuit by logging in to the PacketFabric portal. Use this information to populate the `interface_z` block in your Terraform configuration.
 
 ## Example Usage
 

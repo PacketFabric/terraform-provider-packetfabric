@@ -100,8 +100,7 @@ func resourceOracleMktCloudConnCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceOracleMktCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceOracleMktCloudConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

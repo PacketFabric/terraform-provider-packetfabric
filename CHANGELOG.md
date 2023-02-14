@@ -1,3 +1,11 @@
+## 1.1.0  (February 23, 2023)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Update Read functions in Terraform resources to improve Terraform import (#335)
+* Add Terraform Import support for IX Virtual Circuit (#333)
+* Cleanup rename functions in internal/packetfabric/cloud_router_connection.go and more (#191)
+
 ## 1.0.3  (February 14, 2023)
 
 BUG FIXES:

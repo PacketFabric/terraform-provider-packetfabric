@@ -93,6 +93,7 @@ Read-Only:
 - `site` (String)
 - `site_name` (String)
 - `speed` (String)
+- `svlan` (Number)
 - `time_created` (String)
 - `time_updated` (String)
 - `untagged` (Boolean)

@@ -101,8 +101,7 @@ func resourceGoogleHostedMktConnCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGoogleHostedMktConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceGoogleHostedMktConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

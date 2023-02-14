@@ -127,7 +127,16 @@ func resourceCustomerOwnedPortConnCreate(ctx context.Context, d *schema.Resource
 
 func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	if cid, ok := d.GetOk("circuit_id"); ok {
+		cloudConnCID := d.Get("id")
+		_, err := c.ReadAwsConnection(cid.(string), cloudConnCID.(string))
+		if err != nil {
+			diags = diag.FromErr(err)
+		}
+	}
+	return diags
 }
 
 func resourceCustomerOwnedPortConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

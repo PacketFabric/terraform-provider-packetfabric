@@ -165,8 +165,7 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceHostedIbmConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

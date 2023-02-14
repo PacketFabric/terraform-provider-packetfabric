@@ -126,9 +126,12 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	_, err := c.GetPortByCID(d.Id())
+	resp, err := c.GetPortByCID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("description", resp.Description)
 	}
 	return diags
 }
