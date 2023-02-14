@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -330,7 +329,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "BGP session cannot be deleted.",
-		Detail:   fmt.Sprintf("It will be deleted together with the Cloud Router Connection."),
+		Detail:   "It will be deleted together with the Cloud Router Connection.",
 	})
 	d.SetId("")
 	return diags
