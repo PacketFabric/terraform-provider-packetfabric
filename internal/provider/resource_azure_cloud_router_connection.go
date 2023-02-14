@@ -117,6 +117,8 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
 		}
+		// Adding delay after Azure Cloud Router Connection created
+		time.Sleep(20 * time.Second)
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
