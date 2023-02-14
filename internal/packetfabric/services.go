@@ -246,15 +246,6 @@ func (c *PFClient) CreateBackbone(backbone Backbone) (*BackboneResp, error) {
 	return backboneResp, nil
 }
 
-func (c *PFClient) GetCurrentCustomersBackbone() ([]Services, error) {
-	expectedResp := make([]Services, 0)
-	_, err := c.sendRequest(backboneURI, getMethod, nil, &expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	return expectedResp, err
-}
-
 func (c *PFClient) CreateIXVirtualCircuit(ixVc IxVirtualCircuit) (*VcRequest, error) {
 	expectedResp := &VcRequest{}
 	_, err := c.sendRequest(serviceIxURI, postMethod, ixVc, expectedResp)
