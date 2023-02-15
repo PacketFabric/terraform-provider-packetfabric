@@ -130,6 +130,7 @@ terraform import packetfabric_backbone_virtual_circuit.vc_marketplace PF-DC-PHX-
 11. **A side**, apply the plan to confirm the resource is correctly imported and managed by Terraform.
 
 ```sh
+terraform plan
 terraform apply
 ```
 

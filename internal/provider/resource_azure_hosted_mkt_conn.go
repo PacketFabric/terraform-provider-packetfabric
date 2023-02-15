@@ -13,7 +13,7 @@ import (
 func resourceAzureHostedMktConn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCreateAzureHostedMkt,
-		ReadContext:   resourceAzureHostedMktRead,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
 		DeleteContext: resourceDeleteAzureHostedMkt,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -90,11 +90,6 @@ func resourceCreateAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	}
 	d.SetId(resp.VcRequestUUID)
 	return diags
-}
-
-func resourceAzureHostedMktRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
 func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

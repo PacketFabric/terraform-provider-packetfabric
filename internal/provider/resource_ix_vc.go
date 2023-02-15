@@ -13,7 +13,7 @@ import (
 func resourceIxVC() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIxVCCreate,
-		ReadContext:   resourceIxVCRead,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
 		DeleteContext: resourceIXVCDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -150,16 +150,6 @@ func resourceIxVCCreate(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func resourceIxVCRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	if _, err := c.GetVCRequest(d.Id()); err != nil {
-		return diag.FromErr(err)
-	}
-	return diags
-}
-
 func resourceIXVCDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -217,35 +207,6 @@ func extractIXVcInterface(interf map[string]interface{}) packetfabric.Interfaces
 		vxInterf.Svlan = svlan.(int)
 	}
 	return vxInterf
-}
-
-func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettingsUpdate {
-	settUpdate := packetfabric.ServiceSettingsUpdate{}
-	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
-		settUpdate.RateLimitIn = rateLimitIn.(int)
-	}
-	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
-		settUpdate.RateLimitOut = rateLimitOut.(int)
-	}
-	if description, ok := d.GetOk("description"); ok {
-		settUpdate.Description = description.(string)
-	}
-	if _, ok := d.GetOk("interface"); ok {
-		for _, interf := range d.Get("interface").(*schema.Set).List() {
-			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
-		}
-	}
-	if _, ok := d.GetOk("interface_a"); ok {
-		for _, interf := range d.Get("interface_a").(*schema.Set).List() {
-			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
-		}
-	}
-	if _, ok := d.GetOk("interface_z"); ok {
-		for _, interf := range d.Get("interface_z").(*schema.Set).List() {
-			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
-		}
-	}
-	return settUpdate
 }
 
 func ixVcSpeedOptions() []string {

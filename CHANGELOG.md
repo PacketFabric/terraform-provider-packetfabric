@@ -1,3 +1,17 @@
+## 1.0.4  (February 15, 2023)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Update Read functions in Terraform resources to improve Terraform import (#335)
+* Add Terraform Import support for IX Virtual Circuit (#333)
+* Cleanup rename functions in internal/packetfabric/cloud_router_connection.go and more (#191)
+* Add svlan to packetfabric_backbone_virtual_circuit data-source (#335)
+* Update Read functions for all Marketplace resources (IX, Cloud, Backbone) (#335)
+
+BUG FIXES:
+
+*  Azure BGP session update: if l3Address is not set, set it based on the values of primarySubnet and secondarySubnet (#336)
+
 ## 1.0.3  (February 14, 2023)
 
 BUG FIXES:

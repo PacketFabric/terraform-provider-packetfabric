@@ -141,8 +141,7 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesDedicatedRead(ctx, d, m)
 }
 
 func resourceGoogleDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

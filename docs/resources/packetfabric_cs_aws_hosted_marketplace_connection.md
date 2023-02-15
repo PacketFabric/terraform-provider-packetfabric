@@ -10,6 +10,8 @@ description: |-
 
 Connect a marketplace provider to your AWS cloud environment. For more information, see [Cloud Connections in the PacketFabric documentation](https://docs.packetfabric.com/cloud/) and [Marketplace to Cloud Connections](https://docs.packetfabric.com/eco/marketplace_cloud/).
 
+Once your request has been approved, [import the resource](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/guides/importing) as [`packetfabric_cs_aws_hosted_connection`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/resources/packetfabric_cs_aws_hosted_connection) into Terraform.
+
 ## Example Usage
 
 ```terraform

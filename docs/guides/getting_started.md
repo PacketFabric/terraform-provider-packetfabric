@@ -51,7 +51,7 @@ For more information, see [Get the Account UUID in the PacketFabric documentatio
 
 Account ID can be provided by using the `PF_ACCOUNT_ID` environment variable.
 
-For example (Mac/Linux):
+For example:
 
 ```sh
 $ export PF_ACCOUNT_ID="123456789"

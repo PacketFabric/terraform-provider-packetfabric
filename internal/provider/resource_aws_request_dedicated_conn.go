@@ -135,8 +135,7 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesDedicatedRead(ctx, d, m)
 }
 
 func resourceAwsReqDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

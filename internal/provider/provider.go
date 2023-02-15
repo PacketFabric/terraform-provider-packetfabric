@@ -78,7 +78,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connection_aws":             resourceRouterConnectionAws(),
 			"packetfabric_cloud_router_connection_oracle":          resourceOracleCloudRouteConn(),
 			"packetfabric_cloud_router_bgp_session":                resourceBgpSession(),
-			"packetfabric_backbone_virtual_circuit":                resourceVcBackbone(),
+			"packetfabric_backbone_virtual_circuit":                resourceBackbone(),
 			"packetfabric_backbone_virtual_circuit_marketplace":    resourceThirdPartyVirtualCircuit(),
 			"packetfabric_backbone_virtual_circuit_speed_burst":    resourceAddSpeedBurst(),
 			"packetfabric_cs_aws_hosted_marketplace_connection":    resourceAwsHostedMkt(),

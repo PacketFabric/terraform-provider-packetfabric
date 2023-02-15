@@ -31,8 +31,7 @@ func resourceGoogleProvisionCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceGoogleProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
+	return resourceServicesHostedRead(ctx, d, m)
 }
 
 func resourceGoogleProvisionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -41,5 +40,5 @@ func resourceGoogleProvisionUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceGoogleProvisionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceCloudSourceDelete(ctx, d, m, "Azure Service Delete")
+	return resourceCloudSourceDelete(ctx, d, m, "Google Service Delete")
 }

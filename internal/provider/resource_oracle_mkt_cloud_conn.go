@@ -13,7 +13,7 @@ import (
 func resourceOracleMktCloudConn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceOracleMktCloudConnCreate,
-		ReadContext:   resourceOracleMktCloudConnRead,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
 		DeleteContext: resourceOracleMktCloudConnDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
@@ -97,11 +97,6 @@ func resourceOracleMktCloudConnCreate(ctx context.Context, d *schema.ResourceDat
 	}
 	d.SetId(res.VcRequestUUID)
 	return diags
-}
-
-func resourceOracleMktCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
 func resourceOracleMktCloudConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

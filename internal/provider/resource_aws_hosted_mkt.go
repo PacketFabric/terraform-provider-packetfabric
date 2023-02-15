@@ -18,7 +18,7 @@ func resourceAwsHostedMkt() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceCreateAwsHostedMkt,
-		ReadContext:   resourceReadAwsHostedMkt,
+		ReadContext:   resourceThirdPartyVirtualCircuitRead,
 		DeleteContext: resourceDeleteAwsHostedMkt,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -105,11 +105,6 @@ func resourceCreateAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m i
 		d.SetId(resp.VcRequestUUID)
 	}
 	return diags
-}
-
-func resourceReadAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesRead(ctx, d, m, c.GetCurrentCustomersDedicated)
 }
 
 func resourceDeleteAwsHostedMkt(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

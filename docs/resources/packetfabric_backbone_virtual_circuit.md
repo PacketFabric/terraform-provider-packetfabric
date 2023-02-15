@@ -66,6 +66,11 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 
 - `bandwidth` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--bandwidth))
 - `description` (String) A brief description of this connection.
+- `interface_a` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_a))
+- `interface_z` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_z))
+
+### Optional
+
 - `epl` (Boolean) If true, the circuit will be an EPL connection rather than an EVPL. Default is false.
 
 	EPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.
@@ -73,14 +78,12 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 	EVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.
 
 	For more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).
-- `interface_a` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_a))
-- `interface_z` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface_z))
 
-### Optional
-
+  Defaults: false
 - `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
 - `rate_limit_in` (Number) The upper bound, in Mbps, by which to limit incoming data.
 - `rate_limit_out` (Number) The upper bound, in Mbps, by which to limit outgoing data.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
@@ -129,6 +132,17 @@ Optional:
 - `svlan` (Number) Valid sVLAN.
 - `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
+
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
 
 
 

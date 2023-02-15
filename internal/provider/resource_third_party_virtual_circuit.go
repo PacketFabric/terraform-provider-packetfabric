@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -166,6 +167,11 @@ func resourceThirdPartyVirtualCircuitRead(ctx context.Context, d *schema.Resourc
 	if _, err := c.GetVCRequest(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Marketplace Request.",
+		Detail:   fmt.Sprintf("Warning: the Marketplace connection request for %q has been either accepted or rejected.", d.Id()),
+	})
 	return diags
 }
 

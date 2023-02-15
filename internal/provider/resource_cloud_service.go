@@ -9,6 +9,40 @@ import (
 )
 
 // used for all Hosted Clouds
+func resourceServicesHostedRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+	}
+	return diags
+}
+
+// used for all Dedicated Clouds
+func resourceServicesDedicatedRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+	}
+	return diags
+}
+
+// used for all Hosted Clouds
 func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, fn func(string, string) (*packetfabric.CloudServiceConnCreateResp, error)) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx

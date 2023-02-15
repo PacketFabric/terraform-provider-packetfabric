@@ -19,7 +19,7 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceAzureReqExpressDedicatedConnCreate,
-		ReadContext:   resourceAzureProvisionRead,
+		ReadContext:   resourceAzureReqExpressDedicatedConnRead,
 		UpdateContext: resourceAzureProvisionDedicatedUpdate,
 		DeleteContext: resourceAzureProvisionDelete,
 		Schema: map[string]*schema.Schema{
@@ -143,6 +143,10 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 	return diags
+}
+
+func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceServicesDedicatedRead(ctx, d, m)
 }
 
 func resourceAzureProvisionDedicatedUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

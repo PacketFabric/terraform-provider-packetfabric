@@ -101,9 +101,15 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
+		var regions []string
+		for _, region := range resp.Regions {
+			regions = append(regions, region.Code)
+		}
+		_ = d.Set("regions", regions)
 	}
 	return diags
 }

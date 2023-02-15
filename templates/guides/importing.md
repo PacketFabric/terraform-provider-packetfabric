@@ -38,17 +38,36 @@ $ terraform import packetfabric_cloud_router.awesome_cloud_routers PF-L3-CUST-17
 
 ### 3: Confirm the resource is now managed by Terraform
 
-```terraform
+```bash
 $ terraform state list 
 packetfabric_cloud_router.awesome_cloud_routers
 
 $ terraform state show packetfabric_cloud_router.awesome_cloud_routers
 # packetfabric_cloud_router.awesome_cloud_routers:
 resource "packetfabric_cloud_router" "awesome_cloud_routers" {
-    asn      = 4556
-    capacity = "5Gbps"
-    id       = "PF-L3-CUST-1700239"
-    name     = "Awesome Cloud Routers"
+    account_uuid = "a2115890-ed02-4795-a6dd-c485bec3529c"
+    asn          = 4556
+    capacity     = "5Gbps"
+    id           = "PF-L3-CUST-1700239"
+    name         = "Awesome Cloud Routers"
+    regions      = [
+        "US",
+    ]
+
     timeouts {}
 }
 ```
+
+### 4: Run Terraform Plan
+
+```bash
+$ terraform plan
+
+packetfabric_cloud_router.awesome_cloud_routers: Refreshing state... [id=PF-L3-CUST-1700239]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
+```
+
+You may need to adjust your resource defintion in your Terraform HCL code or Terraform state file based on the output.

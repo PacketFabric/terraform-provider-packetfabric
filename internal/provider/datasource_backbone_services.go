@@ -173,6 +173,11 @@ func datasourceBackboneServices() *schema.Resource {
 										Computed:    true,
 										Description: "The interface vlan.",
 									},
+									"svlan": {
+										Type:        schema.TypeInt,
+										Computed:    true,
+										Description: "The interface svlan.",
+									},
 									"untagged": {
 										Type:        schema.TypeBool,
 										Computed:    true,
@@ -291,6 +296,7 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []inter
 			flatten["zone"] = interf.Zone
 			flatten["description"] = interf.Description
 			flatten["vlan"] = interf.Vlan
+			flatten["svlan"] = interf.Svlan
 			flatten["untagged"] = interf.Untagged
 			flatten["provisioning_status"] = interf.ProvisioningStatus
 			flatten["admin_status"] = interf.AdminStatus
@@ -309,13 +315,14 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []inter
 	return make([]interface{}, 0)
 }
 
-func flattenServiceBandwidth(bandw *packetfabric.ServiceBandwidth) []interface{} {
+func flattenServiceBandwidth(bandw *packetfabric.Bandwidth) []interface{} {
 	flattens := make([]interface{}, 0)
 	if bandw != nil {
 		flatten := make(map[string]interface{})
 		flatten["account_uuid"] = bandw.AccountUUID
 		flatten["subscription_term"] = bandw.SubscriptionTerm
 		flatten["speed"] = bandw.Speed
+		flatten["longhaul_type"] = bandw.LonghaulType
 		flattens = append(flattens, flatten)
 	}
 	return flattens
