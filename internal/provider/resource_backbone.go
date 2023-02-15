@@ -189,9 +189,6 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	if resp != nil {
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("rate_limit_in", resp.RateLimitIn)
-		_ = d.Set("rate_limit_out", resp.RateLimitOut)
-		_ = d.Set("rate_limit_out", resp.RateLimitOut)
 		if resp.Mode == "epl" {
 			_ = d.Set("epl", true)
 		} else {
@@ -202,7 +199,6 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			func(i interface{}) int { return 0 },
 			[]interface{}{},
 		)
-
 		// Add the bandwidth values to the set
 		bandwidth := map[string]interface{}{
 			"account_uuid":      resp.Bandwidth.AccountUUID,
@@ -211,9 +207,9 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			"speed":             resp.Bandwidth.Speed,
 		}
 		bandwidthSet.Add(bandwidth)
-
 		// Set the bandwidth attribute to the schema set
 		_ = d.Set("bandwidth", bandwidthSet)
+
 		if len(resp.Interfaces) == 2 {
 			interfaceA := make(map[string]interface{})
 			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
