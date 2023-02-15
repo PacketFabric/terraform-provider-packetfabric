@@ -258,6 +258,18 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 			return diag.FromErr(err)
 		}
+		updateOk := make(chan bool)
+		defer close(updateOk)
+		ticker := time.NewTicker(10 * time.Second)
+		go func() {
+			for range ticker.C {
+				if ok := c.IsBackboneComplete(d.Id()); ok {
+					ticker.Stop()
+					updateOk <- true
+				}
+			}
+		}()
+		<-updateOk
 	}
 
 	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
