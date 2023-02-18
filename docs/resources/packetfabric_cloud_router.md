@@ -39,18 +39,14 @@ output "packetfabric_cloud_router" {
 
 	Enum: "100Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps" ">100Gbps"
 - `name` (String) Cloud router name.
+- `regions` (List of String) The regions in which the Cloud Router connections will be located.
+		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
 
 ### Optional
 
 - `asn` (Number) The ASN of the cloud router.
 
-	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.
-
-	Defaults to 4556 if unspecified.
-- `regions` (List of String) The regions in which the Cloud Router connections will be located.
-		Use `["US"]` for North America and `["UK"]` for EMEA. For transatlantic, use `["US","UK"]`.
-
-	Defaults to US if unspecified.
+	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534. Defaults: 4556
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
