@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -96,7 +98,17 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: ImportStatePassthroughContext,
+		},
 	}
+}
+
+const StringSeparator = ":"
+
+type CloudRouterCircuitIdData struct {
+	cloudRouterCircuitId           string
+	cloudRouterConnectionCircuitId string
 }
 
 func resourceCustomerOwnedPortConnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -180,4 +192,24 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 		ownedPort.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
 	return ownedPort
+}
+
+func splitCloudRouterCircuitIdString(data string) (CloudRouterCircuitIdData, error) {
+	stringArr := strings.Split(data, StringSeparator)
+	if len(stringArr) != 2 {
+		return CloudRouterCircuitIdData{}, errors.New("to import a cloud router connection, use the format {cloud_router_circuit_id}:{cloud_router_connection_circuit_id}")
+	}
+	return CloudRouterCircuitIdData{cloudRouterCircuitId: stringArr[0], cloudRouterConnectionCircuitId: stringArr[1]}, nil
+}
+
+func ImportStatePassthroughContext(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	if cloudRouterCircuitIdCombination, ok := d.GetOk(""); ok {
+		cloudRouterCircuitIdData, err := splitCloudRouterCircuitIdString(cloudRouterCircuitIdCombination.(string))
+		if err != nil {
+			return []*schema.ResourceData{}, err
+		}
+		_ = d.Set("cloud_router_circuit_id", cloudRouterCircuitIdData.cloudRouterCircuitId)
+		_ = d.Set("cloud_router_connection_circuit_id", cloudRouterCircuitIdData.cloudRouterConnectionCircuitId)
+	}
+	return []*schema.ResourceData{d}, nil
 }
