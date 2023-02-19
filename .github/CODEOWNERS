@@ -2,9 +2,9 @@
 *   @rjouhann
 
 # code
-internal/*  @medzin @solababs @Favouroked @rjouhann
+/internal/  @medzin @solababs @Favouroked @rjouhann
 
 # docs
-docs/*  @caitlinwheeless @rjouhann
-templates/* @caitlinwheeless @rjouhann
-examples/*  @rjouhann
+/docs/  @caitlinwheeless @rjouhann
+/templates/ @caitlinwheeless @rjouhann
+/examples/  @rjouhann
