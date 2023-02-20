@@ -1,3 +1,27 @@
+## 1.0.5  (February 20, 2023)
+
+BREAKING CHANGES:
+
+* Change region in packetfabric_cloud_router to required (#341)
+* Change pop in packetfabric_cs_aws_hosted_marketplace_connection to required (#344)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add default asn value to 4556 in packetfabric_cloud_router (#341)
+* Add default should_create_lag value for packetfabric_cs_aws_dedicated_connection (#341)
+* Add default multihop_ttl value for packetfabric_cloud_router_bgp_session (#341)
+* Add default autoneg value for packetfabric_cs_google_dedicated_connection (#341)
+* Add default nni and autoneg value for packetfabric_port (#341)
+
+BUG FIXES:
+
+* Errors with "usage" based backbone virtual circuits (#399)
+
+SECURITY:
+
+* CVE-2022-27664 golang.org/x/net/http2 Denial of Service vulnerability (#343)
+* CVE-2022-41723 Uncontrolled Resource Consumption (#343)
+
 ## 1.0.4  (February 15, 2023)
 
 IMPROVEMENTS/ENHANCEMENTS:
