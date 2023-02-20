@@ -98,6 +98,9 @@ Required:
 - `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
 
 	Enum ["dedicated" "usage" "hourly"]
+
+Optional:
+
 - `speed` (String) The desired speed of the new connection. Only applicable if `longhaul_type` is "dedicated" or "hourly".
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps"]
@@ -116,7 +119,7 @@ Required:
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
-- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `untagged` (Boolean) Whether the interface should be untagged. Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
@@ -130,7 +133,7 @@ Required:
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
-- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `untagged` (Boolean) Whether the interface should be untagged. Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 

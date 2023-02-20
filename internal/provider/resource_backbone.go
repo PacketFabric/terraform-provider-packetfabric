@@ -47,13 +47,13 @@ func resourceBackbone() *schema.Resource {
 						},
 						"speed": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice(speedOptions(), true),
 							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 						},
 						"subscription_term": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
@@ -88,7 +88,7 @@ func resourceBackbone() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     false,
-							Description: "Whether the interface should be untagged.",
+							Description: "Whether the interface should be untagged. ",
 						},
 					},
 				},
@@ -117,7 +117,7 @@ func resourceBackbone() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     false,
-							Description: "Whether the interface should be untagged.",
+							Description: "Whether the interface should be untagged. ",
 						},
 					},
 				},
@@ -200,13 +200,30 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			[]interface{}{},
 		)
 		// Add the bandwidth values to the set
-		bandwidth := map[string]interface{}{
-			"account_uuid":      resp.Bandwidth.AccountUUID,
-			"longhaul_type":     resp.Bandwidth.LonghaulType,
-			"subscription_term": resp.Bandwidth.SubscriptionTerm,
-			"speed":             resp.Bandwidth.Speed,
+		if resp.Bandwidth.LonghaulType == "dedicated" {
+			bandwidth := map[string]interface{}{
+				"account_uuid":      resp.Bandwidth.AccountUUID,
+				"longhaul_type":     resp.Bandwidth.LonghaulType,
+				"subscription_term": resp.Bandwidth.SubscriptionTerm,
+				"speed":             resp.Bandwidth.Speed,
+			}
+			bandwidthSet.Add(bandwidth)
 		}
-		bandwidthSet.Add(bandwidth)
+		if resp.Bandwidth.LonghaulType == "usage" {
+			bandwidth := map[string]interface{}{
+				"account_uuid":  resp.Bandwidth.AccountUUID,
+				"longhaul_type": resp.Bandwidth.LonghaulType,
+			}
+			bandwidthSet.Add(bandwidth)
+		}
+		if resp.Bandwidth.LonghaulType == "hourly" {
+			bandwidth := map[string]interface{}{
+				"account_uuid":  resp.Bandwidth.AccountUUID,
+				"longhaul_type": resp.Bandwidth.LonghaulType,
+				"speed":         resp.Bandwidth.Speed,
+			}
+			bandwidthSet.Add(bandwidth)
+		}
 		// Set the bandwidth attribute to the schema set
 		_ = d.Set("bandwidth", bandwidthSet)
 
