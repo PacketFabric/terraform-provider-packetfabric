@@ -88,7 +88,8 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Create the dedicated connection as a LAG interface.",
+				Default:     false,
+				Description: "Create the dedicated connection as a LAG interface. ",
 			},
 			"loa": {
 				Type:        schema.TypeString,

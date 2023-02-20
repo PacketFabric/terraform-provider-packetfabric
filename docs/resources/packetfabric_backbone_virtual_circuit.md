@@ -119,7 +119,7 @@ Required:
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
-- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `untagged` (Boolean) Whether the interface should be untagged. Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
@@ -133,7 +133,7 @@ Required:
 Optional:
 
 - `svlan` (Number) Valid sVLAN.
-- `untagged` (Boolean) Whether the interface should be untagged.Defaults: false
+- `untagged` (Boolean) Whether the interface should be untagged. Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
 
