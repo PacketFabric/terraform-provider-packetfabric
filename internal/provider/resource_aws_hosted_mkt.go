@@ -66,7 +66,7 @@ func resourceAwsHostedMkt() *schema.Resource {
 			},
 			"pop": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The POP in which the hosted connection should be provisioned (the cloud on-ramp).",

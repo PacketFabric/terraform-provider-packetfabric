@@ -73,7 +73,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Whether the interface should be untagged. Do not specify a VLAN if this is to be an untagged connection.",
+				Description: "Whether the interface should be untagged. Do not specify a VLAN if this is to be an untagged connection. ",
 			},
 			"speed": {
 				Type:         schema.TypeString,

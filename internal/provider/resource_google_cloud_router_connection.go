@@ -48,7 +48,7 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection.",
+				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,

@@ -39,7 +39,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
+- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
 - `aws_region` (String) The region that the new connection will connect to.
 
 	Example: us-west-1
@@ -62,7 +62,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
 	Example: SSBhbSBhIFBERg==
-- `should_create_lag` (Boolean) Create the dedicated connection as a LAG interface.
+- `should_create_lag` (Boolean) Create the dedicated connection as a LAG interface. Defaults: true
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired AWS availability zone of the new connection.
 

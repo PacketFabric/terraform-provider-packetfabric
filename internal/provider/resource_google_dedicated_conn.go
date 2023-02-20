@@ -72,7 +72,8 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
+				Default:     false,
+				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. ",
 			},
 			"speed": {
 				Type:         schema.TypeString,

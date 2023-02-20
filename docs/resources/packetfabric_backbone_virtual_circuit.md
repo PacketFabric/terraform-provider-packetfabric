@@ -79,7 +79,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 
 	For more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).
 
-  Defaults: false
+	Defaults: false
 - `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
 - `rate_limit_in` (Number) The upper bound, in Mbps, by which to limit incoming data.
 - `rate_limit_out` (Number) The upper bound, in Mbps, by which to limit outgoing data.
