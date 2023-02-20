@@ -39,7 +39,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
+- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
 - `aws_region` (String) The region that the new connection will connect to.
 
 	Example: us-west-1
