@@ -76,7 +76,8 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
+				Default:     false,
+				Description: "Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. ",
 			},
 			"speed": {
 				Type:        schema.TypeString,
@@ -88,7 +89,7 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
+				Default:     true,
 				Description: "Create the dedicated connection as a LAG interface. ",
 			},
 			"loa": {

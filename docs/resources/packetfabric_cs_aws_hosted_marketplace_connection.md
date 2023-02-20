@@ -40,6 +40,7 @@ output "packetfabric_cs_aws_hosted_marketplace_connection" {
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
 	If the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in "DAL5", enter "DAL" for the market).
+- `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `routing_id` (String) The routing ID of the marketplace provider that will be receiving this request.
 
 	Example: TR-1RI-OQ85
@@ -50,7 +51,6 @@ output "packetfabric_cs_aws_hosted_marketplace_connection" {
 ### Optional
 
 - `description` (String) A brief description of this connection.
-- `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired zone of the new connection
 

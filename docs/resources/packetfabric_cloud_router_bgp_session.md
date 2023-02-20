@@ -153,20 +153,20 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 
 ### Optional
 
-- `as_prepend` (Number) The BGP prepend value for this instance. Deprecated.
+- `as_prepend` (Number) The BGP prepend value for this instance. It is used when type = out.
 - `bfd_interval` (Number) If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.
 
 	Available range is 3 through 30000.
 - `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
 
 	Available range is 2 through 16.
-- `community` (Number) The BGP community for this instance. Deprecated.
+- `community` (Number) The BGP community for this instance.
 - `disabled` (Boolean) Whether this BGP session is disabled. Default is false.
 - `l3_address` (String) The L3 address of this instance. Not used for Azure connections. Required for all other CSP.
-- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. Deprecated.
+- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
 - `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
-- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.
-- `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
+- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.
+- `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl). Defaults: 1
 - `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--nat))
 - `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.
@@ -191,6 +191,8 @@ Optional:
 - `as_prepend` (Number) The BGP prepend value of this prefix. It is used when type = out.
 - `local_preference` (Number) The local_preference of this prefix. It is used when type = in.
 - `match_type` (String) The match type of this prefix.
+
+	Enum: `"exact"` `"orlonger"` `"longer"`
 - `med` (Number) The MED of this prefix. It is used when type = out.
 - `order` (Number) The order of this prefix against the others.
 
