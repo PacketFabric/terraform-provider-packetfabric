@@ -9,51 +9,46 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func hclCloudRouterConnectionAws(description, accountUUID, awsAccountID, pop, zone, speed string) (hcl string, resourceName string) {
+func hclCloudRouterConnectionAws(awsAccountID, accountUUID, description, pop, speed string) (hcl string, resourceName string) {
+
 	hclCloudRouter, crResourceName := hclCloudRouter(
-		testutil.GenerateUniqueName(testPrefix),
-		accountUUID,
-		"US",
-		"100Mbps",
-		"4556",
+		os.Getenv(testutil.PF_CR_DESCR),
+		os.Getenv(testutil.PF_ACCOUNT_ID),
+		os.Getenv(testutil.PF_CR_CAPACITY_KEY),
 	)
+
 	hclName := testutil.GenerateUniqueResourceName()
 	resourceName = "packetfabric_cloud_router_connection_aws." + hclName
-	crcHcl := fmt.Sprintf(`
-	resource "packetfabric_cloud_router_connection_aws" "%s" {
-		circuit_id     = %s.id
-		account_uuid   = "%s"
-		aws_account_id = "%s"
-		maybe_nat      = false
-		maybe_dnat      = false
-		description    = "%s"
-		pop            = "%s"
-		zone           = "%s"
-		is_public      = false
-		speed          = "%s"
-	}`, hclName, crResourceName, accountUUID, awsAccountID, description, pop, zone, speed)
+	crcHcl := fmt.Sprintf(testutil.RResourceCloudRouterConnectionAws, hclName, crResourceName, awsAccountID, accountUUID, description, pop, speed)
 
 	hcl = fmt.Sprintf("%s\n%s", hclCloudRouter, crcHcl)
 	return
 }
 
-func TestAccCloudRouterConnectionAws(t *testing.T) {
+func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
-	description := testutil.GenerateUniqueName(testPrefix)
-	// TODO(rjouhann): add function to get pop / zone automatically when packetfabric_locations_cloud available (#200)
+	awsAccountId := os.Getenv(testutil.PF_AWS_ACCOUNT_ID)
+	accountUuid := os.Getenv(testutil.PF_AWS_ACCOUNT_ID)
+	description := os.Getenv(testutil.PF_CRC_DESCR)
+	pop := os.Getenv(testutil.PF_CRC_POP1_KEY)
+	speed := os.Getenv(testutil.PF_CRC_SPEED_KEY)
+
 	hcl, resourceName := hclCloudRouterConnectionAws(
+		awsAccountId,
+		accountUuid,
 		description,
-		testutil.GetAccountUUID(),
-		os.Getenv("PF_AWS_ACCOUNT_ID"),
-		"PDX2",
-		"B",
-		"50Mbps",
+		pop,
+		speed,
 	)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
-				"PF_AWS_ACCOUNT_ID",
+				testutil.PF_CRC_DESCR,
+				testutil.PF_AWS_ACCOUNT_ID,
+				testutil.PF_AWS_ACCOUNT_ID,
+				testutil.PF_CRC_POP1_KEY,
+				testutil.PF_CRC_SPEED_KEY,
 			})
 		},
 		ProviderFactories: testAccProviderFactories,
@@ -62,11 +57,11 @@ func TestAccCloudRouterConnectionAws(t *testing.T) {
 			{
 				Config: hcl,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "aws_account_id", awsAccountId),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "account_uuid", testutil.GetAccountUUID()),
-					resource.TestCheckResourceAttr(resourceName, "pop", "PDX2"),
-					resource.TestCheckResourceAttr(resourceName, "zone", "B"),
-					resource.TestCheckResourceAttr(resourceName, "speed", "50Mbps"),
+					resource.TestCheckResourceAttr(resourceName, "account_uuid", accountUuid),
+					resource.TestCheckResourceAttr(resourceName, "pop", pop),
+					resource.TestCheckResourceAttr(resourceName, "speed", speed),
 				),
 			},
 		},
