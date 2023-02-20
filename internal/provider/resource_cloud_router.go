@@ -31,7 +31,8 @@ func resourceCloudRouter() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "The ASN of the cloud router.\n\n\tThis can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534.\n\n\tDefaults to 4556 if unspecified.",
+				Default:     4556,
+				Description: "The ASN of the cloud router.\n\n\tThis can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534. ",
 			},
 			"name": {
 				Type:         schema.TypeString,
@@ -50,8 +51,8 @@ func resourceCloudRouter() *schema.Resource {
 			},
 			"regions": {
 				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "The regions in which the Cloud Router connections will be located.\n\t\tUse `[\"US\"]` for North America and `[\"UK\"]` for EMEA. For transatlantic, use `[\"US\",\"UK\"]`.\n\n\tDefaults to US if unspecified.",
+				Required:    true,
+				Description: "The regions in which the Cloud Router connections will be located.\n\t\tUse `[\"US\"]` for North America and `[\"UK\"]` for EMEA. For transatlantic, use `[\"US\",\"UK\"]`.",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,

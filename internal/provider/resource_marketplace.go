@@ -75,7 +75,7 @@ func resourceMarketplaceService() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"port-service", "quick-connect-service"}, true),
 				Default:      "port-service",
-				Description:  "The service type of this service. Enum: `\"port-service\"`, `\"quick-connect-service\"` ",
+				Description:  "The service type of this service. Enum: `\"port-service\"`, `\"quick-connect-service\"`\n\n\t",
 			},
 			"cloud_router_circuit_id": {
 				Type:         schema.TypeString,
