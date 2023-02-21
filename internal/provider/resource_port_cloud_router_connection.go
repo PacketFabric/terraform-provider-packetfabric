@@ -2,8 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -150,11 +148,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("speed", resp.Speed)
 
 		_unsetFields := []string{"untagged", "is_public", "published_quote_line_uuid"}
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Field(s) not set",
-			Detail:   fmt.Sprintf("The following fields: %s would not be set.", _unsetFields),
-		})
+		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
 }

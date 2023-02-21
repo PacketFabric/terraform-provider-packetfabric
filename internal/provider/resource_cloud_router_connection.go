@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -90,4 +91,13 @@ func CloudRouterImportStatePassthroughContext(ctx context.Context, d *schema.Res
 	_ = d.Set("circuit_id", cloudRouterCircuitIdData.cloudRouterCircuitId)
 	d.SetId(cloudRouterCircuitIdData.cloudRouterConnectionCircuitId)
 	return []*schema.ResourceData{d}, nil
+}
+
+func showWarningForUnsetFields(unsetFields []string, diags *diag.Diagnostics) diag.Diagnostics {
+	*diags = append(*diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Field(s) not set",
+		Detail:   fmt.Sprintf("The following fields: %s cannot not be set. Update the Terraform state file manually if needed.", unsetFields),
+	})
+	return *diags
 }
