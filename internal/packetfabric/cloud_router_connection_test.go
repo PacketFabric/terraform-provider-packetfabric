@@ -88,7 +88,7 @@ func Test_ReadCloudRouterConnection(t *testing.T) {
 		CircuitID:   _circuitIdMock,
 		CloudConnID: _cloudConnCid,
 	}
-	cTest.runFakeHttpServer(_callReadCloudRouterConn, readParamsPayload, _clConnUpdateExpectedResp[0], buildMockCloudRouterReadResp(_cloudConnUpdateDesc), "aws-cloud-router-conn-read", t)
+	cTest.runFakeHttpServer(_callReadCloudRouterConn, readParamsPayload, _clConnUpdateExpectedResp[0], buildMockCloudRouterReadResp(_cloudConnUpdateDesc), "cloud-router-conn-read", t)
 }
 
 func Test_UpdateCloudRouterConnection(t *testing.T) {
