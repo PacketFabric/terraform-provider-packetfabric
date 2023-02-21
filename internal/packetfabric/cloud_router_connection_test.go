@@ -131,7 +131,7 @@ func _callCreateAwsConn(payload interface{}) (interface{}, error) {
 }
 
 func _callReadAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.ReadAwsConnection(payload.(MockedReadParams).CircuitID, payload.(MockedReadParams).CloudConnID)
+	return cTest.ReadCloudRouterConnection(payload.(MockedReadParams).CircuitID, payload.(MockedReadParams).CloudConnID)
 }
 
 func _callGetClouConnectionStatus(payload interface{}) (interface{}, error) {

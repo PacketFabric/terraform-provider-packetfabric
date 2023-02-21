@@ -141,7 +141,7 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		_, err := c.ReadAwsConnection(cid.(string), cloudConnCID.(string))
+		_, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 		}

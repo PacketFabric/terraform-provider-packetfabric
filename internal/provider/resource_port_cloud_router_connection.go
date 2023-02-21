@@ -134,7 +134,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		resp, err := c.ReadAwsConnection(cid.(string), cloudConnCID.(string))
+		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 		}

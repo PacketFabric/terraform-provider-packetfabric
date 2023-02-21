@@ -317,7 +317,7 @@ func (c *PFClient) CreateOracleCloudRouerConnection(oracleRouter OracleCloudRout
 	return resp, err
 }
 
-func (c *PFClient) ReadAwsConnection(cID, connCid string) (*CloudRouterConnectionReadResponse, error) {
+func (c *PFClient) ReadCloudRouterConnection(cID, connCid string) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 
 	resp := &CloudRouterConnectionReadResponse{}
@@ -356,7 +356,7 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 		return nil, errors.New(errorMsg)
 	}
 
-	routerConn, _ := c.ReadAwsConnection(cID, connCid)
+	routerConn, _ := c.ReadCloudRouterConnection(cID, connCid)
 	if routerConn == nil {
 		return &ConnectionDeleteResp{Message: fmt.Sprintf("No cloud router connection to delete for %s", cID)}, nil
 	}
