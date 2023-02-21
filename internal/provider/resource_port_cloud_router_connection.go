@@ -97,7 +97,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: ImportStatePassthroughContext,
+			StateContext: CloudRouterImportStatePassthroughContext,
 		},
 	}
 }
@@ -196,14 +196,4 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 		ownedPort.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
 	return ownedPort
-}
-
-func ImportStatePassthroughContext(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	cloudRouterCircuitIdData, err := splitCloudRouterCircuitIdString(d.Id())
-	if err != nil {
-		return []*schema.ResourceData{}, err
-	}
-	_ = d.Set("circuit_id", cloudRouterCircuitIdData.cloudRouterCircuitId)
-	d.SetId(cloudRouterCircuitIdData.cloudRouterConnectionCircuitId)
-	return []*schema.ResourceData{d}, nil
 }

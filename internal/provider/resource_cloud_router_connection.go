@@ -81,3 +81,13 @@ func splitCloudRouterCircuitIdString(data string) (CloudRouterCircuitIdData, err
 	}
 	return CloudRouterCircuitIdData{cloudRouterCircuitId: stringArr[0], cloudRouterConnectionCircuitId: stringArr[1]}, nil
 }
+
+func CloudRouterImportStatePassthroughContext(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	cloudRouterCircuitIdData, err := splitCloudRouterCircuitIdString(d.Id())
+	if err != nil {
+		return []*schema.ResourceData{}, err
+	}
+	_ = d.Set("circuit_id", cloudRouterCircuitIdData.cloudRouterCircuitId)
+	d.SetId(cloudRouterCircuitIdData.cloudRouterConnectionCircuitId)
+	return []*schema.ResourceData{d}, nil
+}
