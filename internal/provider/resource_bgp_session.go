@@ -72,27 +72,28 @@ func resourceBgpSession() *schema.Resource {
 			"multihop_ttl": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).",
+				Default:     1,
+				Description: "The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl). ",
 			},
 			"local_preference": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. Deprecated.",
+				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.",
 			},
 			"med": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. Deprecated.",
+				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.",
 			},
 			"community": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The BGP community for this instance. Deprecated.",
+				Description: "The BGP community for this instance.",
 			},
 			"as_prepend": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The BGP prepend value for this instance. Deprecated.",
+				Description: "The BGP prepend value for this instance. It is used when type = out.",
 			},
 			"orlonger": {
 				Type:        schema.TypeBool,
@@ -192,7 +193,7 @@ func resourceBgpSession() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
-							Description:  "The match type of this prefix.",
+							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` `\"longer\"`",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,

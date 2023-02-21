@@ -49,7 +49,7 @@ output "packetfabric_cs_google_dedicated_connection" {
 
 ### Optional
 
-- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
+- `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
 - `loa` (String) A base64 encoded string of a PDF of the LOA that Google provided.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
