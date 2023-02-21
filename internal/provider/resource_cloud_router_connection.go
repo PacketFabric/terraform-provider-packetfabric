@@ -2,11 +2,20 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+const StringSeparator = ":"
+
+type CloudRouterCircuitIdData struct {
+	cloudRouterCircuitId           string
+	cloudRouterConnectionCircuitId string
+}
 
 // common function to update or delete cloud router connections (aws, google, azure, oracle, ibm)
 
@@ -63,4 +72,12 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 		}
 	}
 	return diags
+}
+
+func splitCloudRouterCircuitIdString(data string) (CloudRouterCircuitIdData, error) {
+	stringArr := strings.Split(data, StringSeparator)
+	if len(stringArr) != 2 {
+		return CloudRouterCircuitIdData{}, errors.New("to import a cloud router connection, use the format {cloud_router_circuit_id}:{cloud_router_connection_circuit_id} got")
+	}
+	return CloudRouterCircuitIdData{cloudRouterCircuitId: stringArr[0], cloudRouterConnectionCircuitId: stringArr[1]}, nil
 }
