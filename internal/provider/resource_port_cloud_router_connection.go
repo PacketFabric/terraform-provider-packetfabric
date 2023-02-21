@@ -147,10 +147,6 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
-
-		//_ = d.Set("untagged", resp.)
-		//_ = d.Set("is_public", resp.Pub)
-		//_ = d.Set("published_quote_line_uuid", resp.Pub)
 	}
 	return diags
 }
