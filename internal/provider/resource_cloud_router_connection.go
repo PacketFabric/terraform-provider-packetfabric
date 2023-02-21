@@ -94,10 +94,12 @@ func CloudRouterImportStatePassthroughContext(ctx context.Context, d *schema.Res
 }
 
 func showWarningForUnsetFields(unsetFields []string, diags *diag.Diagnostics) diag.Diagnostics {
-	*diags = append(*diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Field(s) not set.",
-		Detail:   fmt.Sprintf("The following fields: %s cannot be set. Update the Terraform state file manually if needed.", unsetFields),
-	})
+	if len(unsetFields) > 0 {
+		*diags = append(*diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Field(s) not set.",
+			Detail:   fmt.Sprintf("The following fields: %s cannot be set. Update the Terraform state file manually if needed.", unsetFields),
+		})
+	}
 	return *diags
 }
