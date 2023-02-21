@@ -77,7 +77,7 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 func splitCloudRouterCircuitIdString(data string) (CloudRouterCircuitIdData, error) {
 	stringArr := strings.Split(data, StringSeparator)
 	if len(stringArr) != 2 {
-		return CloudRouterCircuitIdData{}, errors.New("to import a cloud router connection, use the format {cloud_router_circuit_id}:{cloud_router_connection_circuit_id} got")
+		return CloudRouterCircuitIdData{}, errors.New("to import a cloud router connection, use the format {cloud_router_circuit_id}:{cloud_router_connection_circuit_id}")
 	}
 	return CloudRouterCircuitIdData{cloudRouterCircuitId: stringArr[0], cloudRouterConnectionCircuitId: stringArr[1]}, nil
 }
