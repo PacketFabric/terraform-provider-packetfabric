@@ -8,7 +8,7 @@ BUG FIXES:
 
 BUG FIXES:
 
-* resource packetfabric_cs_aws_dedicated_connection: autoneg: Default cannot be set with Required (#399)
+* resource packetfabric_cs_aws_dedicated_connection: autoneg: Default cannot be set with Required (#345)
 
 ## 1.0.5  (February 20, 2023)
 
