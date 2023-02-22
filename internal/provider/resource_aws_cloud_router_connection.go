@@ -103,7 +103,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: CloudRouterImportStatePassthroughContext,
 		},
 	}
 }
@@ -142,18 +142,36 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
+	circuitID, ok := d.GetOk("circuit_id")
 	if !ok {
 		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
-	conns, err := c.ListAwsRouterConnections(cID.(string))
+
+	cloudConnCID := d.Get("id")
+	resp, err := c.ReadCloudRouterConnection(circuitID.(string), cloudConnCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	for _, conn := range conns {
-		_ = d.Set("speed", conn.Speed)
-		_ = d.Set("account_uuid", conn.AccountUUID)
+
+	_ = d.Set("account_uuid", resp.AccountUUID)
+	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+	_ = d.Set("maybe_nat", resp.NatCapable)
+	_ = d.Set("maybe_dnat", resp.DNatCapable)
+	_ = d.Set("description", resp.Description)
+	_ = d.Set("speed", resp.Speed)
+	_ = d.Set("pop", resp.Pop)
+	_ = d.Set("zone", resp.Zone)
+	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
+
+	if resp.CloudSettings.PublicIP != "" {
+		_ = d.Set("is_public", true)
+	} else {
+		_ = d.Set("is_public", false)
 	}
+
+	_unsetFields := []string{"published_quote_line_uuid"}
+	showWarningForUnsetFields(_unsetFields, &diags)
+	
 	return diags
 }
 
