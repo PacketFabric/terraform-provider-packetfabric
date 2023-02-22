@@ -114,7 +114,7 @@ func resourceFlexBandwidthRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		// convert int to string and append "Gbps"
-		capacityGbps := int(resp.CapacityMbps) / 1000
+		capacityGbps := resp.CapacityMbps / 1000
 		capacityMbps_string := strconv.Itoa(capacityGbps) + "Gbps"
 		_ = d.Set("capacity", capacityMbps_string)
 		_ = d.Set("used_capacity_mbps", resp.UsedCapacityMbps)
