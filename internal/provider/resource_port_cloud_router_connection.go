@@ -138,6 +138,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
+			return diags
 		}
 
 		_ = d.Set("account_uuid", resp.AccountUUID)

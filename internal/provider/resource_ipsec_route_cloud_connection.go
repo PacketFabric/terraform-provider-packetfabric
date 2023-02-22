@@ -190,6 +190,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		resp1, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
+			return diags
 		}
 		_ = d.Set("account_uuid", resp1.AccountUUID)
 		_ = d.Set("circuit_id", resp1.CloudRouterCircuitID)
