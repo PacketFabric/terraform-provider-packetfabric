@@ -171,7 +171,6 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 
 	_unsetFields := []string{"published_quote_line_uuid"}
 	showWarningForUnsetFields(_unsetFields, &diags)
-	
 	return diags
 }
 
