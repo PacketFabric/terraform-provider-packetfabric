@@ -148,8 +148,18 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
+		if resp.CloudSettings.PublicIP != "" {
+			_ = d.Set("is_public", true)
+		} else {
+			_ = d.Set("is_public", false)
+		}
+		if resp.Vlan == 0 {
+			_ = d.Set("untagged", true)
+		} else {
+			_ = d.Set("untagged", false)
+		}
 
-		_unsetFields := []string{"untagged", "is_public", "published_quote_line_uuid"}
+		_unsetFields := []string{"published_quote_line_uuid"}
 		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
