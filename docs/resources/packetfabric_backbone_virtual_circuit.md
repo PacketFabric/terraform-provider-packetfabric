@@ -95,12 +95,12 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 Required:
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
-
-	Enum ["dedicated" "usage" "hourly"]
 
 Optional:
 
+- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.
+
+	Enum ["dedicated" "usage" "hourly"]
 - `speed` (String) The desired speed of the new connection. Only applicable if `longhaul_type` is "dedicated" or "hourly".
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps"]
