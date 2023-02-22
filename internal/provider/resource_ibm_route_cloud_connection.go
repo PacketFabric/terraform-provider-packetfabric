@@ -120,6 +120,9 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: CloudRouterImportStatePassthroughContext,
+		},
 	}
 }
 
