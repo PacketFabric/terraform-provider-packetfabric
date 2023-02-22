@@ -83,6 +83,7 @@ type BgpSessionCreateResp struct {
 	LocalPreference int         `json:"local_preference"`
 	Community       string      `json:"community"`
 	AsPrepend       int         `json:"as_prepend"`
+	L3Address       string      `json:"l3_address"`
 	Med             int         `json:"med"`
 	Md5             string      `json:"md5"`
 	Orlonger        bool        `json:"orlonger"`
@@ -132,6 +133,7 @@ type BgpSessionAssociatedResp struct {
 	Community       string      `json:"community"`
 	AsPrepend       int         `json:"as_prepend"`
 	Med             int         `json:"med"`
+	L3Address       string      `json:"l3_address"`
 	Orlonger        bool        `json:"orlonger"`
 	BfdInterval     int         `json:"bfd_interval"`
 	BfdMultiplier   int         `json:"bfd_multiplier"`
