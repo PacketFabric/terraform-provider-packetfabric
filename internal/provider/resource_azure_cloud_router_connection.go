@@ -91,6 +91,9 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: CloudRouterImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -135,10 +138,27 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		_, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
+		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 		}
+
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+		_ = d.Set("maybe_nat", resp.NatCapable)
+		_ = d.Set("maybe_dnat", resp.DNatCapable)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
+
+		if resp.CloudSettings.PublicIP != "" {
+			_ = d.Set("is_public", true)
+		} else {
+			_ = d.Set("is_public", false)
+		}
+
+		_unsetFields := []string{"published_quote_line_uuid"}
+		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
 }
