@@ -58,8 +58,8 @@ func resourceBackbone() *schema.Resource {
 						},
 						"longhaul_type": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
+							Optional:    true,
+							Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
 					},
 				},
@@ -204,6 +204,15 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			bandwidth := map[string]interface{}{
 				"account_uuid":      resp.Bandwidth.AccountUUID,
 				"longhaul_type":     resp.Bandwidth.LonghaulType,
+				"subscription_term": resp.Bandwidth.SubscriptionTerm,
+				"speed":             resp.Bandwidth.Speed,
+			}
+			bandwidthSet.Add(bandwidth)
+		}
+		// metro dedicated doesn't need longhaul_type
+		if resp.Bandwidth.LonghaulType == "" {
+			bandwidth := map[string]interface{}{
+				"account_uuid":      resp.Bandwidth.AccountUUID,
 				"subscription_term": resp.Bandwidth.SubscriptionTerm,
 				"speed":             resp.Bandwidth.Speed,
 			}

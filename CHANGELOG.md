@@ -1,3 +1,9 @@
+## 1.0.7  (February 22, 2023)
+
+BUG FIXES:
+
+* Error: Status: 400, Metro VCs do not support upgrades or renewals (#350)
+
 ## 1.0.6  (February 20, 2023)
 
 BUG FIXES:

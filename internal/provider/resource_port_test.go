@@ -63,6 +63,11 @@ func TestAccPort(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "nni", "false"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

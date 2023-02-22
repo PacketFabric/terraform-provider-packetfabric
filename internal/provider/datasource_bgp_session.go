@@ -84,6 +84,13 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "The Multi-Exit Discriminator of this instance. Deprecated.",
 						},
+
+						"l3_address": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+							Description: "The L3 address of this instance.",
+						},
 						"orlonger": {
 							Type:        schema.TypeBool,
 							Computed:    true,
@@ -287,6 +294,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["local_preference"] = session.LocalPreference
 			flatten["community"] = session.Community
 			flatten["as_prepend"] = session.AsPrepend
+			flatten["l3_address"] = session.L3Address
 			flatten["med"] = session.Med
 			flatten["orlonger"] = session.Orlonger
 			flatten["bfd_interval"] = session.BfdInterval

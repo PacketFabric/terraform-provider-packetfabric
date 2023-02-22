@@ -57,6 +57,7 @@ Optional:
 - `community` (String) The BGP community for this instance. Deprecated.
 - `disabled` (Boolean) Whether this BGP session is disabled.
 		Default "false"
+- `l3_address` (String) The L3 address of this instance.
 - `local_preference` (Number) The preference for this instance. Deprecated.
 - `med` (Number) The Multi-Exit Discriminator of this instance. Deprecated.
 - `multihop_ttl` (Number) The TTL of this session.
