@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -53,7 +54,7 @@ func resourceFlexBandwidth() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(speedFlexOptions(), true),
-				Description:  "Capacity of the flex bandwidth container. Must be in the format XXGbps or XXMbps.\n\n\tEnum: [\"100Gbps\" \"150Gbps\" \"200Gbps\" \"250Gbps\" \"300Gbps\" \"350Gbps\" \"400Gbps\" \"450Gbps\" \"500Gbps\"]",
+				Description:  "Capacity of the flex bandwidth container. Must be in the format XXGbps.\n\n\tEnum: [\"100Gbps\" \"150Gbps\" \"200Gbps\" \"250Gbps\" \"300Gbps\" \"350Gbps\" \"400Gbps\" \"450Gbps\" \"500Gbps\"]",
 			},
 			"po_number": {
 				Type:         schema.TypeString,
@@ -62,18 +63,13 @@ func resourceFlexBandwidth() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
-			"capacity_mbps": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Capacity in Mbps of the flex bandwidth container.",
-			},
 			"used_capacity_mbps": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Used capacity in Mbps of the flex bandwidth container.",
 			},
 			"available_capacity_mbps": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Available capacity in Mbps of the flex bandwidth container.",
 			},
@@ -97,12 +93,8 @@ func resourceFlexBandwidthCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("description", resp.Description)
-		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		_ = d.Set("capacity_mbps", resp.CapacityMbps)
 		_ = d.Set("used_capacity_mbps", resp.UsedCapacityMbps)
 		_ = d.Set("available_capacity_mbps", resp.AvailableCapacityMbps)
-		_ = d.Set("po_number", resp.PoNumber)
 		d.SetId(resp.FlexBandwidthID)
 	}
 	return diags
@@ -118,9 +110,13 @@ func resourceFlexBandwidthRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	if resp != nil {
+		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		_ = d.Set("capacity_mbps", resp.CapacityMbps)
+		// convert int to string and append "Gbps"
+		capacityGbps := resp.CapacityMbps / 1000
+		capacityMbps_string := strconv.Itoa(capacityGbps) + "Gbps"
+		_ = d.Set("capacity", capacityMbps_string)
 		_ = d.Set("used_capacity_mbps", resp.UsedCapacityMbps)
 		_ = d.Set("available_capacity_mbps", resp.AvailableCapacityMbps)
 		_ = d.Set("po_number", resp.PoNumber)
