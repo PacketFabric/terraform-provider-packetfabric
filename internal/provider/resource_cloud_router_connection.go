@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -64,14 +63,4 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 		}
 	}
 	return diags
-}
-
-func showWarningForUnsetFields(unsetFields []string, diags *diag.Diagnostics) {
-	if len(unsetFields) > 0 {
-		*diags = append(*diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Field(s) not set.",
-			Detail:   fmt.Sprintf("The following fields: %s cannot be set. Update the Terraform state file manually if needed.", unsetFields),
-		})
-	}
 }

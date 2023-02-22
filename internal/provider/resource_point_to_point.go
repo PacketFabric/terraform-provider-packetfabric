@@ -186,9 +186,6 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 			endpoints := []interface{}{interfaceA, interfaceZ}
 			_ = d.Set("endpoints", endpoints)
 		}
-
-		_unsetFields := []string{"autoneg", "loa", "published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
 }
