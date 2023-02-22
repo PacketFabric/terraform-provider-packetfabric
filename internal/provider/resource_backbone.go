@@ -250,6 +250,9 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
 			_ = d.Set("interface_z", []interface{}{interfaceZ})
 		}
+
+		_unsetFields := []string{"flex_bandwidth_id"}
+		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
 }

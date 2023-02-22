@@ -187,10 +187,35 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		_, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
+		resp1, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 		}
+		_ = d.Set("account_uuid", resp1.AccountUUID)
+		_ = d.Set("circuit_id", resp1.CloudRouterCircuitID)
+		_ = d.Set("description", resp1.Description)
+		_ = d.Set("pop", resp1.Pop)
+		_ = d.Set("speed", resp1.Speed)
+
+		resp2, err := c.GetIpsecSpecificConn(cloudConnCID.(string))
+		if err != nil {
+			diags = diag.FromErr(err)
+		}
+		_ = d.Set("ike_version", resp2.IkeVersion)
+		_ = d.Set("phase1_authentication_method", resp2.Phase1AuthenticationMethod)
+		_ = d.Set("phase1_group", resp2.Phase1Group)
+		_ = d.Set("phase1_encryption_algo", resp2.Phase1EncryptionAlgo)
+		_ = d.Set("phase1_authentication_algo", resp2.Phase1AuthenticationAlgo)
+		_ = d.Set("phase1_lifetime", resp2.Phase1Lifetime)
+		_ = d.Set("phase2_pfs_group", resp2.Phase2PfsGroup)
+		_ = d.Set("phase2_encryption_algo", resp2.Phase2EncryptionAlgo)
+		_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
+		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
+		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
+		_ = d.Set("shared_key", resp2.DescripPreSharedKeytion)
+
+		_unsetFields := []string{"published_quote_line_uuid"}
+		showWarningForUnsetFields(_unsetFields, &diags)
 	}
 	return diags
 }
