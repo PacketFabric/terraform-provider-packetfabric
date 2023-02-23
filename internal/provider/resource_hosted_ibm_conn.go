@@ -165,7 +165,28 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesHostedRead(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("vlan", resp.Settings.VlanIDPf)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
+		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
+		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
+		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+	}
+	// _unsetFields := []string{"port", "zone", "src_svlan", "published_quote_line_uuid"}
+	// showWarningForUnsetFields(_unsetFields, &diags)
+	return diags
 }
 
 func resourceHostedIbmConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

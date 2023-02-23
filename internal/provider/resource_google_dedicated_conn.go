@@ -142,7 +142,25 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesDedicatedRead(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
+		_ = d.Set("service_class", resp.ServiceClass)
+		_ = d.Set("speed", resp.Speed)
+	}
+	// _unsetFields := []string{"autoneg", "zone", "loa", "published_quote_line_uuid"}
+	// showWarningForUnsetFields(_unsetFields, &diags)
+	return diags
 }
 
 func resourceGoogleDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
