@@ -155,7 +155,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	}
 	resp2, err2 := c.GetPortByCID(d.Id())
 	if err2 != nil {
-		diags = diag.FromErr(err2)
+		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
 		_ = d.Set("autoneg", resp2.Autoneg)

@@ -186,7 +186,7 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
-		diags = diag.FromErr(err2)
+		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID)

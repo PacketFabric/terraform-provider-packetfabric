@@ -166,7 +166,7 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 	}
 	resp2, err2 := c.GetPortByCID(d.Id())
 	if err2 != nil {
-		diags = diag.FromErr(err2)
+		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
 		_ = d.Set("zone", resp2.Zone)
