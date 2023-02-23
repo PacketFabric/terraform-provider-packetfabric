@@ -190,16 +190,16 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		resp1, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
+		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 			return diags
 		}
-		_ = d.Set("account_uuid", resp1.AccountUUID)
-		_ = d.Set("circuit_id", resp1.CloudRouterCircuitID)
-		_ = d.Set("description", resp1.Description)
-		_ = d.Set("pop", resp1.Pop)
-		_ = d.Set("speed", resp1.Speed)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("speed", resp.Speed)
 
 		resp2, err := c.GetIpsecSpecificConn(cloudConnCID.(string))
 		if err != nil {
