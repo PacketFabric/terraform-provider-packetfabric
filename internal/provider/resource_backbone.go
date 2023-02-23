@@ -325,15 +325,11 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if vcCircuitID, ok := d.GetOk("id"); ok {
-		resp, err := c.DeleteBackbone(vcCircuitID.(string))
+		_, err := c.DeleteBackbone(vcCircuitID.(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Backbone Delete result",
-			Detail:   resp.Message,
-		})
+		d.SetId("")
 		return diags
 	}
 	return diag.Errorf("please provide a valid VC Circuit ID for deletion")
