@@ -226,7 +226,7 @@ func resourceBgpSession() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: BgpImportStatePassthroughContext,
 		},
 	}
 }

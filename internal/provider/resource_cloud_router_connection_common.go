@@ -18,8 +18,13 @@ type CloudRouterCircuitIdData struct {
 	cloudRouterConnectionCircuitId string
 }
 
-// common function to update or delete cloud router connections (aws, google, azure, oracle, ibm)
+type CloudRouterCircuitBgpIdData struct {
+	cloudRouterCircuitId           string
+	cloudRouterConnectionCircuitId string
+	bgpSessionUUID                 string
+}
 
+// common function to update or delete cloud router connections (aws, google, azure, oracle, ibm)
 func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -75,6 +80,7 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
+// Used to import Cloud Router Connection part of a Cloud Router
 func splitCloudRouterCircuitIdString(data string) (CloudRouterCircuitIdData, error) {
 	stringArr := strings.Split(data, StringSeparator)
 	if len(stringArr) != 2 {
@@ -90,6 +96,27 @@ func CloudRouterImportStatePassthroughContext(ctx context.Context, d *schema.Res
 	}
 	_ = d.Set("circuit_id", cloudRouterCircuitIdData.cloudRouterCircuitId)
 	d.SetId(cloudRouterCircuitIdData.cloudRouterConnectionCircuitId)
+	return []*schema.ResourceData{d}, nil
+}
+
+// Used to import BGP session part of a Cloud Router Connection
+func splitCloudRouterCircuitBgpIdString(data string) (CloudRouterCircuitBgpIdData, error) {
+	stringArr := strings.Split(data, StringSeparator)
+	if len(stringArr) != 3 {
+		return CloudRouterCircuitBgpIdData{}, errors.New("to import a BGP session, use the format {cloud_router_circuit_id}:{cloud_router_connection_circuit_id}:{bgp_session_id}")
+	}
+	return CloudRouterCircuitBgpIdData{cloudRouterCircuitId: stringArr[0], cloudRouterConnectionCircuitId: stringArr[1], bgpSessionUUID: stringArr[2]}, nil
+}
+
+func BgpImportStatePassthroughContext(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	CloudRouterCircuitBgpIdData, err := splitCloudRouterCircuitBgpIdString(d.Id())
+	if err != nil {
+		return []*schema.ResourceData{}, err
+	}
+	_ = d.Set("circuit_id", CloudRouterCircuitBgpIdData.cloudRouterCircuitId)
+	_ = d.Set("connection_id", CloudRouterCircuitBgpIdData.cloudRouterConnectionCircuitId)
+	d.SetId(CloudRouterCircuitBgpIdData.bgpSessionUUID)
+
 	return []*schema.ResourceData{d}, nil
 }
 
