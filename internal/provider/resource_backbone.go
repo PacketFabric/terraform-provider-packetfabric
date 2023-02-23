@@ -259,6 +259,13 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
 			_ = d.Set("interface_z", []interface{}{interfaceZ})
 		}
+		if _, ok := d.GetOk("rate_limit_in"); ok {
+			_ = d.Set("rate_limit_in", resp.RateLimitIn)
+		}
+		if _, ok := d.GetOk("rate_limit_out"); ok {
+			_ = d.Set("rate_limit_out", resp.RateLimitOut)
+		}
+		_ = d.Set("flex_bandwidth_id", resp.AggregateCapacityID)
 	}
 	return diags
 }
