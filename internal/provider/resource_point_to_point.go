@@ -187,6 +187,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 			_ = d.Set("endpoints", endpoints)
 		}
 	}
+	// unsetFields: loa, autoneg, published_quote_line_uuid
 	return diags
 }
 
