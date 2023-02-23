@@ -130,14 +130,23 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("vlan", resp.Settings.VlanIDPf)
+		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("vc_ocid", resp.Settings.VcOcid)
 		_ = d.Set("region", resp.Settings.OracleRegion)
 	}
-	// _unsetFields := []string{"port", "zone", "src_svlan", "published_quote_line_uuid"}
-	// showWarningForUnsetFields(_unsetFields, &diags)
+	resp2, err2 := c.GetBackboneByVcCID(d.Id())
+	if err2 != nil {
+		diags = diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID)
+		_ = d.Set("zone", resp2.Interfaces[0].Zone)
+		if resp2.Interfaces[0].Svlan != 0 {
+			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan)
+		}
+	}
 	return diags
 }
 

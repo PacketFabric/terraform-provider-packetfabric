@@ -153,8 +153,19 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("aws_region", resp.Settings.AwsRegion)
 	}
-	// _unsetFields := []string{"autoneg", "zone", "loa", "should_create_lag", "published_quote_line_uuid"}
-	// showWarningForUnsetFields(_unsetFields, &diags)
+	resp2, err2 := c.GetPortByCID(d.Id())
+	if err2 != nil {
+		diags = diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("autoneg", resp2.Autoneg)
+		_ = d.Set("zone", resp2.Zone)
+		if resp2.IsLag {
+			_ = d.Set("should_create_lag", true)
+		} else {
+			_ = d.Set("should_create_lag", false)
+		}
+	}
 	return diags
 }
 

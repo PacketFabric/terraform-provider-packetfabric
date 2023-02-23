@@ -163,8 +163,18 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("port_category", resp.Settings.AzureConnectionType)
 	}
-	// _unsetFields := []string{"encapsulation", "zone", "loa", "published_quote_line_uuid"}
-	// showWarningForUnsetFields(_unsetFields, &diags)
+	resp2, err2 := c.GetPortByCID(d.Id())
+	if err2 != nil {
+		diags = diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("zone", resp2.Zone)
+		if resp2.IsLag {
+			_ = d.Set("should_create_lag", true)
+		} else {
+			_ = d.Set("should_create_lag", false)
+		}
+	}
 	return diags
 }
 
