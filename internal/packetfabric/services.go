@@ -222,6 +222,7 @@ type CloudConnInfo struct {
 	CustomerSiteCode        string           `json:"customer_site_code,omitempty"`
 	IsAwaitingOnramp        bool             `json:"is_awaiting_onramp,omitempty"`
 	IsCloudRouterConnection bool             `json:"is_cloud_router_connection,omitempty"`
+	AzurePortCategory       string           `json:"azure_port_category,omitempty"`
 }
 
 // hosted and dedicated cloud

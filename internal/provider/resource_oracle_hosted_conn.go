@@ -147,6 +147,7 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan)
 		}
 	}
+	// unsetFields: published_quote_line_uuid
 	return diags
 }
 

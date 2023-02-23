@@ -161,7 +161,8 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		_ = d.Set("service_class", resp.ServiceClass)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("port_category", resp.Settings.AzureConnectionType)
+		_ = d.Set("port_category", resp.AzurePortCategory)
+		_ = d.Set("encapsulation", resp.Settings.AzureEncapsulation)
 	}
 	resp2, err2 := c.GetPortByCID(d.Id())
 	if err2 != nil {
@@ -175,6 +176,7 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 			_ = d.Set("should_create_lag", false)
 		}
 	}
+	// unsetFields: loa
 	return diags
 }
 

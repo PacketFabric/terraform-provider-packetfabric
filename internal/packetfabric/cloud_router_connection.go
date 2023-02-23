@@ -102,6 +102,7 @@ type CloudSettings struct {
 	AzureServiceKey          string `json:"azure_service_key,omitempty"`
 	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
 	AzureConnectionType      string `json:"azure_connection_type,omitempty"`
+	AzureEncapsulation       string `json:"encapsulation,omitempty"`
 	OracleRegion             string `json:"oracle_region,omitempty"`
 	VcOcid                   string `json:"vc_ocid,omitempty"`
 	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`

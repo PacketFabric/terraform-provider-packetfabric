@@ -166,6 +166,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 			_ = d.Set("should_create_lag", false)
 		}
 	}
+	// unsetFields: loa
 	return diags
 }
 

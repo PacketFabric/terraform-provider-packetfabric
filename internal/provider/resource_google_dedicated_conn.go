@@ -171,6 +171,7 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 			_ = d.Set("should_create_lag", false)
 		}
 	}
+	// unsetFields: loa, published_quote_line_uuid
 	return diags
 }
 
