@@ -24,8 +24,8 @@ type Backbone struct {
 	Description     string              `json:"description"`
 	Bandwidth       Bandwidth           `json:"bandwidth"`
 	Interfaces      []BackBoneInterface `json:"interfaces"`
-	RateLimitIn     int                 `json:"rate_limit_in"`
-	RateLimitOut    int                 `json:"rate_limit_out"`
+	RateLimitIn     int                 `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int                 `json:"rate_limit_out,omitempty"`
 	Epl             bool                `json:"epl"`
 	FlexBandwidthID string              `json:"flex_bandwidth_id,omitempty"`
 }
@@ -56,20 +56,22 @@ type ServiceSettingsUpdate struct {
 }
 
 type BackboneResp struct {
-	VcCircuitID  string               `json:"vc_circuit_id"`
-	CustomerUUID string               `json:"customer_uuid"`
-	State        string               `json:"state"`
-	ServiceType  string               `json:"service_type"`
-	ServiceClass string               `json:"service_class"`
-	Mode         string               `json:"mode"`
-	Connected    bool                 `json:"connected"`
-	Bandwidth    Bandwidth            `json:"bandwidth"`
-	Description  string               `json:"description"`
-	RateLimitIn  int                  `json:"rate_limit_in"`
-	RateLimitOut int                  `json:"rate_limit_out"`
-	TimeCreated  string               `json:"time_created"`
-	TimeUpdated  string               `json:"time_updated"`
-	Interfaces   []BackboneInterfResp `json:"interfaces"`
+	VcCircuitID         string               `json:"vc_circuit_id"`
+	CustomerUUID        string               `json:"customer_uuid"`
+	State               string               `json:"state"`
+	ServiceType         string               `json:"service_type"`
+	ServiceClass        string               `json:"service_class"`
+	Mode                string               `json:"mode"`
+	AggregateCapacityID string               `json:"aggregate_capacity_id,omitempty"` // same as flex fandwidth
+	FlexBandwidthID     string               `json:"flex_bandwidth_id,omitempty"`
+	Connected           bool                 `json:"connected"`
+	Bandwidth           Bandwidth            `json:"bandwidth"`
+	Description         string               `json:"description"`
+	RateLimitIn         int                  `json:"rate_limit_in"`
+	RateLimitOut        int                  `json:"rate_limit_out"`
+	TimeCreated         string               `json:"time_created"`
+	TimeUpdated         string               `json:"time_updated"`
+	Interfaces          []BackboneInterfResp `json:"interfaces"`
 }
 
 type BackboneInterfResp struct {

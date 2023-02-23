@@ -94,6 +94,15 @@ func (c *PFClient) GetPointToPointStatus(ptpCircuitID string) (*ServiceState, er
 	return expectedResp, nil
 }
 
+func (c *PFClient) ReadPointToPoint(ptpCircuitID string) (*PointToPointResp, error) {
+	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpCircuitID)
+	expectedResp := &PointToPointResp{}
+	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 func (c *PFClient) UpdatePointToPoint(ptpUUID, description string) (*PointToPointResp, error) {
 	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUUID)
 	expectedResp := &PointToPointResp{}
