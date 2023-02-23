@@ -201,9 +201,9 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 
-		resp2, err := c.GetIpsecSpecificConn(cloudConnCID.(string))
-		if err != nil {
-			diags = diag.FromErr(err)
+		resp2, err2 := c.GetIpsecSpecificConn(cloudConnCID.(string))
+		if err2 != nil {
+			diags = diag.FromErr(err2)
 		}
 		_ = d.Set("ike_version", resp2.IkeVersion)
 		_ = d.Set("phase1_authentication_method", resp2.Phase1AuthenticationMethod)
