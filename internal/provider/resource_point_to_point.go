@@ -156,7 +156,39 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{}
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	ptpUUID := d.Get("id").(string)
+	resp, err := c.ReadPointToPoint(ptpUUID)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("account_uuid", resp.Billing.AccountUUID)
+		_ = d.Set("ptp_circuit_id", resp.PtpCircuitID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("media", resp.Media)
+		_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
+
+		if len(resp.Interfaces) == 2 {
+			interfaceA := make(map[string]interface{})
+			interfaceA["pop"] = resp.Interfaces[0].Pop
+			interfaceA["zone"] = resp.Interfaces[0].Zone
+			interfaceA["customer_site_code"] = resp.Interfaces[0].CustomerSiteCode
+
+			interfaceZ := make(map[string]interface{})
+			interfaceZ["pop"] = resp.Interfaces[1].Pop
+			interfaceZ["zone"] = resp.Interfaces[1].Zone
+			interfaceZ["customer_site_code"] = resp.Interfaces[1].CustomerSiteCode
+
+			endpoints := []interface{}{interfaceA, interfaceZ}
+			_ = d.Set("endpoints", endpoints)
+		}
+	}
+	// unsetFields: loa, autoneg, published_quote_line_uuid
+	return diags
 }
 
 func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

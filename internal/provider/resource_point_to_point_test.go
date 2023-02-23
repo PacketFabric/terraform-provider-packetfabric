@@ -19,12 +19,12 @@ func hclPointToPoint(description, accountUUID, speed, media, subscriptionTerm, p
 		endpoints {
 			pop     = "%s"
 			zone    = "%s"
-			autoneg = true
+			autoneg = false
 		}
 		endpoints {
 			pop     = "%s"
 			zone    = "%s"
-			autoneg = true
+			autoneg = false
 		}
 	}`, description, accountUUID, speed, media, subscriptionTerm, pop1, zone1, pop2, zone2)
 	resourceName = "packetfabric_point_to_point.p2p"
@@ -63,6 +63,11 @@ func TestAccPointToPoint(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "endpoints.1.pop", "AMS2"),
 					resource.TestCheckResourceAttr(resourceName, "endpoints.1.zone", "A"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
