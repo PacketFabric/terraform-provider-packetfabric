@@ -159,9 +159,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		} else {
 			_ = d.Set("untagged", false)
 		}
-
-		_unsetFields := []string{"published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }

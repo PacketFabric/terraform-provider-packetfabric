@@ -182,9 +182,7 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("zone", resp.Zone)
-
-		_unsetFields := []string{"published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }

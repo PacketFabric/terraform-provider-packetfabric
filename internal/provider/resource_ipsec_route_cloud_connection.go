@@ -217,9 +217,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
-
-		_unsetFields := []string{"published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }

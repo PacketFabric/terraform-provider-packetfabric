@@ -159,9 +159,7 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("zone", resp.Zone)
-
-		_unsetFields := []string{"published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }

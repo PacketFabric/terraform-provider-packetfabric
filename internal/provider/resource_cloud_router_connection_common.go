@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -118,14 +117,4 @@ func BgpImportStatePassthroughContext(ctx context.Context, d *schema.ResourceDat
 	d.SetId(CloudRouterCircuitBgpIdData.bgpSessionUUID)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func showWarningForUnsetFields(unsetFields []string, diags *diag.Diagnostics) {
-	if len(unsetFields) > 0 {
-		*diags = append(*diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Field(s) not set.",
-			Detail:   fmt.Sprintf("The following fields: %s cannot be set. Update the Terraform state file manually if needed.", unsetFields),
-		})
-	}
 }

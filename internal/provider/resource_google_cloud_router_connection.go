@@ -163,9 +163,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		} else {
 			_ = d.Set("is_public", false)
 		}
-
-		_unsetFields := []string{"published_quote_line_uuid"}
-		showWarningForUnsetFields(_unsetFields, &diags)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }
