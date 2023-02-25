@@ -104,7 +104,7 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	// Cloud Everywhere if cloud_circuit_id is null display warning
+	// Cloud Everywhere: if cloud_circuit_id is null display error
 	if expectedResp.CloudCircuitID == "" {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
