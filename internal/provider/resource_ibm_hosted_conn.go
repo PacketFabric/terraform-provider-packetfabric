@@ -199,10 +199,10 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		_ = d.Set("zone", resp2.Interfaces[1].Zone)          // Port Z
 		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[1].Svlan)
+			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 	}
 	// unsetFields: published_quote_line_uuid
 	return diags
