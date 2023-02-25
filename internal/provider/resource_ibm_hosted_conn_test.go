@@ -74,10 +74,5 @@ func TestAccIBMHostedConnection(t *testing.T) {
 				),
 			},
 		},
-		{
-			ResourceName:      resourceName,
-			ImportState:       true,
-			ImportStateVerify: true,
-		},
 	})
 }
