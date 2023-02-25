@@ -135,6 +135,16 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	// Cloud Everywhere if cloud_circuit_id is null display warning
+	if expectedResp.CloudCircuitID == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Hosted location Requested",
+			Detail: "On-ramp location does not have a Hosted port currently available. " +
+				"Check in the Portal when your hosted cloud is provisioned and import the resource into your Terraform state file.",
+		})
+		return diags
+	}
 	b := make(map[string]interface{})
 	b["ibm"] = expectedResp
 	tflog.Debug(ctx, "\n#### CREATED IBM CONN", b)
@@ -161,7 +171,6 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 	return diags
-
 }
 
 func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -178,7 +187,7 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
 		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
@@ -189,10 +198,10 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
-		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID)
-		_ = d.Set("zone", resp2.Interfaces[0].Zone)
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		_ = d.Set("zone", resp2.Interfaces[1].Zone)          // Port Z
 		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan)
+			_ = d.Set("src_svlan", resp2.Interfaces[1].Svlan)
 		}
 	}
 	// unsetFields: published_quote_line_uuid

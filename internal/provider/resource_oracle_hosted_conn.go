@@ -110,11 +110,32 @@ func resourceOracleHostedConnCreate(ctx context.Context, d *schema.ResourceData,
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	hostedConn := extractOracleHostedConn(d)
-	resp, err := c.RequestNewHostedOracleConn(hostedConn)
+	expectedResp, err := c.RequestNewHostedOracleConn(hostedConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CloudCircuitID)
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersHosted()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 
@@ -132,7 +153,7 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("vc_ocid", resp.Settings.VcOcid)
 		_ = d.Set("region", resp.Settings.OracleRegion)
 	}
@@ -141,10 +162,10 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
-		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID)
-		_ = d.Set("zone", resp2.Interfaces[0].Zone)
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		_ = d.Set("zone", resp2.Interfaces[1].Zone)          // Port Z
 		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan)
+			_ = d.Set("src_svlan", resp2.Interfaces[1].Svlan)
 		}
 	}
 	// unsetFields: published_quote_line_uuid

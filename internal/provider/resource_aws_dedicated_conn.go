@@ -110,6 +110,9 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 	dedicatedConn := extractDedicatedConn(d)
 	expectedResp, err := c.CreateDedicadedAWSConn(dedicatedConn)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	createOk := make(chan bool)
 	defer close(createOk)
 	ticker := time.NewTicker(10 * time.Second)

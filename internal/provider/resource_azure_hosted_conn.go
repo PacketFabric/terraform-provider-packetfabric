@@ -136,7 +136,7 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
 		_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
 		_ = d.Set("vlan_microsoft", resp.Settings.VlanMicrosoft)
@@ -146,10 +146,10 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
-		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID)
-		_ = d.Set("zone", resp2.Interfaces[0].Zone)
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		_ = d.Set("zone", resp2.Interfaces[1].Zone)          // Port Z
 		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan)
+			_ = d.Set("src_svlan", resp2.Interfaces[1].Svlan)
 		}
 	}
 	return diags
