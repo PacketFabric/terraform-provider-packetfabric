@@ -20,8 +20,8 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 		},
 		CreateContext: resourceAzureReqExpressDedicatedConnCreate,
 		ReadContext:   resourceAzureReqExpressDedicatedConnRead,
-		UpdateContext: resourceAzureProvisionDedicatedUpdate,
-		DeleteContext: resourceAzureProvisionDelete,
+		UpdateContext: resourceAzureReqExpressDedicatedConnUpdate,
+		DeleteContext: resourceAzureReqExpressDedicatedConnDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -146,12 +146,47 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 }
 
 func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesDedicatedRead(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
+		_ = d.Set("service_class", resp.ServiceClass)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("port_category", resp.AzurePortCategory)
+		_ = d.Set("encapsulation", resp.Settings.AzureEncapsulation)
+	}
+	resp2, err2 := c.GetPortByCID(d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("zone", resp2.Zone)
+		if resp2.IsLag {
+			_ = d.Set("should_create_lag", true)
+		} else {
+			_ = d.Set("should_create_lag", false)
+		}
+	}
+	// unsetFields: loa
+	return diags
 }
 
-func resourceAzureProvisionDedicatedUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAzureReqExpressDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+}
+
+func resourceAzureReqExpressDedicatedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceCloudSourceDelete(ctx, d, m, "Google Service Delete")
 }
 
 func extractAzureExpressDedicatedConn(d *schema.ResourceData) packetfabric.AzureExpressRouteDedicated {

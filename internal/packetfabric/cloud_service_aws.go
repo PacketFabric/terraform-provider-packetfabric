@@ -195,40 +195,34 @@ type Components struct {
 }
 
 type DedicatedConnResp struct {
-	UUID                    string                  `json:"uuid"`
-	CustomerUUID            string                  `json:"customer_uuid"`
-	UserUUID                string                  `json:"user_uuid"`
-	ServiceProvider         string                  `json:"service_provider"`
-	PortType                string                  `json:"port_type"`
-	Deleted                 bool                    `json:"deleted"`
-	TimeUpdated             string                  `json:"time_updated"`
-	TimeCreated             string                  `json:"time_created"`
-	CloudCircuitID          string                  `json:"cloud_circuit_id"`
-	AccountUUID             string                  `json:"account_uuid"`
-	CloudProvider           AwsCloudServiceProvider `json:"cloud_provider"`
-	Pop                     string                  `json:"pop"`
-	Site                    string                  `json:"site"`
-	ServiceClass            string                  `json:"service_class"`
-	Description             string                  `json:"description"`
-	State                   string                  `json:"state"`
-	Settings                AwsCloudServiceSettings `json:"settings"`
-	SubscriptionTerm        int                     `json:"subscription_term"`
-	IsCloudRouterConnection bool                    `json:"is_cloud_router_connection"`
-	Speed                   string                  `json:"speed"`
+	UUID                    string               `json:"uuid"`
+	CustomerUUID            string               `json:"customer_uuid"`
+	UserUUID                string               `json:"user_uuid"`
+	ServiceProvider         string               `json:"service_provider"`
+	PortType                string               `json:"port_type"`
+	Deleted                 bool                 `json:"deleted"`
+	TimeUpdated             string               `json:"time_updated"`
+	TimeCreated             string               `json:"time_created"`
+	CloudCircuitID          string               `json:"cloud_circuit_id"`
+	AccountUUID             string               `json:"account_uuid"`
+	CloudProvider           CloudServiceProvider `json:"cloud_provider"`
+	Pop                     string               `json:"pop"`
+	Site                    string               `json:"site"`
+	ServiceClass            string               `json:"service_class"`
+	Description             string               `json:"description"`
+	State                   string               `json:"state"`
+	Settings                CloudServiceSettings `json:"settings"`
+	SubscriptionTerm        int                  `json:"subscription_term"`
+	IsCloudRouterConnection bool                 `json:"is_cloud_router_connection"`
+	Speed                   string               `json:"speed"`
 }
 
-type AwsCloudServiceProvider struct {
+type CloudServiceProvider struct {
 	Pop  string `json:"pop"`
 	Site string `json:"site"`
 }
 
-type CloudProvider struct {
-	Pop    string `json:"pop,omitempty"`
-	Region string `json:"region,omitempty"`
-	Site   string `json:"site,omitempty"`
-}
-
-type AwsCloudServiceSettings struct {
+type CloudServiceSettings struct {
 	AwsRegion string `json:"aws_region"`
 	ZoneDest  string `json:"zone_dest"`
 	Autoneg   bool   `json:"autoneg"`

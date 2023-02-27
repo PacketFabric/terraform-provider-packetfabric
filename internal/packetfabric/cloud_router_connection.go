@@ -47,39 +47,39 @@ type AwsConnectionCreateResponse struct {
 }
 
 type CloudRouterConnectionReadResponse struct {
-	PortType                  string           `json:"port_type,omitempty"`
-	PortCircuitID             string           `json:"port_circuit_id,omitempty"`
-	PendingDelete             bool             `json:"pending_delete,omitempty"`
-	State                     string           `json:"state,omitempty"`
-	CloudCircuitID            string           `json:"cloud_circuit_id,omitempty"`
-	Speed                     string           `json:"speed,omitempty"`
-	Deleted                   bool             `json:"deleted,omitempty"`
-	AccountUUID               string           `json:"account_uuid,omitempty"`
-	ServiceClass              string           `json:"service_class,omitempty"`
-	ServiceProvider           string           `json:"service_provider,omitempty"`
-	ServiceType               string           `json:"service_type,omitempty"`
-	Description               string           `json:"description,omitempty"`
-	UUID                      string           `json:"uuid,omitempty"`
-	CloudProviderConnectionID string           `json:"cloud_provider_connection_id,omitempty"`
-	CloudSettings             CloudSettings    `json:"cloud_settings,omitempty"`
-	NatCapable                bool             `json:"nat_capable,omitempty"`
-	DNatCapable               bool             `json:"dnat_capable,omitempty"`
-	BgpState                  interface{}      `json:"bgp_state,omitempty"`
-	BgpStateList              []BgpStateObj    `json:"bgp_state_list,omitempty"`
-	CloudRouterName           string           `json:"cloud_router_name,omitempty"`
-	CloudRouterASN            int              `json:"cloud_router_asn,omitempty"`
-	CloudRouterCircuitID      string           `json:"cloud_router_circuit_id,omitempty"`
-	ConnectionType            string           `json:"connection_type,omitempty"`
-	UserUUID                  string           `json:"user_uuid,omitempty"`
-	CustomerUUID              string           `json:"customer_uuid,omitempty"`
-	TimeCreated               string           `json:"time_created,omitempty"`
-	TimeUpdated               string           `json:"time_updated,omitempty"`
-	CloudProvider             AwsCloudProvider `json:"cloud_provider,omitempty"`
-	Pop                       string           `json:"pop,omitempty"`
-	Site                      string           `json:"site,omitempty"`
-	Zone                      string           `json:"zone,omitempty"`
-	Vlan                      int              `json:"vlan,omitempty"`
-	DesiredNat                string           `json:"desired_nat,omitempty"`
+	PortType                  string        `json:"port_type,omitempty"`
+	PortCircuitID             string        `json:"port_circuit_id,omitempty"`
+	PendingDelete             bool          `json:"pending_delete,omitempty"`
+	State                     string        `json:"state,omitempty"`
+	CloudCircuitID            string        `json:"cloud_circuit_id,omitempty"`
+	Speed                     string        `json:"speed,omitempty"`
+	Deleted                   bool          `json:"deleted,omitempty"`
+	AccountUUID               string        `json:"account_uuid,omitempty"`
+	ServiceClass              string        `json:"service_class,omitempty"`
+	ServiceProvider           string        `json:"service_provider,omitempty"`
+	ServiceType               string        `json:"service_type,omitempty"`
+	Description               string        `json:"description,omitempty"`
+	UUID                      string        `json:"uuid,omitempty"`
+	CloudProviderConnectionID string        `json:"cloud_provider_connection_id,omitempty"`
+	CloudSettings             CloudSettings `json:"cloud_settings,omitempty"`
+	NatCapable                bool          `json:"nat_capable,omitempty"`
+	DNatCapable               bool          `json:"dnat_capable,omitempty"`
+	BgpState                  interface{}   `json:"bgp_state,omitempty"`
+	BgpStateList              []BgpStateObj `json:"bgp_state_list,omitempty"`
+	CloudRouterName           string        `json:"cloud_router_name,omitempty"`
+	CloudRouterASN            int           `json:"cloud_router_asn,omitempty"`
+	CloudRouterCircuitID      string        `json:"cloud_router_circuit_id,omitempty"`
+	ConnectionType            string        `json:"connection_type,omitempty"`
+	UserUUID                  string        `json:"user_uuid,omitempty"`
+	CustomerUUID              string        `json:"customer_uuid,omitempty"`
+	TimeCreated               string        `json:"time_created,omitempty"`
+	TimeUpdated               string        `json:"time_updated,omitempty"`
+	CloudProvider             CloudProvider `json:"cloud_provider,omitempty"`
+	Pop                       string        `json:"pop,omitempty"`
+	Site                      string        `json:"site,omitempty"`
+	Zone                      string        `json:"zone,omitempty"`
+	Vlan                      int           `json:"vlan,omitempty"`
+	DesiredNat                string        `json:"desired_nat,omitempty"`
 }
 
 type BgpStateObj struct {
@@ -102,6 +102,7 @@ type CloudSettings struct {
 	AzureServiceKey          string `json:"azure_service_key,omitempty"`
 	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
 	AzureConnectionType      string `json:"azure_connection_type,omitempty"`
+	AzureEncapsulation       string `json:"encapsulation,omitempty"`
 	OracleRegion             string `json:"oracle_region,omitempty"`
 	VcOcid                   string `json:"vc_ocid,omitempty"`
 	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`
@@ -116,7 +117,7 @@ type CloudSettings struct {
 	PublicIP                 string `json:"public_ip,omitempty"`
 	NatPublicIP              string `json:"nat_public_ip,omitempty"`
 }
-type AwsCloudProvider struct {
+type CloudProvider struct {
 	Pop    string `json:"pop,omitempty"`
 	Site   string `json:"site,omitempty"`
 	Region string `json:"region,omitempty"`

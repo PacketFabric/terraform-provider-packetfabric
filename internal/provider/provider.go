@@ -95,7 +95,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_connection_ibm":             resourceIBMCloudRouteConn(),
 			"packetfabric_cs_ibm_hosted_connection":                resourceHostedIbmConn(),
 			"packetfabric_cs_azure_hosted_marketplace_connection":  resourceAzureHostedMktConn(),
-			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressConn(),
+			"packetfabric_cs_azure_hosted_connection":              resourceAzureReqExpressHostedConn(),
 			"packetfabric_cs_azure_dedicated_connection":           resourceAzureReqExpressDedicatedConn(),
 			"packetfabric_cs_oracle_hosted_connection":             resourceOracleHostedConn(),
 			"packetfabric_cs_oracle_hosted_marketplace_connection": resourceOracleMktCloudConn(),
