@@ -6,6 +6,7 @@
 *.dylib
 terraform-provider-packetfabric
 .vscode/
+.idea/
 .terraform.lock.hcl
 tfplugindocs
 run.sh

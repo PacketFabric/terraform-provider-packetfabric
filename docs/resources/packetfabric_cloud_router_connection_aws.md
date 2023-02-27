@@ -115,3 +115,11 @@ Optional:
 
 
 
+
+## Import
+
+Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
+
+```bash
+terraform import packetfabric_cloud_router_connection_aws.crc PF-L3-CUST-1700239:PF-L3-CON-2980512
+```
