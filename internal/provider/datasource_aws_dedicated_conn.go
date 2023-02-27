@@ -206,7 +206,7 @@ func flattenDedicatedConns(conns *[]packetfabric.DedicatedConnResp) []interface{
 	return make([]interface{}, 0)
 }
 
-func flattenCloudServiceProvider(provider *packetfabric.AwsCloudServiceProvider) []interface{} {
+func flattenCloudServiceProvider(provider *packetfabric.CloudServiceProvider) []interface{} {
 	flattens := make([]interface{}, 0)
 	if provider != nil {
 		flatten := make(map[string]interface{})
@@ -217,7 +217,7 @@ func flattenCloudServiceProvider(provider *packetfabric.AwsCloudServiceProvider)
 	return flattens
 }
 
-func flattenCloudServiceSettings(settings *packetfabric.AwsCloudServiceSettings) []interface{} {
+func flattenCloudServiceSettings(settings *packetfabric.CloudServiceSettings) []interface{} {
 	flattens := make([]interface{}, 0)
 	if settings != nil {
 		flatten := make(map[string]interface{})

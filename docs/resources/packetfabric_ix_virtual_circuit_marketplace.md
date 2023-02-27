@@ -86,7 +86,7 @@ Required:
 
 Optional:
 
-- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.
+- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.
 
 	Enum ["dedicated" "usage" "hourly"]
 - `speed` (String) The desired speed of the new connection. Only applicable if `longhaul_type` is "dedicated" or "hourly".

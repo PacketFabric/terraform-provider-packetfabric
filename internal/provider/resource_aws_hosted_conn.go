@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -38,7 +39,6 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -96,16 +96,74 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	reqConn := extractReqConn(d)
-	resp, err := c.CreateAwsHostedConn(reqConn)
+	expectedResp, err := c.CreateAwsHostedConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resp.CloudCircuitID)
+	// Cloud Everywhere: if cloud_circuit_id is null display error
+	if expectedResp.CloudCircuitID == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Hosted location Requested",
+			Detail: "On-ramp location does not have a Hosted port currently available. " +
+				"Check in the Portal when your hosted cloud is provisioned and import the resource into your Terraform state file.",
+		})
+		return diags
+	}
+	createOk := make(chan bool)
+	defer close(createOk)
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			dedicatedConns, err := c.GetCurrentCustomersHosted()
+			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
+				for _, conn := range dedicatedConns {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+						expectedResp.CloudCircuitID = conn.CloudCircuitID
+						ticker.Stop()
+						createOk <- true
+					}
+				}
+			}
+		}
+	}()
+	<-createOk
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(expectedResp.CloudCircuitID)
 	return diags
 }
 
 func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesHostedRead(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("vlan", resp.Settings.VlanIDCust)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
+		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
+	}
+	resp2, err2 := c.GetBackboneByVcCID(d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		if resp2.Interfaces[0].Svlan != 0 {
+			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+	}
+	return diags
 }
 
 func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

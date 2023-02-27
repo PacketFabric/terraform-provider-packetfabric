@@ -19,9 +19,9 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceGoogleReqHostConnCreate,
-		UpdateContext: resourceGoogeReqHostConnUpdate,
+		UpdateContext: resourceGoogleReqHostConnUpdate,
 		ReadContext:   resourceGoogleReqHostConnRead,
-		DeleteContext: resourceGoogleProvisionDelete,
+		DeleteContext: resourceGoogeReqHostConnDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -104,6 +104,16 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	// Cloud Everywhere: if cloud_circuit_id is null display error
+	if expectedResp.CloudCircuitID == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Hosted location Requested",
+			Detail: "On-ramp location does not have a Hosted port currently available. " +
+				"Check in the Portal when your hosted cloud is provisioned and import the resource into your Terraform state file.",
+		})
+		return diags
+	}
 	createOk := make(chan bool)
 	defer close(createOk)
 	ticker := time.NewTicker(10 * time.Second)
@@ -130,12 +140,44 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceServicesHostedRead(ctx, d, m)
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("vlan", resp.Settings.VlanIDCust)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
+		_ = d.Set("google_pairing_key", resp.Settings.GooglePairingKey)
+		_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
+	}
+	resp2, err2 := c.GetBackboneByVcCID(d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		if resp2.Interfaces[0].Svlan != 0 {
+			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+	}
+	return diags
 }
 
-func resourceGoogeReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGoogleReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+}
+
+func resourceGoogeReqHostConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceCloudSourceDelete(ctx, d, m, "Google Service Delete")
 }
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {
