@@ -1,3 +1,19 @@
+## 1.0.8  (March 2, 2023)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add l3_address to bgp response in packetfabric_cloud_router_bgp_session (#346)
+* Add Terraform Import support for Cloud Router Connection aws, google, azure, ibm, oracle, port and ipsec resources (#340)
+* Add Terraform (partial) Import support for Cloud Router BGP session resource (#340)
+* Add Terraform Import support for Port resource (#347)
+* Add Terraform Import support for Flex Bandwidth resource (#348)
+* Add Terraform Import support for Point to Point resource (#349)
+* Add Terraform Import support for Dediacted Cloud aws, google, azure (#352)
+* Add Terraform Import support for Hosted Cloud aws, google, azure, ibm, oracle, port and ipsec resources (#352)
+* Add rate_limit_in/out, flex_bandwidth_id to packetfabric_backbone_virtual_circuit read function (#353)
+* Handle location request for Hosted Cloud AWS, Google and IBM (#352)
+* Add missing status check AWS and Oracle hosted cloud (#352)
+
 ## 1.0.7  (February 22, 2023)
 
 BUG FIXES:
