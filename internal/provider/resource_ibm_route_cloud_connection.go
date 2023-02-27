@@ -120,6 +120,9 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: CloudRouterImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -162,10 +165,24 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
-		_, err := c.ReadAwsConnection(cid.(string), cloudConnCID.(string))
+		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
+			return diags
 		}
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+		_ = d.Set("maybe_nat", resp.NatCapable)
+		_ = d.Set("maybe_dnat", resp.DNatCapable)
+		_ = d.Set("ibm_account_id", resp.CloudSettings.AccountID)
+		_ = d.Set("ibm_bgp_asn", resp.CloudSettings.BgpAsn)
+		_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
+		_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("zone", resp.Zone)
+		// unsetFields: published_quote_line_uuid
 	}
 	return diags
 }

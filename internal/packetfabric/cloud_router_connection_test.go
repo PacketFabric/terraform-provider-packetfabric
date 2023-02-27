@@ -88,7 +88,7 @@ func Test_ReadCloudRouterConnection(t *testing.T) {
 		CircuitID:   _circuitIdMock,
 		CloudConnID: _cloudConnCid,
 	}
-	cTest.runFakeHttpServer(_callReadAwsConn, readParamsPayload, _clConnUpdateExpectedResp[0], buildMockCloudRouterReadResp(_cloudConnUpdateDesc), "aws-cloud-router-conn-read", t)
+	cTest.runFakeHttpServer(_callReadCloudRouterConn, readParamsPayload, _clConnUpdateExpectedResp[0], buildMockCloudRouterReadResp(_cloudConnUpdateDesc), "cloud-router-conn-read", t)
 }
 
 func Test_UpdateCloudRouterConnection(t *testing.T) {
@@ -130,8 +130,8 @@ func _callCreateAwsConn(payload interface{}) (interface{}, error) {
 	return cTest.CreateAwsConnection(payload.(AwsConnection), _circuitIdMock)
 }
 
-func _callReadAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.ReadAwsConnection(payload.(MockedReadParams).CircuitID, payload.(MockedReadParams).CloudConnID)
+func _callReadCloudRouterConn(payload interface{}) (interface{}, error) {
+	return cTest.ReadCloudRouterConnection(payload.(MockedReadParams).CircuitID, payload.(MockedReadParams).CloudConnID)
 }
 
 func _callGetClouConnectionStatus(payload interface{}) (interface{}, error) {

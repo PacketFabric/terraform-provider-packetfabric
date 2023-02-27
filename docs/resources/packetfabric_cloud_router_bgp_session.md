@@ -232,8 +232,11 @@ Optional:
 
 ## Import
 
-Import a Cloud Router BGP session using the BGP ID for the session.
+Import a Cloud Router BGP session using its corresponding BGP UUID, the ID of the Cloud Router Connection and Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>:<BGP session UUID>`.
+
+You can find the BGP session UUID in the PacketFabric portal under the Cloud Router Connection details.
+
 
 ```bash
-terraform import packetfabric_cloud_router_bgp_session.cr_bgp1 779881f7-b0ae-4794-8183-1a8ffd9ee777
+terraform import packetfabric_cloud_router_bgp_session.cr_bgp1 PF-L3-CUST-1700239:PF-L3-CON-2980512:779881f7-b0ae-4794-8183-1a8ffd9ee777
 ```
