@@ -1,4 +1,4 @@
-## 1.0.8  (March 2, 2023)
+## 1.1.0  (March 2, 2023)
 
 IMPROVEMENTS/ENHANCEMENTS:
 
@@ -13,6 +13,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Add rate_limit_in/out, flex_bandwidth_id to packetfabric_backbone_virtual_circuit read function (#353)
 * Handle location request for Hosted Cloud AWS, Google and IBM (#352)
 * Add missing status check AWS and Oracle hosted cloud (#352)
+* Deprecate order in packetfabric_cloud_router_bgp_session resource and data-source (#359)
 
 ## 1.0.7  (February 22, 2023)
 
