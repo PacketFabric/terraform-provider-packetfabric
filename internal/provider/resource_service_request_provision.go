@@ -11,6 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
+const azureProvider = "azure"
+const googleProvider = "google"
+const oracleProvider = "oracle"
+const awsProvider = "aws"
+
 func resourceProvisionRequestedService() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceProvisionRequestedServiceCreate,
@@ -175,4 +180,26 @@ func extractProvisionInterf(cloudProvider string, interf map[string]interface{})
 		provisionInterf.Untagged = interf["untagged"].(bool)
 	}
 	return provisionInterf
+}
+
+func extractProvision(d *schema.ResourceData, provider string) packetfabric.ServiceAwsMktConn {
+	mktConn := packetfabric.ServiceAwsMktConn{Provider: provider}
+	interf := packetfabric.ServiceAwsInterf{}
+	if portCid, ok := d.GetOk("port_circuit_id"); ok {
+		interf.PortCircuitID = portCid.(string)
+	}
+	if vlan, ok := d.GetOk("vlan"); ok {
+		interf.Vlan = vlan.(int)
+	}
+	if vlanMicrosoft, ok := d.GetOk("vlan_microsoft"); ok {
+		interf.VlanMicrosoft = vlanMicrosoft.(int)
+	}
+	if vlanPriv, ok := d.GetOk("vlan_private"); ok {
+		interf.VlanPrivate = vlanPriv.(int)
+	}
+	if desc, ok := d.GetOk("description"); ok {
+		mktConn.Description = desc.(string)
+	}
+	mktConn.Interface = interf
+	return mktConn
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceAzureReqExpressConn() *schema.Resource {
+func resourceAzureReqExpressHostedConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(60 * time.Minute),
@@ -18,10 +18,10 @@ func resourceAzureReqExpressConn() *schema.Resource {
 			Read:   schema.DefaultTimeout(60 * time.Minute),
 			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
-		CreateContext: resourceAzureReqExpressConnCreate,
-		ReadContext:   resourceAzureProvisionRead,
-		UpdateContext: resourceAzureProvisionUpdate,
-		DeleteContext: resourceAzureProvisionDelete,
+		CreateContext: resourceAzureReqExpressHostedConnCreate,
+		ReadContext:   resourceAzureReqExpressHostedConnRead,
+		UpdateContext: resourceAzureReqExpressHostedConnUpdate,
+		DeleteContext: resourceAzureReqExpressHostedConnDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -43,7 +43,6 @@ func resourceAzureReqExpressConn() *schema.Resource {
 				Description: "The UUID for the billing account that should be billed. " +
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
-
 			"description": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -90,7 +89,7 @@ func resourceAzureReqExpressConn() *schema.Resource {
 	}
 }
 
-func resourceAzureReqExpressConnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAzureReqExpressHostedConnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -122,6 +121,47 @@ func resourceAzureReqExpressConnCreate(ctx context.Context, d *schema.ResourceDa
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 	return diags
+}
+
+func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
+		_ = d.Set("account_uuid", resp.AccountUUID)
+		_ = d.Set("description", resp.Description)
+		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
+		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
+		_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
+		_ = d.Set("vlan_microsoft", resp.Settings.VlanMicrosoft)
+	}
+	resp2, err2 := c.GetBackboneByVcCID(d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	if resp2 != nil {
+		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
+		if resp2.Interfaces[0].Svlan != 0 {
+			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+	}
+	return diags
+}
+
+func resourceAzureReqExpressHostedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+}
+
+func resourceAzureReqExpressHostedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceCloudSourceDelete(ctx, d, m, "Azure Service Delete")
 }
 
 func extractAzureExpressConn(d *schema.ResourceData) packetfabric.AzureExpressRoute {

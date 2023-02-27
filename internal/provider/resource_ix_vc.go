@@ -95,7 +95,7 @@ func resourceIxVC() *schema.Resource {
 							Optional:     true,
 							ForceNew:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
-							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
+							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
 					},
 				},

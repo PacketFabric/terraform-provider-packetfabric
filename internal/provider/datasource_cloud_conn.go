@@ -398,7 +398,7 @@ func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) [
 	return make([]interface{}, 0)
 }
 
-func flattenCloudProvider(provider *packetfabric.AwsCloudProvider) []interface{} {
+func flattenCloudProvider(provider *packetfabric.CloudProvider) []interface{} {
 	flattens := make([]interface{}, 0)
 	if provider != nil {
 		flatten := make(map[string]interface{})
