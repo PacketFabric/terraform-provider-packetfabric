@@ -10,6 +10,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Add Terraform Import support for Point to Point resource (#349)
 * Add Terraform Import support for Dediacted Cloud aws, google, azure (#352)
 * Add Terraform Import support for Hosted Cloud aws, google, azure, ibm, oracle, port and ipsec resources (#352)
+* Add Terraform Import support for LAG resource (#361)
 * Add rate_limit_in/out, flex_bandwidth_id to packetfabric_backbone_virtual_circuit read function (#353)
 * Handle location request for Hosted Cloud AWS, Google and IBM (#352)
 * Add missing status check AWS and Oracle hosted cloud (#352)
