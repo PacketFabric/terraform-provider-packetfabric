@@ -87,4 +87,10 @@ Optional:
 - `read` (String)
 - `update` (String)
 
+## Import
 
+Import a LAG using its circuit ID. 
+
+```bash
+terraform import packetfabric_link_aggregation_group.lag_1 PF-AE-WDC1-1726464
+```
