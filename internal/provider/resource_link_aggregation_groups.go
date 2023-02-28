@@ -93,6 +93,14 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+	lag, err := c.GetPortByCID(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_ = d.Set("description", lag.Description)
+	_ = d.Set("pop", lag.Pop)
+	_ = d.Set("interval", lag.LagInterval)
+
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
