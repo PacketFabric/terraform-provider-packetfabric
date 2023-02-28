@@ -14,8 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-var ErrNoPops = errors.New("no pops with available ports")
-
 func GenerateUniqueName(prefix string) string {
 	return fmt.Sprintf("%s-%s", prefix, uuid.NewString())
 }
@@ -28,17 +26,17 @@ func GetAccountUUID() string {
 	return os.Getenv("PF_ACCOUNT_ID")
 }
 
-func GetPopAndZoneWithAvailablePort(speed, media string) (string, string, error) {
+func GetPopAndZoneWithAvailablePort(speed string) (pop, zone, media string, availabilityErr error) {
 	host := os.Getenv("PF_HOST")
 	token := os.Getenv("PF_TOKEN")
 	c, err := packetfabric.NewPFClient(&host, &token)
 	if err != nil {
-		return "", "", fmt.Errorf("error creating PFClient: %w", err)
+		return "", "", "", fmt.Errorf("error creating PFClient: %w", err)
 	}
 
 	locations, err := c.ListLocations()
 	if err != nil {
-		return "", "", fmt.Errorf("error getting locations list: %w", err)
+		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 
 	// We need to shuffle the list of locations. Otherwise, we may try to run
@@ -54,15 +52,26 @@ func GetPopAndZoneWithAvailablePort(speed, media string) (string, string, error)
 		}
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
-			return "", "", fmt.Errorf("error getting location port availability: %w", err)
+			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
 		for _, p := range portAvailability {
-			if p.Count > 0 && p.Speed == speed && p.Media == media {
-				return l.Pop, p.Zone, nil
+			if p.Count > 0 && p.Speed == speed {
+				pop = l.Pop
+				zone = p.Zone
+				media = p.Media
+				return
+			}
+		}
+		if pop == "" || zone == "" {
+			if len(portAvailability) > 0 {
+				pop = l.Pop
+				zone = portAvailability[0].Zone
+				media = portAvailability[0].Media
+				return
 			}
 		}
 	}
-	return "", "", ErrNoPops
+	return "", "", "", errors.New("no pops with available ports")
 }
 
 func PreCheck(t *testing.T, additionalEnvVars []string) {
