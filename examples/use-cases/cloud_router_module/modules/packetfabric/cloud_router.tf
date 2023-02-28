@@ -75,7 +75,6 @@ resource "packetfabric_cloud_router_bgp_session" "aws" {
       prefix     = prefixes.value.prefix
       type       = "in"
       match_type = prefixes.value.match_type
-      order      = prefixes.key
     }
   }
 
@@ -85,7 +84,6 @@ resource "packetfabric_cloud_router_bgp_session" "aws" {
       prefix     = prefixes.value.prefix
       type       = "out"
       match_type = prefixes.value.match_type
-      order      = prefixes.key
     }
   }
 }
@@ -110,7 +108,6 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
       prefix     = prefixes.value.prefix
       type       = "in"
       match_type = prefixes.value.match_type
-      order      = prefixes.key
     }
   }
 
@@ -121,7 +118,6 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
       type       = "out"
       match_type = prefixes.value.match_type
       med        = lookup(prefixes.value, "med", 0)
-      order      = prefixes.key
     }
   }
 }

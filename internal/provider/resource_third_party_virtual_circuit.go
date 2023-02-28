@@ -179,15 +179,8 @@ func resourceThirdPartyVirtualCircuitDelete(ctx context.Context, d *schema.Resou
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if msg, err := c.DeleteHostedMktConnection(d.Id()); err != nil {
+	if _, err := c.DeleteHostedMktConnection(d.Id()); err != nil {
 		return diag.FromErr(err)
-	} else {
-		diags = make(diag.Diagnostics, 0)
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Third Party VC delete result",
-			Detail:   msg,
-		})
 	}
 	d.SetId("")
 	return diags

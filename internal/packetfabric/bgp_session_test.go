@@ -45,13 +45,11 @@ func init() {
 				Prefix: _bgpPrefixOut,
 				Type:   "out",
 				Med:    2,
-				Order:  1,
 			},
 			{
 				Prefix:          _bgpPrefixIn,
 				Type:            "in",
 				LocalPreference: 100,
-				Order:           1,
 			},
 		},
 	})
@@ -92,14 +90,12 @@ func _buildBgpSessionPayload() []byte {
 			{
 				"prefix": "%s",
 				"type": "out",
-				"med": 2,
-				"order": 1
+				"med": 2
 			},
 			{
 				"prefix": "%s",
 				"type": "in",
-				"local_preference": 100,
-				"order": 1
+				"local_preference": 100
 			}
 		]
 	}`, _bgpMd5, _bgpL3Prefix, _bgpRemoteAddress, _bgpRemoteAsn, _bgpPrefixOut, _bgpPrefixIn))
@@ -127,14 +123,12 @@ func _buildBgpSessionCreateResp() []byte {
 			{
 				"prefix": "%s",
 				"type": "out",
-				"med": 2,
-				"order": 1
+				"med": 2
 			},
 			{
 				"prefix": "%s",
 				"type": "in",
-				"local_preference": 100,
-				"order": 1
+				"local_preference": 100
 			}
 		],
 		"subnet": null,
@@ -165,14 +159,12 @@ func _buildBgpSessionSettings(timeCreated, timeUpdated, bgpSettingsUUID string) 
 			{
 				"prefix": "%s",
 				"type": "out",
-				"med": 2,
-				"order": 1
+				"med": 2
 			},
 			{
 				"prefix": "%s",
 				"type": "in",
-				"local_preference": 100,
-				"order": 1
+				"local_preference": 100
 			}
 		  ]
 		}
