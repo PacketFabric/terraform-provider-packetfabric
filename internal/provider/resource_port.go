@@ -165,17 +165,13 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	resp, err := c.DeletePort(d.Id())
+	_, err := c.DeletePort(d.Id())
 	time.Sleep(30 * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId("")
-	return append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Port Delete",
-		Detail:   resp.Message,
-	})
+	return diags
 }
 
 func extractInterface(d *schema.ResourceData) packetfabric.Interface {
