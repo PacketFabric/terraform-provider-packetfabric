@@ -220,6 +220,7 @@ func resourceBgpSession() *schema.Resource {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Description: "The order of this prefix against the others.",
+							Deprecated:  "This field is deprecated and will be removed in a future release.",
 						},
 					},
 				},

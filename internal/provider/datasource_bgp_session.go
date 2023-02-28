@@ -245,6 +245,7 @@ func dataSourceBgpSession() *schema.Resource {
 										Computed:    true,
 										Optional:    true,
 										Description: "The order of the bgp prefix against the others.",
+										Deprecated:  "This field is deprecated and will be removed in a future release.",
 									},
 								},
 							},

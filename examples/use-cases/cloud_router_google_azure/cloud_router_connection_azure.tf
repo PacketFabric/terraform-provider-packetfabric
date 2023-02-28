@@ -82,12 +82,10 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   prefixes {
     prefix = var.gcp_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
-    order  = 0
   }
   prefixes {
     prefix = var.azure_vnet_cidr1
     type   = "in" # Allowed Prefixes from Cloud
-    order  = 0
   }
 }
 output "packetfabric_cloud_router_bgp_session_crbs_2" {
