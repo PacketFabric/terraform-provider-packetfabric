@@ -87,7 +87,6 @@ func resourceBackbone() *schema.Resource {
 						"untagged": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							ForceNew:    true,
 							Default:     false,
 							Description: "Whether the interface should be untagged. ",
 						},
@@ -117,7 +116,6 @@ func resourceBackbone() *schema.Resource {
 						"untagged": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							ForceNew:    true,
 							Default:     false,
 							Description: "Whether the interface should be untagged. ",
 						},
