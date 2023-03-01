@@ -87,6 +87,7 @@ func resourceBackbone() *schema.Resource {
 						"untagged": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							ForceNew:    true,
 							Default:     false,
 							Description: "Whether the interface should be untagged. ",
 						},
@@ -116,6 +117,7 @@ func resourceBackbone() *schema.Resource {
 						"untagged": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							ForceNew:    true,
 							Default:     false,
 							Description: "Whether the interface should be untagged. ",
 						},
@@ -265,7 +267,11 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		if _, ok := d.GetOk("rate_limit_out"); ok {
 			_ = d.Set("rate_limit_out", resp.RateLimitOut)
 		}
-		_ = d.Set("flex_bandwidth_id", resp.AggregateCapacityID)
+		if _, ok := d.GetOk("flex_bandwidth_id"); ok {
+			_ = d.Set("flex_bandwidth_id", resp.AggregateCapacityID)
+		} else {
+			_ = d.Set("flex_bandwidth_id", nil)
+		}
 	}
 	return diags
 }
@@ -375,19 +381,19 @@ func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettings
 	}
 	if _, ok := d.GetOk("interface"); ok {
 		for _, interf := range d.Get("interface").(*schema.Set).List() {
-			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 		}
 	}
 	if _, ok := d.GetOk("interface_a"); ok {
 		for _, interf := range d.Get("interface_a").(*schema.Set).List() {
-			settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+			settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 		}
 	}
 	if _, ok := d.GetOk("interface_z"); ok {
 		for _, interf := range d.Get("interface_z").(*schema.Set).List() {
 			// Only include interface_z if it was modified
 			if d.HasChange("interface_z") {
-				settUpdate.Interfaces = append(settUpdate.Interfaces, extractIXVcInterface(interf.(map[string]interface{})))
+				settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 			}
 		}
 	}
@@ -411,16 +417,20 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 	return bandwidth
 }
 
-func extractBackboneInterface(interf map[string]interface{}) packetfabric.BackBoneInterface {
-	backboneInter := packetfabric.BackBoneInterface{}
-	backboneInter.PortCircuitID = interf["port_circuit_id"].(string)
+func extractBackboneInterface(interf map[string]interface{}) packetfabric.Interfaces {
+	backboneInter := packetfabric.Interfaces{}
+	if portCID := interf["port_circuit_id"]; portCID != nil {
+		backboneInter.PortCircuitID = portCID.(string)
+	}
 	if vlan := interf["vlan"]; vlan != nil {
 		backboneInter.Vlan = vlan.(int)
 	}
 	if untagged := interf["untagged"]; untagged != nil {
 		backboneInter.Untagged = untagged.(bool)
 	}
-
+	if svlan := interf["svlan"]; svlan != nil {
+		backboneInter.Svlan = svlan.(int)
+	}
 	return backboneInter
 }
 

@@ -21,19 +21,13 @@ const acceptCloudRouterServiceURI = "/v2/services/cloud-routers/requests/%s/acce
 const rejectCloudRouterService = "/v2/services/cloud-routers/requests/%s/reject"
 
 type Backbone struct {
-	Description     string              `json:"description"`
-	Bandwidth       Bandwidth           `json:"bandwidth"`
-	Interfaces      []BackBoneInterface `json:"interfaces"`
-	RateLimitIn     int                 `json:"rate_limit_in,omitempty"`
-	RateLimitOut    int                 `json:"rate_limit_out,omitempty"`
-	Epl             bool                `json:"epl"`
-	FlexBandwidthID string              `json:"flex_bandwidth_id,omitempty"`
-}
-
-type BackBoneInterface struct {
-	PortCircuitID string `json:"port_circuit_id"`
-	Vlan          int    `json:"vlan,omitempty"`
-	Untagged      bool   `json:"untagged,omitempty"`
+	Description     string       `json:"description"`
+	Bandwidth       Bandwidth    `json:"bandwidth"`
+	Interfaces      []Interfaces `json:"interfaces"`
+	RateLimitIn     int          `json:"rate_limit_in,omitempty"`
+	RateLimitOut    int          `json:"rate_limit_out,omitempty"`
+	Epl             bool         `json:"epl"`
+	FlexBandwidthID string       `json:"flex_bandwidth_id,omitempty"`
 }
 
 type IxVirtualCircuit struct {
