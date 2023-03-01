@@ -16,6 +16,10 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Add missing status check AWS and Oracle hosted cloud (#352)
 * Deprecate order in packetfabric_cloud_router_bgp_session resource and data-source (#359)
 
+BUG FIXES:
+
+* Fix update issue with untagged in packetfabric_backbone_virtual_circuit interfaces (#364)
+
 ## 1.0.7  (February 22, 2023)
 
 BUG FIXES:
