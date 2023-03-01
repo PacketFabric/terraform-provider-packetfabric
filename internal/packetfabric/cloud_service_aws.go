@@ -88,7 +88,7 @@ type Interfaces struct {
 	Description        string `json:"description,omitempty"`
 	Vlan               int    `json:"vlan,omitempty"`
 	Svlan              int    `json:"svlan,omitempty"`
-	Untagged           bool   `json:"untagged,omitempty"`
+	Untagged           bool   `json:"untagged"`
 	ProvisioningStatus string `json:"provisioning_status,omitempty"`
 	AdminStatus        string `json:"admin_status,omitempty"`
 	OperationalStatus  string `json:"operational_status,omitempty"`
