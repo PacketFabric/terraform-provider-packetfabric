@@ -26,17 +26,16 @@ func GetAccountUUID() string {
 	return os.Getenv("PF_ACCOUNT_ID")
 }
 
-func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media, availableSpeed string, availabilityErr error) {
-	host := os.Getenv("PF_HOST")
-	token := os.Getenv("PF_TOKEN")
-	c, err := packetfabric.NewPFClient(&host, &token)
+func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media string, availabilityErr error) {
+
+	c, err := _createPFClient()
 	if err != nil {
-		return "", "", "", "", fmt.Errorf("error creating PFClient: %w", err)
+		return "", "", "", err
 	}
 
 	locations, err := c.ListLocations()
 	if err != nil {
-		return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
+		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 
 	// We need to shuffle the list of locations. Otherwise, we may try to run
@@ -50,16 +49,16 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media, avai
 		if l.Vendor == "Colt" {
 			continue
 		}
+
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
-			return "", "", "", "", fmt.Errorf("error getting location port availability: %w", err)
+			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
 		for _, p := range portAvailability {
 			if p.Count > 0 && p.Speed == desiredSpeed {
 				pop = l.Pop
 				zone = p.Zone
 				media = p.Media
-				availableSpeed = p.Speed
 				return
 			}
 		}
@@ -68,12 +67,11 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media, avai
 				pop = l.Pop
 				zone = portAvailability[0].Zone
 				media = portAvailability[0].Media
-				availableSpeed = portAvailability[0].Speed
 				return
 			}
 		}
 	}
-	return "", "", "", "", errors.New("no pops with available ports")
+	return "", "", "", errors.New("no pops with available ports")
 }
 
 func PreCheck(t *testing.T, additionalEnvVars []string) {
@@ -101,4 +99,14 @@ func SkipIfEnvNotSet(t *testing.T) {
 	if os.Getenv(resource.EnvTfAcc) == "" {
 		t.Skip()
 	}
+}
+
+func _createPFClient() (*packetfabric.PFClient, error) {
+	host := os.Getenv("PF_HOST")
+	token := os.Getenv("PF_TOKEN")
+	c, err := packetfabric.NewPFClient(&host, &token)
+	if err != nil {
+		return nil, fmt.Errorf("error creating PFClient: %w", err)
+	}
+	return c, nil
 }
