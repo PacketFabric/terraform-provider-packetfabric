@@ -60,7 +60,7 @@ output "packetfabric_port_1_details" {
 
 ### Optional
 
-- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps. Defaults: false
+- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
 - `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Defaults: true
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
