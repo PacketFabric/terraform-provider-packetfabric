@@ -100,16 +100,10 @@ func resourceDeleteAzureHostedMkt(ctx context.Context, d *schema.ResourceData, m
 	if !ok {
 		return diag.Errorf("please provide a valid VC Request UUID to delete")
 	}
-	msg, err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
+	_, err := c.DeleteHostedMktConnection(vcRequestUUID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	diags = make(diag.Diagnostics, 0)
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Azure Hosted marketplace delete result",
-		Detail:   msg,
-	})
 	d.SetId("")
 	return diags
 }

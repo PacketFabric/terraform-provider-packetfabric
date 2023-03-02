@@ -52,22 +52,18 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   prefixes {
     prefix = var.pf_crbp_pfx00
     type   = "out" # Allowed Prefixes to Cloud
-    order  = var.pf_crbp_pfx00_order
   }
   prefixes {
     prefix = var.pf_crbp_pfx01
     type   = "out" # Allowed Prefixes to Cloud
-    order  = var.pf_crbp_pfx01_order
   }
   prefixes {
     prefix = var.pf_crbp_pfx02
     type   = "in" # Allowed Prefixes from Cloud
-    order  = var.pf_crbp_pfx02_order
   }
   prefixes {
     prefix = var.pf_crbp_pfx03
     type   = "in" # Allowed Prefixes from Cloud
-    order  = var.pf_crbp_pfx03_order
   }
 }
 
@@ -92,12 +88,10 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   prefixes {
     prefix = var.pf_crbp_pfx00
     type   = "out" # Allowed Prefixes to Cloud
-    order  = var.pf_crbp_pfx00_order
   }
   prefixes {
     prefix = var.pf_crbp_pfx01
     type   = "in"  # Allowed Prefixes from Cloud
-    order  = var.pf_crbp_pfx01_order
   }
 }
 
@@ -128,12 +122,10 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   prefixes {
     prefix = var.pf_crbp_pfx00
     type   = "out" # Allowed Prefixes to Cloud
-    order  = var.pf_crbp_pfx00_order
   }
   prefixes {
     prefix = var.pf_crbp_pfx01
     type   = "in"  # Allowed Prefixes from Cloud
-    order  = var.pf_crbp_pfx01_order
   }
 }
 ```
@@ -194,7 +186,7 @@ Optional:
 
 	Enum: `"exact"` `"orlonger"` `"longer"`
 - `med` (Number) The MED of this prefix. It is used when type = out.
-- `order` (Number) The order of this prefix against the others.
+- `order` (Number, Deprecated) The order of this prefix against the others.
 
 
 <a id="nestedblock--nat"></a>

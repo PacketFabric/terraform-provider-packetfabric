@@ -15,3 +15,11 @@ A Link Aggregation Group interface (or a LAG) is a group of ports on the PacketF
 {{tffile "examples/resources/packetfabric_link_aggregation_group/resource.tf"}}
 
 {{ .SchemaMarkdown }}
+
+## Import
+
+Import a LAG using its circuit ID. 
+
+```bash
+terraform import packetfabric_link_aggregation_group.lag_1 PF-AE-WDC1-1726464
+```

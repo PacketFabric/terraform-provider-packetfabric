@@ -15,7 +15,7 @@ const portDeviceInfoURI = "/v2/ports/%s/device-info"
 const portRouterLogsURI = "/v2/ports/%s/router-logs?time_from=%s&time_to=%s"
 
 type Interface struct {
-	Autoneg          bool   `json:"autoneg,omitempty"`
+	Autoneg          bool   `json:"autoneg"`
 	Nni              bool   `json:"nni,omitempty"`
 	SubscriptionTerm int    `json:"subscription_term,omitempty"`
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -333,6 +333,15 @@ func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*Inter
 	if err != nil {
 		return nil, err
 	}
+	updateOk := make(chan bool)
+	defer close(updateOk)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(expectedResp.PortCircuitID)
+	}
+	go c.CheckServiceStatus(updateOk, fn)
+	if !<-updateOk {
+		return nil, err
+	}
 	return expectedResp, nil
 }
 
@@ -349,6 +358,15 @@ func (c *PFClient) UpdatePortAutoNegOnly(autoNeg bool, portCID string) (*Interfa
 	if err != nil {
 		return nil, err
 	}
+	updateOk := make(chan bool)
+	defer close(updateOk)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(expectedResp.PortCircuitID)
+	}
+	go c.CheckServiceStatus(updateOk, fn)
+	if !<-updateOk {
+		return nil, err
+	}
 	return expectedResp, nil
 }
 
@@ -363,6 +381,15 @@ func (c *PFClient) UpdatePortDescriptionOnly(portCID, description string) (*Inte
 	}
 	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
 	if err != nil {
+		return nil, err
+	}
+	updateOk := make(chan bool)
+	defer close(updateOk)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(expectedResp.PortCircuitID)
+	}
+	go c.CheckServiceStatus(updateOk, fn)
+	if !<-updateOk {
 		return nil, err
 	}
 	return expectedResp, nil

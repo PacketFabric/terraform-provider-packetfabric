@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.0.4"
+      version = ">= 1.1.0"
     }
   }
 }
@@ -788,12 +788,10 @@ resource "random_pet" "name" {}
 #   prefixes {
 #     prefix = "0.0.0.0/0"
 #     type   = "out" # Allowed Prefixes to Cloud
-#     order  = 0
 #   }
 #   prefixes {
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
-#     order  = 0
 #   }
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_1" {
@@ -855,12 +853,10 @@ resource "random_pet" "name" {}
 #   prefixes {
 #     prefix = "0.0.0.0/0"
 #     type   = "out" # Allowed Prefixes to Cloud
-#     order  = 0
 #   }
 #   prefixes {
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
-#     order  = 0
 #   }
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3" {
