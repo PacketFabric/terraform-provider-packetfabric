@@ -65,8 +65,9 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
 	provider      = packetfabric
 	name          = "%s"
   account_uuid  = "%s"
+  asn           = %v
 	capacity      = "%s"
-  regions       = ["%s"]
+  regions       = ["%s", "%s"]
   }`
 
 // Resource: packetfabric_cloud_router_bgp_session
@@ -75,7 +76,6 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	circuit_id     = %s.id
 	connection_id  = %s.id
 	address_family = "%s"
-	multihop_ttl   = %v
 	remote_asn     = %v
 	prefixes {
 		prefix = "%s"
