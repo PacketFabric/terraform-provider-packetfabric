@@ -2022,3 +2022,14 @@ func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsRe
 		},
 	}
 }
+
+func CreateBasePortDetails() PortDetails {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	return PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+}
