@@ -47,6 +47,7 @@ func GenerateUniqueName() string {
 	birdName := birdNames[rand.Intn(len(birdNames))]
 	return fmt.Sprintf("terraform_testacc_%s", birdName)
 }
+
 func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
 	uuid := uuid.NewString()
 	shortUuid := uuid[0:8]
@@ -56,12 +57,53 @@ func GenerateUniqueResourceName(resource string) (resourceName, hclName string) 
 	return
 }
 
+<<<<<<< HEAD
 func _createPFClient() (*packetfabric.PFClient, error) {
 	host := os.Getenv("PF_HOST")
 	token := os.Getenv("PF_TOKEN")
 	c, err := packetfabric.NewPFClient(&host, &token)
 	if err != nil {
 		return nil, fmt.Errorf("error creating PFClient: %w", err)
+=======
+	for _, l := range locations {
+		if l.Vendor == "Colt" {
+			continue
+		}
+
+		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
+		if err != nil {
+			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
+		}
+		for _, p := range portAvailability {
+			if strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev") {
+				if _contains([]string{"LAB05", "LAB6", "LAB7", "LAB8"}, l.Pop) && p.Count > 0 && p.Speed == desiredSpeed {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					log.Println(pop, zone, media, p.Speed)
+					return
+				} else {
+					continue
+				}
+			} else {
+				if p.Count > 0 && p.Speed == desiredSpeed {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					return
+				}
+
+			}
+			if pop == "" || zone == "" {
+				if len(portAvailability) > 0 {
+					pop = l.Pop
+					zone = portAvailability[0].Zone
+					media = portAvailability[0].Media
+					return
+				}
+			}
+		}
+>>>>>>> 05e4b46 (Updating testutil.go)
 	}
 	return c, nil
 }
