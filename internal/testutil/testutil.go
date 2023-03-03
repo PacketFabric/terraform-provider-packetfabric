@@ -3,6 +3,7 @@ package testutil
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"strings"
@@ -55,19 +56,32 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
 		for _, p := range portAvailability {
-			if p.Count > 0 && p.Speed == desiredSpeed {
-				pop = l.Pop
-				zone = p.Zone
-				media = p.Media
-				return
+			if strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev") {
+				if _contains([]string{"LAB05", "LAB6", "LAB7", "LAB8"}, l.Pop) && p.Count > 0 && p.Speed == desiredSpeed {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					log.Println(pop, zone, media, p.Speed)
+					return
+				} else {
+					continue
+				}
+			} else {
+				if p.Count > 0 && p.Speed == desiredSpeed {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					return
+				}
+
 			}
-		}
-		if pop == "" || zone == "" {
-			if len(portAvailability) > 0 {
-				pop = l.Pop
-				zone = portAvailability[0].Zone
-				media = portAvailability[0].Media
-				return
+			if pop == "" || zone == "" {
+				if len(portAvailability) > 0 {
+					pop = l.Pop
+					zone = portAvailability[0].Zone
+					media = portAvailability[0].Media
+					return
+				}
 			}
 		}
 	}
