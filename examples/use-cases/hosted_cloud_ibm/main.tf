@@ -82,7 +82,7 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
   ibm_bgp_asn = var.pf_cs_peer_asn
-  port        = "PF-AP-LAB1-2999387" # packetfabric_port.port_1.id
+  port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
