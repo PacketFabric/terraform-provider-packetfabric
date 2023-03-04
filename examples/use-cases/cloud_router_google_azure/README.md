@@ -14,7 +14,7 @@ Terraform providers used: PacketFabric, Azure and Google.
 - [HashiCorp Microsoft Azure Terraform Provider](https://registry.terraform.io/providers/hashicorp/azurerm)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 > **Warning**: Microsoft begins billing as soon as the service key is created, which is why we advise that you wait until your cross connect is established first.
 

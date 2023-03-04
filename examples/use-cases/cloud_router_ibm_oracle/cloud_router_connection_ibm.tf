@@ -10,17 +10,42 @@ resource "packetfabric_cloud_router_connection_ibm" "crc_1" {
   speed       = var.pf_crc_speed
 }
 
-# From the IBM side: Accept the connection.
-# Vote for 3978 New resource to accept a direct link creation request: ibm_dl_gateway_accept
-# https://github.com/IBM-Cloud/terraform-provider-ibm/issues/3978
-
-data "ibm_dl_gateway" "direct_link_gw" {
-  provider = ibm
-  name     = "${var.tag_name}-${random_pet.name.id}"
+# From the IBM side: Accept the connection
+# Wait for the connection to show up in IBM
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "1m"
+  depends_on = [
+    packetfabric_cs_ibm_hosted_connection.pf_cs_conn1
+  ]
 }
 
+# Retrieve the Direct Connect connections in IBM
+data "ibm_dl_gateway" "current" {
+  provider   = ibm
+  name       = "${var.tag_name}-${random_pet.name.id}"
+  depends_on = [time_sleep.wait_ibm_connection]
+}
 output "ibm_dl_gateway" {
-  value = data.ibm_dl_gateway.direct_link_gw
+  value = data.ibm_dl_gateway.current
+}
+
+resource "ibm_dl_gateway_action" "confirmation" {
+  gateway = data.ibm_dl_gateway.current.id
+  action  = "create_gateway_approve"
+  global  = true
+  metered = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+}
+output "ibm_dl_gateway_action" {
+  value = data.ibm_dl_gateway.current
+}
+
+data "ibm_dl_gateway" "after_approved" {
+  provider   = ibm
+  name       = "${var.tag_name}-${random_pet.name.id}"
+  depends_on = [ibm_dl_gateway_action.confirmation]
+}
+output "ibm_dl_gateway_after" {
+  value = data.ibm_dl_gateway.after_approved
 }
 
 # From the PacketFabric side: Configure BGP
@@ -32,8 +57,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.ibm_bgp_asn
   orlonger       = var.pf_crbs_orlonger
-  remote_address = data.ibm_dl_gateway.direct_link_gw.bgp_base_cidr # IBM side
-  l3_address     = data.ibm_dl_gateway.direct_link_gw.bgp_cer_cidr  # PF side
+  remote_address = data.ibm_dl_gateway.after_approved.bgp_base_cidr # IBM side
+  l3_address     = data.ibm_dl_gateway.after_approved.bgp_cer_cidr  # PF side
   prefixes {
     prefix = var.oracle_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud

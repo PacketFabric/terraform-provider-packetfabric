@@ -22,22 +22,22 @@ resource "time_sleep" "wait_aws_connection" {
 }
 
 # Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current_1" {
-  provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+data "aws_dx_connection" "current" {
+  provider   = aws
+  name       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [time_sleep.wait_aws_connection]
 }
 output "aws_dx_connection_1" {
-  value = data.aws_dx_connection.current_1
+  value = data.aws_dx_connection.current
 }
 
 # Sometimes, it takes more than 10min for the connection to become available
 # Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
 # https://github.com/hashicorp/terraform-provider-aws/issues/26335
 
-resource "aws_dx_connection_confirmation" "confirmation_1" {
+resource "aws_dx_connection_confirmation" "confirmation" {
   provider      = aws
-  connection_id = data.aws_dx_connection.current_1.id
+  connection_id = data.aws_dx_connection.current.id
 
   lifecycle {
     ignore_changes = [
