@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsAwsHostedMktConn = "packetfabric_cs_aws_hosted_marketplace_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -116,6 +117,14 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type RHclCSAwsHostedMktConnectionResult struct {
+	HclResultBase
+	CloudRouter RHclCloudRouterResult
+	Market      string
+	Speed       string
+	Pop         string
 }
 
 // Patterns:
@@ -326,6 +335,25 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_aws_hosted_marketplace_connection
+func RHclCSAwsHostedMktConnection() RHclCSAwsHostedMktConnectionResult {
+
+	var pop, speed, market, hcl string
+
+	resourceName, _ := _generateResourceName(pfCsAwsHostedMktConn)
+
+	return RHclCSAwsHostedMktConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAwsHostedMktConn,
+			ResourceName: resourceName,
+		},
+		Market: market,
+		Speed:  speed,
+		Pop:    pop,
 	}
 }
 
