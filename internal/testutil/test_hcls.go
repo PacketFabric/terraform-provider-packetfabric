@@ -27,6 +27,7 @@ const pfDataZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
+const pfPortLoa = "packetfabric_port_loa"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -247,6 +248,11 @@ type DHclActivityLogResult struct {
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
 	HclResultBase
+type RHclPortLoaResult struct {
+	HclResultBase
+	Port             RHclPortResult
+	LoaCustomerName  string
+	DestinationEmail string
 }
 
 // Patterns:
@@ -567,6 +573,46 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
+	}
+}
+
+// packetfabric_port_loa
+func RHclPortLoa() RHclPortLoaResult {
+
+	var loaCustomerName, destinationEmail, hcl string
+
+	resourceName, _ := _generateResourceName(pfPortLoa)
+
+	return RHclPortLoaResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfPortLoa,
+			ResourceName: resourceName,
+		},
+		LoaCustomerName:  loaCustomerName,
+		DestinationEmail: destinationEmail,
+	}
+}
+
+func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
+	popsAvailable, _ := details.FetchCloudPops()
+	popsToSkip := make([]string, 0)
+	for _, popAvailable := range popsAvailable {
+		if len(popsToSkip) == len(popsAvailable) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, pop) {
+			continue
+		}
+		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
+			popsToSkip = append(popsToSkip, popAvailable)
+			continue
+		} else {
+			pop = popAvailable
+			media = mediaAvailable
+			zone = zoneAvailable
+			return
+		}
 	}
 }
 
