@@ -40,9 +40,9 @@ type FlexBandwidthDelResp struct {
 
 // This function represents the Action to create a new Flex Bandwidth
 // https://docs.packetfabric.com/api/v2/swagger/#/Flex%20Bandwidth/create_flex_bandwidth
-func (c *PFClient) CreateFlexBandwidth(router FlexBandwidth) (*FlexBandwidthResponse, error) {
+func (c *PFClient) CreateFlexBandwidth(flexBand FlexBandwidth) (*FlexBandwidthResponse, error) {
 	resp := &FlexBandwidthResponse{}
-	_, err := c.sendRequest(FlexBandwidthURI, postMethod, router, &resp)
+	_, err := c.sendRequest(FlexBandwidthURI, postMethod, flexBand, &resp)
 	if err != nil {
 		return nil, err
 	}
