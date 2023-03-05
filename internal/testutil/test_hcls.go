@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfPoinToPoint = "packetfabric_point_to_point"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -115,6 +116,20 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type RHclPointToPointResult struct {
+	HclResultBase
+	Desc             string
+	Speed            string
+	Media            string
+	SubscriptionTerm int
+	Pop1             string
+	Zone1            string
+	Autoneg1         bool
+	Pop2             string
+	Zone2            string
+	Autoneg2         bool
 }
 
 // Patterns:
@@ -325,6 +340,35 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_point_to_point
+func RHclPointToPoint() RHclPointToPointResult {
+
+	var media, speed, pop1, pop2, zone1, zone2, hcl string
+	var autoneg1, autoneg2 bool
+	var subscriptionTerm int
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfPoinToPoint)
+	resourceName, _ := _generateResourceName(pfPoinToPoint)
+
+	return RHclPointToPointResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfPoinToPoint,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Speed:            speed,
+		Media:            media,
+		SubscriptionTerm: subscriptionTerm,
+		Pop1:             pop1,
+		Zone1:            zone1,
+		Autoneg1:         autoneg1,
+		Pop2:             pop2,
+		Zone2:            zone2,
+		Autoneg2:         autoneg2,
 	}
 }
 
