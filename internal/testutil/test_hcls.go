@@ -30,6 +30,7 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+<<<<<<< HEAD
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
 const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
@@ -50,6 +51,9 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+=======
+const pfAddSpeedBurst = "packetfabric_backbone_virtual_circuit_speed_burst"
+>>>>>>> faa686b (Acc test structure: Resource  packetfabric_backbone_virtual_circuit_speed_burst)
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -558,6 +562,13 @@ type DHclDatasourceBillingResult struct {
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
+}
+
+// packetfabric_backbone_virtual_circuit_speed_burst
+type RHclBackboneVirtualCircuitSpeedBurstResult struct {
+	HclResultBase
+	VcCircuitId string
+	Speed       string
 }
 
 // Patterns:
@@ -1388,9 +1399,25 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 	}
 }
 
+// packetfabric_backbone_virtual_circuit_speed_burst
+func RHclBackboneVirtualCircuitSpeedBurst() RHclBackboneVirtualCircuitSpeedBurstResult {
+
+	var speed, vcCircuitId, hcl string
+	resourceName, _ := _generateResourceName(pfAddSpeedBurst)
+
+	return RHclBackboneVirtualCircuitSpeedBurstResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfAddSpeedBurst,
+			ResourceName: resourceName,
+		},
+		VcCircuitId: vcCircuitId,
+		Speed:       speed,
+	}
+}
+
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
-
 	var edgeAvailabilityDomain string
 
 	c, err := _createPFClient()
