@@ -39,6 +39,7 @@ const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -367,6 +368,15 @@ type DHclDatasourceBillingResult struct {
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
+}
+
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
 }
 
 // Patterns:
@@ -889,7 +899,6 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -937,6 +946,28 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
 		Speed:            DedicatedCloudSpeed,
+	}
+}
+
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+
+	var pop, interval, hcl string
+	var members []string
+
+	resourceName, _ := _generateResourceName(pfLinkAggregationGroup)
+	uniqueDesc := _generateUniqueNameOrDesc(pfLinkAggregationGroup)
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: interval,
+		Members:  members,
+		Pop:      pop,
 	}
 }
 
