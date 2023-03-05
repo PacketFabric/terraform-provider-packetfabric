@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -116,6 +117,18 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_azure_dedicated_connection
+type RHclCsAzureDedicatedConnectionResult struct {
+	HclResultBase
+	Desc             string
+	Pop              string
+	SubscriptionTerm int
+	ServiceClass     string
+	Encapsulation    string
+	PortCategory     string
+	Speed            string
 }
 
 // Patterns:
@@ -326,6 +339,31 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_azure_dedicated_connection
+func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
+
+	var pop, serviceClass, encapsulation, portCategory, speed, hcl string
+	var subscriptionTerm int
+
+	resourceName, _ := _generateResourceName(pfCsAzureDedicatedConn)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsAzureDedicatedConn)
+
+	return RHclCsAzureDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAzureDedicatedConn,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Pop:              pop,
+		SubscriptionTerm: subscriptionTerm,
+		ServiceClass:     serviceClass,
+		Encapsulation:    encapsulation,
+		PortCategory:     portCategory,
+		Speed:            speed,
 	}
 }
 
