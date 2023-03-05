@@ -24,6 +24,7 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -340,6 +341,15 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -491,6 +501,64 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
+	}
+}
+
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+
+	var pop, interval, hcl string
+	var members []string
+
+	resourceName, _ := GenerateUniqueResourceName(pfLinkAggregationGroup)
+	uniqueDesc := GenerateUniqueName()
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: interval,
+		Members:  members,
+		Pop:      pop,
+	}
+}
+
+// packetfabric_port_loa
+func RHclPortLoa() RHclPortLoaResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		IsCloudConnection: true,
+	}
+
+	hclPortResult := portDetails.RHclPort(false)
+	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
+	email := os.Getenv("PF_USER_EMAIL")
+
+	hcl := fmt.Sprintf(RResourcePortLoa,
+		hclName,
+		hclPortResult.ResourceReference,
+		PortLoaCustomerName,
+		email,
+	)
+
+	return RHclPortLoaResult{
+		HclResultBase: HclResultBase{
+			Hcl:          fmt.Sprintf("%s\n%s", hclPortResult.Hcl, hcl),
+			Resource:     pfPortLoa,
+			ResourceName: resourceName,
+		},
+		LoaCustomerName:  PortLoaCustomerName,
+		DestinationEmail: email,
 	}
 }
 
