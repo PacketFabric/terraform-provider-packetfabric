@@ -23,8 +23,10 @@ func TestAccAzureDedicatedConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             csAzureDedicatedConnectionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config:                    csAzureDedicatedConnectionResult.Hcl,
+				ExpectNonEmptyPlan:        true,
+				Destroy:                   !testutil.IsDevEnv(),
+				PreventPostDestroyRefresh: testutil.IsDevEnv(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "description", csAzureDedicatedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "pop", csAzureDedicatedConnectionResult.Pop),
