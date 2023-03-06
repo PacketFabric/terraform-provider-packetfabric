@@ -115,6 +115,10 @@ func SkipIfEnvNotSet(t *testing.T) {
 	}
 }
 
+func IsDevEnv() bool {
+	return strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev")
+}
+
 func _createPFClient() (*packetfabric.PFClient, error) {
 	host := os.Getenv("PF_HOST")
 	token := os.Getenv("PF_TOKEN")
