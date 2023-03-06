@@ -48,6 +48,13 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+// packetfabric_cs_azure_dedicated_connection
+const CloudServiceAzDedDedicatedSubTerm = 1
+const CloudServiceAzDedServiceClass = "metro"
+const CloudServiceAzDedEncap = "qinq"
+const CloudServiceAzDedSpeed = "10Gbps"
+const CloudServiceAzDedPortCat = "primary"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -344,12 +351,34 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 
 // packetfabric_cs_azure_dedicated_connection
 func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	var pop, serviceClass, encapsulation, portCategory, speed, hcl string
-	var subscriptionTerm int
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "azure",
+		DesiredConnectionType: "dedicated",
+		IsCloudConnection:     true,
+	}
 
-	resourceName, _ := _generateResourceName(pfCsAzureDedicatedConn)
+	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+
+	resourceName, aclName := _generateResourceName(pfCsAzureDedicatedConn)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCsAzureDedicatedConn)
+
+	hcl := fmt.Sprintf(
+		RResourceCSAzureDedicatedConnection,
+		aclName,
+		uniqueDesc,
+		pop,
+		CloudServiceAzDedDedicatedSubTerm,
+		CloudServiceAzDedServiceClass,
+		CloudServiceAzDedEncap,
+		CloudServiceAzDedPortCat,
+		CloudServiceAzDedSpeed)
 
 	return RHclCsAzureDedicatedConnectionResult{
 		HclResultBase: HclResultBase{
@@ -359,11 +388,11 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		},
 		Desc:             uniqueDesc,
 		Pop:              pop,
-		SubscriptionTerm: subscriptionTerm,
-		ServiceClass:     serviceClass,
-		Encapsulation:    encapsulation,
-		PortCategory:     portCategory,
-		Speed:            speed,
+		SubscriptionTerm: CloudServiceAzDedDedicatedSubTerm,
+		ServiceClass:     CloudServiceAzDedServiceClass,
+		Encapsulation:    CloudServiceAzDedEncap,
+		PortCategory:     CloudServiceAzDedPortCat,
+		Speed:            CloudServiceAzDedSpeed,
 	}
 }
 
