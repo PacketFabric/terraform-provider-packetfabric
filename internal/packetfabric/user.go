@@ -20,6 +20,15 @@ type User struct {
 	Group     string `json:"group"`
 }
 
+type UserUpdate struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Phone     string `json:"phone"`
+	Login     string `json:"login"`
+	Timezone  string `json:"timezone"`
+	Group     string `json:"group"`
+}
+
 // This struct represents a User response
 // https://docs.packetfabric.com/api/v2/swagger/#/Users/user_post
 type UserResponse struct {
@@ -67,7 +76,7 @@ func (c *PFClient) ReadUsers(userID string) (*UserResponse, error) {
 
 // This function represents the Action tp update an existing Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_patch
-func (c *PFClient) UpdateUser(user User, userID string) (*UserResponse, error) {
+func (c *PFClient) UpdateUser(user UserUpdate, userID string) (*UserResponse, error) {
 	formatedURI := fmt.Sprintf("%s/%s", UsersURI, userID)
 	resp := &UserResponse{}
 	_, err := c.sendRequest(formatedURI, patchMethod, user, &resp)

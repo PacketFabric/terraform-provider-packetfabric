@@ -45,6 +45,7 @@ func resourceUser() *schema.Resource {
 			"email": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "User e-mail.",
 			},
@@ -57,13 +58,15 @@ func resourceUser() *schema.Resource {
 			"password": {
 				Type:         schema.TypeString,
 				Required:     true,
+				Sensitive:    true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringLenBetween(8, 64),
 				Description:  "User password. Keep it in secret.",
 			},
 			"timezone": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "User time-zone. You can find the list of available timezones here. Alternatively you can check pytz.all_timezones from pytz Python library.",
+				Description: "User time-zone. You can find the list of available timezones [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).",
 			},
 			"group": {
 				Type:         schema.TypeString,
@@ -118,8 +121,15 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	userID := d.Get("login").(string)
-	user := extractUser(d)
-	_, err := c.UpdateUser(user, userID)
+	userUpdate := packetfabric.UserUpdate{
+		FirstName: d.Get("first_name").(string),
+		LastName:  d.Get("last_name").(string),
+		Phone:     d.Get("phone").(string),
+		Login:     d.Get("login").(string),
+		Timezone:  d.Get("timezone").(string),
+		Group:     d.Get("group").(string),
+	}
+	_, err := c.UpdateUser(userUpdate, userID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -129,15 +139,12 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
-
 	var diags diag.Diagnostics
-
 	userID := d.Get("login").(string)
 	_, err := c.DeleteUsers(userID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
 	d.SetId("")
 	return diags
 }

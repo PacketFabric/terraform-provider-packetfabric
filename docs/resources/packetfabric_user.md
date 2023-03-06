@@ -40,9 +40,9 @@ output "packetfabric_user" {
 - `group` (String) User group. Available options are admin, regular, read-only, support, and sales.
 - `last_name` (String) User last name.
 - `login` (String) User login.
-- `password` (String, Sensitive) User password. Keep it in secret.
+- `password` (String) User password. Keep it in secret.
 - `phone` (String) User phone number.
-- `timezone` (String) User time-zone. You can find the list of available timezones here. Alternatively you can check pytz.all_timezones from pytz Python library.
+- `timezone` (String) User time-zone. You can find the list of available timezones [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ### Optional
 
@@ -60,6 +60,7 @@ Optional:
 - `create` (String)
 - `delete` (String)
 - `read` (String)
+- `update` (String)
 
 
 
