@@ -64,8 +64,8 @@ resource "time_sleep" "wait_aws_connection" {
 
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current" {
-  provider = aws
-  name     = "${var.pf_crc_description}"
+  provider   = aws
+  name       = var.pf_crc_description
   depends_on = [time_sleep.wait_aws_connection]
 }
 

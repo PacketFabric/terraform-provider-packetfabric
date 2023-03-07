@@ -13,7 +13,7 @@ the outbound Cross connect for those 2 ports.
 - [PacketFabric Cross Connects Overview](https://docs.packetfabric.com/xconnect/)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "random_pet"
 - "packetfabric_port"

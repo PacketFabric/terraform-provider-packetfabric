@@ -14,7 +14,7 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "aws_dx_gateway"
 - "aws_dx_transit_virtual_interface"
@@ -152,9 +152,9 @@ terraform state rm module.gcloud_bgp_peer_update
 ╷
 │ Error: error waiting for Direct Connection Connection (dxcon-fgohxwui) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
 │ 
-│   with aws_dx_connection_confirmation.confirmation_1,
-│   on cloud_router_connection_aws.tf line 46, in resource "aws_dx_connection_confirmation" "confirmation_1":
-│   46: resource "aws_dx_connection_confirmation" "confirmation_1" {
+│   with aws_dx_connection_confirmation.confirmation,
+│   on cloud_router_connection_aws.tf line 46, in resource "aws_dx_connection_confirmation" "confirmation":
+│   46: resource "aws_dx_connection_confirmation" "confirmation" {
 │ 
 ```
 
@@ -163,9 +163,9 @@ You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://
 As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the following resource:
 
 ```
-# resource "aws_dx_connection_confirmation" "confirmation_1" {
+# resource "aws_dx_connection_confirmation" "confirmation" {
 #   provider      = aws
-#   connection_id = data.aws_dx_connection.current_1.id
+#   connection_id = data.aws_dx_connection.current.id
 
 #   lifecycle {
 #     ignore_changes = [
@@ -175,7 +175,7 @@ As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the f
 # }
 ```
 
-Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation_1` in `packetfabric_cloud_router_connections` data source: 
+Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation` in `packetfabric_cloud_router_connections` data source: 
 
 ```
 data "packetfabric_cloud_router_connections" "current" {
@@ -183,12 +183,12 @@ data "packetfabric_cloud_router_connections" "current" {
   circuit_id = packetfabric_cloud_router.cr.id
 
   # depends_on = [
-  #   aws_dx_connection_confirmation.confirmation_1
+  #   aws_dx_connection_confirmation.confirmation
   # ]
 }
 ```
 
-Then remove the `confirmation_1` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
+Then remove the `confirmation` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform apply
 ```

@@ -137,15 +137,7 @@ func resourceIBMCloudRouteConnCreate(ctx context.Context, d *schema.ResourceData
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
-			return diag.FromErr(err)
-		}
+		// Skip status check as the status will show active when the connection request has been accepted
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
 		}

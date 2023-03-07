@@ -11,7 +11,7 @@ to automate the creation of a mesh of Backbone Virtual Circuits between 6 ports.
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "random_pet"
 - "packetfabric_backbone_virtual_circuit"
