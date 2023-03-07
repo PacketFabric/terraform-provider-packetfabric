@@ -31,6 +31,11 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "regions.1", cloudRouterResult.Regions[1]),
 				),
 			},
+			{
+				ResourceName:      cloudRouterResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
