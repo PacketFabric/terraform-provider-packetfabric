@@ -7,27 +7,31 @@ Terraform providers used: PacketFabric, IBM and Oracle.
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
 - [PacketFabric Cloud Router Docs](https://docs.packetfabric.com/cr/)
+- [IBM Direct Link Connect providers and locations](https://cloud.ibm.com/docs/dl?topic=dl-locations)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [IBM Cloud Terraform Provider](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest)
 - [Oracle Cloud Terraform Provider](https://registry.terraform.io/providers/oracle/oci/latest)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
-- "packetfabric_cloud_router"
-- "packetfabric_cloud_router_connection_ibm"
-- "ibm_dl_virtual_connection"
-- oci_core_drg"
+- "random_pet"
+- "oci_identity_compartment"
+- "oci_core_vcn"
+- "oci_core_drg"
 - "oci_core_virtual_circuit"
-- "packetfabric_cloud_router_connection_oracle"
-- "packetfabric_cloud_router_bgp_session"
 - "ibm_resource_group"
 - "ibm_is_vpc"
 - "ibm_is_vpc_address_prefix"
 - "ibm_is_subnet"
-- "oci_identity_compartment"
-- "oci_core_vcn"
-- "random_pet"
+- "ibm_dl_virtual_connection"
+- "packetfabric_cloud_router"
+- "packetfabric_cloud_router_connection_oracle"
+- "packetfabric_cloud_router_connection_ibm"
+- "packetfabric_cloud_router_bgp_session"
+- "time_sleep"
+- "ibm_dl_gateway"
+- "ibm_dl_gateway_action"
 
 **Estimated time:** ~15 min
 

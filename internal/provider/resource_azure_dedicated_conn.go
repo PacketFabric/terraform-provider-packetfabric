@@ -128,7 +128,7 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 			dedicatedConns, err := c.GetCurrentCustomersDedicated()
 			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
 				for _, conn := range dedicatedConns {
-					if expectedResp.UUID == conn.UUID {
+					if expectedResp.UUID == conn.UUID && conn.State == "active" {
 						expectedResp.CloudCircuitID = conn.CloudCircuitID
 						ticker.Stop()
 						createOk <- true
