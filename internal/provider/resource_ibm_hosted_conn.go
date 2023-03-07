@@ -156,7 +156,8 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 			dedicatedConns, err := c.GetCurrentCustomersHosted()
 			if dedicatedConns != nil && err == nil && len(dedicatedConns) > 0 {
 				for _, conn := range dedicatedConns {
-					if expectedResp.UUID == conn.UUID && conn.State == "active" {
+					// we stop when the state = requested
+					if expectedResp.UUID == conn.UUID && conn.State == "requested" {
 						expectedResp.CloudCircuitID = conn.CloudCircuitID
 						ticker.Stop()
 						createOk <- true

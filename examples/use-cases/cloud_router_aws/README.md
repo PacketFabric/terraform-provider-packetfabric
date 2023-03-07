@@ -13,7 +13,7 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "aws_dx_gateway"
 - "aws_dx_private_virtual_interface"

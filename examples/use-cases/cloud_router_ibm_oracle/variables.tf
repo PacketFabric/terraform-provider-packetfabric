@@ -11,6 +11,11 @@ variable "public_key" {
 }
 
 ## IBM VARs
+variable "ibm_resource_group" {
+  type        = string
+  default     = "My Resource Group"
+  description = "IBM Resource Group"
+}
 variable "ibm_region1" {
   type        = string
   default     = "us-south"
@@ -21,13 +26,11 @@ variable "ibm_region1_zone1" {
   description = "IBM Availability Zone"
   default     = "us-south-1"
 }
-
 variable "ibm_vpc_cidr1" {
   type        = string
   description = "CIDR for the VPC"
   default     = "10.8.0.0/16"
 }
-
 variable "ibm_subnet_cidr1" {
   type        = string
   description = "CIDR for the subnet"

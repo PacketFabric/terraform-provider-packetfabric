@@ -12,7 +12,7 @@ to automate the creation of a Virtual Circuit between 2 ports owned by 2 differe
 - [PacketFabric Marketplace Overview](https://docs.packetfabric.com/eco/overview/)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 **A side**
 

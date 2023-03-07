@@ -11,7 +11,7 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and G
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "random_pet"
 - "google_compute_network"

@@ -15,6 +15,7 @@ Use Cases | Description
 [hosted_cloud_aws](./hosted_cloud_aws) | Create a Port and an AWS Hosted Cloud Connection
 [hosted_cloud_google](./hosted_cloud_google) | Create a Port and a Google Hosted Cloud Connection
 [hosted_cloud_azure](./hosted_cloud_azure) | Create a Port and an Azure Hosted Cloud Connection
+[hosted_cloud_aws](./hosted_cloud_ibms) | Create a Port and an IBM Hosted Cloud Connection
 [marketplace](./marketplace) | Create a Marketplace Request and Accept/Reject it
 
 # List of known issues on other terraform providers, please up vote!
