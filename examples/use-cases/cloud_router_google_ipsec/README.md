@@ -13,7 +13,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "packetfabric_cloud_router"
 - "google_compute_router"

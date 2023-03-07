@@ -13,7 +13,7 @@ to automate the creation of a Dedicated Cloud Connection between PacketFabric an
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "random_pet"
 - "aws_vpc"
