@@ -22,8 +22,7 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             cloudRouterResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: cloudRouterResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "asn", strconv.Itoa(cloudRouterResult.Asn)),
 					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "capacity", cloudRouterResult.Capacity),
