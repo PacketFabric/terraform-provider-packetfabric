@@ -59,9 +59,14 @@ variable "pf_cs_peer_asn" {
 }
 
 # IBM VARs
+variable "ibm_resource_group" {
+  type        = string
+  default     = "My Resource Group"
+  description = "IBM Resource Group"
+}
 variable "ibm_region1" {
   type        = string
-  default     = "us-south"
+  default     = "us-east"
   description = "IBM Cloud region"
 }
 variable "ibm_region1_zone1" {

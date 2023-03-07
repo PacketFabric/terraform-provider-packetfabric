@@ -29,11 +29,19 @@ output "ibm_dl_gateway" {
   value = data.ibm_dl_gateway.current
 }
 
+# data "ibm_resource_group" "group" {
+#   provider = ibm
+#   name     = var.ibm_resource_group
+# }
+
 resource "ibm_dl_gateway_action" "confirmation" {
-  gateway = data.ibm_dl_gateway.current.id
-  action  = "create_gateway_approve"
-  global  = true
-  metered = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current.id
+  # resource_group = data.ibm_resource_group.group.id
+  resource_group = ibm_resource_group.resource_group_1.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
 }
 output "ibm_dl_gateway_action" {
   value = data.ibm_dl_gateway.current
