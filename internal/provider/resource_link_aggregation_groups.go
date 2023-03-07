@@ -104,7 +104,6 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
-
 	return diags
 }
 
@@ -128,8 +127,7 @@ func updatePort(c *packetfabric.PFClient, d *schema.ResourceData) (diag.Diagnost
 	if err2 != nil {
 		return diag.FromErr(err), false
 	}
-
-	return diag.Diagnostics{}, true
+	return nil, true
 }
 
 func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
