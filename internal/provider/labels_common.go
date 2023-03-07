@@ -15,7 +15,7 @@ func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 	if err != nil {
 		return diag.FromErr(err), false
 	}
-	return nil, true
+	return diag.Diagnostics{}, true
 }
 
 func updateLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
@@ -26,7 +26,7 @@ func updateLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 			return diag.FromErr(err), false
 		}
 	}
-	return nil, true
+	return diag.Diagnostics{}, true
 }
 
 func getLabels(c *packetfabric.PFClient, circuitId string) (*packetfabric.LabelsResponse, error) {
