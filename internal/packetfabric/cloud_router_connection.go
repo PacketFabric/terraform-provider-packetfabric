@@ -80,6 +80,7 @@ type CloudRouterConnectionReadResponse struct {
 	Zone                      string        `json:"zone,omitempty"`
 	Vlan                      int           `json:"vlan,omitempty"`
 	DesiredNat                string        `json:"desired_nat,omitempty"`
+	PONumber                  string        `json:"po_number"`
 }
 
 type BgpStateObj struct {
@@ -160,8 +161,9 @@ type AwsComponents struct {
 	IfdPortCircuitIDPf   string `json:"ifd_port_circuit_id_pf"`
 }
 
-type DescriptionUpdate struct {
+type CloudRouterUpdateData struct {
 	Description string `json:"description"`
+	PONumber    string `json:"po_number"`
 }
 
 type ConnectionDeleteResp struct {
@@ -329,11 +331,11 @@ func (c *PFClient) ReadCloudRouterConnection(cID, connCid string) (*CloudRouterC
 	return resp, nil
 }
 
-func (c *PFClient) UpdateCloudRouterConnection(cID, connCid string, description DescriptionUpdate) (*CloudRouterConnectionReadResponse, error) {
+func (c *PFClient) UpdateCloudRouterConnection(cID, connCid string, cloudRouterUpdateData CloudRouterUpdateData) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 
 	resp := &CloudRouterConnectionReadResponse{}
-	_, err := c.sendRequest(formatedURI, patchMethod, description, resp)
+	_, err := c.sendRequest(formatedURI, patchMethod, cloudRouterUpdateData, resp)
 	if err != nil {
 		return nil, err
 	}

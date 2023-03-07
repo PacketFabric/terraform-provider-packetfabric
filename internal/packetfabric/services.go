@@ -47,6 +47,7 @@ type ServiceSettingsUpdate struct {
 	RateLimitOut int          `json:"rate_limit_out,omitempty"`
 	Description  string       `json:"description,omitempty"`
 	Interfaces   []Interfaces `json:"interfaces,omitempty"`
+	PONumber     string       `json:"po_number,omitempty"`
 }
 
 type BackboneResp struct {
@@ -66,6 +67,7 @@ type BackboneResp struct {
 	TimeCreated         string               `json:"time_created"`
 	TimeUpdated         string               `json:"time_updated"`
 	Interfaces          []BackboneInterfResp `json:"interfaces"`
+	PONumber            string               `json:"po_number"`
 }
 
 type BackboneInterfResp struct {

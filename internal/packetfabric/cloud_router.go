@@ -30,6 +30,7 @@ type CloudRouterResponse struct {
 	Regions     []Region `json:"regions"`
 	TimeCreated string   `json:"time_created"`
 	TimeUpdated string   `json:"time_updated"`
+	PONumber    string   `json:"po_number"`
 }
 
 // This struct represents a Cloud Router Region

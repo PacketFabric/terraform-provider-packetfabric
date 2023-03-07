@@ -96,6 +96,11 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -157,6 +162,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
