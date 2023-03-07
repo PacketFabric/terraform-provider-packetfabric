@@ -70,15 +70,15 @@ resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
 }
 
 resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
-  provider         = packetfabric
-  circuit_id       = packetfabric_cloud_router.cr.id
-  connection_id    = packetfabric_cloud_router_connection_azure.crc_2.id
-  address_family   = var.pf_crbs_af
-  multihop_ttl     = var.pf_crbs_mhttl
-  remote_asn       = var.azure_side_asn1
-  orlonger         = var.pf_crbs_orlonger
+  provider       = packetfabric
+  circuit_id     = packetfabric_cloud_router.cr.id
+  connection_id  = packetfabric_cloud_router_connection_azure.crc_2.id
+  address_family = var.pf_crbs_af
+  multihop_ttl   = var.pf_crbs_mhttl
+  remote_asn     = var.azure_side_asn1
+  orlonger       = var.pf_crbs_orlonger
   # Only specify either the primary_subnet OR the secondary_subnet
-  primary_subnet   = var.azure_primary_peer_address_prefix
+  primary_subnet = var.azure_primary_peer_address_prefix
   prefixes {
     prefix = var.gcp_subnet_cidr1
     type   = "out" # Allowed Prefixes to Cloud
