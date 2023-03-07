@@ -250,7 +250,7 @@ func _buildMockCloudRouterConnResp(cloudRouterConnUpdateData CloudRouterUpdateDa
 		"dnat_capable": false,
 		"zone": "A",
 		"vlan": 4,
-		"desired_nat": "overload"
+		"desired_nat": "overload",
 		"po_number": "%s"
 	  }`, cloudRouterConnUpdateData.Description, _cloudConnUUID, cloudRouterConnUpdateData.PONumber))
 }
