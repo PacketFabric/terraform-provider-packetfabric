@@ -19,7 +19,8 @@ func TestAccPort(t *testing.T) {
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{})
 		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config:             portTestResult.Hcl,
