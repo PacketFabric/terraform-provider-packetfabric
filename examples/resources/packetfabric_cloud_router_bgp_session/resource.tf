@@ -72,7 +72,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   }
   prefixes {
     prefix = var.pf_crbp_pfx01
-    type   = "in"  # Allowed Prefixes from Cloud
+    type   = "in" # Allowed Prefixes from Cloud
   }
 }
 
@@ -106,6 +106,6 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   }
   prefixes {
     prefix = var.pf_crbp_pfx01
-    type   = "in"  # Allowed Prefixes from Cloud
+    type   = "in" # Allowed Prefixes from Cloud
   }
 }

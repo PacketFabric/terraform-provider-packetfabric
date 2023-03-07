@@ -439,6 +439,13 @@ resource "random_pet" "name" {}
 #   port        = packetfabric_port.port_1a.id
 #   vlan        = var.pf_cs_vlan7
 #   speed       = var.pf_cs_speed1
+#   lifecycle {
+#     ignore_changes = [
+#       zone,
+#       ibm_bgp_cer_cidr,
+#       ibm_bgp_ibm_cidr
+#     ]
+#   }
 # }
 # output "packetfabric_cs_ibm_hosted_connection" {
 #   value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
@@ -894,6 +901,12 @@ resource "random_pet" "name" {}
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
 #   speed       = var.pf_crc_speed
+#   lifecycle {
+#     ignore_changes = [
+#       ibm_bgp_cer_cidr,
+#       ibm_bgp_ibm_cidr
+#     ]
+#   }
 # }
 
 # resource "packetfabric_cloud_router_connection_oracle" "crc_6" {

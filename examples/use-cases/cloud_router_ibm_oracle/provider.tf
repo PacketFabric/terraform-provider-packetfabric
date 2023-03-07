@@ -6,7 +6,7 @@ terraform {
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = ">= 1.46.0"
+      version = ">= 1.52.0"
     }
     oci = {
       source  = "oracle/oci"
@@ -19,7 +19,7 @@ provider "packetfabric" {}
 
 provider "ibm" {
   region = var.ibm_region1
-  # use PF_IBM_ACCOUNT_ID environment variable
+  # use PF_IBM_ACCOUNT_ID, IC_API_KEY, IAAS_CLASSIC_USERNAME, IAAS_CLASSIC_API_KEY environment variables
 }
 
 provider "oci" {
