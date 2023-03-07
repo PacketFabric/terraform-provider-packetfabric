@@ -69,6 +69,14 @@ func resourceCloudRouter() *schema.Resource {
 				Required:    true,
 				Description: "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -93,6 +101,13 @@ func resourceCloudRouterCreate(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
 		d.SetId(resp.CircuitID)
+
+		if labels, ok := d.GetOk("labels"); ok {
+			diagnostics, created := createLabels(c, d.Id(), labels)
+			if !created {
+				return diagnostics
+			}
+		}
 	}
 	return diags
 }
@@ -118,6 +133,12 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		_ = d.Set("regions", regions)
 		_ = d.Set("po_number", resp.PONumber)
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -143,6 +164,14 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
 	_ = d.Set("po_number", resp.PONumber)
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
+	}
 	return diags
 }
 

@@ -101,6 +101,14 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Required:    true,
 				Description: "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -129,6 +137,13 @@ func resourceCustomerOwnedPortConnCreate(ctx context.Context, d *schema.Resource
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			if labels, ok := d.GetOk("labels"); ok {
+				diagnostics, created := createLabels(c, d.Id(), labels)
+				if !created {
+					return diagnostics
+				}
+			}
 		}
 	}
 	return diags
@@ -167,6 +182,12 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		}
 		// unsetFields: published_quote_line_uuid
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

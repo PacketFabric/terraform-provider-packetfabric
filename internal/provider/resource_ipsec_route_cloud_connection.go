@@ -146,6 +146,14 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				Required:    true,
 				Description: "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -178,6 +186,13 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 		}
 		if resp != nil {
 			d.SetId(resp.VcCircuitID)
+
+			if labels, ok := d.GetOk("labels"); ok {
+				diagnostics, created := createLabels(c, d.Id(), labels)
+				if !created {
+					return diagnostics
+				}
+			}
 		}
 	} else {
 		diags = append(diags, diag.Diagnostic{
@@ -225,6 +240,12 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
+
+	labels, err3 := getLabels(c, d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -239,7 +260,7 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if d.HasChanges([]string{"description", "speed", "po_number"}...) {
+	if d.HasChanges([]string{"description", "speed", "po_number", "labels"}...) {
 		return resourceCloudRouterConnUpdate(ctx, d, m)
 	}
 

@@ -122,6 +122,14 @@ func resourcePointToPoint() *schema.Resource {
 				Required:    true,
 				Description: "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -157,6 +165,13 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	if resp != nil {
 		_ = d.Set("ptp_circuit_id", resp.PtpCircuitID)
 		d.SetId(resp.PtpUUID)
+
+		if labels, ok := d.GetOk("labels"); ok {
+			diagnostics, created := createLabels(c, d.Id(), labels)
+			if !created {
+				return diagnostics
+			}
+		}
 	}
 	return diags
 }
@@ -195,6 +210,12 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		}
 	}
 	// unsetFields: loa, autoneg, published_quote_line_uuid
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -234,6 +255,14 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set("subscription_term", subTerm.(int))
 		} else {
 			return diag.Errorf("please provide a subscription term")
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
 		}
 	}
 	return diags

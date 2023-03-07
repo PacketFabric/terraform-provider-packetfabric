@@ -99,6 +99,14 @@ func resourceInterfaces() *schema.Resource {
 				Required:    true,
 				Description: "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -124,6 +132,13 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 			}
 		}
 		d.SetId(resp.PortCircuitID)
+
+		if labels, ok := d.GetOk("labels"); ok {
+			diagnostics, created := createLabels(c, d.Id(), labels)
+			if !created {
+				return diagnostics
+			}
+		}
 	}
 	return diags
 }
@@ -153,6 +168,12 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 			_ = d.Set("enabled", true)
 		}
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -162,6 +183,15 @@ func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	if d.HasChange("labels") {
+		c := m.(*packetfabric.PFClient)
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
 	}
 	return diags
 }
