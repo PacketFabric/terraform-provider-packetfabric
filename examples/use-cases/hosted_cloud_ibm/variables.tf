@@ -2,7 +2,7 @@
 variable "tag_name" {
   type        = string
   description = "Used to name all resources created in this example"
-  default     = "demo-pf-aws"
+  default     = "demo-pf-ibm"
 }
 
 ## PacketFabic VARs
@@ -36,14 +36,14 @@ variable "pf_port_nni" {
   default = false
 }
 
-# AWS Hosted Connection
+# IBM Hosted Connection
 variable "pf_cs_pop1" {
   type    = string
-  default = "SFO6"
+  default = "LAB1" # SFO1
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A"
+  default = "B" # C
 }
 variable "pf_cs_speed" {
   type    = string
@@ -53,30 +53,24 @@ variable "pf_cs_vlan1" {
   type    = number
   default = 110
 }
-
-# AWS VARs
-variable "amazon_side_asn1" { # used in BGP session
+variable "pf_cs_peer_asn" {
   type    = number
-  default = 64538 # private (64512 to 65534)
-}
-variable "customer_side_asn1" { # used in BGP session
-  type    = number
-  default = 64539 # private (64512 to 65534)
-}
-variable "aws_region1" {
-  type        = string
-  description = "AWS region"
-  default     = "us-west-1" # has to be in the same region as aws_region1 var
-}
-variable "aws_vpc_cidr1" {
-  type        = string
-  description = "CIDR for the VPC"
-  default     = "10.8.0.0/16"
-}
-# Subnet Variables
-variable "aws_subnet_cidr1" {
-  type        = string
-  description = "CIDR for the subnet"
-  default     = "10.8.1.0/24"
+  default = 64535 # private (64512 to 65534)
 }
 
+# IBM VARs
+variable "ibm_resource_group" {
+  type        = string
+  default     = "My Resource Group"
+  description = "IBM Resource Group"
+}
+variable "ibm_region1" {
+  type        = string
+  default     = "us-east"
+  description = "IBM Cloud region"
+}
+variable "ibm_region1_zone1" {
+  type        = string
+  description = "IBM Availability Zone"
+  default     = "us-east-1" # "us-south-1"
+}

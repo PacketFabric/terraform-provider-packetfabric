@@ -13,13 +13,14 @@ resource "google_compute_router" "google_router_1" {
 
 # From the Google side: Create a VLAN attachment.
 resource "google_compute_interconnect_attachment" "google_interconnect_1" {
-  provider      = google
-  name          = "${var.tag_name}-${random_pet.name.id}"
-  region        = var.gcp_region1
-  description   = "Interconnect to PacketFabric Network"
-  type          = "PARTNER"
-  admin_enabled = true # From the Google side: Accept (automatically) the connection.
-  router        = google_compute_router.google_router_1.id
+  provider                 = google
+  name                     = "${var.tag_name}-${random_pet.name.id}"
+  region                   = var.gcp_region1
+  description              = "Interconnect to PacketFabric Network"
+  type                     = "PARTNER"
+  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  admin_enabled            = true # From the Google side: Accept (automatically) the connection.
+  router                   = google_compute_router.google_router_1.id
 }
 output "google_interconnect_1" {
   value = google_compute_interconnect_attachment.google_interconnect_1

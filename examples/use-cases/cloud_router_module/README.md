@@ -13,7 +13,7 @@ Terraform providers used: PacketFabric.
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
-## Terraform resources deployed
+## Terraform resources & data-sources used
 
 - "packetfabric_cloud_router"
 - "packetfabric_locations_pop_zones"
