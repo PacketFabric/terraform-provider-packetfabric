@@ -298,6 +298,9 @@ func extractPtpService(d *schema.ResourceData) packetfabric.PointToPoint {
 	if quote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ptpService.PublishedQuoteLineUUID = quote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ptpService.PONumber = poNumber.(string)
+	}
 	return ptpService
 }
 

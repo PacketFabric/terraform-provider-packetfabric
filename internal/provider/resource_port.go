@@ -189,6 +189,7 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 		Speed:            d.Get("speed").(string),
 		SubscriptionTerm: d.Get("subscription_term").(int),
 		Zone:             d.Get("zone").(string),
+		PONumber:         d.Get("po_number").(string),
 	}
 	if autoneg, ok := d.GetOk("autoneg"); ok {
 		interf.Autoneg = autoneg.(bool)

@@ -14,6 +14,7 @@ type PointToPoint struct {
 	AccountUUID            string      `json:"account_uuid,omitempty"`
 	SubscriptionTerm       int         `json:"subscription_term,omitempty"`
 	PublishedQuoteLineUUID string      `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string      `json:"po_number,omitempty"`
 }
 type Endpoints struct {
 	Pop              string `json:"pop,omitempty"`

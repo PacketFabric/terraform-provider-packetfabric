@@ -198,5 +198,6 @@ func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 		IsPublic:               d.Get("is_public").(bool),
 		Speed:                  d.Get("speed").(string),
 		PublishedQuoteLineUUID: d.Get("published_quote_line_uuid").(string),
+		PONumber:               d.Get("po_number").(string),
 	}
 }

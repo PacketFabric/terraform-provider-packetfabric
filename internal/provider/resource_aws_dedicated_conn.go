@@ -200,5 +200,6 @@ func extractDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn 
 		Speed:            d.Get("speed").(string),
 		ShouldCreateLag:  d.Get("should_create_lag").(bool),
 		Loa:              d.Get("loa"),
+		PONumber:         d.Get("po_number").(string),
 	}
 }

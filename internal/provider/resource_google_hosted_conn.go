@@ -214,5 +214,8 @@ func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedCo
 	if speed, ok := d.GetOk("speed"); ok {
 		googleHosted.Speed = speed.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		googleHosted.PONumber = poNumber.(string)
+	}
 	return googleHosted
 }

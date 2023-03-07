@@ -113,6 +113,7 @@ type HostedAwsConnection struct {
 	SrcSvlan     int    `json:"src_svlan,omitempty"`
 	Zone         string `json:"zone,omitempty"`
 	Speed        string `json:"speed,omitempty"`
+	PONumber     string `json:"po_number,omitempty"`
 }
 
 type DedicatedAwsConn struct {
@@ -127,6 +128,7 @@ type DedicatedAwsConn struct {
 	Speed            string      `json:"speed"`
 	ShouldCreateLag  bool        `json:"should_create_lag"`
 	Loa              interface{} `json:"load"`
+	PONumber         string      `json:"po_number,omitempty"`
 }
 
 type CloudServiceConnCreateResp struct {

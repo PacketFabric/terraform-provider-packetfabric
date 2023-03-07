@@ -221,5 +221,8 @@ func extractGoogleDedicatedConn(d *schema.ResourceData) packetfabric.GoogleReqDe
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		dedicatedConn.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		dedicatedConn.PONumber = poNumber.(string)
+	}
 	return dedicatedConn
 }

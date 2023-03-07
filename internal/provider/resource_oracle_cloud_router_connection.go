@@ -207,5 +207,8 @@ func extractOracleCloudRouterConn(d *schema.ResourceData) packetfabric.OracleClo
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		oracleRouter.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		oracleRouter.PONumber = poNumber.(string)
+	}
 	return oracleRouter
 }

@@ -210,5 +210,8 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ownedPort.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ownedPort.PONumber = poNumber.(string)
+	}
 	return ownedPort
 }

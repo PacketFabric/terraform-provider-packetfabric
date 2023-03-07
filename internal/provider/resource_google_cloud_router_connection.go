@@ -211,5 +211,8 @@ func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRout
 	if publishedQuoteLine, ok := d.GetOk("published_quote_line_uuid"); ok {
 		googleRoute.PublishedQuoteLineUUID = publishedQuoteLine.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		googleRoute.PONumber = poNumber.(string)
+	}
 	return googleRoute
 }

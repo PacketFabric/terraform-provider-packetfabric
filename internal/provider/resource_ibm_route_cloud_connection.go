@@ -231,5 +231,8 @@ func extractIBMCloudRouterConn(d *schema.ResourceData) packetfabric.IBMCloudRout
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ibmRouter.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ibmRouter.PONumber = poNumber.(string)
+	}
 	return ibmRouter
 }

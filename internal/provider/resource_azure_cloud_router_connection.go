@@ -199,5 +199,8 @@ func extractAzureExpressRouteConn(d *schema.ResourceData) packetfabric.AzureExpr
 	if publishedQuoteLine, ok := d.GetOk("published_quote_line_uuid"); ok {
 		expressRoute.PublishedQuoteLineUUID = publishedQuoteLine.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		expressRoute.PONumber = poNumber.(string)
+	}
 	return expressRoute
 }

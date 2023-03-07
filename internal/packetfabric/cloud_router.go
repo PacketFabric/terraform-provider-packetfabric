@@ -17,6 +17,7 @@ type CloudRouter struct {
 	AccountUUID string   `json:"account_uuid"`
 	Regions     []string `json:"regions,omitempty"`
 	Capacity    string   `json:"capacity"`
+	PONumber    string   `json:"po_number,omitempty"`
 }
 
 // This struct represents a Cloud Router create response

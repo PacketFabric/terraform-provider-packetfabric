@@ -28,6 +28,7 @@ type Backbone struct {
 	RateLimitOut    int          `json:"rate_limit_out,omitempty"`
 	Epl             bool         `json:"epl"`
 	FlexBandwidthID string       `json:"flex_bandwidth_id,omitempty"`
+	PONumber        string       `json:"po_number,omitempty"`
 }
 
 type IxVirtualCircuit struct {

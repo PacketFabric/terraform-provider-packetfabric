@@ -195,5 +195,8 @@ func extractAzureExpressConn(d *schema.ResourceData) packetfabric.AzureExpressRo
 	if speed, ok := d.GetOk("speed"); ok {
 		azureExpress.Speed = speed.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		azureExpress.PONumber = poNumber.(string)
+	}
 	return azureExpress
 }

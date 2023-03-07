@@ -207,6 +207,7 @@ func extractAzureExpressDedicatedConn(d *schema.ResourceData) packetfabric.Azure
 		Encapsulation:          d.Get("encapsulation").(string),
 		PortCategory:           d.Get("port_category").(string),
 		PublishedQuoteLineUUID: d.Get("published_quote_line_uuid").(string),
+		PONumber:               d.Get("po_number").(string),
 	}
 	return azureExpress
 }

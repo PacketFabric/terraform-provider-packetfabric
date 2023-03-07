@@ -303,6 +303,9 @@ func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		iPSecRouter.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		iPSecRouter.PONumber = poNumber.(string)
+	}
 	return iPSecRouter, nil
 }
 

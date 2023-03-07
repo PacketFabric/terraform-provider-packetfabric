@@ -368,6 +368,9 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
 		backboneVC.FlexBandwidthID = flexBandID.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		backboneVC.PONumber = poNumber.(string)
+	}
 	return backboneVC
 }
 

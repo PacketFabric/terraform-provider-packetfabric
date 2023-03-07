@@ -26,6 +26,7 @@ type AwsConnection struct {
 	IsPublic               bool   `json:"is_public,omitempty"`
 	Speed                  string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type AwsConnectionCreateResponse struct {
@@ -183,6 +184,7 @@ type IBMCloudRouterConn struct {
 	Zone                   string `json:"zone,omitempty"`
 	Speed                  string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type IPSecRouterConn struct {
@@ -203,6 +205,7 @@ type IPSecRouterConn struct {
 	GatewayAddress             string `json:"gateway_address,omitempty"`
 	SharedKey                  string `json:"shared_key,omitempty"`
 	PublishedQuoteLineUUID     string `json:"published_quote_line_uuid,omitempty"`
+	PONumber                   string `json:"po_number,omitempty"`
 }
 
 type OracleCloudRouterConn struct {
@@ -215,6 +218,7 @@ type OracleCloudRouterConn struct {
 	Pop                    string `json:"pop,omitempty"`
 	Zone                   string `json:"zone,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type IPSecConnUpdate struct {

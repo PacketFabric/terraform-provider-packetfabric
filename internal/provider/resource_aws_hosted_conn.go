@@ -205,5 +205,8 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	if speed, ok := d.GetOk("speed"); ok {
 		hostedAwsConn.Speed = speed.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		hostedAwsConn.PONumber = poNumber.(string)
+	}
 	return hostedAwsConn
 }

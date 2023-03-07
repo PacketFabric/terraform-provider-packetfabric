@@ -177,6 +177,9 @@ func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	if capacity, ok := d.GetOk("capacity"); ok {
 		router.Capacity = capacity.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		router.PONumber = poNumber.(string)
+	}
 	router.Regions = extractRegions(d)
 	return router
 }

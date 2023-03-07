@@ -30,6 +30,7 @@ type Interface struct {
 	VlanMicrosoft    int    `json:"vlan_microsoft,omitempty"`
 	VlanPrivate      int    `json:"vlan_private,omitempty"`
 	Untagged         bool   `json:"untagged,omitempty"`
+	PONumber         string `json:"po_number,omitempty"`
 }
 
 type InterfaceCreateResp struct {

@@ -229,5 +229,8 @@ func extractOracleHostedConn(d *schema.ResourceData) packetfabric.CloudServiceOr
 	if pubQuoteLineUUID, ok := d.GetOk("published_quote_line_uuid"); ok {
 		oracleConn.PublishedQuoteLineUUID = pubQuoteLineUUID.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		oracleConn.PONumber = poNumber.(string)
+	}
 	return oracleConn
 }

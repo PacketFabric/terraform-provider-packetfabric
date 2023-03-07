@@ -81,6 +81,11 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.PortCircuitID)
+
+	diagnostics, updated := updatePort(c, d)
+	if !updated {
+		return diagnostics
+	}
 	return diags
 }
 
@@ -94,27 +99,37 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	if d.HasChange("po_number") {
-		lag, err := c.GetPortByCID(d.Id())
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		poNumber, ok := d.GetOk("po_number")
-		if !ok {
-			return diag.FromErr(errors.New("please enter a purchase order number"))
-		}
-		portUpdateData := packetfabric.PortUpdate{
-			Description: lag.Description,
-			PONumber:    poNumber.(string),
-			Autoneg:     lag.Autoneg,
-		}
-		_, err2 := c.UpdatePort(d.Id(), portUpdateData)
-		if err2 != nil {
-			return diag.FromErr(err)
+		diagnostics, updated := updatePort(c, d)
+		if !updated {
+			return diagnostics
 		}
 	}
 
 	return diags
+}
+
+func updatePort(c *packetfabric.PFClient, d *schema.ResourceData) (diag.Diagnostics, bool) {
+	lag, err := c.GetPortByCID(d.Id())
+	if err != nil {
+		return diag.FromErr(err), false
+	}
+
+	poNumber, ok := d.GetOk("po_number")
+	if !ok {
+		return diag.FromErr(errors.New("please enter a purchase order number")), true
+	}
+
+	portUpdateData := packetfabric.PortUpdate{
+		Description: lag.Description,
+		PONumber:    poNumber.(string),
+		Autoneg:     lag.Autoneg,
+	}
+	_, err2 := c.UpdatePort(d.Id(), portUpdateData)
+	if err2 != nil {
+		return diag.FromErr(err), false
+	}
+	
+	return nil, true
 }
 
 func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

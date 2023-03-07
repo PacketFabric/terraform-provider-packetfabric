@@ -261,5 +261,8 @@ func extractHostedIBMConn(d *schema.ResourceData) packetfabric.HostedIBMConn {
 	if speed, ok := d.GetOk("speed"); ok {
 		hostedConn.Speed = speed.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		hostedConn.PONumber = poNumber.(string)
+	}
 	return hostedConn
 }
