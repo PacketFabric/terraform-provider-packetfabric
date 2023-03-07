@@ -104,6 +104,11 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -170,6 +175,7 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 	}
 	if resp2 != nil {
 		_ = d.Set("zone", resp2.Zone)
+		_ = d.Set("po_number", resp2.PONumber)
 		if resp2.IsLag {
 			_ = d.Set("should_create_lag", true)
 		} else {
@@ -181,8 +187,7 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 }
 
 func resourceAzureReqExpressDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+	return resourceServicesDedicatedUpdate(ctx, d, m)
 }
 
 func resourceAzureReqExpressDedicatedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

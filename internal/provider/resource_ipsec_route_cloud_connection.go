@@ -239,7 +239,7 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("description") || d.HasChange("speed") || d.HasChange("po_number") {
+	if d.HasChanges([]string{"description", "speed", "po_number"}...) {
 		return resourceCloudRouterConnUpdate(ctx, d, m)
 	}
 

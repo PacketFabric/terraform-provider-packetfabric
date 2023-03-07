@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -56,6 +57,11 @@ func resourceLinkAggregationGroups() *schema.Resource {
 					Description: "The member circuit ID.",
 				},
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -86,6 +92,28 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	if d.HasChange("po_number") {
+		lag, err := c.GetPortByCID(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		poNumber, ok := d.GetOk("po_number")
+		if !ok {
+			return diag.FromErr(errors.New("please enter a purchase order number"))
+		}
+		portUpdateData := packetfabric.PortUpdate{
+			Description: lag.Description,
+			PONumber:    poNumber.(string),
+			Autoneg:     lag.Autoneg,
+		}
+		_, err2 := c.UpdatePort(d.Id(), portUpdateData)
+		if err2 != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return diags
 }
 
@@ -100,6 +128,7 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("description", lag.Description)
 	_ = d.Set("pop", lag.Pop)
 	_ = d.Set("interval", lag.LagInterval)
+	_ = d.Set("po_number", lag.PONumber)
 
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {

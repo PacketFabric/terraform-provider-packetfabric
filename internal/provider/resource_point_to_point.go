@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -116,6 +117,11 @@ func resourcePointToPoint() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -171,6 +177,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if len(resp.Interfaces) == 2 {
 			interfaceA := make(map[string]interface{})
@@ -196,13 +203,25 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("description") {
-		if desc, ok := d.GetOk("description"); ok {
-			if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
-				return diag.FromErr(err)
-			}
+	if d.HasChanges([]string{"po_number", "description"}...) {
+		updatePointToPointData := packetfabric.UpdatePointToPointData{}
+		desc, ok := d.GetOk("description")
+		if !ok {
+			return diag.FromErr(errors.New("please enter a description"))
+		}
+		updatePointToPointData.Description = desc.(string)
+
+		poNumber, ok := d.GetOk("po_number")
+		if !ok {
+			return diag.FromErr(errors.New("please enter a purchase order number"))
+		}
+		updatePointToPointData.PONumber = poNumber.(string)
+
+		if _, err := c.UpdatePointToPoint(d.Id(), updatePointToPointData); err != nil {
+			return diag.FromErr(err)
 		}
 	}
+
 	if d.HasChange("subscription_term") {
 		if subTerm, ok := d.GetOk("subscription_term"); ok {
 			billing := packetfabric.BillingUpgrade{

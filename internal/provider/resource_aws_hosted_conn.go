@@ -84,6 +84,11 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				ValidateFunc: validation.StringInSlice(speedOptions(), true),
 				Description:  "The speed of the new connection.\n\n\tAvailable: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -162,13 +167,13 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		_ = d.Set("po_number", resp2.PONumber)
 	}
 	return diags
 }
 
 func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
 func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {

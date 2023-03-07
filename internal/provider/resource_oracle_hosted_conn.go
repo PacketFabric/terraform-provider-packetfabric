@@ -98,6 +98,11 @@ func resourceOracleHostedConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with this connection should be associated.",
 			},
+			"po_number": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -167,14 +172,14 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		_ = d.Set("po_number", resp2.PONumber)
 	}
 	// unsetFields: published_quote_line_uuid
 	return diags
 }
 
 func resourceOracleHostedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
 func resourceOracleHostedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

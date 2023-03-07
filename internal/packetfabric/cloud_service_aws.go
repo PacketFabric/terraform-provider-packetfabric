@@ -393,20 +393,20 @@ func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
 }
 
-func (c *PFClient) UpdateServiceHostedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+func (c *PFClient) UpdateServiceHostedConn(cloudCID string, updateServiceConnData UpdateServiceConn) (*CloudServiceConnCreateResp, error) {
 	formatedURI := fmt.Sprintf(updateCloudConnHostedURI, cloudCID)
 	expectedResp := &CloudServiceConnCreateResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, updateServiceConnData, expectedResp)
 	if err != nil {
 		return nil, err
 	}
 	return expectedResp, err
 }
 
-func (c *PFClient) UpdateServiceDedicatedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+func (c *PFClient) UpdateServiceDedicatedConn(cloudCID string, updateServiceConnData UpdateServiceConn) (*CloudServiceConnCreateResp, error) {
 	formatedURI := fmt.Sprintf(updateCloudConnDedicatedURI, cloudCID)
 	expectedResp := &CloudServiceConnCreateResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, updateServiceConnData, expectedResp)
 	if err != nil {
 		return nil, err
 	}

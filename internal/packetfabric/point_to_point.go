@@ -36,6 +36,12 @@ type PointToPointResp struct {
 	Deleted      bool         `json:"deleted,omitempty"`
 	ServiceClass string       `json:"service_class,omitempty"`
 	Interfaces   []Interfaces `json:"interfaces,omitempty"`
+	PONumber     string       `json:"po_number"`
+}
+
+type UpdatePointToPointData struct {
+	Description string `json:"description"`
+	PONumber    string `json:"po_number"`
 }
 
 func (c *PFClient) CreatePointToPointService(ptp PointToPoint) (*PointToPointResp, error) {
@@ -103,13 +109,10 @@ func (c *PFClient) ReadPointToPoint(ptpCircuitID string) (*PointToPointResp, err
 	return expectedResp, nil
 }
 
-func (c *PFClient) UpdatePointToPoint(ptpUUID, description string) (*PointToPointResp, error) {
+func (c *PFClient) UpdatePointToPoint(ptpUUID string, updatePointToPointData UpdatePointToPointData) (*PointToPointResp, error) {
 	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUUID)
 	expectedResp := &PointToPointResp{}
-	type DescUpdate struct {
-		Description string `json:"description"`
-	}
-	if _, err := c.sendRequest(formatedURI, patchMethod, &DescUpdate{Description: description}, expectedResp); err != nil {
+	if _, err := c.sendRequest(formatedURI, patchMethod, updatePointToPointData, expectedResp); err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
