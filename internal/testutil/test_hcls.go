@@ -158,8 +158,10 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		pop,
 		speed,
 		portSubscriptionTerm,
-		portEnabled)
+		portEnabled,
+		resourceReferece)
 
+	// log.Fatal(hcl)
 	return RHclPortResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
