@@ -91,9 +91,10 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
 			"po_number": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Purchase order number or identifier of a service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 		},
 		Importer: &schema.ResourceImporter{

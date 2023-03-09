@@ -95,9 +95,10 @@ func resourceInterfaces() *schema.Resource {
 				Description: "Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. ",
 			},
 			"po_number": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Purchase order number or identifier of a service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
