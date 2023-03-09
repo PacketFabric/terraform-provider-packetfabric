@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCloudRouterConnAzure = "packetfabric_cloud_router_connection_azure"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -116,6 +117,15 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cloud_router_connection_azure
+type RHclCloudRouterConnectionAzureResult struct {
+	HclResultBase
+	Desc            string
+	CloudRouter     RHclCloudRouterResult
+	AzureServiceKey string
+	Speed           string
 }
 
 // Patterns:
@@ -329,6 +339,25 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_azure
+func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
+
+	var azureServiceKey, speed, hcl string
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnAzure)
+	resourceName, _ := _generateResourceName(pfCloudRouterConnAzure)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnAzure,
+			ResourceName: resourceName,
+		},
+		Desc:            uniqueDesc,
+		AzureServiceKey: azureServiceKey,
+		Speed:           speed,
+	}
+}
 func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
 	popsAvailable, _ := details.FetchCloudPops()
 	popsToSkip := make([]string, 0)
