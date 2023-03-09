@@ -978,11 +978,25 @@ resource "random_pet" "name" {}
 
 # resource "packetfabric_flex_bandwidth" "flex1" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}-2"
+#   description       = "${var.tag_name}-${random_pet.name.id}"
 #   subscription_term = var.pf_flex_subscription_term
 #   capacity          = var.pf_flex_capacity
 # }
-
 # output "packetfabric_flex_bandwidth" {
 #   value = packetfabric_flex_bandwidth.flex1
+# }
+
+# #######################################
+# ##### Cloud Provider Credentials
+# #######################################
+
+# resource "packetfabric_cloud_provider_credential" "aws_creds1" {
+#   provider       = packetfabric
+#   cloud_provider = "aws"
+#   description    = "${var.tag_name}-${random_pet.name.id}"
+#   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+# }
+# output "packetfabric_cloud_provider_credential" {
+#   value     = packetfabric_cloud_provider_credential.aws_creds1
+#   sensitive = true
 # }
