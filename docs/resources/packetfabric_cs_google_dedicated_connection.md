@@ -50,6 +50,7 @@ output "packetfabric_cs_google_dedicated_connection" {
 ### Optional
 
 - `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
+- `labels` (List of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that Google provided.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.

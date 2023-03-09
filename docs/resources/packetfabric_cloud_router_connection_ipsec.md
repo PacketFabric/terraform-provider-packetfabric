@@ -93,6 +93,7 @@ output "packetfabric_cloud_router_connection_ipsec" {
 
 ### Optional
 
+- `labels` (List of String) Label value linked to an object.
 - `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. 
 
 	Enum: "hmac-md5-96" "hmac-sha-256-128" "hmac-sha1-96"
