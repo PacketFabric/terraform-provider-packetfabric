@@ -146,9 +146,10 @@ func resourceBackbone() *schema.Resource {
 				Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 			},
 			"po_number": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Purchase order number or identifier of a service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
 				Type:        schema.TypeList,

@@ -65,9 +65,10 @@ func resourceCloudRouter() *schema.Resource {
 				Description:  "The cloud router capacity.\n\n\tEnum: \"100Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\" \">100Gbps\"",
 			},
 			"po_number": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Purchase order number or identifier of a service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
 				Type:        schema.TypeList,

@@ -98,9 +98,10 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Description: "A base64 encoded string of a PDF of the LOA that AWS provided.\n\n\tExample: SSBhbSBhIFBERg==",
 			},
 			"po_number": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Purchase order number or identifier of a service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
 				Type:        schema.TypeList,
