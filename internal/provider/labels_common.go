@@ -10,7 +10,7 @@ func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 	for _, label := range labels.([]interface{}) {
 		labelsData = append(labelsData, label.(string))
 	}
-	labelPayload := packetfabric.LabelsCreatePayload{Labels: labelsData}
+	labelPayload := packetfabric.LabelsPayload{Labels: labelsData}
 	_, err := c.CreateLabel(circuitId, labelPayload)
 	if err != nil {
 		return diag.FromErr(err), false
@@ -19,12 +19,14 @@ func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 }
 
 func updateLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
+	var labelsData []string
 	for _, label := range labels.([]interface{}) {
-		labelPayload := packetfabric.LabelsUpdatePayload{Objects: []string{circuitId}}
-		_, err := c.UpdateLabel(label.(string), labelPayload)
-		if err != nil {
-			return diag.FromErr(err), false
-		}
+		labelsData = append(labelsData, label.(string))
+	}
+	labelPayload := packetfabric.LabelsPayload{Labels: labelsData}
+	_, err := c.UpdateLabel(circuitId, labelPayload)
+	if err != nil {
+		return diag.FromErr(err), false
 	}
 	return diag.Diagnostics{}, true
 }
