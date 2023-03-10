@@ -47,6 +47,7 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Optional
 
+- `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
