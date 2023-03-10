@@ -63,7 +63,7 @@ func resourceUser() *schema.Resource {
 				Required:     true,
 				Sensitive:    true,
 				ValidateFunc: validation.StringLenBetween(8, 64),
-				Description:  "User password. Note that users will not be automatically prompted to change their password. If a user wishes to change their password, they can do so by resetting it from their user account page.",
+				Description:  "User password. Note that users will not be automatically prompted to change their password.",
 			},
 			"timezone": {
 				Type:        schema.TypeString,

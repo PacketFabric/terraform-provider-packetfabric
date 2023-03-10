@@ -41,7 +41,7 @@ output "packetfabric_user" {
 - `group` (String) User group. Available options are admin, regular, read-only, support, and sales.
 - `last_name` (String) User last name.
 - `login` (String) User login.
-- `password` (String, Sensitive) User password. Note that users will not be automatically prompted to change their password. If a user wishes to change their password, they can do so by resetting it from their user account page.
+- `password` (String, Sensitive) User password. Note that users will not be automatically prompted to change their password.
 - `phone` (String) User phone number.
 - `timezone` (String) User time-zone. You can find the list of available timezones [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
