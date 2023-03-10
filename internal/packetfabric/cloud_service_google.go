@@ -30,6 +30,7 @@ type GoogleCloudRouterConn struct {
 	Pop                      string `json:"pop,omitempty"`
 	Speed                    string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID   string `json:"published_quote_line_uuid,omitempty"`
+	PONumber                 string `json:"po_number,omitempty"`
 }
 
 type GoogleMktCloudConnCreateResp struct {
@@ -61,6 +62,7 @@ type GoogleReqHostedConn struct {
 	Pop                      string `json:"pop,omitempty"`
 	Speed                    string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID   string `json:"published_quote_line_uuid,omitempty"`
+	PONumber                 string `json:"po_number,omitempty"`
 }
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/google_dedicated_connection_post
@@ -75,6 +77,7 @@ type GoogleReqDedicatedConn struct {
 	Speed                  string `json:"speed,omitempty"`
 	Loa                    string `json:"loa,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreateRequestHostedGoogleMktConn(googleConn GoogleMktCloudConn) (*GoogleMktCloudConnCreateResp, error) {

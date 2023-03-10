@@ -51,6 +51,7 @@ output "packetfabric_cs_google_hosted_connection" {
 
 ### Optional
 
+- `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

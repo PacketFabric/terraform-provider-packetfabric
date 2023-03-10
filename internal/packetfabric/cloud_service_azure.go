@@ -131,6 +131,7 @@ type AzureExpressRoute struct {
 	SrcSvlan               int    `json:"src_svlan,omitempty"`
 	Speed                  string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type AzureExpressRouteConn struct {
@@ -142,6 +143,7 @@ type AzureExpressRouteConn struct {
 	Speed                  string `json:"speed,omitempty"`
 	IsPublic               bool   `json:"is_public,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type AzureBilling struct {
@@ -170,6 +172,7 @@ type AzureExpressRouteDedicated struct {
 	Encapsulation          string `json:"encapsulation,omitempty"`
 	PortCategory           string `json:"port_category,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreateAzureHostedMktRequest(azureMktReq AzureHostedMktReq) (*AzureHostedMktReqResp, error) {

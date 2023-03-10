@@ -97,6 +97,12 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				ForceNew:    true,
 				Description: "A base64 encoded string of a PDF of the LOA that AWS provided.\n\n\tExample: SSBhbSBhIFBERg==",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -163,6 +169,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	if resp2 != nil {
 		_ = d.Set("autoneg", resp2.Autoneg)
 		_ = d.Set("zone", resp2.Zone)
+		_ = d.Set("po_number", resp2.PONumber)
 		if resp2.IsLag {
 			_ = d.Set("should_create_lag", true)
 		} else {
@@ -174,8 +181,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAwsReqDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceDedicatedConn)
+	return resourceServicesDedicatedUpdate(ctx, d, m)
 }
 
 func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -195,5 +201,6 @@ func extractDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn 
 		Speed:            d.Get("speed").(string),
 		ShouldCreateLag:  d.Get("should_create_lag").(bool),
 		Loa:              d.Get("loa"),
+		PONumber:         d.Get("po_number").(string),
 	}
 }

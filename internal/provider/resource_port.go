@@ -94,6 +94,12 @@ func resourceInterfaces() *schema.Resource {
 				Default:     true,
 				Description: "Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. ",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -141,6 +147,7 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
 		} else {
@@ -183,6 +190,7 @@ func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 		Speed:            d.Get("speed").(string),
 		SubscriptionTerm: d.Get("subscription_term").(int),
 		Zone:             d.Get("zone").(string),
+		PONumber:         d.Get("po_number").(string),
 	}
 	if autoneg, ok := d.GetOk("autoneg"); ok {
 		interf.Autoneg = autoneg.(bool)
@@ -195,17 +203,15 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	c.Ctx = ctx
 
 	// Update if payload contains Autoneg and Description
-	if d.HasChange("description") && d.HasChange("autoneg") {
-		resp, err = c.UpdatePort(d.Get("autoneg").(bool), d.Id(), d.Get("description").(string))
+	if d.HasChanges([]string{"po_number", "description", "autoneg"}...) {
+		portUpdateData := packetfabric.PortUpdate{
+			Description: d.Get("description").(string),
+			Autoneg:     d.Get("autoneg").(bool),
+			PONumber:    d.Get("po_number").(string),
+		}
+		resp, err = c.UpdatePort(d.Id(), portUpdateData)
 	}
-	// Update if payload contains Description only
-	if d.HasChange("description") && !d.HasChange("autoneg") {
-		resp, err = c.UpdatePortDescriptionOnly(d.Id(), d.Get("description").(string))
-	}
-	// Update if payload contains Autoneg only
-	if !d.HasChange("description") && d.HasChange("autoneg") {
-		resp, err = c.UpdatePortAutoNegOnly(d.Get("autoneg").(bool), d.Id())
-	}
+
 	// Update port status
 	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
 		_, enableChange := d.GetChange("enabled")

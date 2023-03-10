@@ -16,6 +16,7 @@ type HostedIBMConn struct {
 	Zone                   string `json:"zone,omitempty"`
 	Speed                  string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreateHostedIBMConn(conn HostedIBMConn) (*CloudServiceConnCreateResp, error) {
