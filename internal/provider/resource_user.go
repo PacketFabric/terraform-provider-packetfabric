@@ -24,6 +24,10 @@ func resourceUser() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"login": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -45,9 +49,8 @@ func resourceUser() *schema.Resource {
 			"email": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "User e-mail.",
+				Description:  "User e-mail. Please note that this email address can only be updated by the user themselves after creation.",
 			},
 			"phone": {
 				Type:         schema.TypeString,
@@ -59,9 +62,8 @@ func resourceUser() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				Sensitive:    true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringLenBetween(8, 64),
-				Description:  "User password. Keep it in secret.",
+				Description:  "User password. Note that users will not be automatically prompted to change their password. If a user wishes to change their password, they can do so by resetting it from their user account page.",
 			},
 			"timezone": {
 				Type:        schema.TypeString,
@@ -108,6 +110,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if resp != nil {
 		_ = d.Set("first_name", resp.FirstName)
 		_ = d.Set("last_name", resp.LastName)
+		_ = d.Set("login", resp.Login)
 		_ = d.Set("email", resp.Email)
 		_ = d.Set("phone", resp.Phone)
 		_ = d.Set("timezone", resp.Timezone)
@@ -120,18 +123,36 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	userID := d.Get("login").(string)
-	userUpdate := packetfabric.UserUpdate{
-		FirstName: d.Get("first_name").(string),
-		LastName:  d.Get("last_name").(string),
-		Phone:     d.Get("phone").(string),
-		Login:     d.Get("login").(string),
-		Timezone:  d.Get("timezone").(string),
-		Group:     d.Get("group").(string),
+	userID := d.Id()
+
+	if d.HasChange("password") {
+		oldPassword, newPassword := d.GetChange("password")
+		_, err := c.UserPasswordUpdate(userID, oldPassword.(string), newPassword.(string))
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
-	_, err := c.UpdateUser(userUpdate, userID)
-	if err != nil {
-		return diag.FromErr(err)
+	if d.HasChange("email") {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update user's email",
+			Detail:   "User's email can only be updated by the user himself. Please ask the user to update their email if needed.",
+		})
+	}
+	if !d.HasChange("email") {
+		userUpdate := packetfabric.UserUpdate{
+			FirstName: d.Get("first_name").(string),
+			LastName:  d.Get("last_name").(string),
+			Phone:     d.Get("phone").(string),
+			Login:     d.Get("login").(string),
+			Timezone:  d.Get("timezone").(string),
+			Group:     d.Get("group").(string),
+		}
+		_, err := c.UpdateUser(userUpdate, userID)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		d.SetId(d.Get("login").(string))
 	}
 	return diags
 }
@@ -140,7 +161,7 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	userID := d.Get("login").(string)
+	userID := d.Id()
 	_, err := c.DeleteUsers(userID)
 	if err != nil {
 		return diag.FromErr(err)

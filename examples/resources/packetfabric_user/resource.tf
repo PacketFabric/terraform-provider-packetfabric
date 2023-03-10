@@ -11,5 +11,6 @@ resource "packetfabric_user" "user1" {
 }
 
 output "packetfabric_user" {
-  value = packetfabric_user.user1
+  value     = packetfabric_user.user1
+  sensitive = true
 }
