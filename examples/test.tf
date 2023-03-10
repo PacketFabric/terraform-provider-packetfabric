@@ -990,13 +990,12 @@ resource "random_pet" "name" {}
 # ##### Cloud Provider Credentials
 # #######################################
 
-# resource "packetfabric_cloud_provider_credential" "aws_creds1" {
+# resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
 #   provider       = packetfabric
-#   cloud_provider = "aws"
 #   description    = "${var.tag_name}-${random_pet.name.id}"
 #   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
 # }
-# output "packetfabric_cloud_provider_credential" {
-#   value     = packetfabric_cloud_provider_credential.aws_creds1
+# output "packetfabric_cloud_provider_credential_aws" {
+#   value     = packetfabric_cloud_provider_credential_aws.aws_creds1
 #   sensitive = true
 # }
