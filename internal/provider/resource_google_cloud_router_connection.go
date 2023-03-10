@@ -47,14 +47,12 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"google_pairing_key": {
@@ -95,6 +93,12 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
+			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -150,13 +154,12 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
@@ -204,6 +207,9 @@ func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRout
 	}
 	if publishedQuoteLine, ok := d.GetOk("published_quote_line_uuid"); ok {
 		googleRoute.PublishedQuoteLineUUID = publishedQuoteLine.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		googleRoute.PONumber = poNumber.(string)
 	}
 	return googleRoute
 }

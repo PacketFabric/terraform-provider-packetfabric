@@ -25,6 +25,7 @@ type CloudServiceOracleConn struct {
 	Vlan                   int    `json:"vlan,omitempty"`
 	SrcSvlan               int    `json:"src_svlan,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type CloudServiceOracleConnResp struct {

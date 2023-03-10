@@ -64,6 +64,12 @@ func resourceCloudRouter() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The cloud router capacity.\n\n\tEnum: \"100Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\" \">100Gbps\"",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -111,6 +117,7 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			regions = append(regions, region.Code)
 		}
 		_ = d.Set("regions", regions)
+		_ = d.Set("po_number", resp.PONumber)
 	}
 	return diags
 }
@@ -136,6 +143,7 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
+	_ = d.Set("po_number", resp.PONumber)
 	return diags
 }
 
@@ -169,6 +177,9 @@ func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	}
 	if capacity, ok := d.GetOk("capacity"); ok {
 		router.Capacity = capacity.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		router.PONumber = poNumber.(string)
 	}
 	router.Regions = extractRegions(d)
 	return router

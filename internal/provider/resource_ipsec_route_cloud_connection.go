@@ -141,6 +141,12 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -217,6 +223,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
 	return diags
@@ -233,7 +240,7 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("description") || d.HasChange("speed") {
+	if d.HasChanges([]string{"description", "speed", "po_number"}...) {
 		return resourceCloudRouterConnUpdate(ctx, d, m)
 	}
 
@@ -296,6 +303,9 @@ func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		iPSecRouter.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		iPSecRouter.PONumber = poNumber.(string)
 	}
 	return iPSecRouter, nil
 }
