@@ -15,6 +15,7 @@ type CustomerOwnedPort struct {
 	Speed                  string `json:"speed,omitempty"`
 	IsPublic               bool   `json:"is_public,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string `json:"po_number,omitempty"`
 }
 
 type CustomerOwnedPortResp struct {

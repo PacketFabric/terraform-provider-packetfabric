@@ -31,14 +31,12 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"circuit_id": {
@@ -119,6 +117,12 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -164,8 +168,6 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		}
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("ibm_account_id", resp.CloudSettings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.CloudSettings.BgpAsn)
 		_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
@@ -174,6 +176,7 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
 	return diags
@@ -224,6 +227,9 @@ func extractIBMCloudRouterConn(d *schema.ResourceData) packetfabric.IBMCloudRout
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ibmRouter.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ibmRouter.PONumber = poNumber.(string)
 	}
 	return ibmRouter
 }

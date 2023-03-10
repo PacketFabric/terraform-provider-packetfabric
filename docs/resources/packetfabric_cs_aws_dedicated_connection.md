@@ -62,6 +62,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
 	Example: SSBhbSBhIFBERg==
+- `po_number` (String) Purchase order number or identifier of a service.
 - `should_create_lag` (Boolean) Create the dedicated connection as a LAG interface. Defaults: true
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired AWS availability zone of the new connection.

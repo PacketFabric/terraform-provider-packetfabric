@@ -82,6 +82,12 @@ func resourceAzureReqExpressHostedConn() *schema.Resource {
 				ValidateFunc: validation.StringInSlice(speedOptions(), true),
 				Description:  "The peed of the new connection.\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -151,13 +157,13 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		_ = d.Set("po_number", resp2.PONumber)
 	}
 	return diags
 }
 
 func resourceAzureReqExpressHostedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesHostedUpdate(ctx, d, m, c.UpdateServiceHostedConn)
+	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
 func resourceAzureReqExpressHostedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -189,6 +195,9 @@ func extractAzureExpressConn(d *schema.ResourceData) packetfabric.AzureExpressRo
 	}
 	if speed, ok := d.GetOk("speed"); ok {
 		azureExpress.Speed = speed.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		azureExpress.PONumber = poNumber.(string)
 	}
 	return azureExpress
 }
