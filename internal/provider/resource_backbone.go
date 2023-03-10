@@ -145,6 +145,12 @@ func resourceBackbone() *schema.Resource {
 				ForceNew:    true,
 				Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -270,6 +276,7 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		} else {
 			_ = d.Set("flex_bandwidth_id", nil)
 		}
+		_ = d.Set("po_number", resp.PONumber)
 	}
 	return diags
 }
@@ -362,6 +369,9 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
 		backboneVC.FlexBandwidthID = flexBandID.(string)
 	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		backboneVC.PONumber = poNumber.(string)
+	}
 	return backboneVC
 }
 
@@ -394,6 +404,9 @@ func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettings
 				settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 			}
 		}
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		settUpdate.PONumber = poNumber.(string)
 	}
 
 	return settUpdate
