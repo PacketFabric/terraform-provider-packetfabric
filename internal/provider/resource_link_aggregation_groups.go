@@ -120,6 +120,7 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
+<<<<<<< HEAD
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -128,6 +129,8 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
+=======
+>>>>>>> ec53a48 (Add PO Number to resources (#374))
 	return diags
 }
 

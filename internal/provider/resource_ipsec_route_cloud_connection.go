@@ -261,7 +261,11 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
+<<<<<<< HEAD
 	if d.HasChanges([]string{"description", "speed", "po_number", "labels"}...) {
+=======
+	if d.HasChanges([]string{"description", "speed", "po_number"}...) {
+>>>>>>> ec53a48 (Add PO Number to resources (#374))
 		return resourceCloudRouterConnUpdate(ctx, d, m)
 	}
 
