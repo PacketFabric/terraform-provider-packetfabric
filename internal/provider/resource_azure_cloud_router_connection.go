@@ -146,8 +146,6 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
