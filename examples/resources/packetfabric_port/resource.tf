@@ -9,6 +9,7 @@ resource "packetfabric_port" "port_1" {
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
+  labels            = ["label1", "label2"]
 }
 output "packetfabric_port_1" {
   value = packetfabric_port.port_1
