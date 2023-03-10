@@ -98,6 +98,12 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -159,6 +165,7 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
 	return diags
@@ -200,6 +207,9 @@ func extractOracleCloudRouterConn(d *schema.ResourceData) packetfabric.OracleClo
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		oracleRouter.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		oracleRouter.PONumber = poNumber.(string)
 	}
 	return oracleRouter
 }

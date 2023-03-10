@@ -101,6 +101,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -162,6 +168,7 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 	_ = d.Set("pop", resp.Pop)
 	_ = d.Set("zone", resp.Zone)
 	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
+	_ = d.Set("po_number", resp.PONumber)
 
 	if resp.CloudSettings.PublicIP != "" {
 		_ = d.Set("is_public", true)
@@ -192,5 +199,6 @@ func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 		IsPublic:               d.Get("is_public").(bool),
 		Speed:                  d.Get("speed").(string),
 		PublishedQuoteLineUUID: d.Get("published_quote_line_uuid").(string),
+		PONumber:               d.Get("po_number").(string),
 	}
 }

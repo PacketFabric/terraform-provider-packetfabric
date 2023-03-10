@@ -30,6 +30,7 @@ type Interface struct {
 	VlanMicrosoft    int    `json:"vlan_microsoft,omitempty"`
 	VlanPrivate      int    `json:"vlan_private,omitempty"`
 	Untagged         bool   `json:"untagged,omitempty"`
+	PONumber         string `json:"po_number,omitempty"`
 }
 
 type InterfaceCreateResp struct {
@@ -113,6 +114,7 @@ type InterfaceReadResp struct {
 	CustomerUUID        string `json:"customer_uuid,omitempty"`
 	MaxCloudRouterSpeed string `json:"max_cloud_router_speed,omitempty"`
 	Links               Links  `json:"_links,omitempty"`
+	PONumber            string `json:"po_number"`
 }
 
 type Links struct {
@@ -197,6 +199,12 @@ type PortRouterLogs struct {
 	Severity     int    `json:"severity,omitempty"`
 	SeverityName string `json:"severity_name,omitempty"`
 	Timestamp    string `json:"timestamp,omitempty"`
+}
+
+type PortUpdate struct {
+	Autoneg     bool   `json:"autoneg"`
+	Description string `json:"description"`
+	PONumber    string `json:"po_number"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
@@ -318,18 +326,10 @@ func (c *PFClient) GetPortRouterLogs(portCID, timeFrom, timeTo string) ([]PortRo
 	return expectedResp, nil
 }
 
-func (c *PFClient) UpdatePort(autoNeg bool, portCID, description string) (*InterfaceReadResp, error) {
+func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*InterfaceReadResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
 	expectedResp := &InterfaceReadResp{}
-	type PortUpdate struct {
-		Autoneg     bool   `json:"autoneg"`
-		Description string `json:"description"`
-	}
-	portUpdate := PortUpdate{
-		Autoneg:     autoNeg,
-		Description: description,
-	}
-	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdateData, expectedResp)
 	if err != nil {
 		return nil, err
 	}
