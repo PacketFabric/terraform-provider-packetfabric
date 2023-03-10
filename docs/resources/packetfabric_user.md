@@ -36,7 +36,7 @@ output "packetfabric_user" {
 
 ### Required
 
-- `email` (String) User e-mail.
+- `email` (String) User e-mail. Please note that this email address can only be updated by the user themselves after creation.
 - `first_name` (String) User first name.
 - `group` (String) User group. Available options are admin, regular, read-only, support, and sales.
 - `last_name` (String) User last name.
