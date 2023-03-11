@@ -7,9 +7,21 @@ resource "aws_route_table" "route_table_1" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw_1.id
   }
+  route {
+    cidr_block = var.oracle_subnet_cidr1
+    gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
+  }
+  route {
+    cidr_block = var.on_premise_cidr1
+    gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
+  }
   tags = {
     Name = "${var.tag_name}-${random_pet.name.id}"
   }
+  # Need to wait for the transit GW to be attached before adding it to the route table
+  depends_on = [
+    aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
+  ]
 }
 
 # Assign the route table to the subnet
