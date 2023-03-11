@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between AWS, Oraclr and a PacketFabric Port.
 Terraform providers used: PacketFabric, AWS and Oracle. This example uses AWS Transit VIF & Gateway.
 
+![Deployment Diagram](./images/diagram_cloud_router_aws_oracle_port.png)
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
