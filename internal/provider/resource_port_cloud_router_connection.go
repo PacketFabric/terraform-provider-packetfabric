@@ -40,14 +40,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"port_circuit_id": {
@@ -164,8 +162,6 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("port_circuit_id", resp.PortCircuitID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Vlan)

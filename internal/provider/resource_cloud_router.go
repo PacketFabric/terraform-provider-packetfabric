@@ -165,7 +165,6 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
 	_ = d.Set("po_number", resp.PONumber)
-<<<<<<< HEAD
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -174,8 +173,6 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 			return diagnostics
 		}
 	}
-=======
->>>>>>> ec53a48 (Add PO Number to resources (#374))
 	return diags
 }
 

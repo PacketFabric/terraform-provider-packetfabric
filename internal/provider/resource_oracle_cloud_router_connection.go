@@ -38,14 +38,12 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. ",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. ",
 			},
 			"vc_ocid": {
@@ -173,8 +171,6 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("vc_ocid", resp.CloudSettings.VcOcid)
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
