@@ -25,9 +25,9 @@ data "ibm_dl_gateway" "current" {
   name       = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [time_sleep.wait_ibm_connection]
 }
-output "ibm_dl_gateway" {
-  value = data.ibm_dl_gateway.current
-}
+# output "ibm_dl_gateway" {
+#   value = data.ibm_dl_gateway.current
+# }
 
 # data "ibm_resource_group" "group" {
 #   provider = ibm
@@ -43,18 +43,18 @@ resource "ibm_dl_gateway_action" "confirmation" {
   global         = true
   metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
 }
-output "ibm_dl_gateway_action" {
-  value = data.ibm_dl_gateway.current
-}
+# output "ibm_dl_gateway_action" {
+#   value = data.ibm_dl_gateway.current
+# }
 
 data "ibm_dl_gateway" "after_approved" {
   provider   = ibm
   name       = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [ibm_dl_gateway_action.confirmation]
 }
-output "ibm_dl_gateway_after" {
-  value = data.ibm_dl_gateway.after_approved
-}
+# output "ibm_dl_gateway_after" {
+#   value = data.ibm_dl_gateway.after_approved
+# }
 
 # From the PacketFabric side: Configure BGP
 resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
@@ -76,9 +76,9 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_1" {
-  value = packetfabric_cloud_router_bgp_session.crbs_1
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_1" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_1
+# }
 
 # From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
 resource "ibm_dl_virtual_connection" "dl_gateway_vc" {

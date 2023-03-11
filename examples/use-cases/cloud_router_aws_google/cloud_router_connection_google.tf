@@ -22,9 +22,9 @@ resource "google_compute_interconnect_attachment" "google_interconnect_1" {
   admin_enabled            = true # From the Google side: Accept (automatically) the connection.
   router                   = google_compute_router.google_router_1.id
 }
-output "google_interconnect_1" {
-  value = google_compute_interconnect_attachment.google_interconnect_1
-}
+# output "google_interconnect_1" {
+#   value = google_compute_interconnect_attachment.google_interconnect_1
+# }
 
 # From the PacketFabric side: Create a Cloud Router connection.
 resource "packetfabric_cloud_router_connection_google" "crc_2" {
@@ -139,9 +139,9 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   #   ]
   # }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_2" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# }
 
 # Because the BGP session is created automatically, the only way to update it is to use gcloud
 # To avoid using this workaround, vote for:

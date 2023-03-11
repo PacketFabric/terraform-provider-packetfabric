@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
@@ -10,7 +10,7 @@ terraform {
     }
     oci = {
       source  = "oracle/oci"
-      version = ">= 4.88.1"
+      version = ">= 4.111.0"
     }
   }
 }
@@ -25,9 +25,10 @@ provider "ibm" {
 provider "oci" {
   region       = var.oracle_region1
   auth         = "APIKey"
+  # you can use TF_VAR_ to set below variable https://developer.hashicorp.com/terraform/language/values/variables
   tenancy_ocid = var.tenancy_ocid
   user_ocid    = var.user_ocid
-  private_key  = var.private_key
-  #private_key_password = var.private_key_password
-  fingerprint = var.fingerprint
+  private_key  = replace("${var.private_key}", "\\n", "\n") # replace() may not be needed depending on the shell
+  # private_key_password = var.private_key_password # Passphrase used for the key, if it is encrypted
+  fingerprint  = var.fingerprint
 }

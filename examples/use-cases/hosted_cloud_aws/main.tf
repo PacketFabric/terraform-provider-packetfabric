@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.52.0"
+      version = ">= 4.58.0"
     }
   }
 }
@@ -101,9 +101,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 
 # From the PacketFabric side: Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
@@ -115,10 +115,9 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   vlan        = var.pf_cs_vlan1
   zone        = var.pf_cs_zone1
 }
-
-output "packetfabric_cs_aws_hosted_connection" {
-  value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-}
+# output "packetfabric_cs_aws_hosted_connection" {
+#   value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
+# }
 
 # From the AWS side: Accept the connection
 # Wait for the connection to show up in AWS
@@ -135,9 +134,9 @@ data "aws_dx_connection" "current" {
   name       = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [time_sleep.wait_aws_connection]
 }
-output "aws_dx_connection_1" {
-  value = data.aws_dx_connection.current
-}
+# output "aws_dx_connection_1" {
+#   value = data.aws_dx_connection.current
+# }
 
 # Sometimes, it takes more than 10min for the connection to become available
 # Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource

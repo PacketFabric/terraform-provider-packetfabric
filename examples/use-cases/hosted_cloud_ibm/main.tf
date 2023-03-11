@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
@@ -56,10 +56,9 @@ data "ibm_is_subnet" "subnet_1" {
   provider   = ibm
   identifier = ibm_is_subnet.subnet_1.id
 }
-
-output "ibm_is_subnet" {
-  value = data.ibm_is_subnet.subnet_1
-}
+# output "ibm_is_subnet" {
+#   value = data.ibm_is_subnet.subnet_1
+# }
 
 # Create a PacketFabric port
 resource "packetfabric_port" "port_1" {
@@ -73,9 +72,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 
 # From the PacketFabric side: Create a IBM Hosted Connection 
 resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
@@ -88,10 +87,9 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   vlan        = var.pf_cs_vlan1
   zone        = var.pf_cs_zone1
 }
-
-output "packetfabric_cs_ibm_hosted_connection" {
-  value = packetfabric_cs_ibm_hosted_connection.pf_cs_conn1
-}
+# output "packetfabric_cs_ibm_hosted_connection" {
+#   value = packetfabric_cs_ibm_hosted_connection.pf_cs_conn1
+# }
 
 # From the IBM side: Accept the connection
 # Wait for the connection to show up in IBM
@@ -108,9 +106,9 @@ data "ibm_dl_gateway" "current" {
   name       = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [time_sleep.wait_ibm_connection]
 }
-output "ibm_dl_gateway" {
-  value = data.ibm_dl_gateway.current
-}
+# output "ibm_dl_gateway" {
+#   value = data.ibm_dl_gateway.current
+# }
 
 # data "ibm_resource_group" "group" {
 #   provider = ibm
@@ -126,18 +124,18 @@ resource "ibm_dl_gateway_action" "confirmation" {
   global         = true
   metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
 }
-output "ibm_dl_gateway_action" {
-  value = data.ibm_dl_gateway.current
-}
+# output "ibm_dl_gateway_action" {
+#   value = data.ibm_dl_gateway.current
+# }
 
 data "ibm_dl_gateway" "after_approved" {
   provider   = ibm
   name       = "${var.tag_name}-${random_pet.name.id}"
   depends_on = [ibm_dl_gateway_action.confirmation]
 }
-output "ibm_dl_gateway_after" {
-  value = data.ibm_dl_gateway.after_approved
-}
+# output "ibm_dl_gateway_after" {
+#   value = data.ibm_dl_gateway.after_approved
+# }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router

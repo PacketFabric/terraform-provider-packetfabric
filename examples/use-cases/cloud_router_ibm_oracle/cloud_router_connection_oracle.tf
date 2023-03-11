@@ -1,31 +1,32 @@
 # From the Oracle side: Create a dynamic routing gateway
 resource "oci_core_drg" "dyn_routing_gw_1" {
   provider       = oci
-  compartment_id = oci_identity_compartment.compartment_1.id
+  # compartment_id = oci_identity_compartment.compartment_1.id
+  compartment_id = var.parent_compartment_id
   display_name   = "${var.tag_name}-${random_pet.name.id}"
 }
-
-output "oci_core_drg" {
-  value = oci_core_drg.dyn_routing_gw_1
-}
+# output "oci_core_drg" {
+#   value = oci_core_drg.dyn_routing_gw_1
+# }
 
 data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
   provider       = oci
-  compartment_id = oci_identity_compartment.compartment_1.id
+  # compartment_id = oci_identity_compartment.compartment_1.id
+  compartment_id = var.parent_compartment_id
   filter {
     name   = "provider_name"
     values = ["PacketFabric"]
   }
 }
-
-output "oci_core_fast_connect_provider_services" {
-  value = data.oci_core_fast_connect_provider_services.packetfabric_provider
-}
+# output "oci_core_fast_connect_provider_services" {
+#   value = data.oci_core_fast_connect_provider_services.packetfabric_provider
+# }
 
 # From the Oracle side: Create a FastConnect connection 
 resource "oci_core_virtual_circuit" "fast_connect_1" {
   provider             = oci
-  compartment_id       = oci_identity_compartment.compartment_1.id
+  # compartment_id       = oci_identity_compartment.compartment_1.id
+  compartment_id       = var.parent_compartment_id
   display_name         = "${var.tag_name}-${random_pet.name.id}"
   region               = var.oracle_region1
   type                 = "PRIVATE"
@@ -36,8 +37,8 @@ resource "oci_core_virtual_circuit" "fast_connect_1" {
   is_bfd_enabled       = false
   cross_connect_mappings {
     bgp_md5auth_key         = var.oracle_bgp_shared_key
-    customer_bgp_peering_ip = var.oracle_primary_peer_address_prefix
-    oracle_bgp_peering_ip   = var.oracle_secondary_peer_address_prefix
+    customer_bgp_peering_ip = var.oracle_bgp_peering_prefix
+    oracle_bgp_peering_ip   = var.customer_bgp_peering_prefix
   }
   provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider.fast_connect_provider_services.0.id
   # public_prefixes {
@@ -71,8 +72,9 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
-  remote_address = var.oracle_secondary_peer_address_prefix # Oracle side
-  l3_address     = var.oracle_primary_peer_address_prefix   # PF side
+  remote_address = var.oracle_bgp_peering_prefix # Oracle side
+  l3_address     = var.customer_bgp_peering_prefix   # PF side
+  md5            = var.oracle_bgp_shared_key
   prefixes {
     prefix = var.ibm_vpc_cidr1
     type   = "out" # Allowed Prefixes to Cloud
@@ -82,6 +84,7 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_2" {
+#   value     = packetfabric_cloud_router_bgp_session.crbs_2
+#   sensitive = true
+# }
