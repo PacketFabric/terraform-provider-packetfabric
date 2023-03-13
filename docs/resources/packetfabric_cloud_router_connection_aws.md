@@ -95,8 +95,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. Defaults: false
 - `labels` (List of String) Label value linked to an object.
-- `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
-- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
+- `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection.
+- `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
