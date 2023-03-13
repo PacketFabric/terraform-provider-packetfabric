@@ -45,6 +45,14 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("speed", speed.(string))
 		}
 	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -85,6 +93,14 @@ func resourceServicesDedicatedUpdate(ctx context.Context, d *schema.ResourceData
 		}
 		if _, err := c.UpdatePort(d.Id(), portUpdateData); err != nil {
 			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
 		}
 	}
 	return diags

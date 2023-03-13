@@ -63,6 +63,14 @@ func resourceLinkAggregationGroups() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -83,6 +91,13 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 	}
 	d.SetId(resp.PortCircuitID)
 
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
+
 	diagnostics, updated := updatePort(c, d)
 	if !updated {
 		return diagnostics
@@ -101,6 +116,14 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 
 	if d.HasChange("po_number") {
 		diagnostics, updated := updatePort(c, d)
+		if !updated {
+			return diagnostics
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {
 			return diagnostics
 		}
@@ -154,6 +177,12 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 		members[index] = interf.PortCircuitID
 	}
 	_ = d.Set("members", members)
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
