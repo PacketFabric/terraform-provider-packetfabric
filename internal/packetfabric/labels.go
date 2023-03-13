@@ -24,6 +24,9 @@ func (c *PFClient) CreateLabel(circuitId string, labelsData LabelsPayload) (*Lab
 
 func (c *PFClient) UpdateLabel(circuitId string, labelsData LabelsPayload) (*LabelsResponse, error) {
 	formattedURI := fmt.Sprintf(labelsURI, circuitId)
+	if labelsData.Labels == nil {
+		labelsData = LabelsPayload{Labels: []string{}}
+	}
 	resp := &LabelsResponse{}
 	_, err := c.sendRequest(formattedURI, putMethod, labelsData, &resp)
 	if err != nil {
