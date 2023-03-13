@@ -145,7 +145,6 @@ func updatePort(c *packetfabric.PFClient, d *schema.ResourceData) (diag.Diagnost
 	portUpdateData := packetfabric.PortUpdate{
 		Description: lag.Description,
 		PONumber:    poNumber.(string),
-		Autoneg:     lag.Autoneg,
 	}
 	_, err2 := c.UpdatePort(d.Id(), portUpdateData)
 	if err2 != nil {

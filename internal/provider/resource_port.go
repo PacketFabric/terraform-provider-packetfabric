@@ -232,14 +232,18 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 
-	// Update if payload contains Autoneg and Description
-	if d.HasChanges([]string{"po_number", "description", "autoneg"}...) {
+	// Update if payload contains description and po_number
+	if d.HasChanges([]string{"po_number", "description"}...) {
 		portUpdateData := packetfabric.PortUpdate{
 			Description: d.Get("description").(string),
-			Autoneg:     d.Get("autoneg").(bool),
 			PONumber:    d.Get("po_number").(string),
 		}
 		resp, err = c.UpdatePort(d.Id(), portUpdateData)
+	}
+
+	// Update autoneg only if speed == 1Gbps
+	if d.HasChange("autoneg") && d.Get("speed").(string) == "1Gbps" {
+		resp, err = c.UpdatePortAutoNegOnly(d.Id(), d.Get("autoneg").(bool))
 	}
 
 	// Update port status

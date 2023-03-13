@@ -85,10 +85,9 @@ func resourceServicesDedicatedUpdate(ctx context.Context, d *schema.ResourceData
 		}
 	}
 
-	if d.HasChanges([]string{"po_number", "description", "autoneg"}...) {
+	if d.HasChanges([]string{"po_number", "description"}...) {
 		portUpdateData := packetfabric.PortUpdate{
 			Description: d.Get("description").(string),
-			Autoneg:     d.Get("autoneg").(bool),
 			PONumber:    d.Get("po_number").(string),
 		}
 		if _, err := c.UpdatePort(d.Id(), portUpdateData); err != nil {

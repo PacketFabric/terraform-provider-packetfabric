@@ -202,13 +202,18 @@ type PortRouterLogs struct {
 }
 
 type PortUpdate struct {
-	Autoneg     bool   `json:"autoneg"`
 	Description string `json:"description"`
 	PONumber    string `json:"po_number"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
 	expectedResp := &InterfaceCreateResp{}
+
+	// Set autoneg to false if speed is 1Gbps and autoneg is null
+	if interf.Speed == "1Gbps" && !interf.Autoneg {
+		interf.Autoneg = false
+	}
+
 	_, err := c.sendRequest(portsURI, postMethod, interf, expectedResp)
 	if err != nil {
 		return nil, err
@@ -345,39 +350,14 @@ func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*Inter
 	return expectedResp, nil
 }
 
-func (c *PFClient) UpdatePortAutoNegOnly(autoNeg bool, portCID string) (*InterfaceReadResp, error) {
+func (c *PFClient) UpdatePortAutoNegOnly(portCID string, autoNeg bool) (*InterfaceReadResp, error) {
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
 	expectedResp := &InterfaceReadResp{}
-	type PortUpdate struct {
+	type PortUpdateAutoNegOnly struct {
 		Autoneg bool `json:"autoneg"`
 	}
-	portUpdate := PortUpdate{
+	portUpdate := PortUpdateAutoNegOnly{
 		Autoneg: autoNeg,
-	}
-	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(expectedResp.PortCircuitID)
-	}
-	go c.CheckServiceStatus(updateOk, fn)
-	if !<-updateOk {
-		return nil, err
-	}
-	return expectedResp, nil
-}
-
-func (c *PFClient) UpdatePortDescriptionOnly(portCID, description string) (*InterfaceReadResp, error) {
-	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
-	expectedResp := &InterfaceReadResp{}
-	type PortUpdate struct {
-		Description string `json:"description"`
-	}
-	portUpdate := PortUpdate{
-		Description: description,
 	}
 	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
 	if err != nil {
