@@ -81,7 +81,7 @@ type CloudRouterConnectionReadResponse struct {
 	Zone                      string        `json:"zone,omitempty"`
 	Vlan                      int           `json:"vlan,omitempty"`
 	DesiredNat                string        `json:"desired_nat,omitempty"`
-	PONumber                  string        `json:"po_number"`
+	PONumber                  string        `json:"po_number,omitempty"`
 }
 
 type BgpStateObj struct {
@@ -164,7 +164,7 @@ type AwsComponents struct {
 
 type CloudRouterUpdateData struct {
 	Description string `json:"description"`
-	PONumber    string `json:"po_number"`
+	PONumber    string `json:"po_number,omitempty"`
 }
 
 type ConnectionDeleteResp struct {
