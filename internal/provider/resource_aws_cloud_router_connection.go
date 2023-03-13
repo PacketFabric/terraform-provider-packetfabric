@@ -55,14 +55,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"description": {
@@ -100,6 +98,12 @@ func resourceRouterConnectionAws() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line which this connection should be associated.",
+			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -155,13 +159,12 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 
 	_ = d.Set("account_uuid", resp.AccountUUID)
 	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-	_ = d.Set("maybe_nat", resp.NatCapable)
-	_ = d.Set("maybe_dnat", resp.DNatCapable)
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
 	_ = d.Set("pop", resp.Pop)
 	_ = d.Set("zone", resp.Zone)
 	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
+	_ = d.Set("po_number", resp.PONumber)
 
 	if resp.CloudSettings.PublicIP != "" {
 		_ = d.Set("is_public", true)
@@ -192,5 +195,6 @@ func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 		IsPublic:               d.Get("is_public").(bool),
 		Speed:                  d.Get("speed").(string),
 		PublishedQuoteLineUUID: d.Get("published_quote_line_uuid").(string),
+		PONumber:               d.Get("po_number").(string),
 	}
 }

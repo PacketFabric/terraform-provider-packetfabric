@@ -40,14 +40,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
 				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"port_circuit_id": {
@@ -96,6 +94,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -143,12 +147,11 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("port_circuit_id", resp.PortCircuitID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
+		_ = d.Set("po_number", resp.PONumber)
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
 		} else {
@@ -203,6 +206,9 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ownedPort.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ownedPort.PONumber = poNumber.(string)
 	}
 	return ownedPort
 }

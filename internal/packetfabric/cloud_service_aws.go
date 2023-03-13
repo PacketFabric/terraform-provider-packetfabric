@@ -113,6 +113,7 @@ type HostedAwsConnection struct {
 	SrcSvlan     int    `json:"src_svlan,omitempty"`
 	Zone         string `json:"zone,omitempty"`
 	Speed        string `json:"speed,omitempty"`
+	PONumber     string `json:"po_number,omitempty"`
 }
 
 type DedicatedAwsConn struct {
@@ -127,6 +128,7 @@ type DedicatedAwsConn struct {
 	Speed            string      `json:"speed"`
 	ShouldCreateLag  bool        `json:"should_create_lag"`
 	Loa              interface{} `json:"load"`
+	PONumber         string      `json:"po_number,omitempty"`
 }
 
 type CloudServiceConnCreateResp struct {
@@ -393,20 +395,20 @@ func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
 }
 
-func (c *PFClient) UpdateServiceHostedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+func (c *PFClient) UpdateServiceHostedConn(cloudCID string, updateServiceConnData UpdateServiceConn) (*CloudServiceConnCreateResp, error) {
 	formatedURI := fmt.Sprintf(updateCloudConnHostedURI, cloudCID)
 	expectedResp := &CloudServiceConnCreateResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, updateServiceConnData, expectedResp)
 	if err != nil {
 		return nil, err
 	}
 	return expectedResp, err
 }
 
-func (c *PFClient) UpdateServiceDedicatedConn(description, cloudCID string) (*CloudServiceConnCreateResp, error) {
+func (c *PFClient) UpdateServiceDedicatedConn(cloudCID string, updateServiceConnData UpdateServiceConn) (*CloudServiceConnCreateResp, error) {
 	formatedURI := fmt.Sprintf(updateCloudConnDedicatedURI, cloudCID)
 	expectedResp := &CloudServiceConnCreateResp{}
-	_, err := c.sendRequest(formatedURI, patchMethod, UpdateServiceConn{description}, expectedResp)
+	_, err := c.sendRequest(formatedURI, patchMethod, updateServiceConnData, expectedResp)
 	if err != nil {
 		return nil, err
 	}
