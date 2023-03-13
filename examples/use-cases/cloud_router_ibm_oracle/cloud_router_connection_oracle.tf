@@ -1,6 +1,6 @@
 # From the Oracle side: Create a dynamic routing gateway
 resource "oci_core_drg" "dyn_routing_gw_1" {
-  provider       = oci
+  provider = oci
   # compartment_id = oci_identity_compartment.compartment_1.id
   compartment_id = var.parent_compartment_id
   display_name   = "${var.tag_name}-${random_pet.name.id}"
@@ -10,7 +10,7 @@ resource "oci_core_drg" "dyn_routing_gw_1" {
 # }
 
 data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
-  provider       = oci
+  provider = oci
   # compartment_id = oci_identity_compartment.compartment_1.id
   compartment_id = var.parent_compartment_id
   filter {
@@ -24,7 +24,7 @@ data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
 
 # From the Oracle side: Create a FastConnect connection 
 resource "oci_core_virtual_circuit" "fast_connect_1" {
-  provider             = oci
+  provider = oci
   # compartment_id       = oci_identity_compartment.compartment_1.id
   compartment_id       = var.parent_compartment_id
   display_name         = "${var.tag_name}-${random_pet.name.id}"
@@ -72,8 +72,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
-  remote_address = var.oracle_bgp_peering_prefix # Oracle side
-  l3_address     = var.customer_bgp_peering_prefix   # PF side
+  remote_address = var.oracle_bgp_peering_prefix   # Oracle side
+  l3_address     = var.customer_bgp_peering_prefix # PF side
   md5            = var.oracle_bgp_shared_key
   prefixes {
     prefix = var.ibm_vpc_cidr1

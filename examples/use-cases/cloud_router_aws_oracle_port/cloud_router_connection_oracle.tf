@@ -1,6 +1,6 @@
 # From the Oracle side: Create a dynamic routing gateway
 resource "oci_core_drg" "dyn_routing_gw_1" {
-  provider       = oci
+  provider = oci
   # compartment_id = oci_identity_compartment.compartment_1.id
   compartment_id = var.parent_compartment_id
   display_name   = "${var.tag_name}-${random_pet.name.id}"
@@ -10,7 +10,7 @@ resource "oci_core_drg" "dyn_routing_gw_1" {
 # }
 
 data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
-  provider       = oci
+  provider = oci
   # compartment_id = oci_identity_compartment.compartment_1.id
   compartment_id = var.parent_compartment_id
   filter {
@@ -24,7 +24,7 @@ data "oci_core_fast_connect_provider_services" "packetfabric_provider" {
 
 # From the Oracle side: Create a FastConnect connection 
 resource "oci_core_virtual_circuit" "fast_connect_1" {
-  provider             = oci
+  provider = oci
   # compartment_id       = oci_identity_compartment.compartment_1.id
   compartment_id       = var.parent_compartment_id
   display_name         = "${var.tag_name}-${random_pet.name.id}"

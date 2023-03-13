@@ -148,7 +148,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }

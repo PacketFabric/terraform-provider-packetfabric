@@ -1,16 +1,15 @@
-
 # Port
 variable "pf_port_pop1" {
   type    = string
-  default = "NYC4"
+  default = "CHI7"
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A" # login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+  default = "C" # login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "pf_port_media" {
   type    = string
-  default = "LX"
+  default = "LR"
 }
 variable "pf_port_subterm" {
   type    = number
@@ -18,11 +17,11 @@ variable "pf_port_subterm" {
 }
 variable "pf_port_autoneg" {
   type    = bool
-  default = false
+  default = false # only for 1Gbps
 }
 variable "pf_port_speed" {
   type    = string
-  default = "1Gbps"
+  default = "10Gbps"
 }
 variable "pf_port_nni" {
   type    = bool

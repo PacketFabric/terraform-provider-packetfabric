@@ -35,8 +35,8 @@ data "ibm_dl_gateway" "current" {
 # }
 
 resource "ibm_dl_gateway_action" "confirmation" {
-  provider       = ibm
-  gateway        = data.ibm_dl_gateway.current.id
+  provider = ibm
+  gateway  = data.ibm_dl_gateway.current.id
   # resource_group = data.ibm_resource_group.group.id
   resource_group = ibm_resource_group.resource_group_1.id
   action         = "create_gateway_approve"

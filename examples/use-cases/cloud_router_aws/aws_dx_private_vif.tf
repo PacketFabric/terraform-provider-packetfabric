@@ -43,7 +43,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   }
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }
@@ -64,7 +65,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   }
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }

@@ -51,7 +51,7 @@ variable "pf_crc_pop2" {
 }
 variable "pf_crc_zone2" {
   type    = string
-  default = "E"
+  default = "F"
 }
 variable "oracle_bandwidth_shape_name" {
   type    = string

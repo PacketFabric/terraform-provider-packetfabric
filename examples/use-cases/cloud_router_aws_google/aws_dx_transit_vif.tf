@@ -38,7 +38,8 @@ resource "aws_dx_transit_virtual_interface" "direct_connect_vip_1" {
   }
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }

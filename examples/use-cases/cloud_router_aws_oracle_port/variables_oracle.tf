@@ -10,7 +10,7 @@ variable "user_ocid" {
   description = "Oracle User OCID"
 }
 variable "private_key" {
-  type        = string
+  type = string
   # sensitive   = true
   description = "Oracle Private Key"
 }

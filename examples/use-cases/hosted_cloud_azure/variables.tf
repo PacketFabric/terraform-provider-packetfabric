@@ -39,7 +39,7 @@ variable "pf_port_nni" {
 # Azure Hosted Connection
 variable "pf_cs_speed" {
   type    = string
-  default = "50Mbps"  # must match bandwidth_in_mbps for Azure Express
+  default = "50Mbps" # must match bandwidth_in_mbps for Azure Express
 }
 variable "pf_cs_vlan_private" {
   type    = number
@@ -73,7 +73,7 @@ variable "peering_location_1" {
 variable "bandwidth_in_mbps" {
   type        = string
   description = "Azure Bandwidth"
-  default     = 50  # must match pf_cs_speed
+  default     = 50 # must match pf_cs_speed
 }
 variable "service_provider_name" {
   type    = string
