@@ -45,6 +45,7 @@ output "packetfabric_cloud_router_quick_connect" {
 ### Optional
 
 - `import_filters` (Block Set) (see [below for nested schema](#nestedblock--import_filters))
+- `labels` (List of String) Label value linked to an object.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

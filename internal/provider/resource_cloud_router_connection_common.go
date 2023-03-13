@@ -54,6 +54,14 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 			}
 		}
 	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
+	}
 	return diags
 }
 

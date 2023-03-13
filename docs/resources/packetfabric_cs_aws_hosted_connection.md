@@ -64,6 +64,7 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 ### Optional
 
+- `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `zone` (String) The desired zone of the new connection.
