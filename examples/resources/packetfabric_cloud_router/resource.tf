@@ -4,7 +4,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = var.pf_cr_name
   capacity = var.pf_cr_capacity
   regions  = var.pf_cr_regions
-  labels   = ["label1", "label2"]
+  labels   = ["terraform", "dev"]
 }
 
 output "packetfabric_cloud_router" {
