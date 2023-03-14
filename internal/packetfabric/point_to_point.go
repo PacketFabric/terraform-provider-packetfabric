@@ -42,7 +42,7 @@ type PointToPointResp struct {
 
 type UpdatePointToPointData struct {
 	Description string `json:"description"`
-	PONumber    string `json:"po_number"`
+	PONumber    string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreatePointToPointService(ptp PointToPoint) (*PointToPointResp, error) {

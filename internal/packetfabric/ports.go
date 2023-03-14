@@ -114,7 +114,7 @@ type InterfaceReadResp struct {
 	CustomerUUID        string `json:"customer_uuid,omitempty"`
 	MaxCloudRouterSpeed string `json:"max_cloud_router_speed,omitempty"`
 	Links               Links  `json:"_links,omitempty"`
-	PONumber            string `json:"po_number"`
+	PONumber            string `json:"po_number,omitempty"`
 }
 
 type Links struct {
@@ -203,7 +203,7 @@ type PortRouterLogs struct {
 
 type PortUpdate struct {
 	Description string `json:"description"`
-	PONumber    string `json:"po_number"`
+	PONumber    string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
