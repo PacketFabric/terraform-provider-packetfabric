@@ -119,6 +119,10 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+	_, ok := d.GetOk("autoneg")
+	if ok && d.Get("speed").(string) != "1Gbps" {
+		return diag.Errorf("autoneg is only applicable to 1Gbps ports")
+	}
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
 	time.Sleep(30 * time.Second)
@@ -130,6 +134,13 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 		if !enabled.(bool) {
 			if toggleErr := _togglePortStatus(c, enabled.(bool), resp.PortCircuitID); toggleErr != nil {
 				return diag.FromErr(toggleErr)
+			}
+		}
+		autoneg := d.Get("autoneg")
+		// if autoneg = false and speed 1Gbps
+		if !autoneg.(bool) && d.Get("speed").(string) == "1Gbps" {
+			if togglePortAutonegErr := _togglePortAutoneg(c, autoneg.(bool), resp.PortCircuitID); togglePortAutonegErr != nil {
+				return diag.FromErr(togglePortAutonegErr)
 			}
 		}
 		d.SetId(resp.PortCircuitID)
@@ -180,7 +191,10 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-
+	_, ok := d.GetOk("autoneg")
+	if ok && d.Get("speed").(string) != "1Gbps" {
+		return diag.Errorf("autoneg is only applicable to 1Gbps ports")
+	}
 	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
@@ -243,7 +257,8 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	// Update autoneg only if speed == 1Gbps
 	if d.HasChange("autoneg") && d.Get("speed").(string) == "1Gbps" {
-		resp, err = c.UpdatePortAutoNegOnly(d.Id(), d.Get("autoneg").(bool))
+		_, autonegChange := d.GetChange("autoneg")
+		err = _togglePortAutoneg(c, autonegChange.(bool), d.Id())
 	}
 
 	// Update port status
@@ -270,6 +285,15 @@ func _togglePortStatus(c *packetfabric.PFClient, enabled bool, portCID string) (
 		_, err = c.EnablePort(portCID)
 	} else {
 		_, err = c.DisablePort(portCID)
+	}
+	return
+}
+
+func _togglePortAutoneg(c *packetfabric.PFClient, enabled bool, portCID string) (err error) {
+	if enabled {
+		_, err = c.EnablePortAutoneg(portCID)
+	} else {
+		_, err = c.DisablePortAutoneg(portCID)
 	}
 	return
 }
