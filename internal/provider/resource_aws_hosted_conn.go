@@ -90,6 +90,14 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -138,6 +146,13 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 	d.SetId(expectedResp.CloudCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -170,6 +185,12 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 		_ = d.Set("po_number", resp2.PONumber)
 	}
+
+	labels, err3 := getLabels(c, d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

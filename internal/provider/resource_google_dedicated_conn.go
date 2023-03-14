@@ -102,6 +102,14 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -144,6 +152,13 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 	d.SetId(expectedResp.CloudCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -179,6 +194,12 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		}
 	}
 	// unsetFields: loa, published_quote_line_uuid
+
+	labels, err3 := getLabels(c, d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

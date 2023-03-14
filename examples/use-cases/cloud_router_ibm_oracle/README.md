@@ -20,6 +20,7 @@ Terraform providers used: PacketFabric, IBM and Oracle.
 - "oci_core_vcn"
 - "oci_core_drg"
 - "oci_core_virtual_circuit"
+- "oci_core_fast_connect_provider_services"
 - "ibm_resource_group"
 - "ibm_is_vpc"
 - "ibm_is_vpc_address_prefix"

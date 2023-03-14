@@ -110,6 +110,14 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -148,6 +156,13 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 	d.SetId(expectedResp.CloudCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -184,6 +199,12 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 		}
 	}
 	// unsetFields: loa
+
+	labels, err3 := getLabels(c, d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

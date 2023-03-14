@@ -6,7 +6,6 @@ resource "packetfabric_cloud_router" "cr" {
   capacity = var.pf_cr_capacity
   regions  = var.pf_cr_regions
 }
-
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr
-}
+# output "packetfabric_cloud_router" {
+#   value = packetfabric_cloud_router.cr
+# }

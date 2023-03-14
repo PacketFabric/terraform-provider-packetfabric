@@ -15,7 +15,7 @@ const portDeviceInfoURI = "/v2/ports/%s/device-info"
 const portRouterLogsURI = "/v2/ports/%s/router-logs?time_from=%s&time_to=%s"
 
 type Interface struct {
-	Autoneg          bool   `json:"autoneg"`
+	Autoneg          bool   `json:"autoneg,omitempty"`
 	Nni              bool   `json:"nni,omitempty"`
 	SubscriptionTerm int    `json:"subscription_term,omitempty"`
 	AccountUUID      string `json:"account_uuid,omitempty"`
@@ -114,7 +114,7 @@ type InterfaceReadResp struct {
 	CustomerUUID        string `json:"customer_uuid,omitempty"`
 	MaxCloudRouterSpeed string `json:"max_cloud_router_speed,omitempty"`
 	Links               Links  `json:"_links,omitempty"`
-	PONumber            string `json:"po_number"`
+	PONumber            string `json:"po_number,omitempty"`
 }
 
 type Links struct {
@@ -202,13 +202,13 @@ type PortRouterLogs struct {
 }
 
 type PortUpdate struct {
-	Autoneg     bool   `json:"autoneg"`
 	Description string `json:"description"`
-	PONumber    string `json:"po_number"`
+	PONumber    string `json:"po_number,omitempty"`
 }
 
 func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, error) {
 	expectedResp := &InterfaceCreateResp{}
+
 	_, err := c.sendRequest(portsURI, postMethod, interf, expectedResp)
 	if err != nil {
 		return nil, err
@@ -261,6 +261,38 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	}
 	go c.CheckServiceStatus(statusChangeOk, fn)
 	if !<-statusChangeOk {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) EnablePortAutoneg(portCID string) (*InterfaceReadResp, error) {
+	return c.changePortStateAutoneg(portCID, true)
+}
+
+func (c *PFClient) DisablePortAutoneg(portCID string) (*InterfaceReadResp, error) {
+	return c.changePortStateAutoneg(portCID, false)
+}
+
+func (c *PFClient) changePortStateAutoneg(portCID string, enable bool) (*InterfaceReadResp, error) {
+	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
+	expectedResp := &InterfaceReadResp{}
+	type PortUpdateAutoNegOnly struct {
+		Autoneg bool `json:"autoneg"`
+	}
+	portUpdateAutoneg := PortUpdateAutoNegOnly{
+		Autoneg: enable,
+	}
+	_, err := c.sendRequest(formatedURI, patchMethod, portUpdateAutoneg, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	updateAutonegChangeOk := make(chan bool)
+	fn := func() (*ServiceState, error) {
+		return c.GetPortStatus(portCID)
+	}
+	go c.CheckServiceStatus(updateAutonegChangeOk, fn)
+	if !<-updateAutonegChangeOk {
 		return nil, err
 	}
 	return expectedResp, nil
@@ -330,56 +362,6 @@ func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*Inter
 	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
 	expectedResp := &InterfaceReadResp{}
 	_, err := c.sendRequest(formatedURI, patchMethod, portUpdateData, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(expectedResp.PortCircuitID)
-	}
-	go c.CheckServiceStatus(updateOk, fn)
-	if !<-updateOk {
-		return nil, err
-	}
-	return expectedResp, nil
-}
-
-func (c *PFClient) UpdatePortAutoNegOnly(autoNeg bool, portCID string) (*InterfaceReadResp, error) {
-	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
-	expectedResp := &InterfaceReadResp{}
-	type PortUpdate struct {
-		Autoneg bool `json:"autoneg"`
-	}
-	portUpdate := PortUpdate{
-		Autoneg: autoNeg,
-	}
-	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
-	if err != nil {
-		return nil, err
-	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(expectedResp.PortCircuitID)
-	}
-	go c.CheckServiceStatus(updateOk, fn)
-	if !<-updateOk {
-		return nil, err
-	}
-	return expectedResp, nil
-}
-
-func (c *PFClient) UpdatePortDescriptionOnly(portCID, description string) (*InterfaceReadResp, error) {
-	formatedURI := fmt.Sprintf(portByCIDURI, portCID)
-	expectedResp := &InterfaceReadResp{}
-	type PortUpdate struct {
-		Description string `json:"description"`
-	}
-	portUpdate := PortUpdate{
-		Description: description,
-	}
-	_, err := c.sendRequest(formatedURI, patchMethod, portUpdate, expectedResp)
 	if err != nil {
 		return nil, err
 	}

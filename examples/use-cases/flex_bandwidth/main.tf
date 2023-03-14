@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -24,9 +24,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
@@ -38,9 +38,9 @@ resource "packetfabric_port" "port_2" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone2
 }
-output "packetfabric_port_2" {
-  value = packetfabric_port.port_2
-}
+# output "packetfabric_port_2" {
+#   value = packetfabric_port.port_2
+# }
 
 resource "packetfabric_flex_bandwidth" "flex1" {
   provider          = packetfabric
@@ -48,9 +48,9 @@ resource "packetfabric_flex_bandwidth" "flex1" {
   subscription_term = var.pf_flex_subscription_term
   capacity          = var.pf_flex_capacity
 }
-output "packetfabric_flex_bandwidth" {
-  value = packetfabric_flex_bandwidth.flex1
-}
+# output "packetfabric_flex_bandwidth" {
+#   value = packetfabric_flex_bandwidth.flex1
+# }
 
 # Create backbone Virtual Circuit 1
 resource "packetfabric_backbone_virtual_circuit" "vc_1" {
@@ -74,9 +74,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
   }
   flex_bandwidth_id = packetfabric_flex_bandwidth.flex1.id
 }
-output "packetfabric_backbone_virtual_circuit_1" {
-  value = packetfabric_backbone_virtual_circuit.vc_1
-}
+# output "packetfabric_backbone_virtual_circuit_1" {
+#   value = packetfabric_backbone_virtual_circuit.vc_1
+# }
 
 # Create backbone Virtual Circuit 2
 resource "packetfabric_backbone_virtual_circuit" "vc_2" {
@@ -100,6 +100,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc_2" {
   }
   flex_bandwidth_id = packetfabric_flex_bandwidth.flex1.id
 }
-output "packetfabric_backbone_virtual_circuit_2" {
-  value = packetfabric_backbone_virtual_circuit.vc_2
-}
+# output "packetfabric_backbone_virtual_circuit_2" {
+#   value = packetfabric_backbone_virtual_circuit.vc_2
+# }

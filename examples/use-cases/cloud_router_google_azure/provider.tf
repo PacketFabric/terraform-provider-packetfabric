@@ -2,15 +2,15 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     google = {
       source  = "hashicorp/google"
-      version = ">= 4.38.0"
+      version = ">= 4.56.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.14.0"
+      version = ">= 3.47.0"
     }
   }
 }
