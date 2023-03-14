@@ -60,6 +60,7 @@ const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataCloudRouterConnIpsec = "data.packetfabric_cloud_router_connection_ipsec"
 const pfDataCloudRouterConn = "data.packetfabric_cloud_router_connection"
 const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
+const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -617,6 +618,15 @@ type DHclCloudRouterConnResult struct {
 // data packetfabric_cloud_router_connections
 type DHclCloudRouterConnsResult struct {
 	HclResultBase
+}
+
+// packetfabric_outbound_cross_connect
+type RHclOutboundCrossConnectResult struct {
+	HclResultBase
+	Desc         string
+	DocumentUuid string
+	Port         RHclPortResult
+	Site         string
 }
 
 // Patterns:
@@ -1475,7 +1485,6 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
-
 	var edgeAvailabilityDomain string
 
 	c, err := _createPFClient()

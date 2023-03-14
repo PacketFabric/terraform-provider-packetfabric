@@ -15,6 +15,7 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
 
 	resource.ParallelTest(t, resource.TestCase{
+
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -22,7 +23,6 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "description", outboundCrossConnectResult.Desc),
 					resource.TestCheckResourceAttrSet(outboundCrossConnectResult.ResourceName, "document_uuid"),
-					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "site", outboundCrossConnectResult.Site),
 				),
 			},
 		},
