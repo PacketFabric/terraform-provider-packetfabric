@@ -34,7 +34,7 @@ variable "pf_port_subterm" {
 }
 variable "pf_port_autoneg" {
   type    = bool
-  default = false
+  default = true # only for 1Gbps
 }
 variable "pf_port_speed" {
   type    = string

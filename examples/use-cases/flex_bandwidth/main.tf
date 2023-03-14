@@ -15,7 +15,6 @@ resource "random_pet" "name" {}
 # Create a PacketFabric ports
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
@@ -29,7 +28,6 @@ resource "packetfabric_port" "port_1" {
 # }
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
