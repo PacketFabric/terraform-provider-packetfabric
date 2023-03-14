@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -115,6 +116,17 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cloud_router_connection_google
+type RHclCloudRouterConnectionGoogleResult struct {
+	HclResultBase
+	Desc                     string
+	CloudRouter              RHclCloudRouterResult
+	GooglePairingKey         string
+	GoogleVlanAttachmentName string
+	Pop                      string
+	Speed                    string
 }
 
 // Patterns:
@@ -325,6 +337,28 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_google
+func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
+
+	var pop, speed, googlePairingKey, vlan, hcl string
+
+	resourceName, _ := _generateResourceName(pfCloudRouterConnGoogle)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnGoogle)
+
+	return RHclCloudRouterConnectionGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnGoogle,
+			ResourceName: resourceName,
+		},
+		Desc:                     uniqueDesc,
+		GooglePairingKey:         googlePairingKey,
+		GoogleVlanAttachmentName: vlan,
+		Pop:                      pop,
+		Speed:                    speed,
 	}
 }
 
