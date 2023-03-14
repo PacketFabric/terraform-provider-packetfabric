@@ -45,6 +45,14 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("speed", speed.(string))
 		}
 	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -77,14 +85,21 @@ func resourceServicesDedicatedUpdate(ctx context.Context, d *schema.ResourceData
 		}
 	}
 
-	if d.HasChanges([]string{"po_number", "description", "autoneg"}...) {
+	if d.HasChanges([]string{"po_number", "description"}...) {
 		portUpdateData := packetfabric.PortUpdate{
 			Description: d.Get("description").(string),
-			Autoneg:     d.Get("autoneg").(bool),
 			PONumber:    d.Get("po_number").(string),
 		}
 		if _, err := c.UpdatePort(d.Id(), portUpdateData); err != nil {
 			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
 		}
 	}
 	return diags

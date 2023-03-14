@@ -14,6 +14,10 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
+## Demo video
+
+<p align="center"><a href="https://www.youtube.com/watch?v=EblOg0Uaf8Q" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/EblOg0Uaf8Q/1.jpg"></a></p>
+
 ## Terraform resources & data-sources used
 
 - "aws_dx_gateway"

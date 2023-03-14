@@ -11,7 +11,6 @@ resource "google_compute_subnetwork" "subnet_1" {
   region        = var.gcp_region1
   network       = google_compute_network.vpc_1.id
 }
-
-output "google_compute_network" {
-  value = google_compute_network.vpc_1
-}
+# output "google_compute_network" {
+#   value = google_compute_network.vpc_1
+# }

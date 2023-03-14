@@ -15,6 +15,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   zone        = var.pf_crc_zone
   is_public   = var.pf_crc_is_public
   speed       = var.pf_crc_speed
+  labels      = ["terraform", "dev"]
 }
 
 output "packetfabric_cloud_router_connection_aws" {
