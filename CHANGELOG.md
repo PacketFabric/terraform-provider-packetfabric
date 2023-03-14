@@ -1,3 +1,43 @@
+## 1.2.0  (March 13, 2023)
+
+FEATURES:
+
+* New resource packetfabric_user (#371)
+* Add Object Labels (#375) and PO Numbers (#374) to the following resources: 
+    * packetfabric_backbone_virtual_circuit
+    * packetfabric_cloud_router
+    * packetfabric_cloud_router_connection_aws
+    * packetfabric_cloud_router_connection_azure
+    * packetfabric_cloud_router_connection_google
+    * packetfabric_cloud_router_connection_ibm
+    * packetfabric_cloud_router_connection_ipsec
+    * packetfabric_cloud_router_connection_oracle
+    * packetfabric_cloud_router_connection_port
+    * packetfabric_cloud_router_quick_connect (only Object Label)
+    * packetfabric_cs_aws_dedicated_connection
+    * packetfabric_cs_aws_hosted_connection
+    * packetfabric_cs_azure_dedicated_connection
+    * packetfabric_cs_azure_hosted_connection
+    * packetfabric_cs_google_dedicated_connection
+    * packetfabric_cs_google_hosted_connection
+    * packetfabric_cs_ibm_hosted_connection
+    * packetfabric_cs_oracle_hosted_connection
+    * packetfabric_link_aggregation_group
+    * packetfabric_point_to_point
+    * packetfabric_port
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Update IBM hosted cloud and cloud router status check and use case examples (#370)
+* Update Azure Dedicated Cloud status check (#373)
+* Added new use case example Cloud Router with AWS, Oracle and PacketFabric Port (#378)
+* Update Oracle Cloud Router Connect API endpoint from v2 to v2.1 (#381)
+
+BUG FIXES:
+
+* Update maybe_nat and maybe_dnat in all packetfabric_cloud_router_connection resources (#377)
+* Fix update issue with autoneg in packetfabric_port interfaces 10Gbps (#379)
+
 ## 1.1.0  (March 2, 2023)
 
 IMPROVEMENTS/ENHANCEMENTS:
