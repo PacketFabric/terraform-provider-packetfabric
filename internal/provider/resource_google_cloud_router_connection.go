@@ -47,13 +47,13 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. ",
+				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. ",
+				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"google_pairing_key": {
 				Type:         schema.TypeString,

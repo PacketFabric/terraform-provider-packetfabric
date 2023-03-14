@@ -33,7 +33,6 @@ data "ibm_is_subnet" "subnet_1" {
   provider   = ibm
   identifier = ibm_is_subnet.subnet_1.id
 }
-
-output "ibm_is_subnet" {
-  value = data.ibm_is_subnet.subnet_1
-}
+# output "ibm_is_subnet" {
+#   value = data.ibm_is_subnet.subnet_1
+# }

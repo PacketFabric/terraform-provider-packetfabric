@@ -47,12 +47,12 @@ locals {
   val["description"] => val }
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"]
 }
-output "cc1_vlan_private" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_private)
-}
-output "packetfabric_cloud_router_connection_azure" {
-  value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-}
+# output "cc1_vlan_private" {
+#   value = one(local.cc1.cloud_settings[*].vlan_id_private)
+# }
+# output "packetfabric_cloud_router_connection_azure" {
+#   value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
+# }
 
 # From both sides: Configure BGP.
 resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
@@ -88,9 +88,9 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_2" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# }
 
 # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
 resource "azurerm_public_ip" "public_ip_vng_1" {

@@ -37,6 +37,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_2" {
-  value = packetfabric_cloud_router_bgp_session.crbs_2
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_2" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# }

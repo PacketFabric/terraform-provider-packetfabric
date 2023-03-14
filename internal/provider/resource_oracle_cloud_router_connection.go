@@ -38,13 +38,13 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. ",
+				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. ",
+				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"vc_ocid": {
 				Type:         schema.TypeString,
