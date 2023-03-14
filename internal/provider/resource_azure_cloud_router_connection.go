@@ -39,14 +39,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection. ",
+				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use DNAT on this connection. ",
+				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
@@ -90,6 +90,20 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -119,6 +133,13 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			if labels, ok := d.GetOk("labels"); ok {
+				diagnostics, created := createLabels(c, d.Id(), labels)
+				if !created {
+					return diagnostics
+				}
+			}
 		}
 		// Adding delay after Azure Cloud Router Connection created
 		time.Sleep(30 * time.Second)
@@ -146,11 +167,10 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
@@ -159,6 +179,12 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 		}
 		// unsetFields: published_quote_line_uuid
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -192,6 +218,9 @@ func extractAzureExpressRouteConn(d *schema.ResourceData) packetfabric.AzureExpr
 	}
 	if publishedQuoteLine, ok := d.GetOk("published_quote_line_uuid"); ok {
 		expressRoute.PublishedQuoteLineUUID = publishedQuoteLine.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		expressRoute.PONumber = poNumber.(string)
 	}
 	return expressRoute
 }

@@ -83,6 +83,8 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 
 	Defaults: false
 - `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
+- `labels` (List of String) Label value linked to an object.
+- `po_number` (String) Purchase order number or identifier of a service.
 - `rate_limit_in` (Number) The upper bound, in Mbps, by which to limit incoming data.
 - `rate_limit_out` (Number) The upper bound, in Mbps, by which to limit outgoing data.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))

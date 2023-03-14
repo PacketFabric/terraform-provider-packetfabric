@@ -96,6 +96,20 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -138,6 +152,13 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 	d.SetId(expectedResp.CloudCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
@@ -165,6 +186,7 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	if resp2 != nil {
 		_ = d.Set("autoneg", resp2.Autoneg)
 		_ = d.Set("zone", resp2.Zone)
+		_ = d.Set("po_number", resp2.PONumber)
 		if resp2.IsLag {
 			_ = d.Set("should_create_lag", true)
 		} else {
@@ -172,12 +194,17 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		}
 	}
 	// unsetFields: loa, published_quote_line_uuid
+
+	labels, err3 := getLabels(c, d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
 func resourceGoogleDedicatedConnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	return resourceServicesDedicatedUpdate(ctx, d, m, c.UpdateServiceDedicatedConn)
+	return resourceServicesDedicatedUpdate(ctx, d, m)
 }
 
 func resourceGoogleDedicatedConnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -215,6 +242,9 @@ func extractGoogleDedicatedConn(d *schema.ResourceData) packetfabric.GoogleReqDe
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		dedicatedConn.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		dedicatedConn.PONumber = poNumber.(string)
 	}
 	return dedicatedConn
 }

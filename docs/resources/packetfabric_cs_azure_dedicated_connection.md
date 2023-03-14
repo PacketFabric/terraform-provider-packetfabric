@@ -56,7 +56,9 @@ output "packetfabric_cs_azure_dedicated_connection" {
 
 ### Optional
 
+- `labels` (List of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF for the LOA that you generated from the Azure portal
+- `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired zone of the new connection.

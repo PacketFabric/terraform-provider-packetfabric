@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -56,6 +57,20 @@ func resourceLinkAggregationGroups() *schema.Resource {
 					Description: "The member circuit ID.",
 				},
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -75,6 +90,18 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.PortCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
+
+	diagnostics, updated := updatePort(c, d)
+	if !updated {
+		return diagnostics
+	}
 	return diags
 }
 
@@ -86,7 +113,44 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	if d.HasChange("po_number") {
+		diagnostics, updated := updatePort(c, d)
+		if !updated {
+			return diagnostics
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
+	}
 	return diags
+}
+
+func updatePort(c *packetfabric.PFClient, d *schema.ResourceData) (diag.Diagnostics, bool) {
+	lag, err := c.GetPortByCID(d.Id())
+	if err != nil {
+		return diag.FromErr(err), false
+	}
+
+	poNumber, ok := d.GetOk("po_number")
+	if !ok {
+		return diag.FromErr(errors.New("please enter a purchase order number")), true
+	}
+
+	portUpdateData := packetfabric.PortUpdate{
+		Description: lag.Description,
+		PONumber:    poNumber.(string),
+	}
+	_, err2 := c.UpdatePort(d.Id(), portUpdateData)
+	if err2 != nil {
+		return diag.FromErr(err), false
+	}
+	return diag.Diagnostics{}, true
 }
 
 func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -100,6 +164,7 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("description", lag.Description)
 	_ = d.Set("pop", lag.Pop)
 	_ = d.Set("interval", lag.LagInterval)
+	_ = d.Set("po_number", lag.PONumber)
 
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {
@@ -111,6 +176,12 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 		members[index] = interf.PortCircuitID
 	}
 	_ = d.Set("members", members)
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

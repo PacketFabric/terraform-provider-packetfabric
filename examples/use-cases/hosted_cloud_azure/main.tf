@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.14.0"
+      version = ">= 3.47.0"
     }
   }
 }
@@ -89,9 +89,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 
 # From the PacketFabric side: Create a PacketFabric Hosted Cloud Connection.
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
@@ -103,11 +103,10 @@ resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   vlan_private      = var.pf_cs_vlan_private
   #vlan_microsoft = var.pf_cs_vlan_microsoft
 }
-
-output "packetfabric_cs_azure_hosted_connection" {
-  value     = packetfabric_cs_azure_hosted_connection.pf_cs_conn1
-  sensitive = true
-}
+# output "packetfabric_cs_azure_hosted_connection" {
+#   value     = packetfabric_cs_azure_hosted_connection.pf_cs_conn1
+#   sensitive = true
+# }
 
 # From the Microsoft side: Configure peering in the Azure portal.
 resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
@@ -132,10 +131,9 @@ data "azurerm_express_route_circuit" "azure_express_route_1" {
     azurerm_express_route_circuit_peering.private_circuit_1
   ]
 }
-
-output "express_route_circuit" {
-  value = data.azurerm_express_route_circuit.azure_express_route_1
-}
+# output "express_route_circuit" {
+#   value = data.azurerm_express_route_circuit.azure_express_route_1
+# }
 
 ##########################################################################################
 #### Here you would need to setup BGP in your Router

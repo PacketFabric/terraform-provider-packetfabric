@@ -71,6 +71,8 @@ output "packetfabric_link_aggregation_group" {
 
 ### Optional
 
+- `labels` (List of String) Label value linked to an object.
+- `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

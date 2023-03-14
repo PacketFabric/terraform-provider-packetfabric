@@ -155,7 +155,6 @@ data "azurerm_network_interface" "nic_1" {
     azurerm_virtual_machine.vm_1
   ]
 }
-
 output "private_ip_vm_1" {
   description = "Private ip address for VM for Region 1"
   value       = data.azurerm_network_interface.nic_1.private_ip_address
@@ -169,7 +168,6 @@ data "azurerm_public_ip" "public_ip_vm_1" {
     azurerm_virtual_machine.vm_1
   ]
 }
-
 output "public_ip_vm_1" {
   description = "Public ip address for VM for Region 1 (ssh user: ubuntu)"
   value       = data.azurerm_public_ip.public_ip_vm_1.ip_address

@@ -22,6 +22,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = var.pf_cr_name
   capacity = var.pf_cr_capacity
   regions  = var.pf_cr_regions
+  labels   = ["terraform", "dev"]
 }
 
 output "packetfabric_cloud_router" {
@@ -47,6 +48,8 @@ output "packetfabric_cloud_router" {
 - `asn` (Number) The ASN of the cloud router.
 
 	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534. Defaults: 4556
+- `labels` (List of String) Label value linked to an object.
+- `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
