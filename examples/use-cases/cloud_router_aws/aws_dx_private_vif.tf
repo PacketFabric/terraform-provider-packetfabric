@@ -15,15 +15,15 @@ locals {
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
   cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
 }
-output "cc1_vlan_id_pf" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-output "cc2_vlan_id_pf" {
-  value = one(local.cc2.cloud_settings[*].vlan_id_pf)
-}
-output "packetfabric_cloud_router_connection_aws" {
-  value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-}
+# output "cc1_vlan_id_pf" {
+#   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
+# }
+# output "cc2_vlan_id_pf" {
+#   value = one(local.cc2.cloud_settings[*].vlan_id_pf)
+# }
+# output "packetfabric_cloud_router_connection_aws" {
+#   value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
+# }
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider      = aws
   connection_id = data.aws_dx_connection.current_1.id
@@ -43,7 +43,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   }
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }
@@ -64,7 +65,8 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   }
   lifecycle {
     ignore_changes = [
-      connection_id
+      connection_id,
+      vlan
     ]
   }
 }

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -116,6 +117,20 @@ func resourcePointToPoint() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -151,6 +166,13 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	if resp != nil {
 		_ = d.Set("ptp_circuit_id", resp.PtpCircuitID)
 		d.SetId(resp.PtpUUID)
+
+		if labels, ok := d.GetOk("labels"); ok {
+			diagnostics, created := createLabels(c, d.Id(), labels)
+			if !created {
+				return diagnostics
+			}
+		}
 	}
 	return diags
 }
@@ -171,6 +193,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if len(resp.Interfaces) == 2 {
 			interfaceA := make(map[string]interface{})
@@ -188,6 +211,12 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		}
 	}
 	// unsetFields: loa, autoneg, published_quote_line_uuid
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -196,13 +225,25 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	if d.HasChange("description") {
-		if desc, ok := d.GetOk("description"); ok {
-			if _, err := c.UpdatePointToPoint(d.Id(), desc.(string)); err != nil {
-				return diag.FromErr(err)
-			}
+	if d.HasChanges([]string{"po_number", "description"}...) {
+		updatePointToPointData := packetfabric.UpdatePointToPointData{}
+		desc, ok := d.GetOk("description")
+		if !ok {
+			return diag.FromErr(errors.New("please enter a description"))
+		}
+		updatePointToPointData.Description = desc.(string)
+
+		poNumber, ok := d.GetOk("po_number")
+		if !ok {
+			return diag.FromErr(errors.New("please enter a purchase order number"))
+		}
+		updatePointToPointData.PONumber = poNumber.(string)
+
+		if _, err := c.UpdatePointToPoint(d.Id(), updatePointToPointData); err != nil {
+			return diag.FromErr(err)
 		}
 	}
+
 	if d.HasChange("subscription_term") {
 		if subTerm, ok := d.GetOk("subscription_term"); ok {
 			billing := packetfabric.BillingUpgrade{
@@ -215,6 +256,14 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set("subscription_term", subTerm.(int))
 		} else {
 			return diag.Errorf("please provide a subscription term")
+		}
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
 		}
 	}
 	return diags
@@ -278,6 +327,9 @@ func extractPtpService(d *schema.ResourceData) packetfabric.PointToPoint {
 	}
 	if quote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		ptpService.PublishedQuoteLineUUID = quote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		ptpService.PONumber = poNumber.(string)
 	}
 	return ptpService
 }

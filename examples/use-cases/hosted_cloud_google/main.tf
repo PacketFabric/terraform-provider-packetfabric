@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
     google = {
       source  = "hashicorp/google"
-      version = ">= 4.38.0"
+      version = ">= 4.56.0"
     }
   }
 }
@@ -38,10 +38,9 @@ resource "google_compute_subnetwork" "subnet_1" {
   region        = var.gcp_region1
   network       = google_compute_network.vpc_1.id
 }
-
-output "google_compute_network" {
-  value = google_compute_network.vpc_1
-}
+# output "google_compute_network" {
+#   value = google_compute_network.vpc_1
+# }
 
 # From the Google side: Create a Google Cloud Router with ASN 16550.
 resource "google_compute_router" "router_1" {
@@ -80,9 +79,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 
 # From the PacketFabric side: Create a GCP Hosted Connection 
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
@@ -95,10 +94,9 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   pop                         = var.pf_cs_pop1
   vlan                        = var.pf_cs_vlan1
 }
-
-output "packetfabric_cs_google_hosted_connection" {
-  value = packetfabric_cs_google_hosted_connection.pf_cs_conn1
-}
+# output "packetfabric_cs_google_hosted_connection" {
+#   value = packetfabric_cs_google_hosted_connection.pf_cs_conn1
+# }
 
 # data "packetfabric_cs_google_hosted_connection" "current" {
 #   provider         = packetfabric
@@ -122,7 +120,6 @@ data "google_compute_router" "router_1" {
   name     = "${var.tag_name}-${random_pet.name.id}"
   network  = google_compute_network.vpc_1.id
 }
-
-output "google_compute_router" {
-  value = data.google_compute_router.router_1
-}
+# output "google_compute_router" {
+#   value = data.google_compute_router.router_1
+# }

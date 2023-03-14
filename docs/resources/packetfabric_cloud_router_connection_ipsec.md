@@ -93,9 +93,11 @@ output "packetfabric_cloud_router_connection_ipsec" {
 
 ### Optional
 
+- `labels` (List of String) Label value linked to an object.
 - `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. 
 
 	Enum: "hmac-md5-96" "hmac-sha-256-128" "hmac-sha1-96"
+- `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

@@ -11,6 +11,7 @@ const _cloudCircuitID = "PF-AP-LAX1-1002"
 const _cloudConnCid = "PF-CC-LAX-NYC-0192345"
 const _cloudConnDesc = "New Super Cool Cloud Router Connection"
 const _cloudConnUpdateDesc = "Updated Cloud Router Connection"
+const _cloudConnUpdatePONumber = "Updated Cloud Router Connection PO Number"
 const _cloudConnUUID = "095be615-a8ad-4c33-8e9c-c7612fbf6c9f"
 const _cloudConnCustomerUUID = "e7eefd45-cb13-4c62-b229-e5bbc1362123"
 const _cloudConnUserUUID = "7c4d2d7d-8620-4fb3-967a-4a621082cf1f"
@@ -93,13 +94,14 @@ func Test_ReadCloudRouterConnection(t *testing.T) {
 
 func Test_UpdateCloudRouterConnection(t *testing.T) {
 	var expectedResp CloudRouterConnectionReadResponse
-	payload := DescriptionUpdate{
+	payload := CloudRouterUpdateData{
 		Description: _cloudConnUpdateDesc,
+		PONumber:    _cloudConnUpdatePONumber,
 	}
-	if err := json.Unmarshal(_buildMockCloudRouterConnResp(_cloudConnUpdateDesc), &expectedResp); err != nil {
+	if err := json.Unmarshal(_buildMockCloudRouterConnResp(payload), &expectedResp); err != nil {
 		t.Fatalf("Failed to unmarshal CloudRouterConnectionReadResponse: %s", err)
 	}
-	cTest.runFakeHttpServer(_callUpdateAwsConn, payload, expectedResp, _buildMockCloudRouterConnResp(_cloudConnUpdateDesc), "aws-cloud-router-conn-update", t)
+	cTest.runFakeHttpServer(_callUpdateAwsConn, payload, expectedResp, _buildMockCloudRouterConnResp(payload), "aws-cloud-router-conn-update", t)
 }
 
 func Test_GetCloudConnectionStatus(t *testing.T) {
@@ -143,7 +145,7 @@ func _callListAwsRouterConnections(payload interface{}) (interface{}, error) {
 }
 
 func _callUpdateAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.UpdateCloudRouterConnection(_circuitIdMock, _cloudConnCid, payload.(DescriptionUpdate))
+	return cTest.UpdateCloudRouterConnection(_circuitIdMock, _cloudConnCid, payload.(CloudRouterUpdateData))
 }
 
 func _callDeleteAwsConn(payload interface{}) (interface{}, error) {
@@ -201,7 +203,7 @@ func _buildMockCloudRouterCreateResp() []byte {
 	}`, _customerUUID, _userUUID, _cloudCircuitID, _accountUUID, _awsAccountID, _accountUUID))
 }
 
-func _buildMockCloudRouterConnResp(description string) []byte {
+func _buildMockCloudRouterConnResp(cloudRouterConnUpdateData CloudRouterUpdateData) []byte {
 	return []byte(fmt.Sprintf(`{
 		"port_type": "hosted",
 		"connection_type": "cloud_hosted",
@@ -248,8 +250,9 @@ func _buildMockCloudRouterConnResp(description string) []byte {
 		"dnat_capable": false,
 		"zone": "A",
 		"vlan": 4,
-		"desired_nat": "overload"
-	  }`, description, _cloudConnUUID))
+		"desired_nat": "overload",
+		"po_number": "%s"
+	  }`, cloudRouterConnUpdateData.Description, _cloudConnUUID, cloudRouterConnUpdateData.PONumber))
 }
 
 func buildMockCloudRouterReadResp(description string) []byte {

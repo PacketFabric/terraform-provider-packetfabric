@@ -38,15 +38,13 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection. ",
+				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Default:     false,
-				Description: "Set this to true if you intend to use DNAT on this connection. ",
+				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"vc_ocid": {
 				Type:         schema.TypeString,
@@ -98,6 +96,20 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.IsUUID,
 				Description:  "UUID of the published quote line with which this connection should be associated.",
 			},
+			"po_number": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+				Description:  "Purchase order number or identifier of a service.",
+			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -127,6 +139,13 @@ func resourceOracleCloudRouteConnCreate(ctx context.Context, d *schema.ResourceD
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			if labels, ok := d.GetOk("labels"); ok {
+				diagnostics, created := createLabels(c, d.Id(), labels)
+				if !created {
+					return diagnostics
+				}
+			}
 		}
 	} else {
 		diags = append(diags, diag.Diagnostic{
@@ -152,15 +171,20 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("maybe_nat", resp.NatCapable)
-		_ = d.Set("maybe_dnat", resp.DNatCapable)
 		_ = d.Set("vc_ocid", resp.CloudSettings.VcOcid)
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -200,6 +224,9 @@ func extractOracleCloudRouterConn(d *schema.ResourceData) packetfabric.OracleClo
 	}
 	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
 		oracleRouter.PublishedQuoteLineUUID = publishedQuote.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		oracleRouter.PONumber = poNumber.(string)
 	}
 	return oracleRouter
 }

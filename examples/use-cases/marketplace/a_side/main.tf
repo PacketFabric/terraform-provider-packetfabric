@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.1.0"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -29,9 +29,9 @@ resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_con
     subscription_term = var.pf_vc_subterm
   }
 }
-output "packetfabric_backbone_virtual_circuit_marketplace" {
-  value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
-}
+# output "packetfabric_backbone_virtual_circuit_marketplace" {
+#   value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
+# }
 
 # Once the request has been accepted:
 # 1. Comment above packetfabric_backbone_virtual_circuit_marketplace resource
@@ -60,6 +60,6 @@ output "packetfabric_backbone_virtual_circuit_marketplace" {
 #     subscription_term = var.pf_vc_subterm
 #   }
 # }
-# output "packetfabric_backbone_virtual_circuit" {
-#   value = packetfabric_backbone_virtual_circuit.vc_marketplace
-# }
+# # output "packetfabric_backbone_virtual_circuit" {
+# #   value = packetfabric_backbone_virtual_circuit.vc_marketplace
+# # }

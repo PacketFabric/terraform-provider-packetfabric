@@ -128,6 +128,14 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Computed:    true,
 				Description: "The Quick Connect time updated.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -152,10 +160,23 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	_ = d.Set("time_created", resp.TimeCreated)
 	_ = d.Set("time_updated", resp.TimeUpdated)
 	d.SetId(resp.ImportCircuitID)
+
+	if labels, ok := d.GetOk("labels"); ok {
+		diagnostics, created := createLabels(c, d.Id(), labels)
+		if !created {
+			return diagnostics
+		}
+	}
 	return diags
 }
 
 func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	labels, err := getLabels(c, d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_ = d.Set("labels", labels)
 	return diag.Diagnostics{}
 }
 
@@ -168,6 +189,14 @@ func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.Resour
 	quickConn := extractCloudRouterQuickConnectUpdate(d)
 	if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, d.Id(), quickConn); err != nil {
 		return diag.FromErr(err)
+	}
+
+	if d.HasChange("labels") {
+		labels := d.Get("labels")
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
+		if !updated {
+			return diagnostics
+		}
 	}
 	return diags
 }

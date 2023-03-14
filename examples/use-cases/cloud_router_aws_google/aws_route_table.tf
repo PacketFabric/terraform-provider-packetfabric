@@ -18,6 +18,12 @@ resource "aws_route_table" "route_table_1" {
   depends_on = [
     aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
   ]
+  # # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/1426
+  # lifecycle {
+  #   ignore_changes = [
+  #     route
+  #   ]
+  # }
 }
 
 # Assign the route table to the subnet

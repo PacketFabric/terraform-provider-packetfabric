@@ -27,9 +27,9 @@ data "aws_dx_connection" "current" {
   name       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [time_sleep.wait_aws_connection]
 }
-output "aws_dx_connection_1" {
-  value = data.aws_dx_connection.current
-}
+# output "aws_dx_connection_1" {
+#   value = data.aws_dx_connection.current
+# }
 
 # Sometimes, it takes more than 10min for the connection to become available
 # Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
@@ -67,6 +67,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-output "packetfabric_cloud_router_bgp_session_crbs_1" {
-  value = packetfabric_cloud_router_bgp_session.crbs_1
-}
+# output "packetfabric_cloud_router_bgp_session_crbs_1" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_1
+# }

@@ -24,6 +24,7 @@ resource "packetfabric_port" "port_1" {
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
+  labels            = ["terraform", "dev"]
 }
 output "packetfabric_port_1" {
   value = packetfabric_port.port_1
@@ -62,9 +63,11 @@ output "packetfabric_port_1_details" {
 
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
 - `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Defaults: true
+- `labels` (List of String) Label value linked to an object.
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com. Defaults: false
+- `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) Availability zone of the port.
 
