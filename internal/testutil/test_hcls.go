@@ -45,6 +45,9 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -454,6 +457,15 @@ type DHclCsAwsHostedConnectionResult struct {
 // packetfabric_link_aggregation_group
 type DHclDatasourceLinkAggregationGroupsResult struct {
 	HclResultBase
+}
+
+// packetfabric_outbound_cross_connect
+type RHclOutboundCrossConnectResult struct {
+	HclResultBase
+	Desc         string
+	DocumentUuid string
+	Port         RHclPortResult
+	Site         string
 }
 
 // Patterns:
@@ -1130,6 +1142,7 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 	}
 }
 
+<<<<<<< HEAD
 // packetfabric_cs_azure_hosted_connection
 func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
@@ -1229,6 +1242,47 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		Speed:       HostedCloudSpeed,
 		Vlan:        HostedCloudVlan,
 		IbmBgpAsn:   IbmBgpAsn,
+=======
+// packetfabric_outbound_cross_connect
+func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+
+	var pop, documentUuid, hcl string
+
+	resourceName, _ := _generateResourceName(pfOutboundCrossConnect)
+	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
+
+	return RHclOutboundCrossConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfOutboundCrossConnect,
+			ResourceName: resourceName,
+		},
+		Desc:         uniqueDesc,
+		DocumentUuid: documentUuid,
+		Site:         pop,
+	}
+}
+
+func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
+	popsAvailable, _ := details.FetchCloudPops()
+	popsToSkip := make([]string, 0)
+	for _, popAvailable := range popsAvailable {
+		if len(popsToSkip) == len(popsAvailable) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, pop) {
+			continue
+		}
+		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
+			popsToSkip = append(popsToSkip, popAvailable)
+			continue
+		} else {
+			pop = popAvailable
+			media = mediaAvailable
+			zone = zoneAvailable
+			return
+		}
+>>>>>>> 295e2d4 (Acc test structure: Resource packetfabric_outbound_cross_connect)
 	}
 }
 
