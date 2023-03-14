@@ -13,7 +13,7 @@ const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/s
 const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
 const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
 const ipsecConnServiceByCidURI = "/v2/services/ipsec/%s"
-const oracleCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/oracle"
+const oracleCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
 	AwsAccountID           string `json:"aws_account_id,omitempty"`
