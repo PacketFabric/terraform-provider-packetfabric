@@ -39,14 +39,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use NAT on this connection. ",
+				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
-				Description: "Set this to true if you intend to use DNAT on this connection. ",
+				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
@@ -96,6 +96,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"labels": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Label value linked to an object.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -125,6 +133,13 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			if labels, ok := d.GetOk("labels"); ok {
+				diagnostics, created := createLabels(c, d.Id(), labels)
+				if !created {
+					return diagnostics
+				}
+			}
 		}
 		// Adding delay after Azure Cloud Router Connection created
 		time.Sleep(30 * time.Second)
@@ -164,6 +179,12 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 		}
 		// unsetFields: published_quote_line_uuid
 	}
+
+	labels, err2 := getLabels(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	_ = d.Set("labels", labels)
 	return diags
 }
 

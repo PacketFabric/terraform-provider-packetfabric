@@ -4,14 +4,15 @@ Use Cases | Description
 --- | --- 
 [backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit
 [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between Virtual Circuits
+[flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
 [cloud_router_module](./cloud_router_module) | Create a Cloud Router Terraform Module with AWS and Google
 [cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router (private VIF)
 [cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router
 [cloud_router_google_ipsec](./cloud_router_google_ipsec) | Connect Google Cloud and a branch location, on-premises users, or a remote data center using a Cloud Router
 [cloud_router_google_azure](./cloud_router_google_azure) | Connect Google and Azure Clouds using a Cloud Router
 [cloud_router_ibm_oracle](./cloud_router_ibm_oracle) | Connect Oracle and IBM Clouds using a Cloud Router
+[cloud_router_aws_oracle_port](./cloud_router_aws_oracle_port) | Connect AWS, Oracle and a PacketFabric port using a Cloud Router
 [dedicated_cloud_aws](./dedicated_cloud_aws) | Create Dedicated Cloud Connection on AWS
-[flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
 [hosted_cloud_aws](./hosted_cloud_aws) | Create a Port and an AWS Hosted Cloud Connection
 [hosted_cloud_google](./hosted_cloud_google) | Create a Port and a Google Hosted Cloud Connection
 [hosted_cloud_azure](./hosted_cloud_azure) | Create a Port and an Azure Hosted Cloud Connection

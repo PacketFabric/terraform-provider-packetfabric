@@ -13,7 +13,7 @@ const awsConnectionStatusURI = "/v2.1/services/cloud-routers/%s/connections/%s/s
 const ibmCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/ibm"
 const ipsecCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/ipsec"
 const ipsecConnServiceByCidURI = "/v2/services/ipsec/%s"
-const oracleCloudRouterConnectionByCidURI = "/v2/services/cloud-routers/%s/connections/oracle"
+const oracleCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
 	AwsAccountID           string `json:"aws_account_id,omitempty"`
@@ -81,7 +81,7 @@ type CloudRouterConnectionReadResponse struct {
 	Zone                      string        `json:"zone,omitempty"`
 	Vlan                      int           `json:"vlan,omitempty"`
 	DesiredNat                string        `json:"desired_nat,omitempty"`
-	PONumber                  string        `json:"po_number"`
+	PONumber                  string        `json:"po_number,omitempty"`
 }
 
 type BgpStateObj struct {
@@ -164,7 +164,7 @@ type AwsComponents struct {
 
 type CloudRouterUpdateData struct {
 	Description string `json:"description"`
-	PONumber    string `json:"po_number"`
+	PONumber    string `json:"po_number,omitempty"`
 }
 
 type ConnectionDeleteResp struct {

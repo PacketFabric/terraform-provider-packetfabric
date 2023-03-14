@@ -113,6 +113,7 @@ func Provider() *schema.Provider {
 			"packetfabric_flex_bandwidth":                          resourceFlexBandwidth(),
 			"packetfabric_cloud_provider_credential_aws":           resourceCloudProviderCredentialAws(),
 			"packetfabric_cloud_provider_credential_google":        resourceCloudProviderCredentialGoogle(),
+			"packetfabric_user":                                    resourceUser(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
