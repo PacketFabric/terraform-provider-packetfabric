@@ -11,6 +11,7 @@ locals {
   cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
+  # find the cloud router connection by its name
   cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
 }
 # output "cc1_vlan_id_pf" {
