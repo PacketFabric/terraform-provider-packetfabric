@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -115,6 +116,28 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_backbone_virtual_circuit
+type RHclBackboneVirtulalCircuitResult struct {
+	HclResultBase
+	Desc               string
+	Epl                bool
+	InterfaceBackboneA InterfaceBackbone
+	InterfaceBackboneZ InterfaceBackbone
+	BandwidthBackbone
+}
+
+type InterfaceBackbone struct {
+	PortCircuit RHclPortResult
+	Untagged    bool
+	Vlan        int
+}
+
+type BandwidthBackbone struct {
+	LonghaulType     string
+	Speed            string
+	SubscriptionTerm int
 }
 
 // Patterns:
@@ -325,6 +348,39 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func RHclBackboneVirtulalCircuit() RHclBackboneVirtulalCircuitResult {
+
+	var hcl, speed, longhaulType string
+	var vlan1, vlan2, subscriptionTerm int
+	var epl, untagged1, untagged2 bool
+
+	resourceName, _ := _generateResourceName(pfBackboneVirtualCircuit)
+	uniqueDesc := _generateUniqueNameOrDesc(pfBackboneVirtualCircuit)
+
+	return RHclBackboneVirtulalCircuitResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfBackboneVirtualCircuit,
+			ResourceName: resourceName,
+		},
+		Desc: uniqueDesc,
+		Epl:  epl,
+		InterfaceBackboneA: InterfaceBackbone{
+			Untagged: untagged1,
+			Vlan:     vlan1,
+		},
+		InterfaceBackboneZ: InterfaceBackbone{
+			Untagged: untagged2,
+			Vlan:     vlan2,
+		},
+		BandwidthBackbone: BandwidthBackbone{
+			LonghaulType:     longhaulType,
+			Speed:            speed,
+			SubscriptionTerm: subscriptionTerm,
+		},
 	}
 }
 
