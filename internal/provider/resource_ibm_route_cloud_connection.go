@@ -31,13 +31,13 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use NAT on this connection. Defaults: false",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use DNAT on this connection. Defaults: false",
 			},
 			"circuit_id": {
 				Type:         schema.TypeString,
