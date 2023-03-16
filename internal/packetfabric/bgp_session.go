@@ -138,6 +138,7 @@ type BgpSessionAssociatedResp struct {
 	BfdInterval     int         `json:"bfd_interval"`
 	BfdMultiplier   int         `json:"bfd_multiplier"`
 	Disabled        bool        `json:"disabled"`
+	BgpState        string      `json:"bgp_state"`
 	TimeCreated     string      `json:"time_created"`
 	TimeUpdated     string      `json:"time_updated"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`

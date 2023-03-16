@@ -84,7 +84,6 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "The Multi-Exit Discriminator of this instance. Deprecated.",
 						},
-
 						"l3_address": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -178,6 +177,12 @@ func dataSourceBgpSession() *schema.Resource {
 									},
 								},
 							},
+						},
+						"bgp_state": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
@@ -301,6 +306,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["bfd_interval"] = session.BfdInterval
 			flatten["bfd_multiplier"] = session.BfdMultiplier
 			flatten["disabled"] = session.Disabled
+			flatten["bgp_state"] = session.BgpState
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
 			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
