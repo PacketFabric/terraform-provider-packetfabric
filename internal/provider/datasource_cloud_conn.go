@@ -263,11 +263,6 @@ func dataSourceCloudConn() *schema.Resource {
 							Optional:    true,
 							Description: "Region short name\n\t\tExample: us-west-1",
 						},
-						"bgp_state": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc. Deprecated",
-						},
 						"bgp_state_list": {
 							Type:        schema.TypeSet,
 							Computed:    true,

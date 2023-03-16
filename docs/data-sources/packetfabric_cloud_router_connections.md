@@ -40,7 +40,6 @@ output "packetfabric_cloud_router_connections" {
 Read-Only:
 
 - `account_uuid` (String)
-- `bgp_state` (String)
 - `bgp_state_list` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--bgp_state_list))
 - `cloud_circuit_id` (String)
 - `cloud_provider` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_provider))

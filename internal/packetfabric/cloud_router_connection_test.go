@@ -44,7 +44,6 @@ func _buildConnUpdateExpectedResp() {
 		TimeUpdated:               "2019-08-24T14:15:22Z",
 		Pop:                       "LAX1",
 		Site:                      "us-west-1",
-		BgpState:                  "string",
 		BgpStateList: []BgpStateObj{
 			{BgpSettingsUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b", BgpState: "string"},
 		},
@@ -236,7 +235,6 @@ func _buildMockCloudRouterConnResp(cloudRouterConnUpdateData CloudRouterUpdateDa
 		},
 		"pop": "LAX1",
 		"site": "us-west-1",
-		"bgp_state": "string",
 		"bgp_state_list": [
 		  {
 			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
@@ -288,7 +286,6 @@ func buildMockCloudRouterReadResp(description string) []byte {
 		},
 		"pop": "LAX1",
 		"site": "us-west-1",
-		"bgp_state": "string",
 		"bgp_state_list": [
           {
 		        "bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
@@ -377,7 +374,6 @@ func _buildMockCloudRouterConnResps() []byte {
 		},
 		"pop": "LAX1",
 		"site": "us-west-1",
-		"bgp_state": "string",
 		"bgp_state_list": [
           {
 			"bgp_settings_uuid": "3482182c-b483-45e0-b8f7-5562bba57e6b",
