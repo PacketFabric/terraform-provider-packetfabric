@@ -32,10 +32,6 @@ variable "pf_port_subterm" {
   type    = number
   default = 1 # default 1 month
 }
-variable "pf_port_autoneg" {
-  type    = bool
-  default = false
-}
 variable "pf_port_speed" {
   type    = string
   default = "10Gbps"

@@ -39,7 +39,7 @@ func resourceInterfaces() *schema.Resource {
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps. ",
+				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true",
 			},
 			"description": {
 				Type:         schema.TypeString,
