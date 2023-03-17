@@ -286,10 +286,27 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	if diags != nil || len(diags) > 0 {
 		return diags
 	}
-	_, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
+	bgp, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
 	if err != nil {
 		return diag.FromErr(errors.New("could not retrieve bgp session"))
 	}
+	_ = d.Set("md5", bgp.Md5)
+	_ = d.Set("l3_address", bgp.L3Address)
+	_ = d.Set("remote_address", bgp.RemoteAddress)
+	_ = d.Set("remote_asn", bgp.RemoteAsn)
+	_ = d.Set("primary_subnet", bgp.PrimarySubnet)
+	_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
+	_ = d.Set("med", bgp.Med)
+	_ = d.Set("as_prepend", bgp.AsPrepend)
+	_ = d.Set("local_preference", bgp.LocalPreference)
+	_ = d.Set("address_family", bgp.AddressFamily)
+	_ = d.Set("community", bgp.Community)
+	_ = d.Set("bfd_interval", bgp.BfdInterval)
+	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
+	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
+	_ = d.Set("disabled", bgp.Disabled)
+	_ = d.Set("nat", bgp.Nat)
+	_ = d.Set("prefixes", bgp.Prefixes)
 	return diags
 }
 
