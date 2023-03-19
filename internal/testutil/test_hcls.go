@@ -161,7 +161,6 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		portEnabled,
 		resourceReferece)
 
-	// log.Fatal(hcl)
 	return RHclPortResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
