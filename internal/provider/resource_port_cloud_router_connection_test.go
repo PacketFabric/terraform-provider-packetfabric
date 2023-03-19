@@ -25,7 +25,6 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 				Config:             cloudRouterConnectionPortResult.Hcl,
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "port_circuit_id", cloudRouterConnectionPortResult.PortCircuit),
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "description", cloudRouterConnectionPortResult.Desc),
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "speed", cloudRouterConnectionPortResult.Speed),
 				),

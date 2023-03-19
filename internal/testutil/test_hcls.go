@@ -48,6 +48,9 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+// packetfabric_cloud_router_connection_port
+const CloudRouterConnPortSpeed = "1Gbps"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -122,10 +125,10 @@ type RHclBgpSessionResult struct {
 // packetfabric_cloud_router_connection_port
 type RHclCloudRouterConnectionPortResult struct {
 	HclResultBase
-	Desc        string
-	CloudRouter RHclCloudRouterResult
-	PortCircuit string
-	Speed       string
+	Desc              string
+	CloudRouterResult RHclCloudRouterResult
+	PortResult        RHclPortResult
+	Speed             string
 }
 
 // Patterns:
@@ -342,10 +345,23 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cloud_router_connection_port
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
-	var port, speed, hcl string
+	portDetails := CreateBasePortDetails()
+	cloudRouterResult := RHclCloudRouter()
+	portTestResult := portDetails.RHclPort()
 
-	resourceName, _ := _generateResourceName(pfCloudRouterConnPort)
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnPort)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnPort)
+
+	crConnPortHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionPort,
+		hclName,
+		uniqueDesc,
+		cloudRouterResult.ResourceName,
+		portTestResult.ResourceReference,
+		CloudRouterConnPortSpeed,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
 
 	return RHclCloudRouterConnectionPortResult{
 		HclResultBase: HclResultBase{
@@ -353,9 +369,10 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		Desc:        uniqueDesc,
-		PortCircuit: port,
-		Speed:       speed,
+		CloudRouterResult: cloudRouterResult,
+		PortResult:        portTestResult,
+		Desc:              uniqueDesc,
+		Speed:             CloudRouterConnPortSpeed,
 	}
 }
 
