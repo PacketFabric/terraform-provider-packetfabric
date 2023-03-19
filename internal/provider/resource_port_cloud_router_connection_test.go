@@ -22,12 +22,16 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             cloudRouterConnectionPortResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: cloudRouterConnectionPortResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "description", cloudRouterConnectionPortResult.Desc),
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "speed", cloudRouterConnectionPortResult.Speed),
 				),
+			},
+			{
+				ResourceName:      cloudRouterConnectionPortResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
