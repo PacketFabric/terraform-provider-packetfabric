@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"log"
 	"strconv"
 	"testing"
 
@@ -14,7 +13,6 @@ func TestAccPort(t *testing.T) {
 
 	portDetails := testutil.CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort()
-	log.Println(portTestResult.ResourceReference)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{})
@@ -23,8 +21,7 @@ func TestAccPort(t *testing.T) {
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             portTestResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: portTestResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "description", portTestResult.Description),
 					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "speed", portTestResult.Speed),
