@@ -68,7 +68,13 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }`
+  }
+  
+  resource "time_sleep" "wait_60_seconds" {
+    depends_on = [%s]
+    destroy_duration = "60s"
+  }
+  `
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
