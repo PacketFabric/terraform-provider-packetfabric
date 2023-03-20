@@ -98,7 +98,8 @@ func resourceBgpSession() *schema.Resource {
 			"orlonger": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Whether to use exact match or longer for all prefixes.",
+				Default:     false,
+				Description: "Whether to use exact match or longer for all prefixes. ",
 			},
 			"bfd_interval": {
 				Type:        schema.TypeInt,
@@ -113,7 +114,8 @@ func resourceBgpSession() *schema.Resource {
 			"disabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Whether this BGP session is disabled. Default is false.",
+				Default:     false,
+				Description: "Whether this BGP session is disabled. Default is false. ",
 			},
 			"nat": {
 				Type:        schema.TypeSet,
@@ -290,21 +292,50 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(errors.New("could not retrieve bgp session"))
 	}
-	_ = d.Set("md5", bgp.Md5)
+
 	_ = d.Set("l3_address", bgp.L3Address)
 	_ = d.Set("remote_address", bgp.RemoteAddress)
 	_ = d.Set("remote_asn", bgp.RemoteAsn)
-	_ = d.Set("primary_subnet", bgp.PrimarySubnet)
-	_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
-	_ = d.Set("med", bgp.Med)
-	_ = d.Set("as_prepend", bgp.AsPrepend)
-	_ = d.Set("local_preference", bgp.LocalPreference)
-	_ = d.Set("address_family", bgp.AddressFamily)
-	_ = d.Set("community", bgp.Community)
-	_ = d.Set("bfd_interval", bgp.BfdInterval)
-	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
 	_ = d.Set("disabled", bgp.Disabled)
+	_ = d.Set("orlonger", bgp.Orlonger)
+	_ = d.Set("address_family", bgp.AddressFamily)
+
+	if d.HasChange("md5") {
+		_ = d.Set("md5", bgp.Md5)
+	}
+
+	if d.HasChange("primary_subnet") {
+		_ = d.Set("primary_subnet", bgp.PrimarySubnet)
+	}
+
+	if d.HasChange("secondary_subnet") {
+		_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
+	}
+
+	if d.HasChange("med") {
+		_ = d.Set("med", bgp.Med)
+	}
+
+	if d.HasChange("as_prepend") {
+		_ = d.Set("as_prepend", bgp.AsPrepend)
+	}
+
+	if d.HasChange("local_preference") {
+		_ = d.Set("local_preference", bgp.LocalPreference)
+	}
+
+	if d.HasChange("community") {
+		_ = d.Set("community", bgp.Community)
+	}
+
+	if d.HasChange("bfd_interval") {
+		_ = d.Set("bfd_interval", bgp.BfdInterval)
+	}
+
+	if d.HasChange("bfd_multiplier") {
+		_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
+	}
 
 	nat := bgp.Nat
 	if nat != nil {

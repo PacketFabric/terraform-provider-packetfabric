@@ -103,17 +103,17 @@ type BgpSessionBySettingsUUID struct {
 	RemoteAddress   string      `json:"remote_address"`
 	RemoteAsn       int         `json:"remote_asn"`
 	MultihopTTL     int         `json:"multihop_ttl"`
-	LocalPreference int         `json:"local_preference"`
-	Md5             string      `json:"md5"`
-	Med             int         `json:"med"`
+	LocalPreference int         `json:"local_preference,omitempty"`
+	Md5             string      `json:"md5,omitempty"`
+	Med             int         `json:"med,omitempty"`
 	L3Address       string      `json:"l3_address,omitempty"`
 	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
 	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
-	Community       interface{} `json:"community"`
-	AsPrepend       int         `json:"as_prepend"`
+	Community       interface{} `json:"community,omitempty"`
+	AsPrepend       int         `json:"as_prepend,omitempty"`
 	Orlonger        bool        `json:"orlonger"`
-	BfdInterval     int         `json:"bfd_interval"`
-	BfdMultiplier   int         `json:"bfd_multiplier"`
+	BfdInterval     int         `json:"bfd_interval,omitempty"`
+	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
 	Disabled        bool        `json:"disabled"`
 	BgpState        string      `json:"bgp_state"`
 	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
