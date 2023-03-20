@@ -20,8 +20,7 @@ func TestAccPBgpSessionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             bgpSessionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: bgpSessionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "address_family", bgpSessionResult.AddressFamily),
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "remote_asn", strconv.Itoa(bgpSessionResult.Asn)),
@@ -30,6 +29,11 @@ func TestAccPBgpSessionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.prefix", bgpSessionResult.Prefix2),
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.type", bgpSessionResult.Type2),
 				),
+			},
+			{
+				ResourceName:      bgpSessionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
