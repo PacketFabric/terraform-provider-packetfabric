@@ -48,6 +48,9 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+// packetfabric_cloud_router_connection_azure
+const CloudRouterConnectionAzureSpeed = "50Mbps"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -342,20 +345,31 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cloud_router_connection_azure
 func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 
-	var azureServiceKey, speed, hcl string
+	hclCloudRouter := RHclCloudRouter()
 
 	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnAzure)
-	resourceName, _ := _generateResourceName(pfCloudRouterConnAzure)
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnAzure)
 
+	azureHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzure,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_ACCOUNT_ID_KEY),
+		hclCloudRouter.ResourceName,
+		os.Getenv(PF_CRC_AZURE_SERVICE_KEY),
+		CloudRouterConnectionAzureSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouter.Hcl, azureHcl)
 	return RHclCloudRouterConnectionAzureResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCloudRouterConnAzure,
 			ResourceName: resourceName,
 		},
+		CloudRouter:     hclCloudRouter,
 		Desc:            uniqueDesc,
-		AzureServiceKey: azureServiceKey,
-		Speed:           speed,
+		AzureServiceKey: os.Getenv(PF_CRC_AZURE_SERVICE_KEY),
+		Speed:           CloudRouterConnectionAzureSpeed,
 	}
 }
 func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {

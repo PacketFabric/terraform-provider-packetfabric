@@ -17,6 +17,7 @@ func TestAccAzureCloudRouterConnectionRequiredFields(t *testing.T) {
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
 				testutil.PF_ACCOUNT_ID_KEY,
+				testutil.PF_CRC_AZURE_SERVICE_KEY,
 			})
 		},
 		Providers: testAccProviders,
@@ -28,6 +29,11 @@ func TestAccAzureCloudRouterConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "description", cloudRouterConnectionAzureResult.Desc),
 					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "speed", cloudRouterConnectionAzureResult.Speed),
 				),
+			},
+			{
+				ResourceName:      cloudRouterConnectionAzureResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
