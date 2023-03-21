@@ -130,7 +130,7 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersHosted()

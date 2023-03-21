@@ -125,7 +125,7 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -216,7 +216,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	_, err := c.DeletePort(d.Id())
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}

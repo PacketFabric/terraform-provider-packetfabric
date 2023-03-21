@@ -54,7 +54,7 @@ func resourceAddSpeedBurstCreate(ctx context.Context, d *schema.ResourceData, m 
 			}
 			createOk := make(chan bool)
 			defer close(createOk)
-			ticker := time.NewTicker(10 * time.Second)
+			ticker := time.NewTicker(30 * time.Second)
 			go func() {
 				for range ticker.C {
 					if ok := c.IsBackboneComplete(vcCID.(string)); ok {
@@ -91,7 +91,7 @@ func resourceAddSpeedBurstDelete(ctx context.Context, d *schema.ResourceData, m 
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	go func() {
 		for range ticker.C {
 			if ok := c.IsBackboneComplete(d.Id()); ok {

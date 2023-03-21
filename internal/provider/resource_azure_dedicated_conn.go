@@ -136,7 +136,7 @@ func resourceAzureReqExpressDedicatedConnCreate(ctx context.Context, d *schema.R
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersDedicated()
