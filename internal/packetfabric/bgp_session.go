@@ -100,9 +100,9 @@ type BgpSessionCreateResp struct {
 type BgpSessionBySettingsUUID struct {
 	BgpSettingsUUID string      `json:"bgp_settings_uuid"`
 	AddressFamily   string      `json:"address_family"`
-	RemoteAddress   string      `json:"remote_address"`
+	RemoteAddress   string      `json:"remote_address,omitempty"`
 	RemoteAsn       int         `json:"remote_asn"`
-	MultihopTTL     int         `json:"multihop_ttl"`
+	MultihopTTL     int         `json:"multihop_ttl,omitempty"`
 	LocalPreference int         `json:"local_preference,omitempty"`
 	Md5             string      `json:"md5,omitempty"`
 	Med             int         `json:"med,omitempty"`

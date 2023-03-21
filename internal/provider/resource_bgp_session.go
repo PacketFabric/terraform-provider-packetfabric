@@ -293,13 +293,22 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(errors.New("could not retrieve bgp session"))
 	}
 
-	_ = d.Set("l3_address", bgp.L3Address)
-	_ = d.Set("remote_address", bgp.RemoteAddress)
 	_ = d.Set("remote_asn", bgp.RemoteAsn)
-	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
 	_ = d.Set("disabled", bgp.Disabled)
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
+
+	if d.HasChange("multihop_ttl") {
+		_ = d.Set("multihop_ttl", bgp.MultihopTTL)
+	}
+
+	if d.HasChange("l3_address") {
+		_ = d.Set("l3_address", bgp.L3Address)
+	}
+
+	if d.HasChange("remote_address") {
+		_ = d.Set("remote_address", bgp.RemoteAddress)
+	}
 
 	if d.HasChange("md5") {
 		_ = d.Set("md5", bgp.Md5)
@@ -355,10 +364,10 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 		)
 		for _, dnatMapping := range nat.DnatMappings {
 			data := map[string]interface{}{
-				"private_prefix":     dnatMapping.PrivateIP,
-				"public_prefix":      dnatMapping.PublicIP,
-				"conditional_prefix": dnatMapping.ConditionalPrefix,
+				"private_prefix": dnatMapping.PrivateIP,
+				"public_prefix":  dnatMapping.PublicIP,
 			}
+			data["conditional_prefix"] = dnatMapping.ConditionalPrefix
 			dnatMappings.Add(data)
 		}
 
@@ -369,10 +378,10 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 		data := map[string]interface{}{
 			"pre_nat_sources": preNatSources,
 			"pool_prefixes":   poolPrefixes,
-			"direction":       nat.Direction,
-			"nat_type":        nat.NatType,
 			"dnat_mappings":   dnatMappings,
 		}
+		data["direction"] = nat.Direction
+		data["nat_type"] = nat.NatType
 		natData.Add(data)
 		_ = d.Set("nat", natData)
 	}
@@ -381,20 +390,20 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 		func(i interface{}) int { return 0 },
 		[]interface{}{},
 	)
+
 	for _, prefix := range bgp.Prefixes {
 		prefixData := map[string]interface{}{
-			"prefix":           prefix.Prefix,
-			"match_type":       prefix.MatchType,
-			"as_prepend":       prefix.AsPrepend,
-			"med":              prefix.Med,
-			"local_preference": prefix.LocalPreference,
-			"type":             prefix.Type,
-			"order":            prefix.Order,
+			"prefix": prefix.Prefix,
+			"type":   prefix.Type,
 		}
+		prefixData["match_type"] = prefix.MatchType
+		prefixData["as_prepend"] = prefix.AsPrepend
+		prefixData["med"] = prefix.Med
+		prefixData["local_preference"] = prefix.LocalPreference
+		prefixData["order"] = prefix.Order
 		prefixes.Add(prefixData)
 	}
 	_ = d.Set("prefixes", prefixes)
-
 	return diags
 }
 
