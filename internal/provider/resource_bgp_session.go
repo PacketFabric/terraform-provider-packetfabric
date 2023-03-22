@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -242,6 +243,7 @@ func resourceBgpSession() *schema.Resource {
 func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
+	var diags diag.Diagnostics
 	cID, ok := d.GetOk("circuit_id")
 	if !ok {
 		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
@@ -250,7 +252,11 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	if !ok {
 		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
 	}
-	var diags diag.Diagnostics
+	prefixesSet := d.Get("prefixes").(*schema.Set)
+	prefixesList := prefixesSet.List()
+	if err := validatePrefixes(prefixesList); err != nil {
+		return diag.FromErr(err)
+	}
 	session := extractBgpSessionCreate(d)
 	resp, err := c.CreateBgpSession(session, cID.(string), connCID.(string))
 	if err != nil || resp == nil {
@@ -314,6 +320,11 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	}
 	if d.HasChange("primary_subnet") && d.HasChange("secondary_subnet") {
 		return diag.FromErr(errors.New("cannot modify both primary_subnet and secondary_subnet at the same time"))
+	}
+	prefixesSet := d.Get("prefixes").(*schema.Set)
+	prefixesList := prefixesSet.List()
+	if err := validatePrefixes(prefixesList); err != nil {
+		return diag.FromErr(err)
 	}
 	session := extractBgpSessionUpdate(d)
 	_, resp, err := c.UpdateBgpSession(session, cID.(string), connCID.(string))
@@ -535,4 +546,22 @@ func extractConnBgpSessionDnat(d *schema.Set) []packetfabric.BgpDnatMapping {
 		})
 	}
 	return sessionDnat
+}
+
+func validatePrefixes(prefixesList []interface{}) error {
+	inCount, outCount := 0, 0
+	for _, prefix := range prefixesList {
+		prefixMap := prefix.(map[string]interface{})
+		prefixType := prefixMap["type"].(string)
+
+		if prefixType == "in" {
+			inCount++
+		} else if prefixType == "out" {
+			outCount++
+		}
+	}
+	if inCount == 0 || outCount == 0 {
+		return fmt.Errorf("at least 1 'in' and 1 'out' prefix must be provided")
+	}
+	return nil
 }
