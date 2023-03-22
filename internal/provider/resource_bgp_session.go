@@ -297,10 +297,7 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("disabled", bgp.Disabled)
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
-
-	if d.HasChange("multihop_ttl") {
-		_ = d.Set("multihop_ttl", bgp.MultihopTTL)
-	}
+	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
 
 	if d.HasChange("l3_address") {
 		_ = d.Set("l3_address", bgp.L3Address)
