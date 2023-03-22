@@ -48,6 +48,10 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+// packetfabric_cs_aws_hosted_marketplace_connection
+const CloudServiceAwsHostedMktConnSpeed = "1Gbps"
+const CloudServiceAwsHostedMktConnMarket = "DAL"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -341,9 +345,33 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cs_aws_hosted_marketplace_connection
 func RHclCSAwsHostedMktConnection() RHclCSAwsHostedMktConnectionResult {
 
-	var pop, speed, market, hcl string
+	resourceName, hclName := _generateResourceName(pfCsAwsHostedMktConn)
 
-	resourceName, _ := _generateResourceName(pfCsAwsHostedMktConn)
+	c, err := _createPFClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          CloudServiceAwsHostedMktConnSpeed,
+		DesiredProvider:       "aws",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+
+	cloudRouterResult := RHclCloudRouter()
+
+	hostedMktAwsHcl := fmt.Sprintf(
+		RResourceCSAwsHostedMarketplaceConnection,
+		hclName,
+		cloudRouterResult.ResourceName,
+		CloudServiceAwsHostedMktConnMarket,
+		CloudServiceAwsHostedMktConnSpeed,
+		pop,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterResult.Hcl, hostedMktAwsHcl)
 
 	return RHclCSAwsHostedMktConnectionResult{
 		HclResultBase: HclResultBase{
@@ -351,8 +379,8 @@ func RHclCSAwsHostedMktConnection() RHclCSAwsHostedMktConnectionResult {
 			Resource:     pfCsAwsHostedMktConn,
 			ResourceName: resourceName,
 		},
-		Market: market,
-		Speed:  speed,
+		Market: CloudServiceAwsHostedMktConnMarket,
+		Speed:  CloudServiceAwsHostedMktConnSpeed,
 		Pop:    pop,
 	}
 }
