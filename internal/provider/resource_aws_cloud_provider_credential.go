@@ -28,7 +28,7 @@ func resourceCloudProviderCredentialAws() *schema.Resource {
 			},
 			"aws_access_key": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("AWS_ACCESS_KEY_ID", nil),
 				Description: "The AWS access key you want to save. " +
@@ -36,7 +36,7 @@ func resourceCloudProviderCredentialAws() *schema.Resource {
 			},
 			"aws_secret_key": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("AWS_SECRET_ACCESS_KEY", nil),
 				Description: "The AWS secret key you want to save. " +

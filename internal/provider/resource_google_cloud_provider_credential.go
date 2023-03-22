@@ -26,9 +26,9 @@ func resourceCloudProviderCredentialGoogle() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Description of the Cloud Provider Credentials.",
 			},
-			"service_account": {
+			"google_service_account": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("GOOGLE_CREDENTIALS", nil),
 				Description: "The Google service account JSON you want to save. " +
