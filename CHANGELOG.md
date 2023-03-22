@@ -10,7 +10,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 
 FEATURES:
 
-* New resource packetfabric_user (#371)
+* resource: packetfabric_user (#371)
 * Add Object Labels (#375) and PO Numbers (#374) to the following resources: 
     * packetfabric_backbone_virtual_circuit
     * packetfabric_cloud_router
