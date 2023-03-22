@@ -49,7 +49,7 @@ const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
 // packetfabric_cs_aws_hosted_marketplace_connection
-const CloudServiceAwsHostedMktConnSpeed = "1Gbps"
+const CloudServiceAwsHostedMktConnSpeed = "50Mbps"
 const CloudServiceAwsHostedMktConnMarket = "DAL"
 
 type PortDetails struct {
