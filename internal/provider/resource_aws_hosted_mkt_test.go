@@ -14,10 +14,7 @@ func TestAccAwsHostedMktRequiredFields(t *testing.T) {
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_AWS_ACCOUNT_ID_KEY,
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
+			testutil.PreCheck(t, []string{})
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -28,6 +25,11 @@ func TestAccAwsHostedMktRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(awsHostedMktResult.ResourceName, "market", awsHostedMktResult.Market),
 					resource.TestCheckResourceAttr(awsHostedMktResult.ResourceName, "speed", awsHostedMktResult.Speed),
 				),
+			},
+			{
+				ResourceName:      awsHostedMktResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
