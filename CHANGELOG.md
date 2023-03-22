@@ -1,3 +1,11 @@
+## 1.2.1  (March 21, 2023)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Update bgp_state in cloud router connection and BGP session data-sources (#384)
+* Update default value for autoneg in packetfabric_port resource in the doc (#383)
+* Increase status check interval in Cloud Router, Cloud Services, Backbone VC, PTP, Port (#390)
+
 ## 1.2.0  (March 13, 2023)
 
 FEATURES:
