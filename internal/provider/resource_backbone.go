@@ -177,7 +177,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
@@ -321,7 +321,7 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		updateOk := make(chan bool)
 		defer close(updateOk)
-		ticker := time.NewTicker(10 * time.Second)
+		ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 		go func() {
 			for range ticker.C {
 				if ok := c.IsBackboneComplete(d.Id()); ok {
@@ -338,7 +338,7 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	updateOk := make(chan bool)
 	defer close(updateOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if ok := c.IsBackboneComplete(d.Id()); ok {

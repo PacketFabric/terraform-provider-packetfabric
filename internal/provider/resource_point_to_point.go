@@ -144,13 +144,13 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
 	resp, err := c.CreatePointToPointService(ptpService)
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if c.IsPointToPointComplete(resp.PtpUUID) {
@@ -279,7 +279,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 		} else {
 			deleteOk := make(chan bool)
 			defer close(deleteOk)
-			ticker := time.NewTicker(10 * time.Second)
+			ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 			go func() {
 				for range ticker.C {
 					if c.IsPointToPointDeleteComplete(ptpUUID) {

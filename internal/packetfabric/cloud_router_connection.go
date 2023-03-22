@@ -373,7 +373,7 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 		return nil, err
 	}
 	// Upon requested on issue #157
-	time.Sleep(20 * time.Second)
+	time.Sleep(30 * time.Second)
 	return expectedResp, nil
 }
 
