@@ -279,7 +279,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 		} else {
 			deleteOk := make(chan bool)
 			defer close(deleteOk)
-			ticker := time.NewTicker(30 * time.Second)
+			ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 			go func() {
 				for range ticker.C {
 					if c.IsPointToPointDeleteComplete(ptpUUID) {

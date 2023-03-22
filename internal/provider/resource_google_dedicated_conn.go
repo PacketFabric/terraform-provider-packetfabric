@@ -132,7 +132,7 @@ func resourceGoogleDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersDedicated()
