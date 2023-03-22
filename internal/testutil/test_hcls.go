@@ -50,7 +50,6 @@ const CloudRouterBgpSessionType2 = "out"
 
 // packetfabric_cs_aws_hosted_marketplace_connection
 const CloudServiceAwsHostedMktConnSpeed = "50Mbps"
-const CloudServiceAwsHostedMktConnMarket = "DAL"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -366,7 +365,7 @@ func RHclCSAwsHostedMktConnection() RHclCSAwsHostedMktConnectionResult {
 		RResourceCSAwsHostedMarketplaceConnection,
 		hclName,
 		cloudRouterResult.ResourceName,
-		CloudServiceAwsHostedMktConnMarket,
+		os.Getenv(PF_CS_AWS_HOSTED_MKT_CONN_MARKET_KEY),
 		CloudServiceAwsHostedMktConnSpeed,
 		pop,
 	)
@@ -379,7 +378,7 @@ func RHclCSAwsHostedMktConnection() RHclCSAwsHostedMktConnectionResult {
 			Resource:     pfCsAwsHostedMktConn,
 			ResourceName: resourceName,
 		},
-		Market: CloudServiceAwsHostedMktConnMarket,
+		Market: os.Getenv(PF_CS_AWS_HOSTED_MKT_CONN_MARKET_KEY),
 		Speed:  CloudServiceAwsHostedMktConnSpeed,
 		Pop:    pop,
 	}

@@ -14,7 +14,9 @@ func TestAccAwsHostedMktRequiredFields(t *testing.T) {
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testutil.PreCheck(t, []string{})
+			testutil.PreCheck(t, []string{
+				testutil.PF_CS_AWS_HOSTED_MKT_CONN_MARKET_KEY,
+			})
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
