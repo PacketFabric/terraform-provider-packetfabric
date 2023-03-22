@@ -150,7 +150,7 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 	thidPartyVC := extractThirdPartyVC(d)
 	resp, err := c.CreateThirdPartyVC(thidPartyVC)
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}

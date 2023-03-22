@@ -1,6 +1,9 @@
 package packetfabric
 
-import "time"
+import (
+	"math/rand"
+	"time"
+)
 
 type ServiceState struct {
 	CircuitID string `json:"circuit_id"`
@@ -40,7 +43,7 @@ type Status struct {
 }
 
 func (c *PFClient) CheckServiceStatus(ch chan bool, fn func() (*ServiceState, error)) {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	var count int
 	for range ticker.C {
 		count = count + 1
@@ -66,7 +69,7 @@ func (c *PFClient) CheckServiceStatus(ch chan bool, fn func() (*ServiceState, er
 }
 
 func (c *PFClient) CheckIPSecStatus(ch chan bool, fn func() (*ServiceState, error)) {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	var count int
 	for range ticker.C {
 		count = count + 1
@@ -85,4 +88,14 @@ func (c *PFClient) CheckIPSecStatus(ch chan bool, fn func() (*ServiceState, erro
 			ch <- true
 		}
 	}
+}
+
+func (c *PFClient) GetRandomSeconds() int {
+	rand.Seed(time.Now().UnixNano())
+	randomSeconds := rand.Intn(11) + 5 // Generate random number between 5 and 15
+	plusOrMinus := rand.Intn(2)        // Generate random number 0 or 1 for adding or subtracting
+	if plusOrMinus == 0 {
+		randomSeconds = -randomSeconds
+	}
+	return randomSeconds
 }

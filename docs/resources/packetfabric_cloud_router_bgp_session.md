@@ -164,6 +164,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.
 - `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
 - `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating the secondary Azure cloud router connection.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
@@ -218,6 +219,17 @@ Optional:
 
 - `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
 
+
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
 
 
 
