@@ -17,7 +17,7 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds_staged" {
   provider       = packetfabric
   description    = "AWS Staging Environement"
   aws_access_key = var.pf_aws_key # or use env var PF_AWS_ACCESS_KEY_ID
-  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+  aws_secret_key = var.pf_aws_secret  # or use env var PF_AWS_SECRET_ACCESS_KEY
 }
 
 output "packetfabric_cloud_provider_credential_aws" {
@@ -31,12 +31,9 @@ output "packetfabric_cloud_provider_credential_aws" {
 
 ### Required
 
-- `description` (String) Description of the Cloud Provider Credentials.
-
-### Optional
-
 - `aws_access_key` (String, Sensitive) The AWS access key you want to save. Can also be set with the AWS_ACCESS_KEY_ID environment variable.
 - `aws_secret_key` (String, Sensitive) The AWS secret key you want to save. Can also be set with the AWS_SECRET_ACCESS_KEY environment variable.
+- `description` (String) Description of the Cloud Provider Credentials.
 
 ### Read-Only
 
