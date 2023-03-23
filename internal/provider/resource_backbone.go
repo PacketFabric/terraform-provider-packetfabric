@@ -163,7 +163,32 @@ func resourceBackbone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		CustomizeDiff: customizeDiff,
 	}
+}
+
+func customizeDiff(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+	interfaces := []string{"interface_a", "interface_z"}
+
+	if diff.HasChanges(interfaces...) {
+		for _, interfaceName := range interfaces {
+
+			if diff.HasChange(interfaceName) {
+				oldInterface, newInterface := diff.GetChange(interfaceName)
+				oldInterfaceList := oldInterface.(*schema.Set).List()
+
+				for index, interf := range newInterface.(*schema.Set).List() {
+					interfaceData := interf.(map[string]interface{})
+					oldInterfaceData := oldInterfaceList[index].(map[string]interface{})
+
+					if interfaceData["port_circuit_id"].(string) != oldInterfaceData["port_circuit_id"].(string) {
+						_ = diff.ForceNew(interfaceName)
+					}
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
