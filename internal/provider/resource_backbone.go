@@ -79,14 +79,14 @@ func resourceBackbone() *schema.Resource {
 							Optional:     true,
 							Default:      0,
 							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid VLAN range is from 4-4094, inclusive.",
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      0,
 							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid sVLAN range is from 4-4094, inclusive.",
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -112,14 +112,14 @@ func resourceBackbone() *schema.Resource {
 							Optional:     true,
 							Default:      0,
 							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid VLAN range is from 4-4094, inclusive.",
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      0,
 							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid sVLAN range is from 4-4094, inclusive.",
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
