@@ -94,10 +94,11 @@ func resourceHostedIbmConn() *schema.Resource {
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
