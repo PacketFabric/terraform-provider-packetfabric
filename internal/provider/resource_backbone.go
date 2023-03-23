@@ -257,29 +257,7 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		// Set the bandwidth attribute to the schema set
 		_ = d.Set("bandwidth", bandwidthSet)
 
-		if len(resp.Interfaces) == 2 {
-			interfaceA := make(map[string]interface{})
-			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
-			interfaceA["vlan"] = resp.Interfaces[0].Vlan
-			if resp.Interfaces[0].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[0].Svlan
-			}
-			interfaceA["untagged"] = resp.Interfaces[0].Untagged
-			_ = d.Set("interface_a", []interface{}{interfaceA})
-
-			interfaceZ := make(map[string]interface{})
-			interfaceZ["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
-			interfaceZ["vlan"] = resp.Interfaces[1].Vlan
-			if resp.Interfaces[1].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[1].Svlan
-			}
-			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
-			_ = d.Set("interface_z", []interface{}{interfaceZ})
-		}
+		// Skip read interface_a, interface_z as it is not possible to set attributes part of a TypeSet to nil
 		if _, ok := d.GetOk("rate_limit_in"); ok {
 			_ = d.Set("rate_limit_in", resp.RateLimitIn)
 		}
