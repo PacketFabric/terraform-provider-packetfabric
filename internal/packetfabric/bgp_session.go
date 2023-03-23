@@ -116,7 +116,7 @@ type BgpSessionBySettingsUUID struct {
 	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
 	Disabled        bool        `json:"disabled"`
 	BgpState        string      `json:"bgp_state"`
-	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	Prefixes        []BgpPrefix `json:"prefixes"`
 	Subnet          interface{} `json:"subnet"`
 	PublicIP        string      `json:"public_ip"`
 	Nat             *BgpNat     `json:"nat,omitempty"`
@@ -141,7 +141,7 @@ type BgpSessionAssociatedResp struct {
 	BgpState        string      `json:"bgp_state"`
 	TimeCreated     string      `json:"time_created"`
 	TimeUpdated     string      `json:"time_updated"`
-	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	Prefixes        []BgpPrefix `json:"prefixes"`
 	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 
