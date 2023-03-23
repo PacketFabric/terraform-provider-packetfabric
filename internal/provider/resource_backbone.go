@@ -182,7 +182,9 @@ func customizeDiff(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 					oldInterfaceData := oldInterfaceList[index].(map[string]interface{})
 
 					if interfaceData["port_circuit_id"].(string) != oldInterfaceData["port_circuit_id"].(string) {
-						_ = diff.ForceNew(interfaceName)
+						if err := diff.ForceNew(interfaceName); err != nil {
+							return err
+						}
 					}
 				}
 			}
