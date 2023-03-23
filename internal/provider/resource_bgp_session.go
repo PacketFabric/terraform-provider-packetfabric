@@ -349,65 +349,6 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	if d.HasChange("bfd_multiplier") {
 		_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 	}
-
-	nat := bgp.Nat
-	if nat != nil {
-		var poolPrefixes []string
-		for _, poolPrefix := range nat.PoolPrefixes {
-			poolPrefixes = append(poolPrefixes, poolPrefix.(string))
-		}
-
-		var preNatSources []string
-		for _, preNatSource := range nat.PreNatSources {
-			preNatSources = append(preNatSources, preNatSource.(string))
-		}
-
-		dnatMappings := schema.NewSet(
-			func(i interface{}) int { return 0 },
-			[]interface{}{},
-		)
-		for _, dnatMapping := range nat.DnatMappings {
-			data := map[string]interface{}{
-				"private_prefix": dnatMapping.PrivateIP,
-				"public_prefix":  dnatMapping.PublicIP,
-			}
-			data["conditional_prefix"] = dnatMapping.ConditionalPrefix
-			dnatMappings.Add(data)
-		}
-
-		natData := schema.NewSet(
-			func(i interface{}) int { return 0 },
-			[]interface{}{},
-		)
-		data := map[string]interface{}{
-			"pre_nat_sources": preNatSources,
-			"pool_prefixes":   poolPrefixes,
-			"dnat_mappings":   dnatMappings,
-		}
-		data["direction"] = nat.Direction
-		data["nat_type"] = nat.NatType
-		natData.Add(data)
-		_ = d.Set("nat", natData)
-	}
-
-	prefixes := schema.NewSet(
-		func(i interface{}) int { return 0 },
-		[]interface{}{},
-	)
-
-	for _, prefix := range bgp.Prefixes {
-		prefixData := map[string]interface{}{
-			"prefix": prefix.Prefix,
-			"type":   prefix.Type,
-		}
-		prefixData["match_type"] = prefix.MatchType
-		prefixData["as_prepend"] = prefix.AsPrepend
-		prefixData["med"] = prefix.Med
-		prefixData["local_preference"] = prefix.LocalPreference
-		prefixData["order"] = prefix.Order
-		prefixes.Add(prefixData)
-	}
-	_ = d.Set("prefixes", prefixes)
 	return diags
 }
 
