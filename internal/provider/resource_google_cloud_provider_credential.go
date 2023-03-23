@@ -67,8 +67,8 @@ func resourceCloudProviderCredentialGoogleUpdate(ctx context.Context, d *schema.
 		cpc.Description = d.Get("description").(string)
 	}
 	credentials := packetfabric.CloudCredentials{}
-	if serviceAccount, ok := d.GetOk("service_account"); ok {
-		credentials.ServiceAccount = serviceAccount.(string)
+	if googleServiceAccount, ok := d.GetOk("google_service_account"); ok {
+		credentials.GoogleServiceAccount = googleServiceAccount.(string)
 	}
 	cpc.CloudCredentials = credentials
 
@@ -87,8 +87,8 @@ func extractCloudProviderCredentialsGoogle(d *schema.ResourceData) packetfabric.
 		cpc.Description = description.(string)
 	}
 	cloudCredentials := packetfabric.CloudCredentials{}
-	if serviceAccount, ok := d.GetOk("service_account"); ok {
-		cloudCredentials.ServiceAccount = serviceAccount.(string)
+	if googleServiceAccount, ok := d.GetOk("google_service_account"); ok {
+		cloudCredentials.GoogleServiceAccount = googleServiceAccount.(string)
 	}
 	cpc.CloudCredentials = cloudCredentials
 	return cpc

@@ -23,9 +23,9 @@ type CloudProviderCredentialUpdate struct {
 }
 
 type CloudCredentials struct {
-	AWSAccessKey   string `json:"aws_access_key,omitempty"`
-	AWSSecretKey   string `json:"aws_secret_key,omitempty"`
-	ServiceAccount string `json:"service_account,omitempty"`
+	AWSAccessKey         string `json:"aws_access_key,omitempty"`
+	AWSSecretKey         string `json:"aws_secret_key,omitempty"`
+	GoogleServiceAccount string `json:"google_service_account,omitempty"`
 }
 
 // This struct represents a Cloud Provider Credential create response
