@@ -75,14 +75,18 @@ func resourceBackbone() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid sVLAN.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -104,14 +108,18 @@ func resourceBackbone() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid sVLAN.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -261,22 +269,14 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			interfaceA := make(map[string]interface{})
 			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
 			interfaceA["vlan"] = resp.Interfaces[0].Vlan
-			if resp.Interfaces[0].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[0].Svlan
-			}
+			interfaceA["svlan"] = resp.Interfaces[0].Svlan
 			interfaceA["untagged"] = resp.Interfaces[0].Untagged
 			_ = d.Set("interface_a", []interface{}{interfaceA})
 
 			interfaceZ := make(map[string]interface{})
 			interfaceZ["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
 			interfaceZ["vlan"] = resp.Interfaces[1].Vlan
-			if resp.Interfaces[1].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[1].Svlan
-			}
+			interfaceZ["svlan"] = resp.Interfaces[1].Svlan
 			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
 			_ = d.Set("interface_z", []interface{}{interfaceZ})
 		}
