@@ -111,6 +111,8 @@ func Provider() *schema.Provider {
 			"packetfabric_quick_connect_accept_request":            resourceQuickConnectAcceptRequest(),
 			"packetfabric_quick_connect_reject_request":            resourceQuickConnectRejectRequest(),
 			"packetfabric_flex_bandwidth":                          resourceFlexBandwidth(),
+			"packetfabric_cloud_provider_credential_aws":           resourceCloudProviderCredentialAws(),
+			"packetfabric_cloud_provider_credential_google":        resourceCloudProviderCredentialGoogle(),
 			"packetfabric_user":                                    resourceUser(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
