@@ -45,10 +45,11 @@ func resourceFlexBandwidth() *schema.Resource {
 					"Can also be set with the PF_ACCOUNT_ID environment variable.",
 			},
 			"subscription_term": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				ForceNew:    true,
-				Description: "The billing term, in months, of the flex bandwidth container.\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
+				Type:         schema.TypeInt,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "The billing term, in months, of the flex bandwidth container.\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 			},
 			"capacity": {
 				Type:         schema.TypeString,

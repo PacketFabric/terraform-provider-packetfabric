@@ -78,7 +78,7 @@ func resourceInterfaces() *schema.Resource {
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
-				ValidateFunc: validation.IntAtLeast(1),
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 				Description:  "Duration of the subscription in months\n\n\tEnum [\"1\" \"12\" \"24\" \"36\"]",
 			},
 			"zone": {
