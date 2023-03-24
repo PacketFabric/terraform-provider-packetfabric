@@ -68,6 +68,7 @@ Read-Only:
 - `as_prepend` (Number)
 - `match_type` (String)
 - `med` (Number)
+- `pending_approval` (Boolean)
 - `prefix` (String)
 
 

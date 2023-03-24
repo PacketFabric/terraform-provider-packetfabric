@@ -116,6 +116,11 @@ func datasourceQuickConnectRequests() *schema.Resource {
 										Computed:    true,
 										Description: "The Quick Connect prefix med.",
 									},
+									"pending_approval": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Description: "Indicates whether the provider has not approved the return filter",
+									},
 								},
 							},
 						},
@@ -188,6 +193,7 @@ func flattenReturnFilters(filters []packetfabric.ReturnFilters) []interface{} {
 		flatten["match_type"] = filter.MatchType
 		flatten["as_prepend"] = filter.Asprepend
 		flatten["med"] = filter.Med
+		flatten["pending_approval"] = filter.PendingApproval
 		flattens[i] = flatten
 	}
 	return flattens

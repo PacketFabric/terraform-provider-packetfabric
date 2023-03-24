@@ -23,10 +23,11 @@ type ImportFilters struct {
 	Localpref int    `json:"local_preference,omitempty"`
 }
 type ReturnFilters struct {
-	Prefix    string `json:"prefix,omitempty"`
-	MatchType string `json:"match_type,omitempty"`
-	Asprepend int    `json:"as_prepend,omitempty"`
-	Med       int    `json:"med,omitempty"`
+	Prefix          string `json:"prefix,omitempty"`
+	MatchType       string `json:"match_type,omitempty"`
+	Asprepend       int    `json:"as_prepend,omitempty"`
+	Med             int    `json:"med,omitempty"`
+	PendingApproval bool   `json:"pending_approval,omitempty"`
 }
 
 func (c *PFClient) GetCloudRouterRequests(reqType string) ([]CloudRouterRequest, error) {
