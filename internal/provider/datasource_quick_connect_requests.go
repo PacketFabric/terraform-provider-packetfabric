@@ -31,6 +31,11 @@ func datasourceQuickConnectRequests() *schema.Resource {
 							Computed:    true,
 							Description: "The Circuit ID of this Cloud Router Import.",
 						},
+						"cloud_router_circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The Circuit ID of the source Cloud Router",
+						},
 						"customer_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -147,6 +152,7 @@ func flattenQuickConnectRequests(requests *[]packetfabric.CloudRouterRequest) []
 		for i, request := range *requests {
 			flatten := make(map[string]interface{})
 			flatten["import_circuit_id"] = request.ImportCircuitID
+			flatten["cloud_router_circuit_id"] = request.CloudRouterCircuitID
 			flatten["customer_name"] = request.CustomerName
 			flatten["service_uuid"] = request.ServiceUUID
 			flatten["state"] = request.State
