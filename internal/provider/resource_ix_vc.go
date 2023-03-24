@@ -113,10 +113,11 @@ func resourceIxVC() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Required:    true,
-							ForceNew:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
