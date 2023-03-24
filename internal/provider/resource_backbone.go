@@ -189,11 +189,13 @@ func customizeDiff(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 
 				for index, interf := range newInterface.(*schema.Set).List() {
 					interfaceData := interf.(map[string]interface{})
-					oldInterfaceData := oldInterfaceList[index].(map[string]interface{})
+					if len(oldInterfaceList) > index {
+						oldInterfaceData := oldInterfaceList[index].(map[string]interface{})
 
-					if interfaceData["port_circuit_id"].(string) != oldInterfaceData["port_circuit_id"].(string) {
-						if err := diff.ForceNew(interfaceName); err != nil {
-							return err
+						if interfaceData["port_circuit_id"].(string) != oldInterfaceData["port_circuit_id"].(string) {
+							if err := diff.ForceNew(interfaceName); err != nil {
+								return err
+							}
 						}
 					}
 				}
