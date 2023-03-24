@@ -171,7 +171,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
 		_ = d.Set("po_number", resp.PONumber)
