@@ -176,7 +176,7 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
-	_ = d.Set("pop", resp.Pop)
+	_ = d.Set("pop", resp.CloudProvider.Pop)
 	_ = d.Set("zone", resp.Zone)
 	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
 	_ = d.Set("po_number", resp.PONumber)
