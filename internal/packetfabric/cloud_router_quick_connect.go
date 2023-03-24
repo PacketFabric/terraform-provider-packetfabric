@@ -26,11 +26,12 @@ type QuickConnectImportFilters struct {
 	Localpref int    `json:"local_preference,omitempty"`
 }
 type QuickConnectReturnFilters struct {
-	Prefix    string `json:"prefix,omitempty"`
-	MatchType string `json:"match_type,omitempty"`
-	Asprepend int    `json:"as_prepend,omitempty"`
-	Med       int    `json:"med,omitempty"`
-	Localpref int    `json:"local_preference,omitempty"`
+	Prefix          string `json:"prefix,omitempty"`
+	MatchType       string `json:"match_type,omitempty"`
+	Asprepend       int    `json:"as_prepend,omitempty"`
+	Med             int    `json:"med,omitempty"`
+	Localpref       int    `json:"local_preference,omitempty"`
+	PendingApproval bool   `json:"pending_approval,omitempty"`
 }
 
 type CloudRouterQuickConnectResp struct {
