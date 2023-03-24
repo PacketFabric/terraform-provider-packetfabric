@@ -31,6 +31,11 @@ func datasourceQuickConnectRequests() *schema.Resource {
 							Computed:    true,
 							Description: "The Circuit ID of this Cloud Router Import.",
 						},
+						"cloud_router_circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The Circuit ID of the source Cloud Router",
+						},
 						"customer_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -111,6 +116,11 @@ func datasourceQuickConnectRequests() *schema.Resource {
 										Computed:    true,
 										Description: "The Quick Connect prefix med.",
 									},
+									"pending_approval": {
+										Type:        schema.TypeBool,
+										Computed:    true,
+										Description: "Indicates whether the provider has not approved the return filter",
+									},
 								},
 							},
 						},
@@ -147,6 +157,7 @@ func flattenQuickConnectRequests(requests *[]packetfabric.CloudRouterRequest) []
 		for i, request := range *requests {
 			flatten := make(map[string]interface{})
 			flatten["import_circuit_id"] = request.ImportCircuitID
+			flatten["cloud_router_circuit_id"] = request.CloudRouterCircuitID
 			flatten["customer_name"] = request.CustomerName
 			flatten["service_uuid"] = request.ServiceUUID
 			flatten["state"] = request.State
@@ -182,6 +193,7 @@ func flattenReturnFilters(filters []packetfabric.ReturnFilters) []interface{} {
 		flatten["match_type"] = filter.MatchType
 		flatten["as_prepend"] = filter.Asprepend
 		flatten["med"] = filter.Med
+		flatten["pending_approval"] = filter.PendingApproval
 		flattens[i] = flatten
 	}
 	return flattens
