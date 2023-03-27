@@ -2,6 +2,7 @@
 resource "packetfabric_cloud_router_connection_port" "crc_3" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_port_pop1}"
+  labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   # port_circuit_id = var.pf_crc_port_circuit_id # in case you prefer to use an existing port
   port_circuit_id = packetfabric_port.port_1.id

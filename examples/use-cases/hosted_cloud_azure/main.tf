@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -82,6 +82,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -97,6 +98,7 @@ resource "packetfabric_port" "port_1" {
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   port              = packetfabric_port.port_1.id
   speed             = var.pf_cs_speed # will be deprecated

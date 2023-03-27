@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
   }
 }
@@ -18,6 +18,7 @@ resource "packetfabric_marketplace_service_port_accept_request" "accept_marketpl
   provider    = packetfabric
   type        = "backbone"
   description = "${var.tag_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   interface {
     port_circuit_id = var.pf_z_side_port_id
     vlan            = var.pf_z_side_vc_vlan2

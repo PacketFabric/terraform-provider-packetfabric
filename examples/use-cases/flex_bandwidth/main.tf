@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
   }
 }
@@ -16,6 +16,7 @@ resource "random_pet" "name" {}
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -29,6 +30,7 @@ resource "packetfabric_port" "port_1" {
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop2
@@ -54,6 +56,7 @@ resource "packetfabric_flex_bandwidth" "flex1" {
 resource "packetfabric_backbone_virtual_circuit" "vc_1" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   epl         = false
   interface_a {
     port_circuit_id = packetfabric_port.port_1.id
@@ -80,6 +83,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
 resource "packetfabric_backbone_virtual_circuit" "vc_2" {
   provider    = packetfabric
   description = "${var.tag_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   epl         = false
   interface_a {
     port_circuit_id = packetfabric_port.port_1.id

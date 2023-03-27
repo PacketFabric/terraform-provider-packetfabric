@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
     google = {
       source  = "hashicorp/google"
@@ -72,6 +72,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -87,6 +88,7 @@ resource "packetfabric_port" "port_1" {
 resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   provider                    = packetfabric
   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+  labels                      = var.pf_labels
   port                        = packetfabric_port.port_1.id
   speed                       = var.pf_cs_speed
   google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key

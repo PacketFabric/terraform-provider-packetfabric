@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -94,6 +94,7 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
   provider          = packetfabric
   aws_region        = var.aws_region1
   description       = "${var.tag_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   zone              = var.pf_cs_zone1
   pop               = var.pf_cs_pop1
   subscription_term = var.pf_cs_subterm
@@ -191,6 +192,7 @@ resource "aws_dx_connection" "current_1" {
 # resource "packetfabric_backbone_virtual_circuit" "vc_1" {
 #   provider    = packetfabric
 #   description = "${var.tag_name}-${random_pet.name.id}"
+#  labels       = var.pf_labels
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = var.pf_interface_a_circuit_id # AWS dedicated cloud
