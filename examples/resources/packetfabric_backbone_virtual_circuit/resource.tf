@@ -8,6 +8,7 @@ resource "packetfabric_port" "port_1" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "A"
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_port" "port_2" {
@@ -20,6 +21,7 @@ resource "packetfabric_port" "port_2" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "A"
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
@@ -41,4 +43,5 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
     speed             = "1Gbps"
     subscription_term = 1
   }
+  labels = ["terraform", "dev"]
 }
