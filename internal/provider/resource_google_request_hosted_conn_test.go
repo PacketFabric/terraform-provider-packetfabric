@@ -18,6 +18,10 @@ func TestAccHclGoogleReqHostedConnectRequiredFields(t *testing.T) {
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
 				testutil.PF_ACCOUNT_ID_KEY,
+				testutil.PF_CS_GOOGLE_HOS_CONN_SPEED1_KEY,
+				testutil.PF_CS_GOOGLE_HOS_CONN_PAIRING_KEY,
+				testutil.PF_CS_GOOGLE_HOS_CONN_VLAN_ATTACHMENT_NAME_KEY,
+				testutil.PF_CS_GOOGLE_HOS_CONN_VLAN1_KEY,
 			})
 		},
 		Providers: testAccProviders,

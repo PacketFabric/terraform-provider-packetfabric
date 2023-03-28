@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -344,11 +345,44 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 
-	var hcl, googleVlan, googlePairingKey, speed, pop string
-	var vlan int
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	resourceName, _ := _generateResourceName(pfCsGoogleHostedConn)
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop, _, media := portDetails._findAvailableCloudPopZoneAndMedia()
+	if pop == "" {
+		log.Fatalf("Resource: %s: %s", pfCsGoogleHostedConn, "pop cannot be empty")
+	}
+	portDetails.DesiredPop = pop
+	portDetails.DesiredMedia = media
+
+	resourceName, hclName := _generateResourceName(pfCsGoogleHostedConn)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCsGoogleHostedConn)
+	hclPortResult := portDetails.RHclPort()
+
+	vlan, _ := strconv.Atoi(os.Getenv(PF_CS_GOOGLE_HOS_CONN_VLAN1_KEY))
+
+	googleHostedConnHcl := fmt.Sprintf(RResourceCSGoogleHostedConnection,
+		hclName,
+		uniqueDesc,
+		hclPortResult.ResourceReference,
+		os.Getenv(PF_CS_GOOGLE_HOS_CONN_SPEED1_KEY),
+		os.Getenv(PF_CS_GOOGLE_HOS_CONN_PAIRING_KEY),
+		os.Getenv(PF_CS_GOOGLE_HOS_CONN_VLAN_ATTACHMENT_NAME_KEY),
+		pop,
+		vlan,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, googleHostedConnHcl)
 
 	return RHclCsGoogleReqHostedConnectResult{
 		HclResultBase: HclResultBase{
@@ -357,9 +391,9 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
-		Speed:            speed,
-		GooglePairingKey: googlePairingKey,
-		GoogleVlan:       googleVlan,
+		Speed:            os.Getenv(PF_CS_GOOGLE_HOS_CONN_SPEED1_KEY),
+		GooglePairingKey: os.Getenv(PF_CS_GOOGLE_HOS_CONN_PAIRING_KEY),
+		GoogleVlan:       os.Getenv(PF_CS_GOOGLE_HOS_CONN_VLAN_ATTACHMENT_NAME_KEY),
 		Pop:              pop,
 		Vlan:             vlan,
 	}
