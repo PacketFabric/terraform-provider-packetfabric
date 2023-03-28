@@ -342,41 +342,41 @@ resource "random_pet" "name" {}
 # ##### Hosted Cloud Connections
 # #######################################
 
-# Create a AWS Hosted Connection
-resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
-  provider    = packetfabric
-  description = "${var.resource_name}-${random_pet.name.id}"
-  port        = packetfabric_port.port_1a.id
-  speed       = var.pf_cs_speed2
-  pop         = var.pf_cs_pop2
-  vlan        = var.pf_cs_vlan2
-  zone        = var.pf_cs_zone2
-  # # for cloud side provisioning - optional
-  # cloud_settings {
-  #   credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
-  #   aws_region       = var.pf_cs_aws_region
-  #   mtu              = var.pf_cs_mtu
-  #   aws_vif_type     = var.pf_cs_aws_vif_type
-  #   bgp_settings {
-  #     customer_asn   = var.pf_cs_customer_asn
-  #     address_family = var.pf_cs_address_family
-  #   }
-  #   aws_gateways {
-  #     type = "directconnect"
-  #     name = "${var.resource_name}-${random_pet.name.id}"
-  #     asn  = var.pf_cs_directconnect_gw_asn
-  #   }
-  #   aws_gateways {
-  #     type   = "private"
-  #     name   = "${var.resource_name}-${random_pet.name.id}"
-  #     vpc_id = var.pf_cs_aws_vpc_id
-  #   }
-  # }
-  labels = ["terraform"]
-}
-output "packetfabric_cs_aws_hosted_connection" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
-}
+# # Create a AWS Hosted Connection
+# resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
+#   provider    = packetfabric
+#   description = "${var.resource_name}-${random_pet.name.id}"
+#   port        = packetfabric_port.port_1a.id
+#   speed       = var.pf_cs_speed2
+#   pop         = var.pf_cs_pop2
+#   vlan        = var.pf_cs_vlan2
+#   zone        = var.pf_cs_zone2
+#   # # for cloud side provisioning - optional
+#   # cloud_settings {
+#   #   credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+#   #   aws_region       = var.pf_cs_aws_region
+#   #   mtu              = var.pf_cs_mtu
+#   #   aws_vif_type     = var.pf_cs_aws_vif_type
+#   #   bgp_settings {
+#   #     customer_asn   = var.pf_cs_customer_asn
+#   #     address_family = var.pf_cs_address_family
+#   #   }
+#   #   aws_gateways {
+#   #     type = "directconnect"
+#   #     name = "${var.resource_name}-${random_pet.name.id}"
+#   #     asn  = var.pf_cs_directconnect_gw_asn
+#   #   }
+#   #   aws_gateways {
+#   #     type   = "private"
+#   #     name   = "${var.resource_name}-${random_pet.name.id}"
+#   #     vpc_id = var.pf_cs_aws_vpc_id
+#   #   }
+#   # }
+#   labels = ["terraform"]
+# }
+# output "packetfabric_cs_aws_hosted_connection" {
+#   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
+# }
 
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
@@ -1035,15 +1035,15 @@ output "packetfabric_cs_aws_hosted_connection" {
 # ##### Cloud Provider Credentials
 # #######################################
 
-resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
-  provider    = packetfabric
-  description = "${var.resource_name}-${random_pet.name.id}-aws"
-  # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
-}
-output "packetfabric_cloud_provider_credential_aws" {
-  value     = packetfabric_cloud_provider_credential_aws.aws_creds1
-  sensitive = true
-}
+# resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+#   provider    = packetfabric
+#   description = "${var.resource_name}-${random_pet.name.id}-aws"
+#   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+# }
+# output "packetfabric_cloud_provider_credential_aws" {
+#   value     = packetfabric_cloud_provider_credential_aws.aws_creds1
+#   sensitive = true
+# }
 
 # resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 #   provider    = packetfabric
