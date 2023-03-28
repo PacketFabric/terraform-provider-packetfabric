@@ -40,13 +40,13 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use NAT on this connection. Defaults: false",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use DNAT on this connection. Defaults: false",
 			},
 			"port_circuit_id": {
 				Type:         schema.TypeString,
@@ -62,10 +62,11 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Description:  "A brief description of this connection.",
 			},
 			"vlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"untagged": {
 				Type:        schema.TypeBool,

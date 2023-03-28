@@ -94,10 +94,11 @@ func resourceHostedIbmConn() *schema.Resource {
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -164,7 +165,7 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	tflog.Debug(ctx, "\n#### CREATED IBM CONN", b)
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersHosted()

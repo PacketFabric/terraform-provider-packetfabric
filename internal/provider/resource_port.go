@@ -39,7 +39,7 @@ func resourceInterfaces() *schema.Resource {
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps. ",
+				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -78,7 +78,7 @@ func resourceInterfaces() *schema.Resource {
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
-				ValidateFunc: validation.IntAtLeast(1),
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 				Description:  "Duration of the subscription in months\n\n\tEnum [\"1\" \"12\" \"24\" \"36\"]",
 			},
 			"zone": {
@@ -125,7 +125,7 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -216,7 +216,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	_, err := c.DeletePort(d.Id())
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}

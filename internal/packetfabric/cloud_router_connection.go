@@ -65,7 +65,6 @@ type CloudRouterConnectionReadResponse struct {
 	CloudSettings             CloudSettings `json:"cloud_settings,omitempty"`
 	NatCapable                bool          `json:"nat_capable,omitempty"`
 	DNatCapable               bool          `json:"dnat_capable,omitempty"`
-	BgpState                  interface{}   `json:"bgp_state,omitempty"`
 	BgpStateList              []BgpStateObj `json:"bgp_state_list,omitempty"`
 	CloudRouterName           string        `json:"cloud_router_name,omitempty"`
 	CloudRouterASN            int           `json:"cloud_router_asn,omitempty"`
@@ -374,7 +373,7 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 		return nil, err
 	}
 	// Upon requested on issue #157
-	time.Sleep(20 * time.Second)
+	time.Sleep(30 * time.Second)
 	return expectedResp, nil
 }
 

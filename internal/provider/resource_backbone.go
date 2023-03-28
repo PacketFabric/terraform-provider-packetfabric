@@ -52,14 +52,16 @@ func resourceBackbone() *schema.Resource {
 							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
 						},
 						"subscription_term": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+							Description:  "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
 						},
 						"longhaul_type": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
+							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
 						},
 					},
 				},
@@ -75,14 +77,18 @@ func resourceBackbone() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid sVLAN.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -104,14 +110,18 @@ func resourceBackbone() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 						},
 						"svlan": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Valid sVLAN.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -177,7 +187,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
@@ -261,22 +271,14 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			interfaceA := make(map[string]interface{})
 			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
 			interfaceA["vlan"] = resp.Interfaces[0].Vlan
-			if resp.Interfaces[0].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[0].Svlan
-			}
+			interfaceA["svlan"] = resp.Interfaces[0].Svlan
 			interfaceA["untagged"] = resp.Interfaces[0].Untagged
 			_ = d.Set("interface_a", []interface{}{interfaceA})
 
 			interfaceZ := make(map[string]interface{})
 			interfaceZ["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
 			interfaceZ["vlan"] = resp.Interfaces[1].Vlan
-			if resp.Interfaces[1].Svlan == 0 {
-				interfaceA["svlan"] = nil
-			} else {
-				interfaceA["svlan"] = resp.Interfaces[1].Svlan
-			}
+			interfaceZ["svlan"] = resp.Interfaces[1].Svlan
 			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
 			_ = d.Set("interface_z", []interface{}{interfaceZ})
 		}
@@ -321,7 +323,7 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		updateOk := make(chan bool)
 		defer close(updateOk)
-		ticker := time.NewTicker(10 * time.Second)
+		ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 		go func() {
 			for range ticker.C {
 				if ok := c.IsBackboneComplete(d.Id()); ok {
@@ -338,7 +340,7 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	updateOk := make(chan bool)
 	defer close(updateOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if ok := c.IsBackboneComplete(d.Id()); ok {

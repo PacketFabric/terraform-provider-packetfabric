@@ -31,13 +31,13 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use NAT on this connection. Defaults: false",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use DNAT on this connection. Defaults: false",
 			},
 			"circuit_id": {
 				Type:         schema.TypeString,
@@ -188,7 +188,7 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
 		_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("zone", resp.Zone)
 		_ = d.Set("po_number", resp.PONumber)

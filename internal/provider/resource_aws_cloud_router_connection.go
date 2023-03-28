@@ -55,13 +55,13 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use NAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use NAT on this connection. Defaults: false",
 			},
 			"maybe_dnat": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Set this to true if you intend to use DNAT on this connection. Default: false.",
+				Description: "Set this to true if you intend to use DNAT on this connection. Defaults: false",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -176,7 +176,7 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
-	_ = d.Set("pop", resp.Pop)
+	_ = d.Set("pop", resp.CloudProvider.Pop)
 	_ = d.Set("zone", resp.Zone)
 	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
 	_ = d.Set("po_number", resp.PONumber)

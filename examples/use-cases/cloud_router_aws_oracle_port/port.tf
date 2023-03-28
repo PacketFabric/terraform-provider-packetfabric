@@ -1,7 +1,6 @@
 # Create a PacketFabric port
 resource "packetfabric_port" "port_1" {
-  provider = packetfabric
-  # autoneg           = var.pf_port_autoneg # only for 1Gbps
+  provider          = packetfabric
   description       = "${var.tag_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni

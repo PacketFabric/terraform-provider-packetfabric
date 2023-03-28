@@ -219,7 +219,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
 
 		resp2, err2 := c.GetIpsecSpecificConn(cloudConnCID.(string))
