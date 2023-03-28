@@ -26,21 +26,23 @@ Reference the `google_vlan_attachment_name` and `google_pairing_key` as below:
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider                    = packetfabric
-  description                 = var.pf_crc_description
+  description                 = "hello world"
   circuit_id                  = packetfabric_cloud_router.cr1.id
   google_pairing_key          = var.pf_crc_google_pairing_key
   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
-  pop                         = var.pf_crc_pop
-  speed                       = var.pf_crc_speed
-  maybe_nat                   = var.pf_crc_maybe_nat
+  pop                         = "PDX2"
+  speed                       = "1Gbps"
+  maybe_nat                   = false
+  labels                      = ["terraform", "dev"]
 }
 
 output "packetfabric_cloud_router_connection_google" {

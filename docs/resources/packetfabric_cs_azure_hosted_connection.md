@@ -33,12 +33,13 @@ output "cc1_vlan_private" {
 ```terraform
 resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
   provider          = packetfabric
-  description       = var.pf_description
+  description       = "hello world"
   azure_service_key = var.azure_service_key
-  port              = var.pf_port
-  speed             = var.pf_cs_speed # will be deprecated
-  vlan_private      = var.pf_cs_vlan_private
-  vlan_microsoft    = var.pf_cs_vlan_microsoft
+  port              = packetfabric_port.port_1.id
+  speed             = "10Gbps" # will be deprecated
+  vlan_private      = 102
+  vlan_microsoft    = 103
+  labels            = ["terraform", "dev"]
 }
 
 output "packetfabric_cs_azure_hosted_connection" {

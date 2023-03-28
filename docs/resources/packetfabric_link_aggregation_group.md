@@ -16,14 +16,15 @@ A Link Aggregation Group interface (or a LAG) is a group of ports on the PacketF
 # Create a PacketFabric interfaces
 resource "packetfabric_port" "port_1a" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.pf_description}-a"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world-a"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
+  labels            = ["terraform", "dev"]
 }
 output "packetfabric_port_1a" {
   value = packetfabric_port.port_1a
@@ -32,14 +33,15 @@ output "packetfabric_port_1a" {
 ## 2nd port in the same location same zone to create a LAG
 resource "packetfabric_port" "port_1b" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.pf_description}-b"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world-b"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "B"
+  labels            = ["terraform", "dev"]
 }
 output "packetfabric_port_1b" {
   value = packetfabric_port.port_1b
@@ -47,10 +49,11 @@ output "packetfabric_port_1b" {
 
 resource "packetfabric_link_aggregation_group" "lag_1" {
   provider    = packetfabric
-  description = var.pf_description
+  description = "hello world"
   interval    = "fast" # or slow
   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
-  pop         = var.pf_port_pop1
+  pop         = "SEA2"
+  labels      = ["terraform", "dev"]
 }
 output "packetfabric_link_aggregation_group" {
   value = packetfabric_link_aggregation_group.lag_1

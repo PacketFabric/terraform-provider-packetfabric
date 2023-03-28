@@ -1,9 +1,9 @@
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
   labels   = ["terraform", "dev"]
 }
 

@@ -16,14 +16,14 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   enabled           = true
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
   labels            = ["terraform", "dev"]
 }
 output "packetfabric_port_1" {
