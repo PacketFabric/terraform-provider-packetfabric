@@ -104,16 +104,45 @@ type Interfaces struct {
 }
 
 type HostedAwsConnection struct {
-	AwsAccountID string `json:"aws_account_id,omitempty"`
-	AccountUUID  string `json:"account_uuid,omitempty"`
-	Description  string `json:"description,omitempty"`
-	Pop          string `json:"pop,omitempty"`
-	Port         string `json:"port,omitempty"`
-	Vlan         int    `json:"vlan,omitempty"`
-	SrcSvlan     int    `json:"src_svlan,omitempty"`
-	Zone         string `json:"zone,omitempty"`
-	Speed        string `json:"speed,omitempty"`
-	PONumber     string `json:"po_number,omitempty"`
+	AwsAccountID  string                  `json:"aws_account_id,omitempty"`
+	AccountUUID   string                  `json:"account_uuid,omitempty"`
+	Description   string                  `json:"description,omitempty"`
+	Pop           string                  `json:"pop,omitempty"`
+	Port          string                  `json:"port,omitempty"`
+	Vlan          int                     `json:"vlan,omitempty"`
+	SrcSvlan      int                     `json:"src_svlan,omitempty"`
+	Zone          string                  `json:"zone,omitempty"`
+	Speed         string                  `json:"speed,omitempty"`
+	PONumber      string                  `json:"po_number,omitempty"`
+	CloudSettings *CloudSettingsAwsHosted `json:"cloud_settings,omitempty"`
+}
+
+type CloudSettingsAwsHosted struct {
+	CredentialsUUID string       `json:"credentials_uuid,omitempty"`
+	AWSRegion       string       `json:"aws_region,omitempty"`
+	MTU             int          `json:"mtu,omitempty"`
+	AWSVIFType      string       `json:"aws_vif_type,omitempty"`
+	BGPSettings     *BGPSettings `json:"bgp_settings,omitempty"`
+	AWSGateways     []AWSGateway `json:"aws_gateways,omitempty"`
+}
+
+type BGPSettings struct {
+	CustomerASN        int      `json:"customer_asn,omitempty"`
+	L3Address          string   `json:"l3_address,omitempty"`
+	RemoteAddress      string   `json:"remote_address,omitempty"`
+	AddressFamily      string   `json:"address_family,omitempty"`
+	MD5                string   `json:"md5,omitempty"`
+	AdvertisedPrefixes []string `json:"advertised_prefixes,omitempty"`
+}
+
+type AWSGateway struct {
+	Type            string   `json:"type,omitempty"`
+	Name            string   `json:"name,omitempty"`
+	ID              string   `json:"id,omitempty"`
+	ASN             int      `json:"asn,omitempty"`
+	VPCID           string   `json:"vpc_id,omitempty"`
+	SubnetIDs       []string `json:"subnet_ids,omitempty"`
+	AllowedPrefixes []string `json:"allowed_prefixes,omitempty"`
 }
 
 type DedicatedAwsConn struct {

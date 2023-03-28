@@ -21,45 +21,45 @@ resource "random_pet" "name" {}
 # ##### Ports/Interfaces
 # ######################################
 
-# # Get the zone from the pop automatically
-# data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
-#   provider = packetfabric
-#   pop      = var.pf_port_pop1
-# }
-# output "packetfabric_locations_port_availability_pop1" {
-#   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
-# }
-# locals {
-#   zones_pop1 = toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
-# }
-# output "packetfabric_locations_port_availability_pop1_single_zone" {
-#   value = tolist(local.zones_pop1)[0]
-# }
+# Get the zone from the pop automatically
+data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
+  provider = packetfabric
+  pop      = var.pf_port_pop1
+}
+output "packetfabric_locations_port_availability_pop1" {
+  value = data.packetfabric_locations_port_availability.port_availabilty_pop1
+}
+locals {
+  zones_pop1 = toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+}
+output "packetfabric_locations_port_availability_pop1_single_zone" {
+  value = tolist(local.zones_pop1)[0]
+}
 
-# # Create a PacketFabric Ports
-# resource "packetfabric_port" "port_1a" {
-#   provider          = packetfabric
-#   autoneg           = var.pf_port_autoneg
-#   description       = "${var.tag_name}-${random_pet.name.id}-a"
-#   media             = var.pf_port_media
-#   nni               = var.pf_port_nni
-#   pop               = var.pf_port_pop1
-#   speed             = var.pf_port_speed
-#   subscription_term = var.pf_port_subterm
-#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+# Create a PacketFabric Ports
+resource "packetfabric_port" "port_1a" {
+  provider          = packetfabric
+  autoneg           = var.pf_port_autoneg
+  description       = "${var.tag_name}-${random_pet.name.id}-a"
+  media             = var.pf_port_media
+  nni               = var.pf_port_nni
+  pop               = var.pf_port_pop1
+  speed             = var.pf_port_speed
+  subscription_term = var.pf_port_subterm
+  zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
 
-#   lifecycle {
-#     ignore_changes = [
-#       # Ignore changes to zone because zone cannot be modified 
-#       # after the port is created but can change as we get it 
-#       # from packetfabric_locations_port_availability data source
-#       zone,
-#     ]
-#   }
-# }
-# output "packetfabric_port_1a" {
-#   value = packetfabric_port.port_1a
-# }
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to zone because zone cannot be modified 
+      # after the port is created but can change as we get it 
+      # from packetfabric_locations_port_availability data source
+      zone,
+    ]
+  }
+}
+output "packetfabric_port_1a" {
+  value = packetfabric_port.port_1a
+}
 
 # ## 2nd port in the same location same zone to create a LAG
 # resource "packetfabric_port" "port_1b" {
@@ -338,7 +338,7 @@ resource "random_pet" "name" {}
 # ##### Hosted Cloud Connections
 # #######################################
 
-# # Create a AWS Hosted Connection 
+# # Create a AWS Hosted Connection - no cloud side
 # resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
 #   provider    = packetfabric
 #   description = "${var.tag_name}-${random_pet.name.id}"
@@ -351,6 +351,40 @@ resource "random_pet" "name" {}
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 # }
+
+# Create a AWS Hosted Connection - cloud side
+resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}"
+  port        = packetfabric_port.port_1a.id
+  speed       = var.pf_cs_speed2
+  pop         = var.pf_cs_pop2
+  vlan        = var.pf_cs_vlan2
+  zone        = var.pf_cs_zone2
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = "us-east-1"
+    mtu              = 1500
+    aws_vif_type     = "private"
+    bgp_settings {
+      customer_asn   = 64513
+      address_family = "ipv4"
+    }
+    aws_gateways {
+      type = "directconnect"
+      name = "${var.tag_name}-${random_pet.name.id}"
+      asn  = 64513
+    }
+    aws_gateways {
+      type   = "private"
+      name   = "${var.tag_name}-${random_pet.name.id}"
+      vpc_id = "vpc-bea401c4"
+    }
+  }
+}
+output "packetfabric_cs_aws_hosted_connection_cloud_side" {
+  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws_cloud_ide
+}
 
 # data "packetfabric_cs_aws_hosted_connection" "current" {
 #   provider         = packetfabric
@@ -990,12 +1024,22 @@ resource "random_pet" "name" {}
 # ##### Cloud Provider Credentials
 # #######################################
 
-# resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider    = packetfabric
+  description = "${var.tag_name}-${random_pet.name.id}-aws"
+  # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+}
+output "packetfabric_cloud_provider_credential_aws" {
+  value     = packetfabric_cloud_provider_credential_aws.aws_creds1
+  sensitive = true
+}
+
+# resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 #   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}"
-#   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+#   description    = "${var.tag_name}-${random_pet.name.id}-google"
+#   # using env var GOOGLE_CREDENTIALS
 # }
-# output "packetfabric_cloud_provider_credential_aws" {
-#   value     = packetfabric_cloud_provider_credential_aws.aws_creds1
+# output "packetfabric_cloud_provider_credential_google" {
+#   value     = packetfabric_cloud_provider_credential_google.google_creds1
 #   sensitive = true
 # }

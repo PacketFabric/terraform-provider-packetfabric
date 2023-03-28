@@ -12,6 +12,12 @@ import (
 
 func resourceAwsRequestHostConn() *schema.Resource {
 	return &schema.Resource{
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
+		},
 		CreateContext: resourceAwsReqHostConnCreate,
 		UpdateContext: resourceAwsReqHostConnUpdate,
 		ReadContext:   resourceAwsReqHostConnRead,
@@ -97,6 +103,129 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+				},
+			},
+			"cloud_settings": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"credentials_uuid": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The UUID of the credentials to be used with this connection.",
+						},
+						"aws_region": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The AWS region that should be used.",
+						},
+						"mtu": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Default:     1500,
+							ValidateFunc: validation.IntInSlice([]int{1500, 9001}),
+							Description: "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"9001\"] ",
+						},
+						"aws_vif_type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							Description:  "The type of VIF to use for this connection.",
+							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public" }, false),
+						},
+						"bgp_settings": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"customer_asn": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
+									},
+									"l3_address": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The prefix of the customer router. Required for public VIFs.",
+									},
+									"remote_address": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The prefix of the remote router. Required for public VIFs.",
+									},
+									"address_family": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Default:      "ipv4",
+										Description:  "The address family that should be used. ",
+										ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
+									},
+									"md5": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The MD5 value of the authenticated BGP sessions.",
+									},
+									"advertised_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of prefixes that will be advertised. Required for public VIFs.",
+									},
+								},
+							},
+						},
+						"aws_gateways": {
+							Type:     schema.TypeList,
+							Optional: true,
+							ForceNew: true,
+							Description: "Only for Private or Transit VIF."
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"type": {
+										Type:         schema.TypeString,
+										Required:     true,
+										Description:  "The type of this AWS Gateway.",
+										ValidateFunc: validation.StringInSlice([]string{"directconnect", "private", "transit"}, false),
+									},
+									"name": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The name of the AWS Gateway, required if creating a new DirectConnect Gateway.",
+									},
+									"id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The ID of the AWS Gateway to be used.",
+									},
+									"asn": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: "The ASN of the AWS Gateway to be used.",
+									},
+									"vpc_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.",
+									},
+									"subnet_ids": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of subnet IDs to associate with this Gateway. Required for transit Gateways.",
+									},
+									"allowed_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of allowed prefixes. Required on the DirectConnect Gateway when the other Gateway is of type transit.",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
