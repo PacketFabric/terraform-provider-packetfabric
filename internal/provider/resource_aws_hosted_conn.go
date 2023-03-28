@@ -388,18 +388,27 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		hostedAwsConn.PONumber = poNumber.(string)
 	}
-	if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
-		cs := cloudSettings.(map[string]interface{})
-		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{
-			CredentialsUUID: cs["credentials_uuid"].(string),
-			AWSRegion:       cs["aws_region"].(string),
-			MTU:             cs["mtu"].(int),
-			AWSVIFType:      cs["aws_vif_type"].(string),
-			BGPSettings: &packetfabric.BGPSettings{
-				CustomerASN:   cs["customer_asn"].(int),
-				AddressFamily: cs["address_family"].(string),
-			},
-			AWSGateways: extractAwsGateways(cs["aws_gateways"].([]interface{})),
+	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
+		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
+		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
+		hostedAwsConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
+		if awsRegion, ok := cs["aws_region"]; ok {
+			hostedAwsConn.CloudSettings.AWSRegion = awsRegion.(string)
+		}
+		if mtu, ok := cs["mtu"]; ok {
+			hostedAwsConn.CloudSettings.MTU = mtu.(int)
+		}
+		hostedAwsConn.CloudSettings.AWSVIFType = cs["aws_vif_type"].(string)
+		if bgpSettings, ok := cs["bgp_settings"]; ok {
+			bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
+			hostedAwsConn.CloudSettings.BGPSettings = &packetfabric.BGPSettings{}
+			if customerASN, ok := bgpSettingsMap["customer_asn"]; ok {
+				hostedAwsConn.CloudSettings.BGPSettings.CustomerASN = customerASN.(int)
+			}
+			hostedAwsConn.CloudSettings.BGPSettings.AddressFamily = bgpSettingsMap["address_family"].(string)
+		}
+		if awsGateways, ok := cs["aws_gateways"]; ok {
+			hostedAwsConn.CloudSettings.AWSGateways = extractAwsGateways(awsGateways.([]interface{}))
 		}
 	}
 	return hostedAwsConn
@@ -409,23 +418,46 @@ func extractAwsGateways(gateways []interface{}) []packetfabric.AWSGateway {
 	var awsGateways []packetfabric.AWSGateway
 	for _, gw := range gateways {
 		gateway := gw.(map[string]interface{})
-		subnetIDs := make([]string, len(gateway["subnet_ids"].([]interface{})))
-		for i, elem := range gateway["subnet_ids"].([]interface{}) {
-			subnetIDs[i] = elem.(string)
+
+		subnetIDsInterface, subnetIDsExist := gateway["subnet_ids"].([]interface{})
+		var subnetIDs []string
+		if subnetIDsExist {
+			subnetIDs = make([]string, len(subnetIDsInterface))
+			for i, elem := range subnetIDsInterface {
+				subnetIDs[i] = elem.(string)
+			}
 		}
-		allowedPrefixes := make([]string, len(gateway["allowed_prefixes"].([]interface{})))
-		for i, elem := range gateway["allowed_prefixes"].([]interface{}) {
-			allowedPrefixes[i] = elem.(string)
+
+		allowedPrefixesInterface, allowedPrefixesExist := gateway["allowed_prefixes"].([]interface{})
+		var allowedPrefixes []string
+		if allowedPrefixesExist {
+			allowedPrefixes = make([]string, len(allowedPrefixesInterface))
+			for i, elem := range allowedPrefixesInterface {
+				allowedPrefixes[i] = elem.(string)
+			}
 		}
-		awsGateway := packetfabric.AWSGateway{
-			Type:            gateway["type"].(string),
-			Name:            gateway["name"].(string),
-			ID:              gateway["id"].(string),
-			ASN:             gateway["asn"].(int),
-			VPCID:           gateway["vpc_id"].(string),
-			SubnetIDs:       subnetIDs,
-			AllowedPrefixes: allowedPrefixes,
+
+		awsGateway := packetfabric.AWSGateway{}
+
+		if t, ok := gateway["type"].(string); ok {
+			awsGateway.Type = t
 		}
+		if name, ok := gateway["name"].(string); ok {
+			awsGateway.Name = name
+		}
+		if id, ok := gateway["id"].(string); ok {
+			awsGateway.ID = id
+		}
+		if asn, ok := gateway["asn"].(int); ok {
+			awsGateway.ASN = asn
+		}
+		if vpcID, ok := gateway["vpc_id"].(string); ok {
+			awsGateway.VPCID = vpcID
+		}
+
+		awsGateway.SubnetIDs = subnetIDs
+		awsGateway.AllowedPrefixes = allowedPrefixes
+
 		awsGateways = append(awsGateways, awsGateway)
 	}
 	return awsGateways

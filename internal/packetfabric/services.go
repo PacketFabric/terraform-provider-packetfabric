@@ -228,6 +228,7 @@ type CloudConnInfo struct {
 // hosted and dedicated cloud
 type UpdateServiceConn struct {
 	Description   string               `json:"description,omitempty"`
+	PONumber      string               `json:"po_number,omitempty"`
 	CloudSettings *CloudSettingsHosted `json:"cloud_settings,omitempty"`
 }
 

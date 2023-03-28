@@ -14,6 +14,11 @@ variable "pf_labels" {
   description = "A list of labels to be applied to PacketFabric resources. These labels will be visible in the PacketFabric Portal and can be searched for easier resource identification."
   default     = ["terraform"] # Example: ["terraform", "dev"]
 }
+variable "pf_po_number" {
+  type        = string
+  description = "Purchase Order Number"
+  default     = "0123456"
+}
 
 ########################################
 ###### PORTS / CROSS CONNECT / VC

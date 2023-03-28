@@ -21,12 +21,13 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	updateServiceConnData := packetfabric.UpdateServiceConn{}
 	changed := false
 
-	if d.HasChange("description") {
-		desc, ok := d.GetOk("description")
-		if !ok {
-			return diag.Errorf("please provide a valid description for Cloud Service")
+	if d.HasChanges([]string{"po_number", "description"}...) {
+		if desc, ok := d.GetOk("description"); ok {
+			updateServiceConnData.Description = desc.(string)
 		}
-		updateServiceConnData.Description = desc.(string)
+		if poNumber, ok := d.GetOk("po_number"); ok {
+			updateServiceConnData.PONumber = poNumber.(string)
+		}
 		changed = true
 	}
 
