@@ -17,25 +17,32 @@ Create a service to make available through the PacketFabric marketplace. For mor
 ```terraform
 # Create a Marketplace Service type quick-connect
 resource "packetfabric_marketplace_service" "marketplace_quick_connect" {
-  provider                = packetfabric
-  name                    = var.pf_name
-  description             = var.pf_description
-  service_type            = "quick-connect-service"
-  sku                     = var.pf_sku
-  categories              = var.pf_categories
-  published               = var.pf_published
-  cloud_router_circuit_id = var.pf_cloud_router_circuit_id
-  connection_circuit_ids  = var.pf_connection_circuit_ids
+  provider     = packetfabric
+  name         = "hello world"
+  description  = "hello world quick connect"
+  service_type = "quick-connect-service"
+  sku          = "001234567"
+  categories = [
+    "cloud-computing",
+    "security",
+    "web-hosting"
+  ]
+  published               = true
+  cloud_router_circuit_id = "PF-L3-CUST-2839140"
+  connection_circuit_ids = [
+    "PF-L3-CON-2853999",
+    "PF-L3-CON-2888830"
+  ]
   route_set {
-    description = var.pf_route_set_description
-    is_private  = var.pf_route_set_is_private
+    description = "hello world route set"
+    is_private  = false
     prefixes {
-      prefix     = var.pf_route_set_prefix1
-      match_type = var.pf_route_set_match_type1
+      prefix     = "185.56.153.165/32"
+      match_type = "orlonger"
     }
     prefixes {
-      prefix     = var.pf_route_set_prefix2
-      match_type = var.pf_route_set_match_type2
+      prefix     = "185.56.153.166/32"
+      match_type = "orlonger"
     }
   }
 }
@@ -46,13 +53,20 @@ output "packetfabric_marketplace_service_quick_connect" {
 # Create a Marketplace Service type port
 resource "packetfabric_marketplace_service" "marketplace_port" {
   provider     = packetfabric
-  name         = var.pf_name
-  description  = var.pf_description
+  name         = "hello world port"
+  description  = "hello world"
   service_type = "port-service"
-  sku          = var.pf_sku
-  categories   = var.pf_categories
-  published    = var.pf_published
-  locations    = var.pf_locations
+  sku          = "001234567"
+  categories = [
+    "cloud-computing",
+    "security",
+    "web-hosting"
+  ]
+  published = true
+  locations = [
+    "PDX1",
+    "SFO2"
+  ]
 }
 output "packetfabric_marketplace_service_port" {
   value = packetfabric_marketplace_service.marketplace_port

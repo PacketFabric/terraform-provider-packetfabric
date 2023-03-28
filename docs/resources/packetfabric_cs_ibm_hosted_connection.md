@@ -17,12 +17,13 @@ description: |-
 ```terraform
 resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
   provider    = packetfabric
-  ibm_bgp_asn = var.ibm_bgp_asn
-  description = var.pf_description
-  pop         = var.pf_cs_pop
-  port        = var.pf_port
-  vlan        = var.pf_cs_vlan
-  speed       = var.pf_cs_speed
+  ibm_bgp_asn = 64536
+  description = "hello world"
+  pop         = "BOS1"
+  port        = packetfabric_port.port_1.id
+  vlan        = 102
+  speed       = "10Gbps"
+  labels      = ["terraform", "dev"]
 }
 output "packetfabric_cs_ibm_hosted_connection" {
   value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm

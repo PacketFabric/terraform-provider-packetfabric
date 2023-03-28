@@ -15,12 +15,12 @@ As a marketplace provider, reject an incoming connection request to your network
 ```terraform
 resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_marketplace_conn1" {
   provider    = packetfabric
-  description = var.pf_description
-  routing_id  = var.pf_routing_id
-  market      = var.pf_market
-  speed       = var.pf_cs_speed
-  pop         = var.pf_cs_pop
-  zone        = var.pf_cs_zone
+  description = "hello world"
+  routing_id  = "PD-WUY-9VB0"
+  market      = "HOU"
+  speed       = "10Gbps"
+  pop         = "BOS1"
+  zone        = "A"
 }
 
 resource "packetfabric_marketplace_service_port_reject_request" "reject_request_aws" {
