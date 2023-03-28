@@ -104,20 +104,20 @@ type Interfaces struct {
 }
 
 type HostedAwsConnection struct {
-	AwsAccountID  string                  `json:"aws_account_id,omitempty"`
-	AccountUUID   string                  `json:"account_uuid,omitempty"`
-	Description   string                  `json:"description,omitempty"`
-	Pop           string                  `json:"pop,omitempty"`
-	Port          string                  `json:"port,omitempty"`
-	Vlan          int                     `json:"vlan,omitempty"`
-	SrcSvlan      int                     `json:"src_svlan,omitempty"`
-	Zone          string                  `json:"zone,omitempty"`
-	Speed         string                  `json:"speed,omitempty"`
-	PONumber      string                  `json:"po_number,omitempty"`
-	CloudSettings *CloudSettingsAwsHosted `json:"cloud_settings,omitempty"`
+	AwsAccountID  string               `json:"aws_account_id,omitempty"`
+	AccountUUID   string               `json:"account_uuid,omitempty"`
+	Description   string               `json:"description,omitempty"`
+	Pop           string               `json:"pop,omitempty"`
+	Port          string               `json:"port,omitempty"`
+	Vlan          int                  `json:"vlan,omitempty"`
+	SrcSvlan      int                  `json:"src_svlan,omitempty"`
+	Zone          string               `json:"zone,omitempty"`
+	Speed         string               `json:"speed,omitempty"`
+	PONumber      string               `json:"po_number,omitempty"`
+	CloudSettings *CloudSettingsHosted `json:"cloud_settings,omitempty"`
 }
 
-type CloudSettingsAwsHosted struct {
+type CloudSettingsHosted struct {
 	CredentialsUUID string       `json:"credentials_uuid,omitempty"`
 	AWSRegion       string       `json:"aws_region,omitempty"`
 	MTU             int          `json:"mtu,omitempty"`

@@ -18,18 +18,40 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("please provide a valid cloud service id")
 	}
 
+	updateServiceConnData := packetfabric.UpdateServiceConn{}
+	changed := false
+
 	if d.HasChange("description") {
-		updateServiceConnData := packetfabric.UpdateServiceConn{}
 		desc, ok := d.GetOk("description")
 		if !ok {
 			return diag.Errorf("please provide a valid description for Cloud Service")
 		}
 		updateServiceConnData.Description = desc.(string)
+		changed = true
+	}
 
-		if resp, err := c.UpdateServiceHostedConn(cloudCID.(string), updateServiceConnData); err != nil {
+	if d.HasChange("cloud_settings") {
+		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
+			cs := cloudSettings.(map[string]interface{})
+			if cs["aws_vif_type"] != nil {
+				updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{
+					CredentialsUUID: cs["credentials_uuid"].(string),
+					AWSRegion:       cs["aws_region"].(string),
+					MTU:             cs["mtu"].(int),
+					AWSVIFType:      cs["aws_vif_type"].(string),
+					BGPSettings: &packetfabric.BGPSettings{
+						CustomerASN:   cs["customer_asn"].(int),
+						AddressFamily: cs["address_family"].(string),
+					},
+				}
+				changed = true
+			}
+		}
+	}
+
+	if changed {
+		if _, err := c.UpdateServiceHostedConn(cloudCID.(string), updateServiceConnData); err != nil {
 			return diag.FromErr(err)
-		} else {
-			_ = d.Set("description", resp.Description)
 		}
 	}
 

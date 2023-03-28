@@ -302,6 +302,34 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
+
+		if _, ok := d.GetOk("cloud_settings"); ok {
+			cloudSettings := make(map[string]interface{})
+			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
+			cloudSettings["aws_region"] = resp.CloudSettings.AWSRegion
+			cloudSettings["mtu"] = resp.CloudSettings.MTU
+			cloudSettings["aws_vif_type"] = resp.CloudSettings.AWSVIFType
+
+			bgpSettings := make(map[string]interface{})
+			bgpSettings["customer_asn"] = resp.CloudSettings.BGPSettings.CustomerASN
+			bgpSettings["address_family"] = resp.CloudSettings.BGPSettings.AddressFamily
+			cloudSettings["bgp_settings"] = bgpSettings
+
+			awsGateways := make([]map[string]interface{}, len(resp.CloudSettings.AWSGateways))
+			for i, gateway := range resp.CloudSettings.AWSGateways {
+				awsGateway := make(map[string]interface{})
+				awsGateway["type"] = gateway.Type
+				awsGateway["name"] = gateway.Name
+				awsGateway["id"] = gateway.ID
+				awsGateway["asn"] = gateway.ASN
+				awsGateway["vpc_id"] = gateway.VPCID
+				awsGateway["subnet_ids"] = gateway.SubnetIDs
+				awsGateway["allowed_prefixes"] = gateway.AllowedPrefixes
+				awsGateways[i] = awsGateway
+			}
+			cloudSettings["aws_gateways"] = awsGateways
+			_ = d.Set("cloud_settings", cloudSettings)
+		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -360,5 +388,45 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		hostedAwsConn.PONumber = poNumber.(string)
 	}
+	if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
+		cs := cloudSettings.(map[string]interface{})
+		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{
+			CredentialsUUID: cs["credentials_uuid"].(string),
+			AWSRegion:       cs["aws_region"].(string),
+			MTU:             cs["mtu"].(int),
+			AWSVIFType:      cs["aws_vif_type"].(string),
+			BGPSettings: &packetfabric.BGPSettings{
+				CustomerASN:   cs["customer_asn"].(int),
+				AddressFamily: cs["address_family"].(string),
+			},
+			AWSGateways: extractAwsGateways(cs["aws_gateways"].([]interface{})),
+		}
+	}
 	return hostedAwsConn
+}
+
+func extractAwsGateways(gateways []interface{}) []packetfabric.AWSGateway {
+	var awsGateways []packetfabric.AWSGateway
+	for _, gw := range gateways {
+		gateway := gw.(map[string]interface{})
+		subnetIDs := make([]string, len(gateway["subnet_ids"].([]interface{})))
+		for i, elem := range gateway["subnet_ids"].([]interface{}) {
+			subnetIDs[i] = elem.(string)
+		}
+		allowedPrefixes := make([]string, len(gateway["allowed_prefixes"].([]interface{})))
+		for i, elem := range gateway["allowed_prefixes"].([]interface{}) {
+			allowedPrefixes[i] = elem.(string)
+		}
+		awsGateway := packetfabric.AWSGateway{
+			Type:            gateway["type"].(string),
+			Name:            gateway["name"].(string),
+			ID:              gateway["id"].(string),
+			ASN:             gateway["asn"].(int),
+			VPCID:           gateway["vpc_id"].(string),
+			SubnetIDs:       subnetIDs,
+			AllowedPrefixes: allowedPrefixes,
+		}
+		awsGateways = append(awsGateways, awsGateway)
+	}
+	return awsGateways
 }

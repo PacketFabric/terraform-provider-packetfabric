@@ -351,27 +351,27 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   pop         = var.pf_cs_pop2
   vlan        = var.pf_cs_vlan2
   zone        = var.pf_cs_zone2
-  # for cloud side provisioning - optional
-  cloud_settings {
-    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
-    aws_region       = var.pf_cs_aws_region
-    mtu              = var.pf_cs_mtu
-    aws_vif_type     = var.pf_cs_aws_vif_type
-    bgp_settings {
-      customer_asn   = var.pf_cs_customer_asn
-      address_family = var.pf_cs_address_family
-    }
-    aws_gateways {
-      type = "directconnect"
-      name = "${var.resource_name}-${random_pet.name.id}"
-      asn  = var.pf_cs_directconnect_gw_asn
-    }
-    aws_gateways {
-      type   = "private"
-      name   = "${var.resource_name}-${random_pet.name.id}"
-      vpc_id = var.pf_cs_aws_vpc_id
-    }
-  }
+  # # for cloud side provisioning - optional
+  # cloud_settings {
+  #   credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+  #   aws_region       = var.pf_cs_aws_region
+  #   mtu              = var.pf_cs_mtu
+  #   aws_vif_type     = var.pf_cs_aws_vif_type
+  #   bgp_settings {
+  #     customer_asn   = var.pf_cs_customer_asn
+  #     address_family = var.pf_cs_address_family
+  #   }
+  #   aws_gateways {
+  #     type = "directconnect"
+  #     name = "${var.resource_name}-${random_pet.name.id}"
+  #     asn  = var.pf_cs_directconnect_gw_asn
+  #   }
+  #   aws_gateways {
+  #     type   = "private"
+  #     name   = "${var.resource_name}-${random_pet.name.id}"
+  #     vpc_id = var.pf_cs_aws_vpc_id
+  #   }
+  # }
   labels = ["terraform"]
 }
 output "packetfabric_cs_aws_hosted_connection" {
