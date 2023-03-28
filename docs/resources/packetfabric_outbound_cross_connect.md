@@ -16,14 +16,14 @@ A customer inbound/PacketFabric outbound cross connect. For more information, se
 # Create a PacketFabric interfaces
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
 }
 output "packetfabric_port_1" {
   value = packetfabric_port.port_1
@@ -40,7 +40,7 @@ locals {
   all_locations = data.packetfabric_locations.main.locations[*]
   helper_map = { for val in local.all_locations :
   val["pop"] => val }
-  pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
+  pf_port_site1 = local.helper_map["SEA2"]["site_code"]
 }
 output "pf_port_site1" {
   value = local.pf_port_site1
@@ -49,7 +49,7 @@ output "pf_port_site1" {
 # Create Cross Connect
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
-  description   = var.pf_description
+  description   = "hello world"
   document_uuid = var.pf_document_uuid1
   port          = packetfabric_port.port_1.id
   site          = local.pf_port_site1

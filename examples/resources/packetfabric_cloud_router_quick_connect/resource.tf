@@ -1,15 +1,15 @@
 resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
   provider              = packetfabric
-  cr_circuit_id         = var.pf_cr_circuit_id
-  connection_circuit_id = var.pf_connection_circuit_id
+  cr_circuit_id         = packetfabric_cloud_router.cr1.id
+  connection_circuit_id = packetfabric_cloud_router_connection_aws.crc1.id
   service_uuid          = var.pf_service_uuid
   return_filters {
-    prefix     = var.pf_return_filters_prefix1
-    match_type = var.pf_return_filters_match_type1
+    prefix     = "185.56.153.165/32"
+    match_type = "orlonger"
   }
   return_filters {
-    prefix     = var.pf_return_filters_prefix2
-    match_type = var.pf_return_filters_match_type2
+    prefix     = "185.56.153.166/32"
+    match_type = "orlonger"
   }
 }
 output "packetfabric_cloud_router_quick_connect" {
