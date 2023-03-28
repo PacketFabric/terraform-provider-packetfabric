@@ -27,24 +27,24 @@ resource "random_pet" "name" {}
 # From the Microsoft side: Create a Microsoft Azure account and set up a virtual network (VNet)
 resource "azurerm_resource_group" "resource_group_1" {
   provider = azurerm
-  name     = "${var.tag_name}-${random_pet.name.id}"
+  name     = "${var.resource_name}-${random_pet.name.id}"
   location = var.azure_region1
 }
 
 resource "azurerm_virtual_network" "virtual_network_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-vnet1"
+  name                = "${var.resource_name}-${random_pet.name.id}-vnet1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   address_space       = ["${var.vnet_cidr1}"]
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
 resource "azurerm_subnet" "subnet_1" {
   provider             = azurerm
-  name                 = "${var.tag_name}-${random_pet.name.id}-subnet1"
+  name                 = "${var.resource_name}-${random_pet.name.id}-subnet1"
   address_prefixes     = ["${var.subnet_cidr1}"]
   resource_group_name  = azurerm_resource_group.resource_group_1.name
   virtual_network_name = azurerm_virtual_network.virtual_network_1.name
@@ -62,7 +62,7 @@ resource "azurerm_subnet" "subnet_gw" {
 # From the Microsoft side: Create an ExpressRoute circuit from the Azure portal.
 resource "azurerm_express_route_circuit" "azure_express_route_1" {
   provider              = azurerm
-  name                  = "${var.tag_name}-${random_pet.name.id}"
+  name                  = "${var.resource_name}-${random_pet.name.id}"
   resource_group_name   = azurerm_resource_group.resource_group_1.name
   location              = azurerm_resource_group.resource_group_1.location
   peering_location      = var.peering_location_1
@@ -73,7 +73,7 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
     family = var.sku_family
   }
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -81,7 +81,7 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
@@ -97,7 +97,7 @@ resource "packetfabric_port" "port_1" {
 # From the PacketFabric side: Create a PacketFabric Hosted Cloud Connection.
 resource "packetfabric_cs_azure_hosted_connection" "pf_cs_conn1" {
   provider          = packetfabric
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   labels            = var.pf_labels
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   port              = packetfabric_port.port_1.id
@@ -146,18 +146,18 @@ data "azurerm_express_route_circuit" "azure_express_route_1" {
 # # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
 # resource "azurerm_public_ip" "public_ip_vng_1" {
 #   provider            = azurerm
-#   name                = "${var.tag_name}-${random_pet.name.id}-public-ip-vng1"
+#   name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
 #   location            = azurerm_resource_group.resource_group_1.location
 #   resource_group_name = azurerm_resource_group.resource_group_1.name
 #   allocation_method   = "Dynamic"
 #   tags = {
-#     environment = "${var.tag_name}-${random_pet.name.id}"
+#     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }
 # }
 # # This resource creation can take up to 50min - deletion up to 12min
 # resource "azurerm_virtual_network_gateway" "vng_1" {
 #   provider            = azurerm
-#   name                = "${var.tag_name}-${random_pet.name.id}-vng1"
+#   name                = "${var.resource_name}-${random_pet.name.id}-vng1"
 #   location            = azurerm_resource_group.resource_group_1.location
 #   resource_group_name = azurerm_resource_group.resource_group_1.name
 #   type                = "ExpressRoute"
@@ -169,14 +169,14 @@ data "azurerm_express_route_circuit" "azure_express_route_1" {
 #     subnet_id                     = azurerm_subnet.subnet_gw.id
 #   }
 #   tags = {
-#     environment = "${var.tag_name}-${random_pet.name.id}"
+#     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }
 # }
 
 # # From the Microsoft side: Link a virtual network gateway to the ExpressRoute circuit.
 # resource "azurerm_virtual_network_gateway_connection" "vng_connection_1" {
 #   provider                   = azurerm
-#   name                       = "${var.tag_name}-${random_pet.name.id}-vng_connection_1"
+#   name                       = "${var.resource_name}-${random_pet.name.id}-vng_connection_1"
 #   location                   = azurerm_resource_group.resource_group_1.location
 #   resource_group_name        = azurerm_resource_group.resource_group_1.name
 #   type                       = "ExpressRoute"
@@ -184,7 +184,7 @@ data "azurerm_express_route_circuit" "azure_express_route_1" {
 #   virtual_network_gateway_id = azurerm_virtual_network_gateway.vng_1.id
 #   routing_weight             = 0
 #   tags = {
-#     environment = "${var.tag_name}-${random_pet.name.id}"
+#     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }
 #   depends_on = [
 #     packetfabric_cs_azure_hosted_connection.pf_cs_conn1

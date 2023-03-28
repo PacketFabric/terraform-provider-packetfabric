@@ -3,7 +3,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   provider = packetfabric
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
-  description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   pop         = var.pf_crc_pop1
@@ -23,7 +23,7 @@ resource "time_sleep" "wait_aws_connection" {
 # Retrieve the Direct Connect connections in AWS
 data "aws_dx_connection" "current" {
   provider   = aws
-  name       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  name       = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   depends_on = [time_sleep.wait_aws_connection]
 }
 # output "aws_dx_connection_1" {

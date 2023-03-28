@@ -16,7 +16,7 @@ resource "random_pet" "name" {}
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
@@ -31,7 +31,7 @@ output "packetfabric_port_1" {
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
@@ -87,7 +87,7 @@ output "packetfabric_billing_port_2" {
 # # Create Cross Connect
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
-#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   description   = "${var.resource_name}-${random_pet.name.id}"
 #   document_uuid = var.pf_document_uuid1
 #   port          = packetfabric_port.port_1.id
 #   site          = local.pf_port_site1
@@ -97,7 +97,7 @@ output "packetfabric_billing_port_2" {
 # }
 # resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
 #   provider      = packetfabric
-#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   description   = "${var.resource_name}-${random_pet.name.id}"
 #   document_uuid = var.pf_document_uuid2
 #   port          = packetfabric_port.port_2.id
 #   site          = local.pf_port_site2
@@ -109,7 +109,7 @@ output "packetfabric_billing_port_2" {
 # Create backbone Virtual Circuit
 resource "packetfabric_backbone_virtual_circuit" "vc_1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
   labels      = var.pf_labels
   epl         = false
   interface_a {

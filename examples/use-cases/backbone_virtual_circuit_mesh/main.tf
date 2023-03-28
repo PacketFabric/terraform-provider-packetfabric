@@ -15,7 +15,7 @@ resource "random_pet" "name" {}
 # var.pf_port2 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc1"
+  description = "${var.resource_name}-${random_pet.name.id}-vc1"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -38,7 +38,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 # var.pf_port1 - var.pf_port2
 resource "packetfabric_backbone_virtual_circuit" "vc2" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc2"
+  description = "${var.resource_name}-${random_pet.name.id}-vc2"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -64,7 +64,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc2" {
 # var.pf_port1 - var.pf_port5
 resource "packetfabric_backbone_virtual_circuit" "vc3" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc3"
+  description = "${var.resource_name}-${random_pet.name.id}-vc3"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -87,7 +87,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc3" {
 # var.pf_port1 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc4" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc4"
+  description = "${var.resource_name}-${random_pet.name.id}-vc4"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -110,7 +110,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc4" {
 # var.pf_port1 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc5" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc5"
+  description = "${var.resource_name}-${random_pet.name.id}-vc5"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -133,7 +133,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc5" {
 # var.pf_port1 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc6" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc6"
+  description = "${var.resource_name}-${random_pet.name.id}-vc6"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -156,7 +156,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc6" {
 # var.pf_port2 - var.pf_port5
 resource "packetfabric_backbone_virtual_circuit" "vc7" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc7"
+  description = "${var.resource_name}-${random_pet.name.id}-vc7"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -179,7 +179,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc7" {
 # var.pf_port2 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc8" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc8"
+  description = "${var.resource_name}-${random_pet.name.id}-vc8"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -202,7 +202,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc8" {
 # var.pf_port2 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc9" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc9"
+  description = "${var.resource_name}-${random_pet.name.id}-vc9"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -225,7 +225,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc9" {
 # var.pf_port5 - var.pf_port4
 resource "packetfabric_backbone_virtual_circuit" "vc10" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc10"
+  description = "${var.resource_name}-${random_pet.name.id}-vc10"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -248,7 +248,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc10" {
 # var.pf_port5 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc11" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc11"
+  description = "${var.resource_name}-${random_pet.name.id}-vc11"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -271,7 +271,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc11" {
 # var.pf_port5 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc12" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc12"
+  description = "${var.resource_name}-${random_pet.name.id}-vc12"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -294,7 +294,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc12" {
 # var.pf_port4 - var.pf_port6
 resource "packetfabric_backbone_virtual_circuit" "vc13" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc13"
+  description = "${var.resource_name}-${random_pet.name.id}-vc13"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -317,7 +317,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc13" {
 # var.pf_port4 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc14" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc14"
+  description = "${var.resource_name}-${random_pet.name.id}-vc14"
   labels      = var.pf_labels
   epl         = false
   interface_a {
@@ -340,7 +340,7 @@ resource "packetfabric_backbone_virtual_circuit" "vc14" {
 # var.pf_port6 - var.pf_port3
 resource "packetfabric_backbone_virtual_circuit" "vc15" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-vc15"
+  description = "${var.resource_name}-${random_pet.name.id}-vc15"
   labels      = var.pf_labels
   epl         = false
   interface_a {

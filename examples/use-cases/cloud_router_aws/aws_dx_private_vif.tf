@@ -13,8 +13,8 @@ locals {
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
   # find the cloud router connection by its name
-  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
-  cc2 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
+  cc1 = local.helper_map["${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"]
+  cc2 = local.helper_map["${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"]
 }
 # output "cc1_vlan_id_pf" {
 #   value = one(local.cc1.cloud_settings[*].vlan_id_pf)
@@ -29,7 +29,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider      = aws
   connection_id = data.aws_dx_connection.current_1.id
   dx_gateway_id = aws_dx_gateway.direct_connect_gw_1.id
-  name          = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+  name          = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection data source. 
   # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to create the VIF in AWS
   vlan           = one(local.cc1.cloud_settings[*].vlan_id_pf)
@@ -53,7 +53,7 @@ resource "aws_dx_private_virtual_interface" "direct_connect_vip_2" {
   provider       = aws.region2
   connection_id  = data.aws_dx_connection.current_2.id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_2.id
-  name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  name           = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   vlan           = one(local.cc2.cloud_settings[*].vlan_id_pf)
   address_family = "ipv4"
   bgp_asn        = var.pf_cr_asn
