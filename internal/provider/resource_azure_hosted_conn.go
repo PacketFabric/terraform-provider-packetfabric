@@ -71,10 +71,11 @@ func resourceAzureReqExpressHostedConn() *schema.Resource {
 				Description:  "The VLAN ID you are using for Microsoft peering. This is optional and is used to connect to Office 365.\n\n\tThe VLAN ID must be unique within the circuit (not used for any other peerings).\n\n\tValid VLAN range is from 4-4094, inclusive. ",
 			},
 			"src_svlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -114,7 +115,7 @@ func resourceAzureReqExpressHostedConnCreate(ctx context.Context, d *schema.Reso
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersHosted()

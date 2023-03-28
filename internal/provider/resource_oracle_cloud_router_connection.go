@@ -174,7 +174,7 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("vc_ocid", resp.CloudSettings.VcOcid)
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("pop", resp.Pop)
+		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("zone", resp.Zone)
 		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid

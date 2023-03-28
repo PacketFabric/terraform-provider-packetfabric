@@ -39,6 +39,7 @@ output "packetfabric_quick_connect_requests" {
 
 Read-Only:
 
+- `cloud_router_circuit_id` (String)
 - `customer_name` (String)
 - `import_circuit_id` (String)
 - `import_filters` (Set of Object) (see [below for nested schema](#nestedobjatt--quick_connect_requests--import_filters))
@@ -67,6 +68,7 @@ Read-Only:
 - `as_prepend` (Number)
 - `match_type` (String)
 - `med` (Number)
+- `pending_approval` (Boolean)
 - `prefix` (String)
 
 
