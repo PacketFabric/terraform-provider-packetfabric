@@ -15,14 +15,15 @@ This is a port located in a Microsoft Azure cloud on-ramp facility, which will b
 ```terraform
 resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azure" {
   provider          = packetfabric
-  description       = var.pf_description
-  zone              = var.pf_cs_zone
-  pop               = var.pf_cs_pop
-  subscription_term = var.pf_cs_subterm
-  service_class     = var.pf_cs_srvclass
-  encapsulation     = var.encapsulation
-  port_category     = var.port_category
-  speed             = var.pf_cs_speed
+  description       = "hello world"
+  zone              = "A"
+  pop               = "BOS1"
+  subscription_term = 1
+  service_class     = "longhaul"
+  encapsulation     = "dot1q"
+  port_category     = "primary" # secondary
+  speed             = "10Gbps"
+  labels            = ["terraform", "dev"]
 }
 
 output "packetfabric_cs_azure_dedicated_connection" {
