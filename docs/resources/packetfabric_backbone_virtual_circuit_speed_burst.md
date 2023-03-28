@@ -15,7 +15,7 @@ Burst the capacity on an existing virtual circuit. For more information, see [Ca
 ```terraform
 resource "packetfabric_backbone_virtual_circuit_speed_burst" "boost" {
   provider      = packetfabric
-  vc_circuit_id = var.pf_vc_circuit_id
+  vc_circuit_id = packetfabric_backbone_virtual_circuit.vc1.id
   speed         = "10Gbps"
 }
 
