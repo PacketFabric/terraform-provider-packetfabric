@@ -21,58 +21,58 @@ resource "random_pet" "name" {}
 # ##### Ports/Interfaces
 # ######################################
 
-# Get the zone from the pop automatically
-data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
-  provider = packetfabric
-  pop      = var.pf_port_pop1
-}
-output "packetfabric_locations_port_availability_pop1" {
-  value = data.packetfabric_locations_port_availability.port_availabilty_pop1
-}
-locals {
-  zones_pop1 = toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
-}
-output "packetfabric_locations_port_availability_pop1_single_zone" {
-  value = tolist(local.zones_pop1)[0]
-}
+# # Get the zone from the pop automatically
+# data "packetfabric_locations_port_availability" "port_availabilty_pop1" {
+#   provider = packetfabric
+#   pop      = var.pf_port_pop1
+# }
+# output "packetfabric_locations_port_availability_pop1" {
+#   value = data.packetfabric_locations_port_availability.port_availabilty_pop1
+# }
+# locals {
+#   zones_pop1 = toset([for each in data.packetfabric_locations_port_availability.port_availabilty_pop1.ports_available[*] : each.zone if each.media == var.pf_port_media])
+# }
+# output "packetfabric_locations_port_availability_pop1_single_zone" {
+#   value = tolist(local.zones_pop1)[0]
+# }
 
-# Create a PacketFabric Ports
-resource "packetfabric_port" "port_1a" {
-  provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}-a"
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
-
-  lifecycle {
-    ignore_changes = [
-      # Ignore changes to zone because zone cannot be modified 
-      # after the port is created but can change as we get it 
-      # from packetfabric_locations_port_availability data source
-      zone,
-    ]
-  }
-}
-output "packetfabric_port_1a" {
-  value = packetfabric_port.port_1a
-}
-
-# ## 2nd port in the same location same zone to create a LAG
-# resource "packetfabric_port" "port_1b" {
+# # Create a PacketFabric Ports
+# resource "packetfabric_port" "port_1a" {
 #   provider          = packetfabric
 #   autoneg           = var.pf_port_autoneg
-#   description       = "${var.tag_name}-${random_pet.name.id}-b"
+#   description       = "${var.resource_name}-${random_pet.name.id}-a"
 #   media             = var.pf_port_media
 #   nni               = var.pf_port_nni
 #   pop               = var.pf_port_pop1
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+#   labels            = ["terraform"]
+#   lifecycle {
+#     ignore_changes = [
+#       # Ignore changes to zone because zone cannot be modified 
+#       # after the port is created but can change as we get it 
+#       # from packetfabric_locations_port_availability data source
+#       zone,
+#     ]
+#   }
+# }
+# output "packetfabric_port_1a" {
+#   value = packetfabric_port.port_1a
+# }
 
+# ## 2nd port in the same location same zone to create a LAG
+# resource "packetfabric_port" "port_1b" {
+#   provider          = packetfabric
+#   autoneg           = var.pf_port_autoneg
+#   description       = "${var.resource_name}-${random_pet.name.id}-b"
+#   media             = var.pf_port_media
+#   nni               = var.pf_port_nni
+#   pop               = var.pf_port_pop1
+#   speed             = var.pf_port_speed
+#   subscription_term = var.pf_port_subterm
+#   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
+#   labels            = ["terraform"]
 #   lifecycle {
 #     ignore_changes = [
 #       # Ignore changes to zone because zone cannot be modified 
@@ -88,11 +88,12 @@ output "packetfabric_port_1a" {
 
 # resource "packetfabric_link_aggregation_group" "lag_1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   interval    = "fast" # or slow
 #   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
 #   #members = [packetfabric_port.port_1a.id]
-#   pop = var.pf_port_pop1
+#   pop    = var.pf_port_pop1
+#   labels = ["terraform"]
 # }
 
 # data "packetfabric_link_aggregation_group" "lag_1" {
@@ -107,13 +108,14 @@ output "packetfabric_port_1a" {
 #   provider          = packetfabric
 #   enabled           = true # set to false to disable the port
 #   autoneg           = var.pf_port_autoneg
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   media             = var.pf_port_media
 #   nni               = var.pf_port_nni
 #   pop               = var.pf_port_pop2
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = var.pf_port_avzone2
+#   labels            = ["terraform"]
 # }
 # output "packetfabric_port_2" {
 #   value = packetfabric_port.port_2
@@ -157,7 +159,7 @@ output "packetfabric_port_1a" {
 # # Create backbone Virtual Circuit
 # resource "packetfabric_backbone_virtual_circuit" "vc1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = packetfabric_port.port_1a.id
@@ -174,6 +176,7 @@ output "packetfabric_port_1a" {
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
 #   }
+#   labels = ["terraform"]
 # }
 # output "packetfabric_backbone_virtual_circuit" {
 #   value = packetfabric_backbone_virtual_circuit.vc1
@@ -206,7 +209,7 @@ output "packetfabric_port_1a" {
 
 # resource "packetfabric_point_to_point" "ptp1" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   speed             = var.pf_ptp_speed
 #   media             = var.pf_ptp_media
 #   subscription_term = var.pf_ptp_subterm
@@ -220,6 +223,7 @@ output "packetfabric_port_1a" {
 #     zone    = var.pf_ptp_zone2
 #     autoneg = var.pf_ptp_autoneg
 #   }
+#   labels = ["terraform"]
 # }
 # output "packetfabric_point_to_point" {
 #   value = packetfabric_point_to_point.ptp1
@@ -272,7 +276,7 @@ output "packetfabric_port_1a" {
 # # Create Cross Connect
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
-#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   description   = "${var.resource_name}-${random_pet.name.id}"
 #   document_uuid = var.pf_document_uuid1
 #   port          = packetfabric_port.port_1a.id
 #   site          = local.pf_port_site1
@@ -283,7 +287,7 @@ output "packetfabric_port_1a" {
 
 # resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
 #   provider      = packetfabric
-#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   description   = "${var.resource_name}-${random_pet.name.id}"
 #   document_uuid = var.pf_document_uuid2
 #   port          = packetfabric_port.port_1a.id
 #   site          = local.pf_port_site2
@@ -338,52 +342,40 @@ output "packetfabric_port_1a" {
 # ##### Hosted Cloud Connections
 # #######################################
 
-# # Create a AWS Hosted Connection - no cloud side
-# resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
-#   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
-#   port        = packetfabric_port.port_1a.id
-#   speed       = var.pf_cs_speed2
-#   pop         = var.pf_cs_pop2
-#   vlan        = var.pf_cs_vlan2
-#   zone        = var.pf_cs_zone2
-# }
-# output "packetfabric_cs_aws_hosted_connection" {
-#   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
-# }
-
-# Create a AWS Hosted Connection - cloud side
-resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
+# Create a AWS Hosted Connection
+resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
   port        = packetfabric_port.port_1a.id
   speed       = var.pf_cs_speed2
   pop         = var.pf_cs_pop2
   vlan        = var.pf_cs_vlan2
   zone        = var.pf_cs_zone2
+  # for cloud side provisioning - optional
   cloud_settings {
     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
-    aws_region       = "us-east-1"
-    mtu              = 1500
-    aws_vif_type     = "private"
+    aws_region       = var.pf_cs_aws_region
+    mtu              = var.pf_cs_mtu
+    aws_vif_type     = var.pf_cs_aws_vif_type
     bgp_settings {
-      customer_asn   = 64513
-      address_family = "ipv4"
+      customer_asn   = var.pf_cs_customer_asn
+      address_family = var.pf_cs_address_family
     }
     aws_gateways {
       type = "directconnect"
-      name = "${var.tag_name}-${random_pet.name.id}"
-      asn  = 64513
+      name = "${var.resource_name}-${random_pet.name.id}"
+      asn  = var.pf_cs_directconnect_gw_asn
     }
     aws_gateways {
       type   = "private"
-      name   = "${var.tag_name}-${random_pet.name.id}"
-      vpc_id = "vpc-bea401c4"
+      name   = "${var.resource_name}-${random_pet.name.id}"
+      vpc_id = var.pf_cs_aws_vpc_id
     }
   }
+  labels = ["terraform"]
 }
-output "packetfabric_cs_aws_hosted_connection_cloud_side" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws_cloud_ide
+output "packetfabric_cs_aws_hosted_connection" {
+  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
 }
 
 # data "packetfabric_cs_aws_hosted_connection" "current" {
@@ -397,12 +389,13 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Azure Hosted Connection 
 # resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   azure_service_key = var.azure_service_key
 #   port              = packetfabric_port.port_1a.id
 #   speed             = var.pf_cs_speed1 # will be deprecated
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
+#   labels = ["terraform"]
 # }
 # output "packetfabric_cs_azure_hosted_connection" {
 #   sensitive = true
@@ -420,13 +413,14 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a GCP Hosted Connection 
 # resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
 #   provider                    = packetfabric
-#   description                 = "${var.tag_name}-${random_pet.name.id}"
+#   description                 = "${var.resource_name}-${random_pet.name.id}"
 #   port                        = packetfabric_port.port_1a.id
 #   speed                       = var.pf_cs_speed1
 #   google_pairing_key          = var.google_pairing_key
-#   google_vlan_attachment_name = "${var.tag_name}-${random_pet.name.id}"
+#   google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
 #   pop                         = var.pf_cs_pop1
 #   vlan                        = var.pf_cs_vlan1
+#   labels                      = ["terraform"]
 # }
 # output "packetfabric_cs_google_hosted_connection" {
 #   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
@@ -444,13 +438,14 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Oracle Hosted Connection 
 # resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   vc_ocid     = var.pf_cs_oracle_vc_ocid
 #   region      = var.pf_cs_oracle_region
 #   port        = packetfabric_port.port_1a.id
 #   pop         = var.pf_cs_pop6
 #   zone        = var.pf_cs_zone6
 #   vlan        = var.pf_cs_vlan6
+#   labels      = ["terraform"]
 # }
 # output "packetfabric_cs_oracle_hosted_connection" {
 #   value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
@@ -468,11 +463,12 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
 #   provider    = packetfabric
 #   ibm_bgp_asn = var.ibm_bgp_asn
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   pop         = var.pf_cs_pop7
 #   port        = packetfabric_port.port_1a.id
 #   vlan        = var.pf_cs_vlan7
 #   speed       = var.pf_cs_speed1
+#   labels      = ["terraform"]
 #   lifecycle {
 #     ignore_changes = [
 #       zone,
@@ -500,7 +496,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Marketplace Service type port
 # resource "packetfabric_marketplace_service" "marketplace_port" {
 #   provider     = packetfabric
-#   name         = "${var.tag_name}-${random_pet.name.id}-port"
+#   name         = "${var.resource_name}-${random_pet.name.id}-port"
 #   description  = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lobortis mattis aliquam faucibus purus in massa tempor nec."
 #   service_type = "port-service"
 #   sku          = var.pf_sku
@@ -515,7 +511,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Marketplace Service type quick-connect
 # resource "packetfabric_marketplace_service" "marketplace_quick_connect" {
 #   provider                = packetfabric
-#   name                    = "${var.tag_name}-${random_pet.name.id}-quick-connect"
+#   name                    = "${var.resource_name}-${random_pet.name.id}-quick-connect"
 #   description             = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lobortis mattis aliquam faucibus purus in massa tempor nec."
 #   service_type            = "quick-connect-service"
 #   sku                     = var.pf_sku
@@ -543,7 +539,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a VC Marketplace Connection 
 # resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   routing_id  = var.pf_routing_id
 #   market      = var.pf_market
 #   interface {
@@ -564,7 +560,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create an IX Marketplace Connection 
 # resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   routing_id  = var.pf_routing_id_ix
 #   market      = var.pf_market_ix
 #   asn         = var.pf_asn_ix
@@ -586,7 +582,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a AWS Hosted Marketplace Connection 
 # resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketplace_aws" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   routing_id  = var.pf_routing_id
 #   market      = var.pf_market
 #   speed       = var.pf_cs_speed2
@@ -600,7 +596,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Azure Hosted Marketplace Connection 
 # resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketplace_azure" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   azure_service_key = var.azure_service_key
 #   routing_id        = var.pf_routing_id
 #   market            = var.pf_market
@@ -614,7 +610,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a GCP Hosted Marketplace Connection 
 # resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_marketplace_google" {
 #   provider                    = packetfabric
-#   description                 = "${var.tag_name}-${random_pet.name.id}"
+#   description                 = "${var.resource_name}-${random_pet.name.id}"
 #   routing_id                  = var.pf_routing_id
 #   market                      = var.pf_market
 #   speed                       = var.pf_cs_speed1
@@ -630,7 +626,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Create a Oracle Hosted Marketplace Connection 
 # resource "packetfabric_cs_oracle_hosted_marketplace_connection" "cs_conn1_marketplace_oracle" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   vc_ocid     = var.pf_cs_oracle_vc_ocid
 #   region      = var.pf_cs_oracle_region
 #   routing_id  = var.pf_routing_id
@@ -647,7 +643,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   provider       = packetfabric
 #   type           = "cloud"
 #   cloud_provider = "aws" # "aws, azure, google, oracle
-#   description    = "${var.tag_name}-${random_pet.name.id}"
+#   description    = "${var.resource_name}-${random_pet.name.id}"
 #   interface {
 #     port_circuit_id = var.pf_market_port_circuit_id
 #     vlan            = var.pf_cs_vlan2
@@ -659,7 +655,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # resource "packetfabric_marketplace_service_port_accept_request" "accept_marketplace_request_backbone" {
 #   provider    = packetfabric
 #   type        = "backbone"
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   interface {
 #     port_circuit_id = var.pf_market_port_circuit_id
 #     vlan            = var.pf_vc_vlan1
@@ -729,7 +725,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
 #   provider          = packetfabric
 #   aws_region        = var.aws_region3
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone3
 #   pop               = var.pf_cs_pop3
 #   subscription_term = var.pf_cs_subterm
@@ -737,18 +733,20 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed3
 #   should_create_lag = var.should_create_lag
+#   labels            = ["terraform"]
 # }
 
 # # GCP Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone4
 #   pop               = var.pf_cs_pop4
 #   subscription_term = var.pf_cs_subterm
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
+#   labels            = ["terraform"]
 # }
 # output "packetfabric_cs_google_dedicated_connection" {
 #   value = packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
@@ -757,7 +755,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # # Azure Dedicated Connection
 # resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azure" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   zone              = var.pf_cs_zone5
 #   pop               = var.pf_cs_pop5
 #   subscription_term = var.pf_cs_subterm
@@ -765,6 +763,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   encapsulation     = var.encapsulation
 #   port_category     = var.port_category
 #   speed             = var.pf_cs_speed5
+#   labels            = ["terraform"]
 # }
 
 # data "packetfabric_cs_dedicated_connections" "current" {
@@ -781,14 +780,15 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # resource "packetfabric_cloud_router" "cr" {
 #   provider = packetfabric
 #   asn      = var.pf_cr_asn
-#   name     = "${var.tag_name}-${random_pet.name.id}"
+#   name     = "${var.resource_name}-${random_pet.name.id}"
 #   capacity = var.pf_cr_capacity
 #   regions  = var.pf_cr_regions
+#   labels   = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
+#   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
 #   circuit_id  = packetfabric_cloud_router.cr.id
 #   pop         = var.pf_crc_pop1
 #   zone        = var.pf_crc_zone1
@@ -796,6 +796,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
 #   is_public   = var.pf_crc_is_public
+#   labels      = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
@@ -834,6 +835,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
+#   labels = ["terraform"]
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_1" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_1
@@ -851,7 +853,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 # resource "packetfabric_cloud_router_connection_google" "crc_2" {
 #   provider                    = packetfabric
-#   description                 = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+#   description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
 #   google_pairing_key          = var.pf_crc_google_pairing_key
 #   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
@@ -859,11 +861,12 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
 #   maybe_dnat                  = var.pf_crc_maybe_dnat
+#   labels                      = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {
 #   provider                     = packetfabric
-#   description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
+#   description                  = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop3}"
 #   circuit_id                   = packetfabric_cloud_router.cr.id
 #   pop                          = var.pf_crc_pop3
 #   speed                        = var.pf_crc_speed
@@ -879,6 +882,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
 #   shared_key                   = var.pf_crc_shared_key
+#   labels                       = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
@@ -899,6 +903,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
+#   labels = ["terraform"]
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
@@ -916,18 +921,19 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 # resource "packetfabric_cloud_router_connection_azure" "crc_4" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+#   description       = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id        = packetfabric_cloud_router.cr.id
 #   azure_service_key = var.pf_crc_azure_service_key
 #   speed             = var.pf_crc_speed
 #   maybe_nat         = var.pf_crc_maybe_nat
 #   maybe_dnat        = var.pf_crc_maybe_dnat
 #   is_public         = var.pf_crc_is_public
+#   labels            = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_connection_ibm" "crc_5" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
+#   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop4}"
 #   circuit_id  = packetfabric_cloud_router.cr.id
 #   ibm_bgp_asn = var.pf_crc_ibm_bgp_asn
 #   pop         = var.pf_crc_pop4
@@ -935,6 +941,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
 #   speed       = var.pf_crc_speed
+#   labels      = ["terraform"]
 #   lifecycle {
 #     ignore_changes = [
 #       ibm_bgp_cer_cidr,
@@ -945,7 +952,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 # resource "packetfabric_cloud_router_connection_oracle" "crc_6" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop5}"
+#   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop5}"
 #   circuit_id  = packetfabric_cloud_router.cr.id
 #   region      = var.pf_crc_oracle_region
 #   vc_ocid     = var.pf_crc_oracle_vc_ocid
@@ -953,11 +960,12 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   zone        = var.pf_crc_zone5
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
+#   labels      = ["terraform"]
 # }
 
 # resource "packetfabric_cloud_router_connection_port" "crc_7" {
 #   provider        = packetfabric
-#   description     = "${var.tag_name}-${random_pet.name.id}"
+#   description     = "${var.resource_name}-${random_pet.name.id}"
 #   circuit_id      = packetfabric_cloud_router.cr.id
 #   port_circuit_id = packetfabric_port.port_1a.id
 #   vlan            = var.pf_crc_vlan
@@ -965,6 +973,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #   is_public       = var.pf_crc_is_public
 #   maybe_nat       = var.pf_crc_maybe_nat
 #   maybe_dnat      = var.pf_crc_maybe_dnat
+#   labels          = ["terraform"]
 # }
 
 # data "packetfabric_cloud_router_connections" "all_crc" {
@@ -989,6 +998,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 #     prefix     = var.pf_return_filters_prefix2
 #     match_type = var.pf_return_filters_match_type2
 #   }
+#   labels = ["terraform"]
 # }
 # output "packetfabric_cloud_router_quick_connect" {
 #   value = packetfabric_cloud_router_quick_connect.cr_quick_connect
@@ -1005,6 +1015,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 # }
 # output "packetfabric_billing_port_1a" {
 #   value = data.packetfabric_billing.port_1a
+# }
 
 # #######################################
 # ##### Flex Bandwidth
@@ -1012,7 +1023,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 # resource "packetfabric_flex_bandwidth" "flex1" {
 #   provider          = packetfabric
-#   description       = "${var.tag_name}-${random_pet.name.id}"
+#   description       = "${var.resource_name}-${random_pet.name.id}"
 #   subscription_term = var.pf_flex_subscription_term
 #   capacity          = var.pf_flex_capacity
 # }
@@ -1026,7 +1037,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-aws"
+  description = "${var.resource_name}-${random_pet.name.id}-aws"
   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
 }
 output "packetfabric_cloud_provider_credential_aws" {
@@ -1035,8 +1046,8 @@ output "packetfabric_cloud_provider_credential_aws" {
 }
 
 # resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
-#   provider       = packetfabric
-#   description    = "${var.tag_name}-${random_pet.name.id}-google"
+#   provider    = packetfabric
+#   description = "${var.resource_name}-${random_pet.name.id}-google"
 #   # using env var GOOGLE_CREDENTIALS
 # }
 # output "packetfabric_cloud_provider_credential_google" {

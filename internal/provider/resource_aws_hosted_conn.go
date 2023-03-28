@@ -122,18 +122,18 @@ func resourceAwsRequestHostConn() *schema.Resource {
 							Description: "The AWS region that should be used.",
 						},
 						"mtu": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     1500,
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1500,
 							ValidateFunc: validation.IntInSlice([]int{1500, 9001}),
-							Description: "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"9001\"] ",
+							Description:  "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"9001\"] ",
 						},
 						"aws_vif_type": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ForceNew:     true,
 							Description:  "The type of VIF to use for this connection.",
-							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public" }, false),
+							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public"}, false),
 						},
 						"bgp_settings": {
 							Type:     schema.TypeList,
@@ -178,10 +178,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 							},
 						},
 						"aws_gateways": {
-							Type:     schema.TypeList,
-							Optional: true,
-							ForceNew: true,
-							Description: "Only for Private or Transit VIF."
+							Type:        schema.TypeList,
+							Optional:    true,
+							ForceNew:    true,
+							Description: "Only for Private or Transit VIF.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"type": {
