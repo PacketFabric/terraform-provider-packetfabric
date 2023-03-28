@@ -1,8 +1,8 @@
 resource "packetfabric_flex_bandwidth" "flex1" {
   provider          = packetfabric
-  description       = var.pf_description
-  subscription_term = var.pf_flex_subscription_term
-  capacity          = var.pf_flex_capacity
+  description       = "hello world"
+  subscription_term = 1
+  capacity          = "200Gbps"
 }
 
 output "packetfabric_flex_bandwidth" {
