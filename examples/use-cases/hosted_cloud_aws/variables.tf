@@ -53,6 +53,12 @@ variable "pf_cs_vlan1" {
   type    = number
   default = 110
 }
+# AWS Cloud Side Provisioning
+variable "pf_cs_mtu" {
+  description = "Maximum Transmission Unit this port supports (size of the largest supported PDU)"
+  type        = number
+  default     = 1500
+}
 
 # AWS VARs
 variable "amazon_side_asn1" { # used in BGP session

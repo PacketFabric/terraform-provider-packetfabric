@@ -34,19 +34,28 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	if d.HasChange("cloud_settings") {
 		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
 			cs := cloudSettings.(map[string]interface{})
-			if cs["aws_vif_type"] != nil {
-				updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{
-					CredentialsUUID: cs["credentials_uuid"].(string),
-					AWSRegion:       cs["aws_region"].(string),
-					MTU:             cs["mtu"].(int),
-					AWSVIFType:      cs["aws_vif_type"].(string),
-					BGPSettings: &packetfabric.BGPSettings{
-						CustomerASN:   cs["customer_asn"].(int),
-						AddressFamily: cs["address_family"].(string),
-					},
-				}
-				changed = true
+			updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{}
+			if credentialsUUID, ok := cs["credentials_uuid"].(string); ok {
+				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
 			}
+			if awsRegion, ok := cs["aws_region"].(string); ok {
+				updateServiceConnData.CloudSettings.AWSRegion = awsRegion
+			}
+			if mtu, ok := cs["mtu"].(int); ok {
+				updateServiceConnData.CloudSettings.MTU = mtu
+			}
+			if bgpSettings, ok := cs["bgp_settings"].([]interface{}); ok && len(bgpSettings) > 0 {
+				bgp := bgpSettings[0].(map[string]interface{})
+				updateServiceConnData.CloudSettings.BGPSettings = &packetfabric.BGPSettings{}
+				if advertisedPrefixes, ok := bgp["advertised_prefixes"].([]interface{}); ok {
+					ap := make([]string, len(advertisedPrefixes))
+					for i, elem := range advertisedPrefixes {
+						ap[i] = elem.(string)
+					}
+					updateServiceConnData.CloudSettings.BGPSettings.AdvertisedPrefixes = ap
+				}
+			}
+			changed = true
 		}
 	}
 

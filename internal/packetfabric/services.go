@@ -223,6 +223,7 @@ type CloudConnInfo struct {
 	IsAwaitingOnramp        bool                 `json:"is_awaiting_onramp,omitempty"`
 	IsCloudRouterConnection bool                 `json:"is_cloud_router_connection,omitempty"`
 	AzurePortCategory       string               `json:"azure_port_category,omitempty"`
+	PONumber                string               `json:"po_number,omitempty"`
 }
 
 // hosted and dedicated cloud

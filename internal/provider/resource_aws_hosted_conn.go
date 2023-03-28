@@ -298,10 +298,12 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
+		_ = d.Set("po_number", resp.PONumber)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
+		_ = d.Set("po_number", resp.PONumber)
 
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
@@ -341,7 +343,6 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		_ = d.Set("po_number", resp2.PONumber)
 	}
 
 	labels, err3 := getLabels(c, d.Id())
