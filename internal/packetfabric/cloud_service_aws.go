@@ -133,7 +133,6 @@ type CloudSettingsHosted struct {
 	AwsDxBandwidth            string            `json:"aws_dx_bandwidth,omitempty"`
 	AwsDxJumboFrameCapable    bool              `json:"aws_dx_jumbo_frame_capable,omitempty"`
 	AwsDxAWSDevice            string            `json:"aws_dx_aws_device,omitempty"`
-	AwsDxAWSDeviceV2          string            `json:"aws_dx_aws_device_v2,omitempty"`
 	AwsDxAWSLogicalDeviceID   string            `json:"aws_dx_aws_logical_device_id,omitempty"`
 	AwsDxHasLogicalRedundancy bool              `json:"aws_dx_has_logical_redundancy,omitempty"`
 	AwsDxMacSecCapable        bool              `json:"aws_dx_mac_sec_capable,omitempty"`

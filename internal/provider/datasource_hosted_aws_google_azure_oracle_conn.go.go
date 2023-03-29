@@ -160,10 +160,6 @@ func dataSourceCloudServicesConnInfo() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"aws_dx_aws_deviceV2": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"aws_dx_aws_logical_device_id": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -383,7 +379,6 @@ func flattenCloudConnInfoCloudSettings(cloudSettings *packetfabric.CloudSettings
 		"aws_dx_bandwidth":              cloudSettings.AwsDxBandwidth,
 		"aws_dx_jumbo_frame_capable":    cloudSettings.AwsDxJumboFrameCapable,
 		"aws_dx_aws_device":             cloudSettings.AwsDxAWSDevice,
-		"aws_dx_aws_deviceV2":           cloudSettings.AwsDxAWSDeviceV2,
 		"aws_dx_aws_logical_device_id":  cloudSettings.AwsDxAWSLogicalDeviceID,
 		"aws_dx_has_logical_redundancy": cloudSettings.AwsDxHasLogicalRedundancy,
 		"aws_dx_mac_sec_capable":        cloudSettings.AwsDxMacSecCapable,
