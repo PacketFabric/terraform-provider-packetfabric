@@ -1245,11 +1245,29 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 =======
 // packetfabric_outbound_cross_connect
 func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	var pop, documentUuid, hcl string
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
 
-	resourceName, _ := _generateResourceName(pfOutboundCrossConnect)
+	hclPortResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfOutboundCrossConnect)
 	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
+
+	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_DOCUMENT_UUID1_KEY),
+		hclPortResult.ResourceReference,
+		os.Getenv(PF_OUTBOUND_SITE_KEY))
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, outboundCrossHcl)
 
 	return RHclOutboundCrossConnectResult{
 		HclResultBase: HclResultBase{
@@ -1258,8 +1276,8 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 			ResourceName: resourceName,
 		},
 		Desc:         uniqueDesc,
-		DocumentUuid: documentUuid,
-		Site:         pop,
+		DocumentUuid: os.Getenv(PF_DOCUMENT_UUID1_KEY),
+		Site:         os.Getenv(PF_OUTBOUND_SITE_KEY),
 	}
 }
 

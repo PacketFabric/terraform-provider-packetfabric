@@ -7,14 +7,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func testOutboundCrossConnect(t *testing.T) {
+func TestOutboundCrossConnect(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testutil.PreCheck(t, nil)
+			testutil.PreCheck(t, []string{
+				testutil.PF_DOCUMENT_UUID1_KEY,
+				testutil.PF_OUTBOUND_SITE_KEY,
+			})
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
