@@ -2,7 +2,6 @@ package packetfabric
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -20,8 +19,7 @@ const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
-const cloudVcBackboneURI = "/v2/services/%s"
-const routerConfigURI = "/v2/services/cloud/connections/%s/router-config?"
+const routerConfigURI = "/v2/services/cloud/connections/%s/router-config?cloud_circuit_id=%s&router_type=%s"
 
 type ServiceAws struct {
 	RoutingID    string `json:"routing_id,omitempty"`
@@ -468,7 +466,7 @@ func (c *PFClient) GetRouterConfiguration(cloudCircuitID, routerType string) (*R
 	formattedURI := fmt.Sprintf(routerConfigURI, cloudCircuitID, routerType)
 	expectedResp := &RouterConfig{}
 
-	_, err := c.sendRequest(formattedURI, http.MethodGet, nil, expectedResp)
+	_, err := c.sendRequest(formattedURI, getMethod, nil, expectedResp)
 	if err != nil {
 		return nil, err
 	}
