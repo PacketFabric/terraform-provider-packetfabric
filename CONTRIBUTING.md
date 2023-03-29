@@ -34,6 +34,9 @@
         * From the root, execute `tfplugindocs generate --provider-name packetfabric`
         * Then, you need to run the following command on the `docs/resources` and `docs/data-sources` folders to prepend packetfabric_ to the file name:  
         `for file in *; do mv $file packetfabric_${file%%}; done`
+        * Removing `Defaults: 0` in all `*.md` files as this isn't needed (Terraform sending `null` when default is zero)
+        `find docs/* -name "*.md" -type f -exec sed -i '' 's/ Defaults: 0//g' {} \;` (mac)
+        `find docs/* -name "*.md" -type f -exec sed -i 's/ Defaults: 0//g' {} \;` (linux)
         * Verify each `*.md` under `docs/`
     * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
     * To see the debug logs, comment out `c.Ctx = context.Background()` in `internal/packetfabric/client.go`
