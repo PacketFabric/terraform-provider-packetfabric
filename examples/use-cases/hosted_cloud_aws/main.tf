@@ -105,6 +105,9 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
   allowed_prefixes = [
     var.aws_vpc_cidr1
   ]
+  depends_on = [
+    aws_vpn_gateway_attachment.vpn_attachment_1
+  ]
   timeouts {
     create = "2h"
     delete = "2h"
@@ -134,10 +137,11 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
 }
 
-# Create a AWS Hosted Connection 
+# Create a AWS Hosted Connection + AWS VIF
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
@@ -161,7 +165,9 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
       vpc_id = aws_vpc.vpc_1.id
     }
   }
-  labels = var.pf_labels
+  depends_on = [
+    aws_dx_gateway.direct_connect_gw_1
+  ]
 }
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
