@@ -386,12 +386,11 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 			return diag.Errorf("error setting 'nat': %s", err)
 		}
 	}
-	if bgp.Prefixes != nil {
-		prefixes := flattenPrefixConfiguration(bgp.Prefixes)
-		if err := d.Set("prefixes", prefixes); err != nil {
-			return diag.Errorf("error setting 'prefixes': %s", err)
-		}
+	prefixes := flattenPrefixConfiguration(bgp.Prefixes)
+	if err := d.Set("prefixes", prefixes); err != nil {
+		return diag.Errorf("error setting 'prefixes': %s", err)
 	}
+
 	return diags
 }
 
