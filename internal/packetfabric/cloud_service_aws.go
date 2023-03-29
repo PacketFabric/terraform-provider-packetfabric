@@ -2,6 +2,7 @@ package packetfabric
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -20,6 +21,7 @@ const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hoste
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
 const cloudVcBackboneURI = "/v2/services/%s"
+const routerConfigURI = "/v2/services/cloud/connections/%s/router-config?"
 
 type ServiceAws struct {
 	RoutingID    string `json:"routing_id,omitempty"`
@@ -295,6 +297,12 @@ type HostedInterfaces struct {
 	IsPtp              bool   `json:"is_ptp,omitempty"`
 }
 
+type RouterConfig struct {
+	CloudCircuitID string `json:"cloud_circuit_id"`
+	RouterType     string `json:"router_type"`
+	RouterConfig   string `json:"router_config"`
+}
+
 func (c *PFClient) CreateAwsHostedMkt(serviceAws ServiceAws) (*AwsHostedMktResp, error) {
 	expectedResp := &AwsHostedMktResp{}
 	_, err := c.sendRequest(serviceAwsURI, postMethod, serviceAws, expectedResp)
@@ -454,4 +462,16 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 		return err
 	}
 	return nil
+}
+
+func (c *PFClient) GetRouterConfiguration(cloudCircuitID, routerType string) (*RouterConfig, error) {
+	formattedURI := fmt.Sprintf(routerConfigURI, cloudCircuitID, routerType)
+	expectedResp := &RouterConfig{}
+
+	_, err := c.sendRequest(formattedURI, http.MethodGet, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return expectedResp, nil
 }
