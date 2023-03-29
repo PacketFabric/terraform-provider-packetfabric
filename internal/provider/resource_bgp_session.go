@@ -346,7 +346,6 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
-	_ = d.Set("prefixes", bgp.Prefixes)
 
 	if _, ok := d.GetOk("l3_address"); ok {
 		_ = d.Set("l3_address", bgp.L3Address)
@@ -381,13 +380,18 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	if _, ok := d.GetOk("bfd_multiplier"); ok {
 		_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 	}
-	if _, ok := d.GetOk("nat"); ok {
+	if bgp.Nat != nil {
 		nat := flattenNatConfiguration(bgp.Nat)
 		if err := d.Set("nat", nat); err != nil {
 			return diag.Errorf("error setting 'nat': %s", err)
 		}
 	}
-
+	if bgp.Prefixes != nil {
+		prefixes := flattenPrefixConfiguration(bgp.Prefixes)
+		if err := d.Set("prefixes", prefixes); err != nil {
+			return diag.Errorf("error setting 'prefixes': %s", err)
+		}
+	}
 	return diags
 }
 
@@ -658,6 +662,22 @@ func flattenDnatMappings(dnatMappings []packetfabric.BgpDnatMapping) []interface
 		data["private_prefix"] = dnat.PrivateIP
 		data["public_prefix"] = dnat.PublicIP
 		data["conditional_prefix"] = dnat.ConditionalPrefix
+		result[i] = data
+	}
+	return result
+}
+
+func flattenPrefixConfiguration(prefixes []packetfabric.BgpPrefix) []interface{} {
+	result := make([]interface{}, len(prefixes))
+	for i, prefix := range prefixes {
+		data := make(map[string]interface{})
+		data["prefix"] = prefix.Prefix
+		data["match_type"] = prefix.MatchType
+		data["as_prepend"] = prefix.AsPrepend
+		data["med"] = prefix.Med
+		data["local_preference"] = prefix.LocalPreference
+		data["type"] = prefix.Type
+		data["order"] = prefix.Order
 		result[i] = data
 	}
 	return result
