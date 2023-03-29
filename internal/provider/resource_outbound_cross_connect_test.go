@@ -15,7 +15,6 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
 
 	resource.ParallelTest(t, resource.TestCase{
-
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
