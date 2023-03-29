@@ -160,8 +160,8 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
-		_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
-		_ = d.Set("vlan_microsoft", resp.Settings.VlanMicrosoft)
+		_ = d.Set("vlan_private", resp.Settings.VlanIDPrivate)
+		_ = d.Set("vlan_microsoft", resp.Settings.VlanIDMicrosoft)
 		_ = d.Set("po_number", resp.PONumber)
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())

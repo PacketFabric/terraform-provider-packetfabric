@@ -308,23 +308,23 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
 			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
-			cloudSettings["aws_region"] = resp.CloudSettings.AWSRegion
-			cloudSettings["mtu"] = resp.CloudSettings.MTU
-			cloudSettings["aws_vif_type"] = resp.CloudSettings.AWSVIFType
+			cloudSettings["aws_region"] = resp.CloudSettings.AwsRegion
+			cloudSettings["mtu"] = resp.CloudSettings.Mtu
+			cloudSettings["aws_vif_type"] = resp.CloudSettings.AwsVifType
 
 			bgpSettings := make(map[string]interface{})
-			bgpSettings["customer_asn"] = resp.CloudSettings.BGPSettings.CustomerASN
-			bgpSettings["address_family"] = resp.CloudSettings.BGPSettings.AddressFamily
+			bgpSettings["customer_asn"] = resp.CloudSettings.BgpSettings.CustomerAsn
+			bgpSettings["address_family"] = resp.CloudSettings.BgpSettings.AddressFamily
 			cloudSettings["bgp_settings"] = bgpSettings
 
-			awsGateways := make([]map[string]interface{}, len(resp.CloudSettings.AWSGateways))
-			for i, gateway := range resp.CloudSettings.AWSGateways {
+			awsGateways := make([]map[string]interface{}, len(resp.CloudSettings.AwsGateways))
+			for i, gateway := range resp.CloudSettings.AwsGateways {
 				awsGateway := make(map[string]interface{})
 				awsGateway["type"] = gateway.Type
 				awsGateway["name"] = gateway.Name
 				awsGateway["id"] = gateway.ID
-				awsGateway["asn"] = gateway.ASN
-				awsGateway["vpc_id"] = gateway.VPCID
+				awsGateway["asn"] = gateway.Asn
+				awsGateway["vpc_id"] = gateway.VpcID
 				awsGateway["subnet_ids"] = gateway.SubnetIDs
 				awsGateway["allowed_prefixes"] = gateway.AllowedPrefixes
 				awsGateways[i] = awsGateway
@@ -394,29 +394,29 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
 		hostedAwsConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
 		if awsRegion, ok := cs["aws_region"]; ok {
-			hostedAwsConn.CloudSettings.AWSRegion = awsRegion.(string)
+			hostedAwsConn.CloudSettings.AwsRegion = awsRegion.(string)
 		}
 		if mtu, ok := cs["mtu"]; ok {
-			hostedAwsConn.CloudSettings.MTU = mtu.(int)
+			hostedAwsConn.CloudSettings.Mtu = mtu.(int)
 		}
-		hostedAwsConn.CloudSettings.AWSVIFType = cs["aws_vif_type"].(string)
+		hostedAwsConn.CloudSettings.AwsVifType = cs["aws_vif_type"].(string)
 		if bgpSettings, ok := cs["bgp_settings"]; ok {
 			bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
-			hostedAwsConn.CloudSettings.BGPSettings = &packetfabric.BGPSettings{}
-			if customerASN, ok := bgpSettingsMap["customer_asn"]; ok {
-				hostedAwsConn.CloudSettings.BGPSettings.CustomerASN = customerASN.(int)
+			hostedAwsConn.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
+			if customerAsn, ok := bgpSettingsMap["customer_asn"]; ok {
+				hostedAwsConn.CloudSettings.BgpSettings.CustomerAsn = customerAsn.(int)
 			}
-			hostedAwsConn.CloudSettings.BGPSettings.AddressFamily = bgpSettingsMap["address_family"].(string)
+			hostedAwsConn.CloudSettings.BgpSettings.AddressFamily = bgpSettingsMap["address_family"].(string)
 		}
 		if awsGateways, ok := cs["aws_gateways"]; ok {
-			hostedAwsConn.CloudSettings.AWSGateways = extractAwsGateways(awsGateways.([]interface{}))
+			hostedAwsConn.CloudSettings.AwsGateways = extractAwsGateways(awsGateways.([]interface{}))
 		}
 	}
 	return hostedAwsConn
 }
 
-func extractAwsGateways(gateways []interface{}) []packetfabric.AWSGateway {
-	var awsGateways []packetfabric.AWSGateway
+func extractAwsGateways(gateways []interface{}) []packetfabric.AwsGateway {
+	var awsGateways []packetfabric.AwsGateway
 	for _, gw := range gateways {
 		gateway := gw.(map[string]interface{})
 
@@ -438,7 +438,7 @@ func extractAwsGateways(gateways []interface{}) []packetfabric.AWSGateway {
 			}
 		}
 
-		awsGateway := packetfabric.AWSGateway{}
+		awsGateway := packetfabric.AwsGateway{}
 
 		if t, ok := gateway["type"].(string); ok {
 			awsGateway.Type = t
@@ -450,10 +450,10 @@ func extractAwsGateways(gateways []interface{}) []packetfabric.AWSGateway {
 			awsGateway.ID = id
 		}
 		if asn, ok := gateway["asn"].(int); ok {
-			awsGateway.ASN = asn
+			awsGateway.Asn = asn
 		}
 		if vpcID, ok := gateway["vpc_id"].(string); ok {
-			awsGateway.VPCID = vpcID
+			awsGateway.VpcID = vpcID
 		}
 
 		awsGateway.SubnetIDs = subnetIDs

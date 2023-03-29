@@ -297,13 +297,11 @@ func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m 
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	// Retrieve the cloud circuit ID from the resource data.
 	circuitID, ok := d.GetOk("cloud_circuit_id")
 	if !ok {
 		return diag.Errorf("cloud_circuit_id is required")
 	}
 
-	// Retrieve the connection information from the PacketFabric API.
 	connInfo, err := c.GetCloudConnInfo(circuitID.(string))
 	if err != nil {
 		return diag.FromErr(err)
@@ -318,15 +316,12 @@ func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m 
 			return diag.FromErr(err)
 		}
 	}
-
-	// Set the resource ID to the circuit ID.
 	d.SetId(connInfo.CloudCircuitID)
 
 	return diags
 }
 
-// flattenCloudConnInfo flattens a CloudConnectionInfo struct into a map.
-func flattenCloudConnInfo(connInfo *packetfabric.CloudConnectionInfo) map[string]interface{} {
+func flattenCloudConnInfo(connInfo *packetfabric.CloudConnInfo) map[string]interface{} {
 	connInfoMap := map[string]interface{}{
 		"cloud_circuit_id":      connInfo.CloudCircuitID,
 		"customer_uuid":         connInfo.CustomerUUID,
@@ -346,90 +341,90 @@ func flattenCloudConnInfo(connInfo *packetfabric.CloudConnectionInfo) map[string
 		"is_awaiting_onramp":    connInfo.IsAwaitingOnramp,
 	}
 
-	// Flatten the settings list.
-	settingsList := make([]interface{}, 0, len(connInfo.Settings))
-	for _, s := range connInfo.Settings {
-		settingsList = append(settingsList, flattenCloudConnInfoSettings(s))
+	settingsList := make([]interface{}, 0)
+	if connInfo.Settings != nil {
+		settingsList = append(settingsList, flattenCloudConnInfoSettings(connInfo.Settings))
 	}
 	connInfoMap["settings"] = settingsList
 
-	// Flatten the cloud_settings list.
-	cloudSettingsList := make([]interface{}, 0, len(connInfo.CloudSettings))
-	for _, cs := range connInfo.CloudSettings {
-		cloudSettingsList = append(cloudSettingsList, flattenCloudConnInfoCloudSettings(cs))
+	cloudSettingsList := make([]interface{}, 0)
+	if connInfo.CloudSettings != nil {
+		cloudSettingsList = append(cloudSettingsList, flattenCloudConnInfoCloudSettings(connInfo.CloudSettings))
 	}
 	connInfoMap["cloud_settings"] = cloudSettingsList
 
 	return connInfoMap
 }
 
-// flattenCloudConnInfoSettings flattens a CloudConnectionInfoSettings struct into a map.
-func flattenCloudConnInfoSettings(settings *packetfabric.CloudConnectionInfoSettings) map[string]interface{} {
+func flattenCloudConnInfoSettings(settings *packetfabric.Settings) map[string]interface{} {
 	return map[string]interface{}{
-		"vlan_id_pf":       settings.VlanIDPF,
-		"vlan_id_cust":     settings.VlanIDCust,
-		"svlan_id_cust":    settings.SVlanIDCust,
-		"aws_region":       settings.AWSRegion,
-		"aws_hosted_type":  settings.AWSHostedType,
-		"aws_account_id":   settings.AWSAccountID,
-		"aws_connection_id": settings.AWSConnectionID,
+		"vlan_id_pf":        settings.VlanIDPf,
+		"vlan_id_cust":      settings.VlanIDCust,
+		"svlan_id_cust":     settings.SvlanIDCust,
+		"aws_region":        settings.AwsRegion,
+		"aws_hosted_type":   settings.AwsHostedType,
+		"aws_account_id":    settings.AwsAccountID,
+		"aws_connection_id": settings.AwsConnectionID,
 	}
 }
 
-// flattenCloudConnInfoCloudSettings flattens a CloudConnectionInfoCloudSettings struct into a map.
-func flattenCloudConnInfoCloudSettings(cloudSettings *packetfabric.CloudConnectionInfoCloudSettings) map[string]interface{} {
+func flattenCloudConnInfoCloudSettings(cloudSettings *packetfabric.CloudSettingsHosted) map[string]interface{} {
 	cloudSettingsMap := map[string]interface{}{
-		"vlan_id_pf":                  cloudSettings.VlanIDPf,
-		"vlan_id_cust":                cloudSettings.VlanIDCust,
-		"svlan_id_cust":               cloudSettings.SvlanIDCust,
-		"aws_region":                  cloudSettings.AWSRegion,
-		"aws_hosted_type":             cloudSettings.AWSHostedType,
-		"aws_account_id":              cloudSettings.AWSAccountID,
-		"aws_connection_id":           cloudSettings.AWSConnectionID,
-		"credentials_uuid":            cloudSettings.CredentialsUUID,
-		"mtu":                         cloudSettings.MTU,
-		"aws_dx_location":             cloudSettings.AWSDXLocation,
-		"aws_dx_bandwidth":            cloudSettings.AWSDXBandwidth,
-		"aws_dx_jumbo_frame_capable":  cloudSettings.AWSDXJumboFrameCapable,
-		"aws_dx_aws_device":           cloudSettings.AWSDXAWSDevice,
-		"aws_dx_aws_deviceV2":         cloudSettings.AWSDXAWSDeviceV2,
-		"aws_dx_aws_logical_device_id": cloudSettings.AWSDXAWSLogicalDeviceID,
-		"aws_dx_has_logical_redundancy": cloudSettings.AWSDXHasLogicalRedundancy,
-		"aws_dx_mac_sec_capable":      cloudSettings.AWSDXMACSecCapable,
-		"aws_dx_encryption_mode":      cloudSettings.AWSDXEncryptionMode,
-		"aws_vif_type":                cloudSettings.AWSVIFType,
-		"aws_vif_id":                  cloudSettings.AWSVIFID,
-		"aws_vif_bgp_peer_id":         cloudSettings.AWSVIFBGPPeerID,
-		"aws_vif_direct_connect_gw_id": cloudSettings.AWSVIFDirectConnectGWID,
+		"vlan_id_pf":                    cloudSettings.VlanIDPf,
+		"vlan_id_cust":                  cloudSettings.VlanIDCust,
+		"svlan_id_cust":                 cloudSettings.SvlanIDCust,
+		"aws_region":                    cloudSettings.AwsRegion,
+		"aws_hosted_type":               cloudSettings.AwsHostedType,
+		"aws_account_id":                cloudSettings.AwsAccountID,
+		"aws_connection_id":             cloudSettings.AwsConnectionID,
+		"credentials_uuid":              cloudSettings.CredentialsUUID,
+		"mtu":                           cloudSettings.Mtu,
+		"aws_dx_location":               cloudSettings.AwsDxLocation,
+		"aws_dx_bandwidth":              cloudSettings.AwsDxBandwidth,
+		"aws_dx_jumbo_frame_capable":    cloudSettings.AwsDxJumboFrameCapable,
+		"aws_dx_aws_device":             cloudSettings.AwsDxAWSDevice,
+		"aws_dx_aws_deviceV2":           cloudSettings.AwsDxAWSDeviceV2,
+		"aws_dx_aws_logical_device_id":  cloudSettings.AwsDxAWSLogicalDeviceID,
+		"aws_dx_has_logical_redundancy": cloudSettings.AwsDxHasLogicalRedundancy,
+		"aws_dx_mac_sec_capable":        cloudSettings.AwsDxMacSecCapable,
+		"aws_dx_encryption_mode":        cloudSettings.AwsDxEncryptionMode,
+		"aws_vif_type":                  cloudSettings.AwsVifType,
+		"aws_vif_id":                    cloudSettings.AwsVifID,
+		"aws_vif_bgp_peer_id":           cloudSettings.AwsVifBGPPeerID,
+		"aws_vif_direct_connect_gw_id":  cloudSettings.AwsVifDirectConnectGwID,
 	}
 
-	// Flatten the cloud_state list.
-	cloudStateList := make([]interface{}, 0, len(cloudSettings.CloudState))
-	for _, cs := range cloudSettings.CloudState {
-		cloudStateList = append(cloudStateList, flattenCloudConnInfoCloudState(cs))
+	cloudStateList := make([]interface{}, 0)
+	if cloudSettings.CloudState != nil {
+		cloudStateList = append(cloudStateList, flattenCloudConnInfoCloudState(cloudSettings.CloudState))
 	}
 	cloudSettingsMap["cloud_state"] = cloudStateList
 
-	// Flatten the bgp_settings list.
-	bgpSettingsList := make([]interface{}, 0, len(cloudSettings.BGPSettings))
-	for _, bs := range cloudSettings.BGPSettings {
-		bgpSettingsList = append(bgpSettingsList, flattenCloudConnInfoBGPSettings(bs))
+	bgpSettingsList := make([]interface{}, 0)
+	if cloudSettings.BgpSettings != nil {
+		bgpSettingsList = append(bgpSettingsList, flattenCloudConnInfoBGPSettings(cloudSettings.BgpSettings))
 	}
 	cloudSettingsMap["bgp_settings"] = bgpSettingsList
 
 	return cloudSettingsMap
 }
 
-// flattenCloudConnInfoCloudState flattens a CloudConnectionInfoCloudState struct into a map.
-func flattenCloudConnInfoCloudState(cloudState *packetfabric.CloudConnectionInfoCloudState) map[string]interface{} {
+func flattenCloudConnInfoBGPSettings(bgpSettings *packetfabric.BgpSettings) map[string]interface{} {
 	return map[string]interface{}{
-		"aws_dx_connection_state":      cloudState.AWSDXConnectionState,
-		"aws_dx_port_encryption_status": cloudState.AWSDXPortEncryptionStatus,
-		"aws_vif_state":                cloudState.AWSVIFState,
-		"bgp_state":                    cloudState.BGPState,
+		"customer_asn":        bgpSettings.CustomerAsn,
+		"l3_address":          bgpSettings.L3Address,
+		"remote_address":      bgpSettings.RemoteAddress,
+		"address_family":      bgpSettings.AddressFamily,
+		"md5":                 bgpSettings.Md5,
+		"advertised_prefixes": bgpSettings.AdvertisedPrefixes,
 	}
 }
 
-// flattenCloudConnInfoBGPSettings flattens a CloudConnectionInfoBGPSettings struct into a map.
-func flattenCloudConnInfoB
-
+func flattenCloudConnInfoCloudState(cloudState *packetfabric.CloudStateHosted) map[string]interface{} {
+	return map[string]interface{}{
+		"aws_dx_connection_state":       cloudState.AwsDxConnectionState,
+		"aws_dx_port_encryption_status": cloudState.AwsDxPortEncryptionStatus,
+		"aws_vif_state":                 cloudState.AwsVifState,
+		"bgp_state":                     cloudState.BgpState,
+	}
+}

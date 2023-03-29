@@ -39,20 +39,20 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
 			}
 			if awsRegion, ok := cs["aws_region"].(string); ok {
-				updateServiceConnData.CloudSettings.AWSRegion = awsRegion
+				updateServiceConnData.CloudSettings.AwsRegion = awsRegion
 			}
 			if mtu, ok := cs["mtu"].(int); ok {
-				updateServiceConnData.CloudSettings.MTU = mtu
+				updateServiceConnData.CloudSettings.Mtu = mtu
 			}
 			if bgpSettings, ok := cs["bgp_settings"].([]interface{}); ok && len(bgpSettings) > 0 {
 				bgp := bgpSettings[0].(map[string]interface{})
-				updateServiceConnData.CloudSettings.BGPSettings = &packetfabric.BGPSettings{}
+				updateServiceConnData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
 				if advertisedPrefixes, ok := bgp["advertised_prefixes"].([]interface{}); ok {
 					ap := make([]string, len(advertisedPrefixes))
 					for i, elem := range advertisedPrefixes {
 						ap[i] = elem.(string)
 					}
-					updateServiceConnData.CloudSettings.BGPSettings.AdvertisedPrefixes = ap
+					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap
 				}
 			}
 			changed = true
