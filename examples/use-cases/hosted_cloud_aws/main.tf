@@ -27,7 +27,7 @@ resource "aws_vpc" "vpc_1" {
   cidr_block           = var.aws_vpc_cidr1
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "subnet_1" {
   vpc_id     = aws_vpc.vpc_1.id
   cidr_block = var.aws_subnet_cidr1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "gw_1" {
   provider = aws
   vpc_id   = aws_vpc.vpc_1.id
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_1
@@ -78,7 +78,7 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -93,11 +93,8 @@ resource "aws_route_table_association" "route_association_1" {
 # Create Direct Connect Gateway
 resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
-  name            = "${var.tag_name}-${random_pet.name.id}"
+  name            = "${var.resource_name}-${random_pet.name.id}"
   amazon_side_asn = var.amazon_side_asn1
-  depends_on = [
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
 }
 
 # Associate Virtual Private GW to Direct Connect GW
@@ -107,9 +104,6 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
   allowed_prefixes = [
     var.aws_vpc_cidr1
-  ]
-  depends_on = [
-    aws_dx_private_virtual_interface.direct_connect_vip_1
   ]
   timeouts {
     create = "2h"
@@ -121,18 +115,18 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
+  labels            = var.pf_labels
 }
 # output "packetfabric_port_1" {
 #   value = packetfabric_port.port_1
 # }
-
 
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider    = packetfabric
@@ -143,7 +137,7 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
 # Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
@@ -155,7 +149,7 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
     mtu              = var.pf_cs_mtu
     aws_vif_type     = "private"
     bgp_settings {
-      customer_asn   = var.customer_side_asn1
+      customer_asn = var.customer_side_asn1
     }
     aws_gateways {
       type = "directconnect"
@@ -167,13 +161,17 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
       vpc_id = aws_vpc.vpc_1.id
     }
   }
+  labels = var.pf_labels
 }
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
 # }
 
-# data "packetfabric_cs_aws_hosted_connection_router_config" "router_config" {
-#   provider          = packetfabric
-#   cloud_circuit_id  = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
-#   router_type       = "CiscoSystemsInc-2900SeriesRouters-IOS124"
-# }
+data "packetfabric_cs_hosted_connection_router_config" "router_aws_cisco2900" {
+  cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
+  router_type      = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+}
+resource "local_file" "router_aws_cisco2900_file" {
+  filename = "router_config_aws_cisco2900.txt"
+  content  = data.packetfabric_cs_hosted_connection_router_config.router_aws_cisco2900.router_config
+}

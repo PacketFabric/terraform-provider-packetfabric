@@ -80,10 +80,11 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"zone": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "The desired zone of the new connection.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The desired zone of the new connection.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -112,14 +113,16 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"credentials_uuid": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "The UUID of the credentials to be used with this connection.",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.IsUUID,
+							Description:  "The UUID of the credentials to be used with this connection.",
 						},
 						"aws_region": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "The AWS region that should be used.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The AWS region that should be used.",
 						},
 						"mtu": {
 							Type:         schema.TypeInt,
@@ -131,9 +134,8 @@ func resourceAwsRequestHostConn() *schema.Resource {
 						"aws_vif_type": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ForceNew:     true,
-							Description:  "The type of VIF to use for this connection.",
 							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public"}, false),
+							Description:  "The type of VIF to use for this connection.",
 						},
 						"bgp_settings": {
 							Type:     schema.TypeList,
@@ -142,19 +144,22 @@ func resourceAwsRequestHostConn() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_asn": {
-										Type:        schema.TypeInt,
-										Required:    true,
-										Description: "The customer ASN of this connection.",
+										Type:         schema.TypeInt,
+										Required:     true,
+										ValidateFunc: validatePublicOrPrivateASN,
+										Description:  "The customer ASN of this connection.",
 									},
 									"l3_address": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The prefix of the customer router. Required for public VIFs.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the customer router. Required for public VIFs.",
 									},
 									"remote_address": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The prefix of the remote router. Required for public VIFs.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the remote router. Required for public VIFs.",
 									},
 									"address_family": {
 										Type:         schema.TypeString,
@@ -164,9 +169,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 										ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
 									},
 									"md5": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The MD5 value of the authenticated BGP sessions.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The MD5 value of the authenticated BGP sessions.",
 									},
 									"advertised_prefixes": {
 										Type:        schema.TypeList,
@@ -180,35 +186,39 @@ func resourceAwsRequestHostConn() *schema.Resource {
 						"aws_gateways": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							ForceNew:    true,
+							MaxItems:    2,
 							Description: "Only for Private or Transit VIF.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"type": {
 										Type:         schema.TypeString,
 										Required:     true,
-										Description:  "The type of this AWS Gateway.",
 										ValidateFunc: validation.StringInSlice([]string{"directconnect", "private", "transit"}, false),
+										Description:  "The type of this AWS Gateway.",
 									},
 									"name": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The name of the AWS Gateway, required if creating a new DirectConnect Gateway.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The name of the AWS Gateway, required if creating a new DirectConnect Gateway.",
 									},
 									"id": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The ID of the AWS Gateway to be used.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The ID of the AWS Gateway to be used.",
 									},
 									"asn": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: "The ASN of the AWS Gateway to be used.",
+										Type:         schema.TypeInt,
+										Optional:     true,
+										ValidateFunc: validatePrivateASN,
+										Description:  "The ASN of the AWS Gateway to be used.",
 									},
 									"vpc_id": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.",
 									},
 									"subnet_ids": {
 										Type:        schema.TypeList,

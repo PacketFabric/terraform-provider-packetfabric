@@ -371,6 +371,10 @@ resource "random_pet" "name" {}
 #   #     type = "directconnect"
 #   #     name = "${var.resource_name}-${random_pet.name.id}"
 #   #     asn  = var.pf_cs_directconnect_gw_asn
+#   #     allowed_prefixes = [
+#   #       "10.1.1.0/24",
+#   #       "10.1.2.0/24"
+#   #     ]
 #   #   }
 #   #   aws_gateways {
 #   #     type   = var.pf_cs_aws_vif_type
@@ -391,6 +395,15 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cs_aws_hosted_connection_data" {
 #   value = data.packetfabric_cs_aws_hosted_connection.current
+# }
+
+# data "packetfabric_cs_hosted_connection_router_config" "router_aws_cisco2900" {
+#   cloud_circuit_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.id
+#   router_type      = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+# }
+# resource "local_file" "router_aws_cisco2900_file" {
+#   filename = "router_config_aws_cisco2900.txt"
+#   content  = data.packetfabric_cs_hosted_connection_router_config.router_aws_cisco2900.router_config
 # }
 
 # # Create a Azure Hosted Connection 
