@@ -19,7 +19,7 @@ const cloudConnectionInfoURI = "/v2/services/cloud/connections/%s"
 const cloudConnectionCurrentCustomersURI = "/v2/services/cloud/connections/hosted"
 const cloudConnectionCurrentCustmersDedicatedURI = "/v2/services/cloud/connections/dedicated"
 const cloudConnectionHostedRequestsSentURI = "/v2/services/requests?type=%s"
-const routerConfigURI = "/v2/services/cloud/connections/%s/router-config?cloud_circuit_id=%s&router_type=%s"
+const routerConfigURI = "/v2/services/cloud/connections/%s/router-config?router_type=%s"
 
 type ServiceAws struct {
 	RoutingID    string `json:"routing_id,omitempty"`
