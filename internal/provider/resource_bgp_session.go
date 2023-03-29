@@ -346,40 +346,18 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
+	_ = d.Set("l3_address", bgp.L3Address)
+	_ = d.Set("remote_address", bgp.RemoteAddress)
+	_ = d.Set("md5", bgp.Md5)
+	_ = d.Set("primary_subnet", bgp.PrimarySubnet)
+	_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
+	_ = d.Set("med", bgp.Med)
+	_ = d.Set("as_prepend", bgp.AsPrepend)
+	_ = d.Set("local_preference", bgp.LocalPreference)
+	_ = d.Set("community", bgp.Community)
+	_ = d.Set("bfd_interval", bgp.BfdInterval)
+	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 
-	if _, ok := d.GetOk("l3_address"); ok {
-		_ = d.Set("l3_address", bgp.L3Address)
-	}
-	if _, ok := d.GetOk("remote_address"); ok {
-		_ = d.Set("remote_address", bgp.RemoteAddress)
-	}
-	if _, ok := d.GetOk("md5"); ok {
-		_ = d.Set("md5", bgp.Md5)
-	}
-	if _, ok := d.GetOk("primary_subnet"); ok {
-		_ = d.Set("primary_subnet", bgp.PrimarySubnet)
-	}
-	if _, ok := d.GetOk("secondary_subnet"); ok {
-		_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
-	}
-	if _, ok := d.GetOk("med"); ok {
-		_ = d.Set("med", bgp.Med)
-	}
-	if _, ok := d.GetOk("as_prepend"); ok {
-		_ = d.Set("as_prepend", bgp.AsPrepend)
-	}
-	if _, ok := d.GetOk("local_preference"); ok {
-		_ = d.Set("local_preference", bgp.LocalPreference)
-	}
-	if _, ok := d.GetOk("community"); ok {
-		_ = d.Set("community", bgp.Community)
-	}
-	if _, ok := d.GetOk("bfd_interval"); ok {
-		_ = d.Set("bfd_interval", bgp.BfdInterval)
-	}
-	if _, ok := d.GetOk("bfd_multiplier"); ok {
-		_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
-	}
 	if bgp.Nat != nil {
 		nat := flattenNatConfiguration(bgp.Nat)
 		if err := d.Set("nat", nat); err != nil {
