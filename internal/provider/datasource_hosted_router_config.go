@@ -51,11 +51,7 @@ func datasourceHostedCloudRouterConfigRead(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err)
 	}
 
-	err = d.Set("router_config", routerConfig)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
+	d.Set("router_config", routerConfig.RouterConfig)
 	d.SetId(cloudCircuitID.(string))
 
 	return diags
