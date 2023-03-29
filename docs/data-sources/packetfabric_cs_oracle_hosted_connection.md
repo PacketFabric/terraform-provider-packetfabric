@@ -60,5 +60,76 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Read-Only
 
+- `cloud_settings` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings))
 - `id` (String) The ID of this resource.
+- `settings` (List of Object) (see [below for nested schema](#nestedatt--settings))
+
+<a id="nestedatt--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Read-Only:
+
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_dx_aws_device` (String)
+- `aws_dx_aws_logical_device_id` (String)
+- `aws_dx_bandwidth` (String)
+- `aws_dx_encryption_mode` (String)
+- `aws_dx_has_logical_redundancy` (Boolean)
+- `aws_dx_jumbo_frame_capable` (Boolean)
+- `aws_dx_location` (String)
+- `aws_dx_mac_sec_capable` (Boolean)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `aws_vif_bgp_peer_id` (String)
+- `aws_vif_direct_connect_gw_id` (String)
+- `aws_vif_id` (String)
+- `aws_vif_type` (String)
+- `bgp_settings` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--bgp_settings))
+- `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--cloud_state))
+- `credentials_uuid` (String)
+- `mtu` (Number)
+- `svlan_id_cust` (Number)
+- `vlan_id_cust` (Number)
+- `vlan_id_pf` (Number)
+
+<a id="nestedobjatt--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Read-Only:
+
+- `address_family` (String)
+- `advertised_prefixes` (List of String)
+- `customer_asn` (Number)
+- `l3_address` (String)
+- `md5` (String)
+- `remote_address` (String)
+- `remote_asn` (Number)
+
+
+<a id="nestedobjatt--cloud_settings--cloud_state"></a>
+### Nested Schema for `cloud_settings.cloud_state`
+
+Read-Only:
+
+- `aws_dx_connection_state` (String)
+- `aws_dx_port_encryption_status` (String)
+- `aws_vif_state` (String)
+- `bgp_state` (String)
+
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `svlan_id_cust` (Number)
+- `vlan_id_cust` (Number)
+- `vlan_id_pf` (Number)
+
 
