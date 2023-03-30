@@ -16,7 +16,7 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric Cloud Router Connection - IBM and Oracle
+# PacketFabric Cloud Router Connection - Common
 variable "pf_crc_maybe_nat" {
   type        = bool
   description = "Set this to true if you intend to use NAT on this connection"
