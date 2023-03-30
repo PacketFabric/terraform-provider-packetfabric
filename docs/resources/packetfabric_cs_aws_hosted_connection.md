@@ -12,25 +12,11 @@ A hosted cloud connection to your AWS environment. For more information, see [Cl
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-To retrieve the VLAN ID for establishing AWS peering via [`aws_dx_transit_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_transit_virtual_interface) or [`aws_dx_private_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_private_virtual_interface), utilize the [`packetfabric_cloud_router_connections (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_cloud_router_connections) and loop through its output in a `locals` block. 
-
-The code to do this is provided below:
-
-```terraform
-locals {
-  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-  helper_map = { for val in local.cloud_connections :
-  val["description"] => val }
-  cc1 = local.helper_map["${var.pf_crc_description}"]
-}
-output "cc1_vlan_id_pf" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-```
-
 ## Example Usage
 
 ```terraform
+# Example PacketFabric side provisioning only
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider    = packetfabric
   description = "hello world"
@@ -41,9 +27,43 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   zone        = "A"
   labels      = ["terraform", "dev"]
 }
-
 output "packetfabric_cs_aws_hosted_connection" {
   value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
+}
+
+# Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
+  provider    = packetfabric
+  description = "hello world"
+  port        = packetfabric_port.port_1.id
+  speed       = "10Gbps"
+  pop         = "BOS1"
+  vlan        = 102
+  zone        = "A"
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = "us-east-1"
+    mtu              = 1500
+    aws_vif_type     = "private"
+    bgp_settings {
+      customer_asn   = 64513
+      address_family = "ipv4"
+    }
+    aws_gateways {
+      type = "directconnect"
+      name = "${var.tag_name}-${random_pet.name.id}"
+      asn  = 64513
+    }
+    aws_gateways {
+      type   = "private"
+      name   = "${var.tag_name}-${random_pet.name.id}"
+      vpc_id = "vpc-bea401c4"
+    }
+  }
+  labels = ["terraform", "dev"]
+}
+output "packetfabric_cs_aws_hosted_connection_cloud_side" {
+  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws_cloud_side
 }
 ```
 
@@ -65,14 +85,78 @@ output "packetfabric_cs_aws_hosted_connection" {
 
 ### Optional
 
+- `cloud_settings` (Block List, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings))
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `zone` (String) The desired zone of the new connection.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Required:
+
+- `aws_vif_type` (String) The type of VIF to use for this connection.
+- `bgp_settings` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings))
+- `credentials_uuid` (String) The UUID of the credentials to be used with this connection.
+
+Optional:
+
+- `aws_gateways` (Block List) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_region` (String) The AWS region that should be used.
+- `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
+
+	Enum: ["1500", "9001"] Defaults: 1500
+
+<a id="nestedblock--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Required:
+
+- `customer_asn` (Number) The customer ASN of this connection.
+
+Optional:
+
+- `address_family` (String) The address family that should be used. Defaults: ipv4
+- `advertised_prefixes` (List of String) An array of prefixes that will be advertised. Required for public VIFs.
+- `l3_address` (String) The prefix of the customer router. Required for public VIFs.
+- `md5` (String) The MD5 value of the authenticated BGP sessions.
+- `remote_address` (String) The prefix of the remote router. Required for public VIFs.
+
+
+<a id="nestedblock--cloud_settings--aws_gateways"></a>
+### Nested Schema for `cloud_settings.aws_gateways`
+
+Required:
+
+- `type` (String) The type of this AWS Gateway.
+
+Optional:
+
+- `allowed_prefixes` (List of String) An array of allowed prefixes. Required on the DirectConnect Gateway when the other Gateway is of type transit.
+- `asn` (Number) The ASN of the AWS Gateway to be used.
+- `id` (String) The ID of the AWS Gateway to be used.
+- `name` (String) The name of the AWS Gateway, required if creating a new DirectConnect Gateway.
+- `subnet_ids` (List of String) An array of subnet IDs to associate with this Gateway. Required for transit Gateways.
+- `vpc_id` (String) The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.
+
+
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
+
 
 
 
