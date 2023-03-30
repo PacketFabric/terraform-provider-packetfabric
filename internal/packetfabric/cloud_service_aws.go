@@ -353,6 +353,7 @@ type RouterConfig struct {
 	CloudCircuitID string `json:"cloud_circuit_id"`
 	RouterType     string `json:"router_type"`
 	RouterConfig   string `json:"router_config"`
+}
 
 type CloudConnInfo struct {
 	UUID                    string               `json:"uuid,omitempty"`
