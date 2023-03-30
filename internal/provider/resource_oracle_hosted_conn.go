@@ -177,6 +177,7 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("vc_ocid", resp.Settings.VcOcid)
 		_ = d.Set("region", resp.Settings.OracleRegion)
+		_ = d.Set("po_number", resp.PONumber)
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -188,7 +189,6 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		_ = d.Set("po_number", resp2.PONumber)
 	}
 	// unsetFields: published_quote_line_uuid
 
