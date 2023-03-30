@@ -18,18 +18,50 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("please provide a valid cloud service id")
 	}
 
-	if d.HasChange("description") {
-		updateServiceConnData := packetfabric.UpdateServiceConn{}
-		desc, ok := d.GetOk("description")
-		if !ok {
-			return diag.Errorf("please provide a valid description for Cloud Service")
-		}
-		updateServiceConnData.Description = desc.(string)
+	updateServiceConnData := packetfabric.UpdateServiceConn{}
+	changed := false
 
-		if resp, err := c.UpdateServiceHostedConn(cloudCID.(string), updateServiceConnData); err != nil {
+	if d.HasChanges([]string{"po_number", "description"}...) {
+		if desc, ok := d.GetOk("description"); ok {
+			updateServiceConnData.Description = desc.(string)
+		}
+		if poNumber, ok := d.GetOk("po_number"); ok {
+			updateServiceConnData.PONumber = poNumber.(string)
+		}
+		changed = true
+	}
+
+	if d.HasChange("cloud_settings") {
+		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
+			cs := cloudSettings.(map[string]interface{})
+			updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{}
+			if credentialsUUID, ok := cs["credentials_uuid"].(string); ok {
+				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
+			}
+			if awsRegion, ok := cs["aws_region"].(string); ok {
+				updateServiceConnData.CloudSettings.AwsRegion = awsRegion
+			}
+			if mtu, ok := cs["mtu"].(int); ok {
+				updateServiceConnData.CloudSettings.Mtu = mtu
+			}
+			if bgpSettings, ok := cs["bgp_settings"].([]interface{}); ok && len(bgpSettings) > 0 {
+				bgp := bgpSettings[0].(map[string]interface{})
+				updateServiceConnData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
+				if advertisedPrefixes, ok := bgp["advertised_prefixes"].([]interface{}); ok {
+					ap := make([]string, len(advertisedPrefixes))
+					for i, elem := range advertisedPrefixes {
+						ap[i] = elem.(string)
+					}
+					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap
+				}
+			}
+			changed = true
+		}
+	}
+
+	if changed {
+		if _, err := c.UpdateServiceHostedConn(cloudCID.(string), updateServiceConnData); err != nil {
 			return diag.FromErr(err)
-		} else {
-			_ = d.Set("description", resp.Description)
 		}
 	}
 
