@@ -4,10 +4,20 @@
 ##############################################################
 
 ## General VARs
-variable "tag_name" {
+variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
   default     = "demo"
+}
+variable "pf_labels" {
+  type        = list(string)
+  description = "A list of labels to be applied to PacketFabric resources. These labels will be visible in the PacketFabric Portal and can be searched for easier resource identification."
+  default     = ["terraform"] # Example: ["terraform", "dev"]
+}
+variable "pf_po_number" {
+  type        = string
+  description = "Purchase Order Number"
+  default     = "0123456"
 }
 
 ########################################
@@ -187,6 +197,42 @@ variable "pf_cs_speed2" {
 variable "pf_cs_vlan2" {
   type    = number
   default = 107
+}
+# AWS Cloud Side Provisioning
+variable "pf_cs_aws_region" {
+  description = "The AWS region that should be used."
+  type        = string
+  default     = "us-east-1"
+}
+variable "pf_cs_mtu" {
+  description = "Maximum Transmission Unit this port supports (size of the largest supported PDU)"
+  type        = number
+  default     = 1500
+}
+variable "pf_cs_aws_vif_type" {
+  description = "The type of VIF to use for this connection."
+  type        = string
+  default     = "private"
+}
+variable "pf_cs_customer_asn" {
+  description = "The customer ASN of this connection."
+  type        = number
+  default     = 64513
+}
+variable "pf_cs_address_family" {
+  description = "The address family that should be used."
+  type        = string
+  default     = "ipv4"
+}
+variable "pf_cs_directconnect_gw_asn" {
+  description = "Direct Connect gateway ASN."
+  type        = number
+  default     = 64514
+}
+variable "pf_cs_aws_vpc_id" {
+  description = "AWS VPC ID to attach to the private gateway."
+  type        = string
+  default     = "vpc-bea401c4"
 }
 
 # Oracle Hosted Connection
