@@ -61,7 +61,7 @@ func resourceMarketplaceService() *schema.Resource {
 				Description: "Categories in which the service will fit.\n\n\tEnum: `\"cloud-computing\"`, `\"content-delivery-network\"`, `\"edge-computing\"`, `\"sd-wan\"`, `\"data-storage\"`, `\"developer-platform\"`, `\"internet-service-provider\"`, `\"security\"`, `\"video-conferencing\"`, `\"voice-and-messaging\"`, `\"web-hosting\"`, `\"internet-of-things\"`, `\"private-connectivity\"`, `\"bare-metal-hosting\"`",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validation.StringIsNotEmpty,
+					ValidateFunc: validation.StringInSlice([]string{"cloud-computing", "content-delivery-network", "edge-computing", "sd-wan", "data-storage", "developer-platform", "internet-service-provider", "security", "video-conferencing", "voice-and-messaging", "web-hosting", "internet-of-things", "private-connectivity", "bare-metal-hosting"}, true),
 				},
 			},
 			"published": {
