@@ -2,6 +2,7 @@
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
+This example uses AWS Private VIF & Gateway.
 
 ## Useful links
 
