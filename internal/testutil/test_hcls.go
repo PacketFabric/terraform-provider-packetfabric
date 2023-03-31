@@ -118,6 +118,17 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
+// packetfabric_cloud_router_connection_aws
+type RHclCloudRouterConnectionAWSResult struct {
+	HclResultBase
+	CloudRouter  RHclCloudRouterResult
+	AwsAccountID string
+	AccountUuid  string
+	Desc         string
+	Pop          string
+	Speed        string
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -325,6 +336,44 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		},
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
+		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_aws
+func RHclCloudRouterConnectioAws() RHclCloudRouterConnectionAWSResult {
+
+	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+	if pop == "" {
+		log.Fatalf("Resource: %s: %s", pfCsAwsHostedConn, "pop cannot be empty")
+	}
+
+	cloudRouterResult := RHclCloudRouter()
+	resourceName, hclName := _generateResourceName(pfCsAwsHostedConn)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsAwsHostedConn)
+
+	crConnectionAwsHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAws,
+		hclName,
+		cloudRouterResult.ResourceName,
+		os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		uniqueDesc,
+		pop,
+		os.Getenv(PF_CRC_SPEED_KEY))
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterResult.Hcl, crConnectionAwsHcl)
+
+	return RHclCloudRouterConnectionAWSResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAwsHostedConn,
+			ResourceName: resourceName,
+		},
+		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		Desc:         uniqueDesc,
+		AccountUuid:  os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		Speed:        os.Getenv(PF_CRC_SPEED_KEY),
 		Pop:          pop,
 	}
 }
