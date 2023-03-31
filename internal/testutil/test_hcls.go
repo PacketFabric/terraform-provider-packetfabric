@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCloudRouterConnOracle = "packetfabric_cloud_router_connection_oracle"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,8 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const CloudRouterConnectionOracleVcOcid = "ocid1.virtualcircuit"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -116,6 +119,16 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cloud_router_connection_oracle
+type RHclCloudRouterConnectionOracleResult struct {
+	HclResultBase
+	Desc        string
+	CloudRouter RHclCloudRouterResult
+	Region      string
+	VcOcid      string
+	Pop         string
 }
 
 // Patterns:
@@ -326,6 +339,51 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_oracle
+func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "oracle",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+
+	hclCloudRouter := RHclCloudRouter()
+
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnOracle)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnOracle)
+
+	oracleHcl := fmt.Sprintf(
+		RResourceCloudRouterconnectionOracle,
+		hclName,
+		uniqueDesc,
+		hclCloudRouter.ResourceName,
+		os.Getenv(PF_CS_ORACLE_REGION_KEY),
+		CloudRouterConnectionOracleVcOcid,
+		pop)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouter.Hcl, oracleHcl)
+
+	return RHclCloudRouterConnectionOracleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnOracle,
+			ResourceName: resourceName,
+		},
+		Desc:   uniqueDesc,
+		Region: os.Getenv(PF_CS_ORACLE_REGION_KEY),
+		VcOcid: CloudRouterConnectionOracleVcOcid,
+		Pop:    pop,
 	}
 }
 
