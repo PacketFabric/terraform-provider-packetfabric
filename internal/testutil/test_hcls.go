@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,10 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const GoogleDedicatedConnServiceClass = "metro"
+const GoogleDedicatedConnSpeed = "10Gbps"
+const GoogleDedicatedConnSubscriptionTerm = 1
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -116,6 +121,18 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_google_dedicated_connection
+type RHclCSGoogleDedicatedConnectionResult struct {
+	HclResultBase
+	Desc             string
+	Zone             string
+	Pop              string
+	SubscriptionTerm int
+	ServiceClass     string
+	Autoneg          bool
+	Speed            string
 }
 
 // Patterns:
@@ -326,6 +343,60 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_google_dedicated_connection
+func RHclCSGoogleDedicatedConnection() RHclCSGoogleDedicatedConnectionResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "dedicated",
+		IsCloudConnection:     true,
+	}
+
+	pop, zone, media := portDetails._findAvailableCloudPopZoneAndMedia()
+	if pop == "" {
+		log.Fatalf("Resource: %s: %s", pfGoogleDedicatedConn, "pop cannot be empty")
+	}
+	portDetails.DesiredPop = pop
+	portDetails.DesiredMedia = media
+	portDetails.DesiredZone = zone
+
+	resourceName, hclName := _generateResourceName(pfGoogleDedicatedConn)
+	uniqueDesc := _generateUniqueNameOrDesc(pfGoogleDedicatedConn)
+
+	hcl := fmt.Sprintf(RResourceCSGoogleDedicatedConnection,
+		hclName,
+		uniqueDesc,
+		zone,
+		pop,
+		GoogleDedicatedConnSubscriptionTerm,
+		GoogleDedicatedConnServiceClass,
+		false,
+		GoogleDedicatedConnSpeed,
+	)
+
+	return RHclCSGoogleDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfGoogleDedicatedConn,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Zone:             zone,
+		Pop:              pop,
+		SubscriptionTerm: GoogleDedicatedConnSubscriptionTerm,
+		ServiceClass:     GoogleDedicatedConnServiceClass,
+		Autoneg:          false,
+		Speed:            GoogleDedicatedConnSpeed,
 	}
 }
 
