@@ -3,6 +3,7 @@ package testutil
 // ACCOUNT
 const PF_HOST_KEY = "PF_HOST"
 const PF_ACCOUNT_ID_KEY = "PF_ACCOUNT_ID"
+const PF_IBM_ACCOUNT_ID_KEY = "PF_IBM_ACCOUNT_ID"
 
 //########################################
 //###### PORTS / CROSS CONNECT / VC
