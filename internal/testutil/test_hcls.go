@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsAzureHostedMktConn = "packetfabric_cs_azure_hosted_marketplace_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,8 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const CsAzureHostedMarketConnSpeed = "50Mbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -116,6 +119,16 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_azure_hosted_marketplace_connection
+type RHclCsAzureHostedMarketplaceConnectionResult struct {
+	HclResultBase
+	Desc            string
+	AzureServiceKey string
+	RoutingID       string
+	Market          string
+	Speed           string
 }
 
 // Patterns:
@@ -326,6 +339,35 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_azure_hosted_marketplace_connection
+func RHclCsAzureHostedMarketplaceConnection() RHclCsAzureHostedMarketplaceConnectionResult {
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsAzureHostedMktConn)
+	resourceName, hclName := _generateResourceName(pfCsAzureHostedMktConn)
+
+	hcl := fmt.Sprintf(RResourceCSAzureHostedMarketplaceConnection,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_CRC_AZURE_SERVICE_KEY),
+		os.Getenv(PF_ROUTING_ID_KEY),
+		os.Getenv(PF_AZ_CS_HOSTED_MARKET_CONN_KEY),
+		CsAzureHostedMarketConnSpeed,
+	)
+
+	return RHclCsAzureHostedMarketplaceConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAzureHostedMktConn,
+			ResourceName: resourceName,
+		},
+		Desc:            uniqueDesc,
+		AzureServiceKey: os.Getenv(PF_CRC_AZURE_SERVICE_KEY),
+		Market:          os.Getenv(PF_AZ_CS_HOSTED_MARKET_CONN_KEY),
+		RoutingID:       os.Getenv(PF_ROUTING_ID_KEY),
+		Speed:           CsAzureHostedMarketConnSpeed,
 	}
 }
 
