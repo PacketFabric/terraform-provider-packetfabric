@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,10 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const IBMHostedConnectionSpeed = "50Mbps"
+const IBMHostedConnectionIbmBgpAsn = 64536
+const IBMHostedConnectionVlan = 109
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -116,6 +121,17 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_ibm_hosted_connection
+type RHclCsIBMHostedConnectionResult struct {
+	HclResultBase
+	IbmBgpAsn int
+	Desc      string
+	Pop       string
+	Port      RHclPortResult
+	Vlan      int
+	Speed     string
 }
 
 // Patterns:
@@ -326,6 +342,57 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_ibm_hosted_connection
+func RHclCsIBMHostedConnection() RHclCsIBMHostedConnectionResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "ibm",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop, zone, media := portDetails._findAvailableCloudPopZoneAndMedia()
+	portDetails.DesiredPop = pop
+	portDetails.DesiredZone = zone
+	portDetails.DesiredMedia = media
+
+	hclPortResult := portDetails.RHclPort()
+	resourceName, hclName := _generateResourceName(pfCsIbmHostedConn)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsIbmHostedConn)
+
+	ibmHostedConnHcl := fmt.Sprintf(RResourceCSIBMHostedConnection,
+		hclName,
+		IBMHostedConnectionIbmBgpAsn,
+		uniqueDesc,
+		pop,
+		hclPortResult.ResourceReference,
+		IBMHostedConnectionVlan,
+		IBMHostedConnectionSpeed,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, ibmHostedConnHcl)
+
+	return RHclCsIBMHostedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsIbmHostedConn,
+			ResourceName: resourceName,
+		},
+		IbmBgpAsn: IBMHostedConnectionIbmBgpAsn,
+		Desc:      uniqueDesc,
+		Pop:       pop,
+		Vlan:      IBMHostedConnectionVlan,
+		Speed:     IBMHostedConnectionSpeed,
 	}
 }
 
