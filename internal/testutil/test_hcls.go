@@ -22,6 +22,7 @@ const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+<<<<<<< HEAD
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
@@ -41,6 +42,9 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+=======
+const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
+>>>>>>> d65b1a4 (Generating HCL for packetfabric_cloud_router_connection_ipsec)
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -112,6 +116,20 @@ const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
+
+const CloudRouterConnIpsecGatewayAddress = "104.198.66.55"
+const CloudRouterConnIpsecSpeed = "50Mbps"
+const CloudRouterConnIpsecPhase1AuthenticationMethod = "pre-shared-key"
+const CloudRouterConnIpsecPhase1Group = "group5"
+const CloudRouterConnIpsecPhase1EncryptionAlgo = "aes-256-cbc"
+const CloudRouterConnIpsecPhase1AuthenticationAlgo = "sha1"
+const CloudRouterConnIpsecPhase2pfsGroup = "group5"
+const CloudRouterConnIpsecPhase2EncryptionAlgo = "aes-128-gcm"
+const CloudRouterConnIpsecPhase2AuthenticationAlgo = "hmac-sha1-96"
+const CloudRouterConnIpsecSharedKey = "superCoolKey"
+const CloudRouterConnIpsecIkeVersion = 1
+const CloudRouterConnIpsecPhase1Lifetime = 10800
+const CloudRouterConnIpsecPhase2Lifetime = 28800
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -389,6 +407,27 @@ type DHclCsAwsHostedConnectionResult struct {
 // packetfabric_link_aggregation_group
 type DHclDatasourceLinkAggregationGroupsResult struct {
 	HclResultBase
+}
+
+// packetfabric_cloud_router_connection_ipsec
+type RHclCloudRouterConnectionIpsecResult struct {
+	HclResultBase
+	Desc                       string
+	Port                       RHclPortResult
+	Pop                        string
+	Speed                      string
+	GatewayAddress             string
+	IkeVersion                 int
+	Phase1AuthenticationMethod string
+	Phase1Group                string
+	Phase1EncryptionAlgo       string
+	Phase1AuthenticationAlgo   string
+	Phase1Lifetime             int
+	Phase2PfsGroup             string
+	Phase2EncryptionAlgo       string
+	Phase2AuthenticationAlgo   string
+	Phase2Lifetime             int
+	SharedKey                  string
 }
 
 // Patterns:
@@ -911,6 +950,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 	}
 }
 
+<<<<<<< HEAD
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
@@ -960,6 +1000,87 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		Speed:       HostedCloudSpeed,
 		Pop:         pop,
 		Vlan:        HostedCloudVlan,
+=======
+// packetfabric_cloud_router_connection_ipsec
+func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
+
+	pop, _, _, error := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed)
+
+	if error != nil {
+		log.Panic(error)
+	}
+
+	hclCloudRouterResult := RHclCloudRouter()
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnIpsec)
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnIpsec)
+
+	cloudRouterIpsecHcl := fmt.Sprintf(RResourceCloudRouterConnectionIpsec,
+		hclName,
+		uniqueDesc,
+		hclCloudRouterResult.ResourceName,
+		pop,
+		CloudRouterConnIpsecSpeed,
+		CloudRouterConnIpsecGatewayAddress,
+		CloudRouterConnIpsecIkeVersion,
+		CloudRouterConnIpsecPhase1AuthenticationMethod,
+		CloudRouterConnIpsecPhase1Group,
+		CloudRouterConnIpsecPhase1EncryptionAlgo,
+		CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		CloudRouterConnIpsecPhase1Lifetime,
+		CloudRouterConnIpsecPhase2pfsGroup,
+		CloudRouterConnIpsecPhase2EncryptionAlgo,
+		CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		CloudRouterConnIpsecPhase2Lifetime,
+		CloudRouterConnIpsecSharedKey,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterResult.Hcl, cloudRouterIpsecHcl)
+
+	return RHclCloudRouterConnectionIpsecResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnIpsec,
+			ResourceName: resourceName,
+		},
+		Desc:                       uniqueDesc,
+		Pop:                        pop,
+		Speed:                      CloudRouterConnIpsecSpeed,
+		GatewayAddress:             CloudRouterConnIpsecGatewayAddress,
+		IkeVersion:                 CloudRouterConnIpsecIkeVersion,
+		Phase1AuthenticationMethod: CloudRouterConnIpsecPhase1AuthenticationMethod,
+		Phase1Group:                CloudRouterConnIpsecPhase1Group,
+		Phase1EncryptionAlgo:       CloudRouterConnIpsecPhase1EncryptionAlgo,
+		Phase1AuthenticationAlgo:   CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		Phase1Lifetime:             CloudRouterConnIpsecPhase1Lifetime,
+		Phase2PfsGroup:             CloudRouterConnIpsecPhase2pfsGroup,
+		Phase2EncryptionAlgo:       CloudRouterConnIpsecPhase2EncryptionAlgo,
+		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
+		SharedKey:                  CloudRouterConnIpsecSharedKey,
+	}
+}
+
+func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
+	popsAvailable, _ := details.FetchCloudPops()
+	popsToSkip := make([]string, 0)
+	for _, popAvailable := range popsAvailable {
+		if len(popsToSkip) == len(popsAvailable) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, pop) {
+			continue
+		}
+		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
+			popsToSkip = append(popsToSkip, popAvailable)
+			continue
+		} else {
+			pop = popAvailable
+			media = mediaAvailable
+			zone = zoneAvailable
+			return
+		}
+>>>>>>> d65b1a4 (Generating HCL for packetfabric_cloud_router_connection_ipsec)
 	}
 }
 
