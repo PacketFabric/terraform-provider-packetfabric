@@ -48,6 +48,8 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+const CloudRouterConnGoogleSpeed = "50Mbps"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -343,10 +345,23 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cloud_router_connection_google
 func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 
-	var pop, speed, googlePairingKey, vlan, hcl string
+	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
 
-	resourceName, _ := _generateResourceName(pfCloudRouterConnGoogle)
+	hclCloudRouter := RHclCloudRouter()
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnGoogle)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnGoogle)
+
+	clouddRouterGoogleHcl := fmt.Sprintf(RResourceCloudRouterConnectionGoogle,
+		hclName,
+		uniqueDesc,
+		hclCloudRouter.ResourceName,
+		os.Getenv(PF_CRC_GOOGLE_PAIRING_KEY),
+		os.Getenv(PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY),
+		pop,
+		CloudRouterConnGoogleSpeed,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouter.Hcl, clouddRouterGoogleHcl)
 
 	return RHclCloudRouterConnectionGoogleResult{
 		HclResultBase: HclResultBase{
@@ -355,10 +370,10 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 			ResourceName: resourceName,
 		},
 		Desc:                     uniqueDesc,
-		GooglePairingKey:         googlePairingKey,
-		GoogleVlanAttachmentName: vlan,
+		GooglePairingKey:         os.Getenv(PF_CRC_GOOGLE_PAIRING_KEY),
+		GoogleVlanAttachmentName: os.Getenv(PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY),
 		Pop:                      pop,
-		Speed:                    speed,
+		Speed:                    CloudRouterConnGoogleSpeed,
 	}
 }
 

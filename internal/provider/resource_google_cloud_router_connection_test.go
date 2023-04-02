@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"log"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -12,11 +13,13 @@ func TestAccHclCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	cloudRouterConnectionAwsResult := testutil.RHclCloudRouterConnectionGoogle()
-
+	log.Fatal(cloudRouterConnectionAwsResult.Hcl)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
 				testutil.PF_ACCOUNT_ID_KEY,
+				testutil.PF_CRC_GOOGLE_PAIRING_KEY,
+				testutil.PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY,
 			})
 		},
 		Providers: testAccProviders,
