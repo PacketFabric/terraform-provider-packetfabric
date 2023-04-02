@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -20,6 +21,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +48,8 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const AzureHostedConnectionSpeed = "50Mbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -116,6 +120,16 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type RHclCSAzureHostedConnectionResult struct {
+	HclResultBase
+	Desc            string
+	AzureServiceKey string
+	Port            RHclPortResult
+	Speed           string
+	VlanPrivate     int
+	VlanMicrosoft   int
 }
 
 // Patterns:
@@ -326,6 +340,64 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_azure_hosted_connection
+func RHclCSAzureHostedConnection() RHclCSAzureHostedConnectionResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "azure",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop, zone, media := portDetails._findAvailableCloudPopZoneAndMedia()
+	if pop == "" {
+		log.Fatalf("Resource: %s: %s", pfCsAwsHostedConn, "pop cannot be empty")
+	}
+
+	portDetails.DesiredPop = pop
+	portDetails.DesiredMedia = media
+	portDetails.DesiredZone = zone
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsAzureHostedConn)
+	resourceName, hclName := _generateResourceName(pfCsAzureHostedConn)
+	hclPortResult := portDetails.RHclPort()
+
+	vlanPrivate, _ := strconv.Atoi(os.Getenv(PF_CS_VLAN_PRIVATE_KEY))
+	vlanMicrosoft, _ := strconv.Atoi(os.Getenv(PF_CS_VLAN_MICROSOFT_KEY))
+
+	azureHostedHcl := fmt.Sprintf(RResourceCSAzureHostedConnection,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_AZURE_SERVICE_KEY),
+		hclPortResult.ResourceReference,
+		AzureHostedConnectionSpeed,
+		vlanPrivate,
+		vlanMicrosoft,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, azureHostedHcl)
+
+	return RHclCSAzureHostedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAwsHostedConn,
+			ResourceName: resourceName,
+		},
+		Desc:            uniqueDesc,
+		AzureServiceKey: os.Getenv(PF_AZURE_SERVICE_KEY),
+		Speed:           AzureHostedConnectionSpeed,
+		VlanPrivate:     vlanPrivate,
+		VlanMicrosoft:   vlanMicrosoft,
 	}
 }
 
