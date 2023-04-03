@@ -25,9 +25,9 @@ resource "packetfabric_port" "port_1" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
+# output "packetfabric_port_1" {
+#   value = packetfabric_port.port_1
+# }
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
@@ -40,25 +40,25 @@ resource "packetfabric_port" "port_2" {
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone2
 }
-output "packetfabric_port_2" {
-  value = packetfabric_port.port_2
-}
+# output "packetfabric_port_2" {
+#   value = packetfabric_port.port_2
+# }
 
-# Get billing information related to the interface created
-data "packetfabric_billing" "port_1" {
-  provider   = packetfabric
-  circuit_id = packetfabric_port.port_1.id
-}
-output "packetfabric_billing_port_1" {
-  value = data.packetfabric_billing.port_1
-}
-data "packetfabric_billing" "port_2" {
-  provider   = packetfabric
-  circuit_id = packetfabric_port.port_2.id
-}
-output "packetfabric_billing_port_2" {
-  value = data.packetfabric_billing.port_2
-}
+# # Get billing information related to the interface created
+# data "packetfabric_billing" "port_1" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_port.port_1.id
+# }
+# output "packetfabric_billing_port_1" {
+#   value = data.packetfabric_billing.port_1
+# }
+# data "packetfabric_billing" "port_2" {
+#   provider   = packetfabric
+#   circuit_id = packetfabric_port.port_2.id
+# }
+# output "packetfabric_billing_port_2" {
+#   value = data.packetfabric_billing.port_2
+# }
 
 ### Get the site filtering on the pop using packetfabric_locations
 
@@ -128,6 +128,6 @@ resource "packetfabric_backbone_virtual_circuit" "vc_1" {
     subscription_term = var.pf_vc_subterm
   }
 }
-output "packetfabric_backbone_virtual_circuit_1" {
-  value = packetfabric_backbone_virtual_circuit.vc_1
-}
+# output "packetfabric_backbone_virtual_circuit_1" {
+#   value = packetfabric_backbone_virtual_circuit.vc_1
+# }
