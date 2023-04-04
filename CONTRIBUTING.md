@@ -33,10 +33,12 @@
     * Generate the docs using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs)
         * From the root, execute `tfplugindocs generate --provider-name packetfabric`
         * Then, you need to run the following command on the `docs/resources` and `docs/data-sources` folders to prepend packetfabric_ to the file name:  
-        `for file in *; do mv $file packetfabric_${file%%}; done`
+            * `for file in *; do mv $file packetfabric_${file%%}; done` (mac/linux)
+            * `Get-ChildItem -File | ForEach-Object { Rename-Item -Path $_.FullName -NewName ("packetfabric_" + $_.Name) }` (PowerShell)
         * Removing `Defaults: 0` in all `*.md` files as this isn't needed (Terraform sending `null` when default is zero)
-        `find docs/* -name "*.md" -type f -exec sed -i '' 's/ Defaults: 0//g' {} \;` (mac)
-        `find docs/* -name "*.md" -type f -exec sed -i 's/ Defaults: 0//g' {} \;` (linux)
+            * `find docs/* -name "*.md" -type f -exec sed -i '' 's/ Defaults: 0//g' {} \;` (mac)
+            * `find docs/* -name "*.md" -type f -exec sed -i 's/ Defaults: 0//g' {} \;` (linux)
+            * `Get-ChildItem -Path "docs/*" -Include "*.md" -File -Recurse | ForEach-Object { (Get-Content $_.FullName) -replace ' Defaults: 0', '' | Set-Content -Path $_.FullName }` (PowerShell)
         * Verify each `*.md` under `docs/`
     * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
     * To see the debug logs, comment out `c.Ctx = context.Background()` in `internal/packetfabric/client.go`
