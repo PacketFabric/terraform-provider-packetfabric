@@ -17,7 +17,3 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
   is_public         = false
   labels            = ["terraform", "dev"]
 }
-
-output "packetfabric_cloud_router_connection_azure" {
-  value = packetfabric_cloud_router_connection_azure.crc4
-}

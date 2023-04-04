@@ -9,8 +9,3 @@ resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   vlan                        = 102
   labels                      = ["terraform", "dev"]
 }
-
-output "packetfabric_cs_google_hosted_connection" {
-  value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
-  sensitive = true
-}
