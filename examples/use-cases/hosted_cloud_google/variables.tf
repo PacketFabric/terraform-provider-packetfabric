@@ -72,9 +72,11 @@ variable "subnet_cidr1" {
   description = "CIDR for the subnet"
   default     = "10.5.1.0/24"
 }
-# You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
-variable "gcp_side_asn1" {
-  type        = number
-  default     = 16550
-  description = "Google Cloud ASN"
+variable "pf_cs_google_customer_asn" {
+  type    = number
+  default = 64517
+}
+variable "pf_cs_google_bgp_md5" {
+  type    = string
+  default = "changeme"
 }

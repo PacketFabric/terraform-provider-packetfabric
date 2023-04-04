@@ -107,7 +107,7 @@ Required:
 
 Optional:
 
-- `aws_gateways` (Block List) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_gateways` (Block List, Max: 2) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
 - `aws_region` (String) The AWS region that should be used.
 - `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
 

@@ -16,9 +16,10 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and G
 - "random_pet"
 - "google_compute_network"
 - "google_compute_subnetwork"
-- "google_compute_router"
-- "google_compute_interconnect_attachment"
+<!-- - "google_compute_router"
+- "google_compute_interconnect_attachment" -->
 - "packetfabric_cs_google_hosted_connection"
+<!-- - "packetfabric_cs_hosted_connection_router_config" -->
 
 **Estimated time:** ~5 min
 
