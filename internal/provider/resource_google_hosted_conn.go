@@ -301,11 +301,13 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		if _, ok := d.GetOk("google_pairing_key"); ok {
-			_ = d.Set("google_pairing_key", resp.Settings.GooglePairingKey)
-		}
-		if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
-			_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
+		if _, ok := d.GetOk("cloud_settings"); !ok {
+			if _, ok := d.GetOk("google_pairing_key"); ok {
+				_ = d.Set("google_pairing_key", resp.Settings.GooglePairingKey)
+			}
+			if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
+				_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
+			}
 		}
 		_ = d.Set("po_number", resp.PONumber)
 
@@ -315,6 +317,7 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 			cloudSettings["google_region"] = resp.CloudSettings.GoogleRegion
 			cloudSettings["google_project_id"] = resp.CloudSettings.GoogleProjectID
 			cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
+			cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
 			cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
 			cloudSettings["google_vpc_name"] = resp.CloudSettings.GoogleVPCName
 			cloudSettings["google_edge_availability_domain"] = resp.CloudSettings.GoogleEdgeAvailabilityDomain

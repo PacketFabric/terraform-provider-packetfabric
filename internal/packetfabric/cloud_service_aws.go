@@ -236,7 +236,7 @@ type Settings struct {
 	AzureServiceTag          int         `json:"azure_service_tag,omitempty"`
 	AzureEncapsulation       string      `json:"encapsulation,omitempty"`
 	GooglePairingKey         string      `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName string      `json:"google_vlan_attchment_name,omitempty"`
+	GoogleVlanAttachmentName string      `json:"google_vlan_attachment_name,omitempty"`
 	AwsRegion                string      `json:"aws_region,omitempty"`
 	AwsHostedType            string      `json:"aws_hosted_type,omitempty"`
 	AwsConnectionID          string      `json:"aws_connection_id,omitempty"`
