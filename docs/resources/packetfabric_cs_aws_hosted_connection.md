@@ -85,7 +85,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 ### Optional
 
-- `cloud_settings` (Block List, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings))
+- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -107,7 +107,7 @@ Required:
 
 Optional:
 
-- `aws_gateways` (Block List) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_gateways` (Block List, Max: 2) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
 - `aws_region` (String) The AWS region that should be used.
 - `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
 
