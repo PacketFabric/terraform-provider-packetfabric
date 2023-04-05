@@ -18,7 +18,3 @@ resource "packetfabric_cloud_router_connection_oracle" "crc6" {
   maybe_nat   = false
   labels      = ["terraform", "dev"]
 }
-
-output "packetfabric_cloud_router_connection_oracle" {
-  value = packetfabric_cloud_router_connection_oracle.crc6
-}

@@ -1,5 +1,4 @@
 # Example PacketFabric side provisioning only
-
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider    = packetfabric
   description = "hello world"
@@ -10,11 +9,15 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   zone        = "A"
   labels      = ["terraform", "dev"]
 }
-output "packetfabric_cs_aws_hosted_connection" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
-}
 
 # Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider       = packetfabric
+  description    = "AWS Staging Environement"
+  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+}
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
   provider    = packetfabric
   description = "hello world"
@@ -44,7 +47,4 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
     }
   }
   labels = ["terraform", "dev"]
-}
-output "packetfabric_cs_aws_hosted_connection_cloud_side" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws_cloud_side
 }

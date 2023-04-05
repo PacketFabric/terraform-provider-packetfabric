@@ -16,7 +16,7 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric AWS Cloud Router Connection - AWS
+# PacketFabric Cloud Router Connection - AWS
 variable "pf_crc_pop1" {
   type        = string
   description = "The POP in which you want to provision the connection"
@@ -47,7 +47,7 @@ variable "oracle_bandwidth_shape_name" {
   default = "1 Gbps" # 1 Gbps, 10 Gbps, or 100 Gbps increments
 }
 
-# PacketFabric Cloud Router Connection Port
+# PacketFabric Cloud Router Connection - Port
 variable "pf_crc_port_circuit_id" {
   type        = string
   description = "Port Circuit ID used as a source port to create a Port Cloud Router Connection"

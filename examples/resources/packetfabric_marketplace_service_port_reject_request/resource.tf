@@ -12,7 +12,3 @@ resource "packetfabric_marketplace_service_port_reject_request" "reject_request_
   provider        = packetfabric
   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1.id
 }
-
-output "packetfabric_marketplace_service_port_reject_request" {
-  value = packetfabric_marketplace_service_port_reject_request.reject_request_aws
-}

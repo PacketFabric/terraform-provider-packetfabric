@@ -26,9 +26,6 @@ resource "packetfabric_port" "port_1a" {
   zone              = "A"
   labels            = ["terraform", "dev"]
 }
-output "packetfabric_port_1a" {
-  value = packetfabric_port.port_1a
-}
 
 ## 2nd port in the same location same zone to create a LAG
 resource "packetfabric_port" "port_1b" {
@@ -43,9 +40,6 @@ resource "packetfabric_port" "port_1b" {
   zone              = "B"
   labels            = ["terraform", "dev"]
 }
-output "packetfabric_port_1b" {
-  value = packetfabric_port.port_1b
-}
 
 resource "packetfabric_link_aggregation_group" "lag_1" {
   provider    = packetfabric
@@ -54,9 +48,6 @@ resource "packetfabric_link_aggregation_group" "lag_1" {
   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
   pop         = "SEA2"
   labels      = ["terraform", "dev"]
-}
-output "packetfabric_link_aggregation_group" {
-  value = packetfabric_link_aggregation_group.lag_1
 }
 ```
 
