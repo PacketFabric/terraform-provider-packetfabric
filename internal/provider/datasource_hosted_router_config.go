@@ -21,7 +21,7 @@ func datasourceHostedCloudRouterConfig() *schema.Resource {
 			"router_type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				Description:  "Router Type Identifier.\n\n\tEnum: [\"CiscoSystemsInc-2900SeriesRouters-IOS124\", \"CiscoSystemsInc-3700SeriesRouters-IOS124\", \"CiscoSystemsInc-7200SeriesRouters-IOS124\", \"CiscoSystemsInc-Nexus7000SeriesSwitches-NXOS51\", \"CiscoSystemsInc-Nexus9KSeriesSwitches-NXOS93\", \"JuniperNetworksInc-MMXSeriesRouters-JunOS95\", \"JuniperNetworksInc-SRXSeriesRouters-JunOS95\", \"JuniperNetworksInc-TSeriesRouters-JunOS95\", \"PaloAltoNetworks-PA3000and5000series-PANOS803\"]",
+				Description:  "Router Type Identifier. CiscoSystemsInc-3700SeriesRouters-IOS124 and JuniperNetworksInc-MMXSeriesRouters-JunOS95 for Google. \n\n\tEnum: [\"CiscoSystemsInc-2900SeriesRouters-IOS124\", \"CiscoSystemsInc-3700SeriesRouters-IOS124\", \"CiscoSystemsInc-7200SeriesRouters-IOS124\", \"CiscoSystemsInc-Nexus7000SeriesSwitches-NXOS51\", \"CiscoSystemsInc-Nexus9KSeriesSwitches-NXOS93\", \"JuniperNetworksInc-MMXSeriesRouters-JunOS95\", \"JuniperNetworksInc-SRXSeriesRouters-JunOS95\", \"JuniperNetworksInc-TSeriesRouters-JunOS95\", \"PaloAltoNetworks-PA3000and5000series-PANOS803\"]",
 				ValidateFunc: validation.StringInSlice(getValidRouterTypes(), false),
 			},
 			"router_config": {
