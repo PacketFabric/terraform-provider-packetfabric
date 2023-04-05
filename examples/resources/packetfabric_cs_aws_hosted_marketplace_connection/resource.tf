@@ -7,7 +7,3 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketpla
   pop         = "BOS1"
   zone        = "A"
 }
-
-output "packetfabric_cs_aws_hosted_marketplace_connection" {
-  value = packetfabric_cs_aws_hosted_marketplace_connection.cs_conn1_marketplace_aws
-}
