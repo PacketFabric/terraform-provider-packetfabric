@@ -77,7 +77,7 @@ func (d *Decoder) Decode() (packetfabric.StreamingEventsGetResponse, error) {
 			event.Event = string(bytes.TrimSpace(fields[1]))
 		case "data":
 			data := packetfabric.StreamingEventData{}
-			err = json.Unmarshal(bytes.TrimSpace(fields[1]), &data)
+			_ = json.Unmarshal(bytes.TrimSpace(fields[1]), &data)
 			event.Data = &data
 		}
 	}
@@ -116,7 +116,7 @@ func datasourceStreamingEventsRead(ctx context.Context, d *schema.ResourceData, 
 		}
 
 		if event.Event != "" {
-			tflog.Debug(ctx, fmt.Sprintf("Setting event: %s", event))
+			tflog.Debug(ctx, fmt.Sprintf("Setting event: %s", event.Event))
 		}
 	}
 	return diags
