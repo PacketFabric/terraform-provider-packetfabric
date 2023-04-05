@@ -2,6 +2,7 @@
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
+This example uses AWS Private VIF & Gateway.
 
 ## Useful links
 
@@ -23,11 +24,9 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - "aws_vpn_gateway_attachment"
 - "aws_route_table"
 - "aws_route_table_association"
-- "packetfabric_cs_aws_hosted_connection"
-- "time_sleep"
-- "aws_dx_connection_confirmation"
 - "aws_dx_gateway"
-- "aws_dx_private_virtual_interface"
+- "packetfabric_cs_aws_hosted_connection"
+- "packetfabric_cs_hosted_connection_router_config"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -70,8 +69,8 @@ Set additional environment variables for AWS:
 
 ```sh
 export PF_AWS_ACCOUNT_ID="98765432"
-export AWS_ACCESS_KEY_ID = "ABCDEFGH"
-export AWS_SECRET_ACCESS_KEY = "secret"
+export AWS_ACCESS_KEY_ID="ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY="secret"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.

@@ -3,7 +3,7 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_1
@@ -18,7 +18,7 @@ resource "aws_vpn_gateway" "vpn_gw_2" {
   provider        = aws.region2
   amazon_side_asn = var.amazon_side_asn2
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_2

@@ -29,9 +29,6 @@ resource "packetfabric_marketplace_service" "marketplace_quick_connect" {
     }
   }
 }
-output "packetfabric_marketplace_service_quick_connect" {
-  value = packetfabric_marketplace_service.marketplace_quick_connect
-}
 
 # Create a Marketplace Service type port
 resource "packetfabric_marketplace_service" "marketplace_port" {
@@ -50,7 +47,4 @@ resource "packetfabric_marketplace_service" "marketplace_port" {
     "PDX1",
     "SFO2"
   ]
-}
-output "packetfabric_marketplace_service_port" {
-  value = packetfabric_marketplace_service.marketplace_port
 }

@@ -8,8 +8,3 @@ resource "packetfabric_cs_oracle_hosted_marketplace_connection" "cs_conn1_market
   market      = "HOU"
   pop         = "BOS1"
 }
-
-output "packetfabric_cs_oracle_hosted_marketplace_connection" {
-  value     = packetfabric_cs_oracle_hosted_marketplace_connection.cs_conn1_marketplace_oracle
-  sensitive = true
-}

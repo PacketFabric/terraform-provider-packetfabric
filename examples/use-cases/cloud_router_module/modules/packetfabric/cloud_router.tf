@@ -3,7 +3,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
   }
 }
@@ -16,6 +16,7 @@ resource "packetfabric_cloud_router" "cr" {
   asn      = var.asn
   capacity = var.capacity
   regions  = var.regions
+  labels   = var.labels
 }
 
 # This block creates a data source of type "packetfabric_locations_pop_zones" and is used to retrieve the zone information for a given pop.
@@ -32,6 +33,7 @@ resource "packetfabric_cloud_router_connection_aws" "aws" {
   provider    = packetfabric
   circuit_id  = packetfabric_cloud_router.cr.id
   description = "aws-${each.key}-${lower(each.value.pop)}"
+  labels      = var.labels
   pop         = each.value.pop
   speed       = each.value.speed
   zone        = data.packetfabric_locations_pop_zones.locations_pop_zones_aws[each.key].locations_zones[0]
@@ -48,6 +50,7 @@ resource "packetfabric_cloud_router_connection_google" "gcp" {
   provider                    = packetfabric
   circuit_id                  = packetfabric_cloud_router.cr.id
   description                 = "gcp-${each.key}-${lower(each.value.pop)}"
+  labels                      = var.labels
   google_pairing_key          = each.value.pairing_key
   google_vlan_attachment_name = "gcp-${each.value.vlan_attachment_name}-${lower(each.value.pop)}"
   pop                         = each.value.pop

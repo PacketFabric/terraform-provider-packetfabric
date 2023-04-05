@@ -16,7 +16,6 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 
 ```terraform
 # Example PacketFabric side provisioning only
-
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   provider    = packetfabric
   description = "hello world"
@@ -27,11 +26,15 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   zone        = "A"
   labels      = ["terraform", "dev"]
 }
-output "packetfabric_cs_aws_hosted_connection" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws
-}
 
 # Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider       = packetfabric
+  description    = "AWS Staging Environement"
+  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+}
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
   provider    = packetfabric
   description = "hello world"
@@ -62,9 +65,6 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
   }
   labels = ["terraform", "dev"]
 }
-output "packetfabric_cs_aws_hosted_connection_cloud_side" {
-  value = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws_cloud_side
-}
 ```
 
 
@@ -85,7 +85,7 @@ output "packetfabric_cs_aws_hosted_connection_cloud_side" {
 
 ### Optional
 
-- `cloud_settings` (Block List, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings))
+- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -107,7 +107,7 @@ Required:
 
 Optional:
 
-- `aws_gateways` (Block List) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_gateways` (Block List, Max: 2) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
 - `aws_region` (String) The AWS region that should be used.
 - `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
 

@@ -18,7 +18,3 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   speed       = "1Gbps"
   labels      = ["terraform", "dev"]
 }
-
-output "packetfabric_cloud_router_connection_ibm" {
-  value = packetfabric_cloud_router_connection_ibm.crc5
-}
