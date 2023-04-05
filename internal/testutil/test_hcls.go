@@ -48,6 +48,8 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+const OracleHostedConnVlan = 108
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -343,12 +345,40 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 
 // packetfabric_cs_oracle_hosted_connection
 func RHclCsOracleHostedConnection() RHclCsOracleHostedConnectionResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	var region, pop, zone, vcOcid, hcl string
-	var vlan int
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "oracle",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
 
-	resourceName, _ := _generateResourceName(pfCsOracleHostedConn)
+	pop, zone, media := portDetails._findAvailableCloudPopZoneAndMedia()
+	portDetails.DesiredPop = pop
+	portDetails.DesiredZone = zone
+	portDetails.DesiredMedia = media
+
+	resourceName, hclName := _generateResourceName(pfCsOracleHostedConn)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCsOracleHostedConn)
+	hclPortResult := portDetails.RHclPort()
+
+	oracleHostedHcl := fmt.Sprintf(RResourceCSOracleHostedConnection,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_CS_ORACLE_VC_OCID_KEY),
+		os.Getenv(PF_CS_ORACLE_REGION_KEY),
+		hclPortResult.ResourceReference,
+		pop,
+		zone,
+		OracleHostedConnVlan,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, oracleHostedHcl)
 
 	return RHclCsOracleHostedConnectionResult{
 		HclResultBase: HclResultBase{
@@ -357,11 +387,11 @@ func RHclCsOracleHostedConnection() RHclCsOracleHostedConnectionResult {
 			ResourceName: resourceName,
 		},
 		Desc:   uniqueDesc,
-		VcOcid: vcOcid,
-		Region: region,
+		VcOcid: os.Getenv(PF_CS_ORACLE_VC_OCID_KEY),
+		Region: os.Getenv(PF_CS_ORACLE_REGION_KEY),
 		Pop:    pop,
 		Zone:   zone,
-		Vlan:   vlan,
+		Vlan:   OracleHostedConnVlan,
 	}
 }
 

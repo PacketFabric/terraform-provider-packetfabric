@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"log"
 	"strconv"
 	"testing"
 
@@ -12,7 +13,7 @@ func TestOracleHostedConnectRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	csOracleHostedConnectionResult := testutil.RHclCsOracleHostedConnection()
-
+	log.Fatal(csOracleHostedConnectionResult.Hcl)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
