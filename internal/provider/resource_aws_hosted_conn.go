@@ -107,9 +107,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				},
 			},
 			"cloud_settings": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"credentials_uuid": {

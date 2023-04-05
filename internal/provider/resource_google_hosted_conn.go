@@ -41,14 +41,14 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Optional if set in cloud_settings, otherwise Required.",
+				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.",
 			},
 			"google_vlan_attachment_name": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The name you used for your VLAN attachment in Google. Optional if set in cloud_settings, otherwise Required.",
+				Description:  "The name you used for your VLAN attachment in Google.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -104,9 +104,10 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				},
 			},
 			"cloud_settings": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"credentials_uuid": {
