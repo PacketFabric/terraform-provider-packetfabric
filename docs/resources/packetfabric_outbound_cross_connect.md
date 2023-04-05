@@ -44,7 +44,7 @@ locals {
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
   description   = "hello world"
-  document_uuid = var.pf_document_uuid1
+  document_uuid = "55a7a654-4c3c-4c69-bcbe-755790f0417c" # Document uuid for the LOA
   port          = packetfabric_port.port_1.id
   site          = local.pf_port_site1
 }
