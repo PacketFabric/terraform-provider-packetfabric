@@ -17,6 +17,7 @@ func resourceStreamingEvents() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceStreamingEventsCreate,
 		ReadContext:   resourceStreamingEventsRead,
+		DeleteContext: resourceStreamingEventsDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
@@ -27,36 +28,46 @@ func resourceStreamingEvents() *schema.Resource {
 				Computed:    true,
 				Description: "ID for created bundle of event streams",
 			},
-			"type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Type of events to subscribe to.",
-			},
-			"events": {
-				Type:        schema.TypeList,
-				Description: "Categories of events to subscribe to. If not specified, then all event categories are assumed.",
-				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringIsNotEmpty,
+			"streams": {
+				Type:     schema.TypeSet,
+				Required: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Type of events to subscribe to.",
+						},
+						"events": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "Categories of events to subscribe to. If not specified, then all event categories are assumed.",
+							Elem: &schema.Schema{
+								Type:         schema.TypeString,
+								ValidateFunc: validation.StringIsNotEmpty,
+							},
+						},
+						"vcs": {
+							Type:        schema.TypeList,
+							Description: VCSDescription,
+							Elem: &schema.Schema{
+								Type:         schema.TypeString,
+								ValidateFunc: validation.StringIsNotEmpty,
+							},
+							Optional: true,
+						},
+						"ifds": {
+							Type:        schema.TypeList,
+							Description: "Specific ports you wish to subscribe to, identified by port circuit IDs. If none are supplied, then all ports to which the customer has access are assumed.",
+							Elem: &schema.Schema{
+								Type:         schema.TypeString,
+								ValidateFunc: validation.StringIsNotEmpty,
+							},
+							Optional: true,
+						},
+					},
 				},
-			},
-			"vcs": {
-				Type:        schema.TypeList,
-				Description: VCSDescription,
-				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringIsNotEmpty,
-				},
-				Optional: true,
-			},
-			"ifds": {
-				Type:        schema.TypeList,
-				Description: "Specific ports you wish to subscribe to, identified by port circuit IDs. If none are supplied, then all ports to which the customer has access are assumed.",
-				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringIsNotEmpty,
-				},
-				Optional: true,
+				ForceNew: true,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -65,35 +76,41 @@ func resourceStreamingEvents() *schema.Resource {
 	}
 }
 
-func getStringListData(d *schema.ResourceData, key string) []string {
-	var data []string
-	for _, i := range d.Get(key).(*schema.Set).List() {
-		data = append(data, i.(string))
+func getStringListData(data []interface{}) []string {
+	var StringListData []string
+	for _, i := range data {
+		StringListData = append(StringListData, i.(string))
 	}
-	return data
+	return StringListData
 }
 
 func resourceStreamingEventsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
+
 	var diags diag.Diagnostics
+	var streamsData []packetfabric.StreamData
+	streams := d.Get("streams")
 
-	streamingType := d.Get("type")
-	events := getStringListData(d, "events")
+	for _, stream := range streams.(*schema.Set).List() {
+		streamData := stream.(map[string]interface{})
+		payload := packetfabric.StreamData{
+			Type:   streamData["type"].(string),
+			Events: getStringListData(streamData["events"].([]interface{})),
+		}
 
-	payload := packetfabric.StreamingEventsPayload{
-		Type:   streamingType.(string),
-		Events: events,
+		if len(streamData["vcs"].([]interface{})) > 0 {
+			payload.VCS = getStringListData(streamData["vcs"].([]interface{}))
+		}
+
+		if len(streamData["ifds"].([]interface{})) > 0 {
+			payload.IFDs = getStringListData(streamData["ifds"].([]interface{}))
+		}
+
+		streamsData = append(streamsData, payload)
 	}
 
-	if _, ok := d.GetOk("vcs"); ok {
-		payload.VCS = getStringListData(d, "vcs")
-	}
-	if _, ok := d.GetOk("ifds"); ok {
-		payload.IFDs = getStringListData(d, "ifds")
-	}
-
-	resp, err := c.CreateStreamingEvent(payload)
+	resp, err := c.CreateStreamingEvent(packetfabric.StreamingEventsPayload{Streams: streamsData})
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -103,14 +120,10 @@ func resourceStreamingEventsCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceStreamingEventsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
+	return diag.Diagnostics{}
+}
 
-	_, err := c.GetStreamingEvent(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return diags
+func resourceStreamingEventsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	d.SetId("")
+	return diag.Diagnostics{}
 }
