@@ -192,17 +192,15 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_asn": {
-										Type:         schema.TypeInt,
-										Required:     true,
-										ValidateFunc: validatePublicOrPrivateASN,
-										Description:  "The customer ASN of this connection.",
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
 									},
 									"remote_asn": {
-										Type:         schema.TypeInt,
-										Optional:     true,
-										Default:      16550,
-										ValidateFunc: validatePublicOrPrivateASN,
-										Description:  "The Google ASN of this connection. Must be 16550, between 64512 and 65534, or between 4200000000 and 4294967294.",
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     16550,
+										Description: "The Google ASN of this connection. Must be 16550, between 64512 and 65534, or between 4200000000 and 4294967294.",
 									},
 									"md5": {
 										Type:         schema.TypeString,
