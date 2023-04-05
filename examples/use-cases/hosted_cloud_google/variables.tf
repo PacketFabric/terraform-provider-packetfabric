@@ -1,5 +1,5 @@
 ## General VARs
-variable "tag_name" {
+variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
   default     = "demo-pf-google"
@@ -52,8 +52,7 @@ variable "pf_cs_vlan1" {
 
 # GCP VARs
 variable "gcp_project_id" {
-  type = string
-  # sensitive   = true
+  type        = string
   description = "Google Cloud project ID"
 }
 # https://cloud.google.com/compute/docs/regions-zones
