@@ -2,6 +2,7 @@
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
+This example uses AWS Private VIF & Gateway.
 
 ## Useful links
 
@@ -68,8 +69,8 @@ Set additional environment variables for AWS:
 
 ```sh
 export PF_AWS_ACCOUNT_ID="98765432"
-export AWS_ACCESS_KEY_ID = "ABCDEFGH"
-export AWS_SECRET_ACCESS_KEY = "secret"
+export AWS_ACCESS_KEY_ID="ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY="secret"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.

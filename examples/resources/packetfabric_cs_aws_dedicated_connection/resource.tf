@@ -1,4 +1,3 @@
-
 resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
   provider          = packetfabric
   aws_region        = "us-east-1"
@@ -11,8 +10,4 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
   speed             = "10Gbps"
   should_create_lag = true
   labels            = ["terraform", "dev"]
-}
-
-output "packetfabric_cs_aws_dedicated_connection" {
-  value = packetfabric_cs_aws_dedicated_connection.pf_cs_conn1_dedicated_aws
 }
