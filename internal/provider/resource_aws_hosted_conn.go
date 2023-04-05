@@ -145,10 +145,9 @@ func resourceAwsRequestHostConn() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_asn": {
-										Type:         schema.TypeInt,
-										Required:     true,
-										ValidateFunc: validatePublicOrPrivateASN,
-										Description:  "The customer ASN of this connection.",
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
 									},
 									"l3_address": {
 										Type:         schema.TypeString,
@@ -210,10 +209,9 @@ func resourceAwsRequestHostConn() *schema.Resource {
 										Description:  "The ID of the AWS Gateway to be used.",
 									},
 									"asn": {
-										Type:         schema.TypeInt,
-										Optional:     true,
-										ValidateFunc: validatePrivateASN,
-										Description:  "The ASN of the AWS Gateway to be used.",
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: "The ASN of the AWS Gateway to be used.",
 									},
 									"vpc_id": {
 										Type:         schema.TypeString,
