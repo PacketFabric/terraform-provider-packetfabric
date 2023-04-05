@@ -10,7 +10,3 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
   speed             = "10Gbps"
   labels            = ["terraform", "dev"]
 }
-
-output "packetfabric_cs_azure_dedicated_connection" {
-  value = packetfabric_cs_azure_dedicated_connection.pf_cs_conn1_dedicated_azure
-}

@@ -5,7 +5,9 @@ FEATURES:
 * resource: packetfabric_cloud_provider_credential_aws (#376)
 * resource: packetfabric_cloud_provider_credential_google (#376)
 * resource: [UPDATED] packetfabric_cs_aws_hosted_connection (#408)
+* resource: [UPDATED] packetfabric_cs_google_hosted_connection (#414)
 * data-source: [UPDATED] packetfabric_cs_aws_hosted_connection (#408)
+* data-source: [UPDATED] packetfabric_cs_google_hosted_connection (#414)
 * data-source: packetfabric_cs_hosted_connection_router_config (#409)
 
 IMPROVEMENTS/ENHANCEMENTS:

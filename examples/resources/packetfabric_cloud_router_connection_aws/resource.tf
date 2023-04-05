@@ -18,10 +18,6 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   labels      = ["terraform", "dev"]
 }
 
-output "packetfabric_cloud_router_connection_aws" {
-  value = packetfabric_cloud_router_connection_aws.crc1
-}
-
 # Wait for the connection to show up in AWS
 resource "time_sleep" "wait_aws_connection" {
   create_duration = "2m"

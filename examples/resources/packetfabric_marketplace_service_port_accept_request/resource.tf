@@ -18,7 +18,3 @@ resource "packetfabric_marketplace_service_port_accept_request" "accept_marketpl
   }
   vc_request_uuid = packetfabric_cs_aws_hosted_marketplace_connection.cs_marketplace_conn1.id
 }
-
-output "packetfabric_marketplace_service_port_accept_request" {
-  value = packetfabric_marketplace_service_port_accept_request.accept_request_aws
-}

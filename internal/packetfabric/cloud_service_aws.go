@@ -118,46 +118,63 @@ type HostedAwsConnection struct {
 }
 
 type CloudSettingsHosted struct {
-	CredentialsUUID           string            `json:"credentials_uuid,omitempty"`
-	AwsRegion                 string            `json:"aws_region,omitempty"`
-	Mtu                       int               `json:"mtu,omitempty"`
-	AwsVifType                string            `json:"aws_vif_type,omitempty"`
-	BgpSettings               *BgpSettings      `json:"bgp_settings,omitempty"`
-	AwsConnectionID           string            `json:"aws_connection_id,omitempty"`
-	AwsHostedType             string            `json:"aws_hosted_type,omitempty"`
-	AwsAccountID              string            `json:"aws_account_id,omitempty"`
-	VlanIDPf                  int               `json:"vlan_id_pf,omitempty"`
-	VlanIDCust                int               `json:"vlan_id_cust,omitempty"`
-	SvlanIDCust               int               `json:"svlan_id_cust,omitempty"`
-	AwsDxLocation             string            `json:"aws_dx_location,omitempty"`
-	AwsDxBandwidth            string            `json:"aws_dx_bandwidth,omitempty"`
-	AwsDxJumboFrameCapable    bool              `json:"aws_dx_jumbo_frame_capable,omitempty"`
-	AwsDxAWSDevice            string            `json:"aws_dx_aws_device,omitempty"`
-	AwsDxAWSLogicalDeviceID   string            `json:"aws_dx_aws_logical_device_id,omitempty"`
-	AwsDxHasLogicalRedundancy bool              `json:"aws_dx_has_logical_redundancy,omitempty"`
-	AwsDxMacSecCapable        bool              `json:"aws_dx_mac_sec_capable,omitempty"`
-	AwsDxEncryptionMode       string            `json:"aws_dx_encryption_mode,omitempty"`
-	AwsVifID                  string            `json:"aws_vif_id,omitempty"`
-	AwsVifBGPPeerID           string            `json:"aws_vif_bgp_peer_id,omitempty"`
-	AwsVifDirectConnectGwID   string            `json:"aws_vif_direct_connect_gw_id,omitempty"`
-	AwsGateways               []AwsGateway      `json:"aws_gateways,omitempty"`
-	CloudState                *CloudStateHosted `json:"cloud_state,omitempty"`
+	CredentialsUUID              string            `json:"credentials_uuid,omitempty"`
+	AwsRegion                    string            `json:"aws_region,omitempty"`
+	Mtu                          int               `json:"mtu,omitempty"`
+	AwsVifType                   string            `json:"aws_vif_type,omitempty"`
+	BgpSettings                  *BgpSettings      `json:"bgp_settings,omitempty"`
+	AwsConnectionID              string            `json:"aws_connection_id,omitempty"`
+	AwsHostedType                string            `json:"aws_hosted_type,omitempty"`
+	AwsAccountID                 string            `json:"aws_account_id,omitempty"`
+	VlanIDPf                     int               `json:"vlan_id_pf,omitempty"`
+	VlanIDCust                   int               `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust                  int               `json:"svlan_id_cust,omitempty"`
+	AwsDxLocation                string            `json:"aws_dx_location,omitempty"`
+	AwsDxBandwidth               string            `json:"aws_dx_bandwidth,omitempty"`
+	AwsDxJumboFrameCapable       bool              `json:"aws_dx_jumbo_frame_capable,omitempty"`
+	AwsDxAWSDevice               string            `json:"aws_dx_aws_device,omitempty"`
+	AwsDxAWSLogicalDeviceID      string            `json:"aws_dx_aws_logical_device_id,omitempty"`
+	AwsDxHasLogicalRedundancy    bool              `json:"aws_dx_has_logical_redundancy,omitempty"`
+	AwsDxMacSecCapable           bool              `json:"aws_dx_mac_sec_capable,omitempty"`
+	AwsDxEncryptionMode          string            `json:"aws_dx_encryption_mode,omitempty"`
+	AwsVifID                     string            `json:"aws_vif_id,omitempty"`
+	AwsVifBGPPeerID              string            `json:"aws_vif_bgp_peer_id,omitempty"`
+	AwsVifDirectConnectGwID      string            `json:"aws_vif_direct_connect_gw_id,omitempty"`
+	AwsGateways                  []AwsGateway      `json:"aws_gateways,omitempty"`
+	GoogleRegion                 string            `json:"google_region,omitempty"`
+	GoogleProjectID              string            `json:"google_project_id,omitempty"`
+	GoogleVlanAttachmentName     string            `json:"google_vlan_attachment_name,omitempty"`
+	GoogleCloudRouterName        string            `json:"google_cloud_router_name,omitempty"`
+	GoogleVPCName                string            `json:"google_vpc_name,omitempty"`
+	GoogleEdgeAvailabilityDomain int               `json:"google_edge_availability_domain,omitempty"`
+	GoogleDataplaneVersion       int               `json:"google_dataplane_version,omitempty"`
+	GoogleInterfaceName          string            `json:"google_interface_name,omitempty"`
+	GooglePairingKey             string            `json:"google_pairing_key,omitempty"`
+	CloudState                   *CloudStateHosted `json:"cloud_state,omitempty"`
 }
 
 type CloudStateHosted struct {
-	AwsDxConnectionState      string
-	AwsDxPortEncryptionStatus string
-	AwsVifState               string
-	BgpState                  string
+	AwsDxConnectionState           string `json:"aws_dx_connection_state,omitempty"`
+	AwsDxPortEncryptionStatus      string `json:"aws_dx_port_encryption_status,omitempty"`
+	AwsVifState                    string `json:"aws_vif_state,omitempty"`
+	BgpState                       string `json:"bgp_state,omitempty"`
+	GoogleInterconnectState        string `json:"google_interconnect_state,omitempty"`
+	GoogleInterconnectAdminEnabled bool   `json:"google_interconnect_admin_enabled,omitempty"`
 }
 
 type BgpSettings struct {
-	CustomerAsn        int      `json:"customer_asn,omitempty"`
-	L3Address          string   `json:"l3_address,omitempty"`
-	RemoteAddress      string   `json:"remote_address,omitempty"`
-	AddressFamily      string   `json:"address_family,omitempty"`
-	Md5                string   `json:"md5,omitempty"`
-	AdvertisedPrefixes []string `json:"advertised_prefixes,omitempty"`
+	CustomerAsn              int      `json:"customer_asn,omitempty"`
+	RemoteAsn                int      `json:"remote_asn,omitempty"`
+	L3Address                string   `json:"l3_address,omitempty"`
+	RemoteAddress            string   `json:"remote_address,omitempty"`
+	AddressFamily            string   `json:"address_family,omitempty"`
+	Md5                      string   `json:"md5,omitempty"`
+	AdvertisedPrefixes       []string `json:"advertised_prefixes,omitempty"`
+	CustomerRouterIp         string   `json:"customer_router_ip,omitempty"`
+	RemoteRouterIp           string   `json:"remote_router_ip,omitempty"`
+	GoogleAdvertiseMode      string   `json:"google_advertise_mode,omitempty"`
+	GoogleKeepaliveInterval  int      `json:"google_keepalive_interval,omitempty"`
+	GoogleAdvertisedIPRanges []string `json:"google_advertised_ip_ranges,omitempty"`
 }
 
 type AwsGateway struct {
@@ -219,7 +236,7 @@ type Settings struct {
 	AzureServiceTag          int         `json:"azure_service_tag,omitempty"`
 	AzureEncapsulation       string      `json:"encapsulation,omitempty"`
 	GooglePairingKey         string      `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName string      `json:"google_vlan_attchment_name,omitempty"`
+	GoogleVlanAttachmentName string      `json:"google_vlan_attachment_name,omitempty"`
 	AwsRegion                string      `json:"aws_region,omitempty"`
 	AwsHostedType            string      `json:"aws_hosted_type,omitempty"`
 	AwsConnectionID          string      `json:"aws_connection_id,omitempty"`

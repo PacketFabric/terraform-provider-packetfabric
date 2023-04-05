@@ -27,7 +27,3 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
   shared_key                   = "superCoolKey"
   labels                       = ["terraform", "dev"]
 }
-
-output "packetfabric_cloud_router_connection_ipsec" {
-  value = packetfabric_cloud_router_connection_ipsec.crc3
-}

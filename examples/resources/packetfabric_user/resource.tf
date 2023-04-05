@@ -9,8 +9,3 @@ resource "packetfabric_user" "user1" {
   timezone   = "America/Vancouver"
   group      = "read-only"
 }
-
-output "packetfabric_user" {
-  value     = packetfabric_user.user1
-  sensitive = true
-}

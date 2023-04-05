@@ -10,7 +10,3 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
   speed             = "10Gbps"
   labels            = ["terraform", "dev"]
 }
-
-output "packetfabric_cs_google_dedicated_connection" {
-  value = data.packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
-}
