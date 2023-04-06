@@ -112,6 +112,8 @@ const DedicatedCloudPortCat = "primary" // Azure only
 // packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
 
+const LinkAggGroupInterval = "fast"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -952,11 +954,59 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 
-	var pop, interval, hcl string
-	var members []string
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	resourceName, _ := _generateResourceName(pfLinkAggregationGroup)
+	portDetails1 := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop1, _, media1 := portDetails1._findAvailableCloudPopZoneAndMedia()
+	if pop1 == "" {
+		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
+	}
+
+	portDetails1.DesiredPop = pop1
+	portDetails1.DesiredMedia = media1
+
+	hclPortResult1 := portDetails1.RHclPort()
+
+	portDetails2 := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          portSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop2, _, media2 := portDetails2._findAvailableCloudPopZoneAndMedia()
+	if pop2 == "" {
+		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
+	}
+	portDetails2.DesiredPop = pop2
+	portDetails2.DesiredMedia = media2
+
+	hclPortResult2 := portDetails2.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfLinkAggregationGroup)
 	uniqueDesc := _generateUniqueNameOrDesc(pfLinkAggregationGroup)
+
+	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
+		hclName,
+		uniqueDesc,
+		LinkAggGroupInterval,
+		hclPortResult1.ResourceReference,
+		hclPortResult2.ResourceReference,
+		pop1,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult1.Hcl, hclPortResult2.Hcl, linkAggGroupHcl)
 
 	return RHclLinkAggregationGroupResult{
 		HclResultBase: HclResultBase{
@@ -965,9 +1015,12 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 			ResourceName: resourceName,
 		},
 		Desc:     uniqueDesc,
-		Interval: interval,
-		Members:  members,
-		Pop:      pop,
+		Interval: LinkAggGroupInterval,
+		Members: []string{
+			hclPortResult1.ResourceName,
+			hclPortResult2.ResourceName,
+		},
+		Pop: pop1,
 	}
 }
 
