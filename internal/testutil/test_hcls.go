@@ -74,6 +74,8 @@ const CloudRouterBgpSessionType2 = "out"
 // packetfabric_cs_aws_hosted_connection
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
+const PortLoaCustomerName = "loa"
+const PortLoaDestinationEmail = "romain.jouhannet@packetfabric.com"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -579,9 +581,27 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 // packetfabric_port_loa
 func RHclPortLoa() RHclPortLoaResult {
 
-	var loaCustomerName, destinationEmail, hcl string
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	resourceName, _ := _generateResourceName(pfPortLoa)
+	portDetails := PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		IsCloudConnection: true,
+	}
+
+	hclPortResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfPortLoa)
+
+	hcl := fmt.Sprintf(RResourcePortLoa,
+		hclName,
+		hclPortResult.ResourceReference,
+		PortLoaCustomerName,
+		PortLoaDestinationEmail,
+	)
 
 	return RHclPortLoaResult{
 		HclResultBase: HclResultBase{
@@ -589,8 +609,8 @@ func RHclPortLoa() RHclPortLoaResult {
 			Resource:     pfPortLoa,
 			ResourceName: resourceName,
 		},
-		LoaCustomerName:  loaCustomerName,
-		DestinationEmail: destinationEmail,
+		LoaCustomerName:  PortLoaCustomerName,
+		DestinationEmail: PortLoaDestinationEmail,
 	}
 }
 

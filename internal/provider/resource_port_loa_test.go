@@ -26,6 +26,11 @@ func TestAccPortLOARequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(portLoaResult.ResourceName, "loa_customer_name", portLoaResult.LoaCustomerName),
 				),
 			},
+			{
+				ResourceName:      portLoaResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
