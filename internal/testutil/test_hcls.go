@@ -48,6 +48,9 @@ const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 
+const PoinToPointSpeed = "50Mbps"
+const PointToPointSubscriptionTerm = 1
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -346,12 +349,24 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 // packetfabric_point_to_point
 func RHclPointToPoint() RHclPointToPointResult {
 
-	var media, speed, pop1, pop2, zone1, zone2, hcl string
-	var autoneg1, autoneg2 bool
-	var subscriptionTerm int
+	pop1, zone1, media, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+	pop2, zone2, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
 
 	uniqueDesc := _generateUniqueNameOrDesc(pfPoinToPoint)
-	resourceName, _ := _generateResourceName(pfPoinToPoint)
+	resourceName, hclName := _generateResourceName(pfPoinToPoint)
+
+	hcl := fmt.Sprintf(RResourcePointToPoint,
+		hclName,
+		uniqueDesc,
+		PoinToPointSpeed,
+		media,
+		PointToPointSubscriptionTerm,
+		pop1,
+		zone1,
+		false,
+		pop2,
+		zone2,
+		false)
 
 	return RHclPointToPointResult{
 		HclResultBase: HclResultBase{
@@ -360,15 +375,15 @@ func RHclPointToPoint() RHclPointToPointResult {
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
-		Speed:            speed,
+		Speed:            PoinToPointSpeed,
 		Media:            media,
-		SubscriptionTerm: subscriptionTerm,
+		SubscriptionTerm: PointToPointSubscriptionTerm,
 		Pop1:             pop1,
 		Zone1:            zone1,
-		Autoneg1:         autoneg1,
+		Autoneg1:         false,
 		Pop2:             pop2,
 		Zone2:            zone2,
-		Autoneg2:         autoneg2,
+		Autoneg2:         false,
 	}
 }
 
