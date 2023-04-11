@@ -516,7 +516,7 @@ func flattenCloudConnInfoSettings(settings *packetfabric.Settings) map[string]in
 	}
 }
 
-func flattenCloudConnInfoCloudSettings(cloudSettings *packetfabric.CloudSettingsHosted) map[string]interface{} {
+func flattenCloudConnInfoCloudSettings(cloudSettings *packetfabric.CloudSettings) map[string]interface{} {
 	cloudSettingsMap := map[string]interface{}{
 		"vlan_id_pf":                      cloudSettings.VlanIDPf,
 		"vlan_id_cust":                    cloudSettings.VlanIDCust,
@@ -580,7 +580,7 @@ func flattenCloudConnInfoBGPSettings(bgpSettings *packetfabric.BgpSettings) map[
 	}
 }
 
-func flattenCloudConnInfoCloudState(cloudState *packetfabric.CloudStateHosted) map[string]interface{} {
+func flattenCloudConnInfoCloudState(cloudState *packetfabric.CloudState) map[string]interface{} {
 	return map[string]interface{}{
 		"aws_dx_connection_state":           cloudState.AwsDxConnectionState,
 		"aws_dx_port_encryption_status":     cloudState.AwsDxPortEncryptionStatus,
