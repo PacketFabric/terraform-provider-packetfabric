@@ -19,22 +19,24 @@ For information specific to each cloud provider, see [the PacketFabric cloud rou
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider    = packetfabric
   circuit_id  = packetfabric_cloud_router.cr1.id
-  maybe_nat   = var.pf_crc_maybe_nat
-  maybe_dnat  = var.pf_crc_maybe_dnat
-  description = var.pf_crc_description
-  pop         = var.pf_crc_pop
-  zone        = var.pf_crc_zone
-  is_public   = var.pf_crc_is_public
-  speed       = var.pf_crc_speed
+  maybe_nat   = false
+  maybe_dnat  = false
+  description = "hello world"
+  pop         = "PDX2"
+  zone        = "A"
+  is_public   = false
+  speed       = "1Gbps"
+  labels      = ["terraform", "dev"]
 }
 
 # Example maybe_nat set to false
@@ -42,13 +44,9 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
-  address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
-  remote_asn     = var.pf_crbs_rasn
-  orlonger       = var.pf_crbs_orlonger
-  remote_address = var.pf_crbs_remoteaddr
-  l3_address     = var.pf_crbs_l3addr
-  md5            = var.pf_crbs_md5
+  address_family = "v4"
+  multihop_ttl   = 1
+  remote_asn     = 64535
   prefixes {
     prefix = var.pf_crbp_pfx00
     type   = "out" # Allowed Prefixes to Cloud
@@ -72,18 +70,14 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
-  address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
-  remote_asn     = var.pf_crbs_rasn
-  orlonger       = var.pf_crbs_orlonger
-  remote_address = var.pf_crbs_remoteaddr
-  l3_address     = var.pf_crbs_l3addr
-  md5            = var.pf_crbs_md5
+  address_family = "v4"
+  multihop_ttl   = 1
+  remote_asn     = 64535
   nat {
     direction       = "input" # or output
     nat_type        = "overload"
-    pre_nat_sources = var.pf_crbs_pre_nat_sources # e.g. ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-    pool_prefixes   = var.pf_crbs_pool_prefixes   # e.g. ["192.168.1.50/32", "192.168.1.51/32"]
+    pre_nat_sources = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
+    pool_prefixes   = ["192.168.1.50/32", "192.168.1.51/32"]
   }
   prefixes {
     prefix = var.pf_crbp_pfx00
@@ -100,13 +94,9 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
-  address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
-  remote_asn     = var.pf_crbs_rasn
-  orlonger       = var.pf_crbs_orlonger
-  remote_address = var.pf_crbs_remoteaddr
-  l3_address     = var.pf_crbs_l3addr
-  md5            = var.pf_crbs_md5
+  address_family = "v4"
+  multihop_ttl   = 1
+  remote_asn     = 64535
   nat {
     nat_type = "inline_dnat"
     dnat_mappings {
@@ -135,9 +125,6 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 
 ### Required
 
-- `address_family` (String) Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported.
-
-	Enum: "v4" "v6"
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `connection_id` (String) The circuit ID of the connection associated with the BGP session. This starts with "PF-L3-CON-".
 - `prefixes` (Block Set, Min: 1) The list of BGP prefixes (see [below for nested schema](#nestedblock--prefixes))
@@ -145,22 +132,33 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 
 ### Optional
 
+- `address_family` (String) Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported.
+
+	Enum: "v4" "v6" Defaults: v4
 - `as_prepend` (Number) The BGP prepend value for this instance. It is used when type = out.
+
+	Available range is 1 through 5.
 - `bfd_interval` (Number) If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.
 
 	Available range is 3 through 30000.
 - `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
 
 	Available range is 2 through 16.
-- `community` (Number) The BGP community for this instance.
-- `disabled` (Boolean) Whether this BGP session is disabled. Default is false.
+- `community` (Number, Deprecated) The BGP community for this instance.
+- `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
 - `l3_address` (String) The L3 address of this instance. Not used for Azure connections. Required for all other CSP.
 - `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
+
+	Available range is 1 through 4294967295.
 - `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
 - `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.
-- `multihop_ttl` (Number) The TTL of this session. The default is `1`. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl). Defaults: 1
+
+	Available range is 1 through 4294967295.
+- `multihop_ttl` (Number) The TTL of this session. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).
+
+	Available range is 1 through 4. Defaults: 1
 - `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--nat))
-- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
+- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes. Defaults: false
 - `primary_subnet` (String) Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.
 - `remote_address` (String) The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.
 - `secondary_subnet` (String) Currently for Azure use only. Provide this as the secondary subnet when creating the secondary Azure cloud router connection.
@@ -182,11 +180,17 @@ Required:
 Optional:
 
 - `as_prepend` (Number) The BGP prepend value of this prefix. It is used when type = out.
+
+	Available range is 1 through 5.
 - `local_preference` (Number) The local_preference of this prefix. It is used when type = in.
+
+	Available range is 1 through 4294967295.
 - `match_type` (String) The match type of this prefix.
 
-	Enum: `"exact"` `"orlonger"` `"longer"`
+	Enum: `"exact"` `"orlonger"` Defaults: exact
 - `med` (Number) The MED of this prefix. It is used when type = out.
+
+	Available range is 1 through 4294967295.
 - `order` (Number, Deprecated) The order of this prefix against the others.
 
 
@@ -195,11 +199,11 @@ Optional:
 
 Optional:
 
-- `direction` (String) If using NAT overload, the direction of the NAT connection. Output is the default.
-		Enum: output, input.
+- `direction` (String) If using NAT overload, the direction of the NAT connection. 
+		Enum: output, input. Defaults: output
 - `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--nat--dnat_mappings))
-- `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). Overload is the default.
-		Enum: overload, inline_dnat.
+- `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
+		Enum: overload, inline_dnat. Defaults: overload
 - `pool_prefixes` (List of String) If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.
 
 	Example: 10.0.0.0/32

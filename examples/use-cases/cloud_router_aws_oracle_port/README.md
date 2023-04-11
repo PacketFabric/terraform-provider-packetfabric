@@ -82,8 +82,8 @@ Set additional environment variables for AWS and Oracle:
 ```sh
 ### AWS
 export PF_AWS_ACCOUNT_ID="98765432"
-export AWS_ACCESS_KEY_ID = "ABCDEFGH"
-export AWS_SECRET_ACCESS_KEY = "secret"
+export AWS_ACCESS_KEY_ID="ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY="secret"
 
 ### Oracle
 # https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm

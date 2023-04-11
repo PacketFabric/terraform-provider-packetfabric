@@ -12,6 +12,12 @@ import (
 
 func resourceAwsRequestHostConn() *schema.Resource {
 	return &schema.Resource{
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
+		},
 		CreateContext: resourceAwsReqHostConnCreate,
 		UpdateContext: resourceAwsReqHostConnUpdate,
 		ReadContext:   resourceAwsReqHostConnRead,
@@ -74,10 +80,11 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"zone": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "The desired zone of the new connection.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "The desired zone of the new connection.",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -97,6 +104,137 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+				},
+			},
+			"cloud_settings": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"credentials_uuid": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.IsUUID,
+							Description:  "The UUID of the credentials to be used with this connection.",
+						},
+						"aws_region": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The AWS region that should be used.",
+						},
+						"mtu": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1500,
+							ValidateFunc: validation.IntInSlice([]int{1500, 9001}),
+							Description:  "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"9001\"] ",
+						},
+						"aws_vif_type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public"}, false),
+							Description:  "The type of VIF to use for this connection.",
+						},
+						"bgp_settings": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"customer_asn": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
+									},
+									"l3_address": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the customer router. Required for public VIFs.",
+									},
+									"remote_address": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the remote router. Required for public VIFs.",
+									},
+									"address_family": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Default:      "ipv4",
+										Description:  "The address family that should be used. ",
+										ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
+									},
+									"md5": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The MD5 value of the authenticated BGP sessions.",
+									},
+									"advertised_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of prefixes that will be advertised. Required for public VIFs.",
+									},
+								},
+							},
+						},
+						"aws_gateways": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							MaxItems:    2,
+							Description: "Only for Private or Transit VIF.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"type": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"directconnect", "private", "transit"}, false),
+										Description:  "The type of this AWS Gateway.",
+									},
+									"name": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The name of the AWS Gateway, required if creating a new DirectConnect Gateway.",
+									},
+									"id": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The ID of the AWS Gateway to be used.",
+									},
+									"asn": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: "The ASN of the AWS Gateway to be used.",
+									},
+									"vpc_id": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.",
+									},
+									"subnet_ids": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of subnet IDs to associate with this Gateway. Required for transit Gateways.",
+									},
+									"allowed_prefixes": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of allowed prefixes. Required on the DirectConnect Gateway when the other Gateway is of type transit.",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -169,10 +307,40 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
+		_ = d.Set("po_number", resp.PONumber)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
+		_ = d.Set("po_number", resp.PONumber)
+
+		if _, ok := d.GetOk("cloud_settings"); ok {
+			cloudSettings := make(map[string]interface{})
+			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
+			cloudSettings["aws_region"] = resp.CloudSettings.AwsRegion
+			cloudSettings["mtu"] = resp.CloudSettings.Mtu
+			cloudSettings["aws_vif_type"] = resp.CloudSettings.AwsVifType
+
+			bgpSettings := make(map[string]interface{})
+			bgpSettings["customer_asn"] = resp.CloudSettings.BgpSettings.CustomerAsn
+			bgpSettings["address_family"] = resp.CloudSettings.BgpSettings.AddressFamily
+			cloudSettings["bgp_settings"] = bgpSettings
+
+			awsGateways := make([]map[string]interface{}, len(resp.CloudSettings.AwsGateways))
+			for i, gateway := range resp.CloudSettings.AwsGateways {
+				awsGateway := make(map[string]interface{})
+				awsGateway["type"] = gateway.Type
+				awsGateway["name"] = gateway.Name
+				awsGateway["id"] = gateway.ID
+				awsGateway["asn"] = gateway.Asn
+				awsGateway["vpc_id"] = gateway.VpcID
+				awsGateway["subnet_ids"] = gateway.SubnetIDs
+				awsGateway["allowed_prefixes"] = gateway.AllowedPrefixes
+				awsGateways[i] = awsGateway
+			}
+			cloudSettings["aws_gateways"] = awsGateways
+			_ = d.Set("cloud_settings", cloudSettings)
+		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -184,7 +352,6 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		_ = d.Set("po_number", resp2.PONumber)
 	}
 
 	labels, err3 := getLabels(c, d.Id())
@@ -231,5 +398,75 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		hostedAwsConn.PONumber = poNumber.(string)
 	}
+	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
+		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
+		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
+		hostedAwsConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
+		if awsRegion, ok := cs["aws_region"]; ok {
+			hostedAwsConn.CloudSettings.AwsRegion = awsRegion.(string)
+		}
+		if mtu, ok := cs["mtu"]; ok {
+			hostedAwsConn.CloudSettings.Mtu = mtu.(int)
+		}
+		hostedAwsConn.CloudSettings.AwsVifType = cs["aws_vif_type"].(string)
+		if bgpSettings, ok := cs["bgp_settings"]; ok {
+			bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
+			hostedAwsConn.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
+			hostedAwsConn.CloudSettings.BgpSettings.CustomerAsn = bgpSettingsMap["customer_asn"].(int)
+			hostedAwsConn.CloudSettings.BgpSettings.AddressFamily = bgpSettingsMap["address_family"].(string)
+		}
+		if awsGateways, ok := cs["aws_gateways"]; ok {
+			hostedAwsConn.CloudSettings.AwsGateways = extractAwsGateways(awsGateways.([]interface{}))
+		}
+	}
 	return hostedAwsConn
+}
+
+func extractAwsGateways(gateways []interface{}) []packetfabric.AwsGateway {
+	var awsGateways []packetfabric.AwsGateway
+	for _, gw := range gateways {
+		gateway := gw.(map[string]interface{})
+
+		subnetIDsInterface, subnetIDsExist := gateway["subnet_ids"].([]interface{})
+		var subnetIDs []string
+		if subnetIDsExist {
+			subnetIDs = make([]string, len(subnetIDsInterface))
+			for i, elem := range subnetIDsInterface {
+				subnetIDs[i] = elem.(string)
+			}
+		}
+
+		allowedPrefixesInterface, allowedPrefixesExist := gateway["allowed_prefixes"].([]interface{})
+		var allowedPrefixes []string
+		if allowedPrefixesExist {
+			allowedPrefixes = make([]string, len(allowedPrefixesInterface))
+			for i, elem := range allowedPrefixesInterface {
+				allowedPrefixes[i] = elem.(string)
+			}
+		}
+
+		awsGateway := packetfabric.AwsGateway{}
+
+		if t, ok := gateway["type"].(string); ok {
+			awsGateway.Type = t
+		}
+		if name, ok := gateway["name"].(string); ok {
+			awsGateway.Name = name
+		}
+		if id, ok := gateway["id"].(string); ok {
+			awsGateway.ID = id
+		}
+		if asn, ok := gateway["asn"].(int); ok {
+			awsGateway.Asn = asn
+		}
+		if vpcID, ok := gateway["vpc_id"].(string); ok {
+			awsGateway.VpcID = vpcID
+		}
+
+		awsGateway.SubnetIDs = subnetIDs
+		awsGateway.AllowedPrefixes = allowedPrefixes
+
+		awsGateways = append(awsGateways, awsGateway)
+	}
+	return awsGateways
 }

@@ -10,7 +10,7 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   # Need to wait for the transit GW to be attached before adding it to the route table
   depends_on = [
@@ -33,7 +33,7 @@ resource "aws_route_table" "route_table_2" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_2.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   # Need to wait for the transit GW to be attached before adding it to the route table
   depends_on = [

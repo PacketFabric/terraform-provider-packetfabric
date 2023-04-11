@@ -16,7 +16,7 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric Cloud Router Connection - Google and IPsec
+# PacketFabric Cloud Router Connection - Common
 variable "pf_crc_speed" {
   type        = string
   description = "The speed of the new connection"

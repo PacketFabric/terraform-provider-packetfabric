@@ -19,34 +19,32 @@ An IPsec VPN connection from your cloud router. For more information, see the fo
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
   provider                     = packetfabric
-  description                  = var.pf_crc_description
+  description                  = "hello world"
   circuit_id                   = packetfabric_cloud_router.cr1.id
-  pop                          = var.pf_crc_pop
-  speed                        = var.pf_crc_speed
-  gateway_address              = var.pf_crc_gateway_address
-  ike_version                  = var.pf_crc_ike_version
-  phase1_authentication_method = var.pf_crc_phase1_authentication_method
-  phase1_group                 = var.pf_crc_phase1_group
-  phase1_encryption_algo       = var.pf_crc_phase1_encryption_algo
-  phase1_authentication_algo   = var.pf_crc_phase1_authentication_algo
-  phase1_lifetime              = var.pf_crc_phase1_lifetime
-  phase2_pfs_group             = var.pf_crc_phase2_pfs_group
-  phase2_encryption_algo       = var.pf_crc_phase2_encryption_algo
-  phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
-  phase2_lifetime              = var.pf_crc_phase2_lifetime
-  shared_key                   = var.pf_crc_shared_key
-}
-
-output "packetfabric_cloud_router_connection_ipsec" {
-  value = packetfabric_cloud_router_connection_ipsec.crc3
+  pop                          = "SFO6"
+  speed                        = "1Gbps"
+  gateway_address              = "127.0.0.1"
+  ike_version                  = 1
+  phase1_authentication_method = "pre-shared-key"
+  phase1_group                 = "group14"
+  phase1_encryption_algo       = "3des-cbc"
+  phase1_authentication_algo   = "sha-384"
+  phase1_lifetime              = 10800
+  phase2_pfs_group             = "group14"
+  phase2_encryption_algo       = "3des-cbc"
+  phase2_authentication_algo   = "hmac-sha-256-128"
+  phase2_lifetime              = 28800
+  shared_key                   = "superCoolKey"
+  labels                       = ["terraform", "dev"]
 }
 ```
 

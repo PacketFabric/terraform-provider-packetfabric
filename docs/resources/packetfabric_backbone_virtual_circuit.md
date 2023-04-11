@@ -17,47 +17,50 @@ A virtual circuit between two ports in the PacketFabric network. For more inform
 ```terraform
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_port" "port_2" {
   provider          = packetfabric
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop2
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone2
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "NYC5"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_backbone_virtual_circuit" "vc1" {
   provider    = packetfabric
-  description = var.pf_description
+  description = "hello world"
   epl         = false
   interface_a {
     port_circuit_id = packetfabric_port.port_1.id
     untagged        = false
-    vlan            = var.pf_vc_vlan1
+    vlan            = 100
   }
   interface_z {
     port_circuit_id = packetfabric_port.port_2.id
     untagged        = false
-    vlan            = var.pf_vc_vlan2
+    vlan            = 101
   }
   bandwidth {
-    longhaul_type     = var.pf_vc_longhaul_type
-    speed             = var.pf_vc_speed
-    subscription_term = var.pf_vc_subterm
+    longhaul_type     = "dedicated"
+    speed             = "1Gbps"
+    subscription_term = 1
   }
+  labels = ["terraform", "dev"]
 }
 ```
 
