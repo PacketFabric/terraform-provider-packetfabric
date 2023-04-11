@@ -31,6 +31,11 @@ func TestAccHclOracleRouteConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "pop", cloudRouterConnectionOracleResult.Pop),
 				),
 			},
+			{
+				ResourceName:      cloudRouterConnectionOracleResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 
