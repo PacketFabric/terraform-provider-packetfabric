@@ -5,7 +5,7 @@
 # From the Microsoft side: Create an ExpressRoute circuit in the Azure Console.
 resource "azurerm_express_route_circuit" "azure_express_route_1" {
   provider              = azurerm
-  name                  = "${var.tag_name}-${random_pet.name.id}"
+  name                  = "${var.resource_name}-${random_pet.name.id}"
   resource_group_name   = azurerm_resource_group.resource_group_1.name
   location              = azurerm_resource_group.resource_group_1.location
   peering_location      = var.azure_peering_location_1
@@ -16,7 +16,7 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
     family = var.azure_sku_family
   }
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -24,7 +24,8 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   provider = packetfabric
   # using Azure Peering location for the name but removing the spaces with a regex
-  description       = "${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"
+  description       = "${var.resource_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"
+  labels            = var.pf_labels
   circuit_id        = packetfabric_cloud_router.cr.id
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   speed             = var.pf_crc_speed
@@ -46,7 +47,7 @@ locals {
   helper_map = { for val in local.cloud_connections :
   val["description"] => val }
   # find the cloud router connection by its name
-  cc1 = local.helper_map["${var.tag_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"]
+  cc1 = local.helper_map["${var.resource_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"]
 }
 # output "cc1_vlan_private" {
 #   value = one(local.cc1.cloud_settings[*].vlan_id_private)
@@ -96,13 +97,13 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
 # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
 resource "azurerm_public_ip" "public_ip_vng_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-public-ip-vng1"
+  name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   allocation_method   = "Dynamic"
   sku                 = "Standard"
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -110,7 +111,7 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
 # # Deletion can take up to 15 minutes
 # resource "azurerm_virtual_network_gateway" "vng_1" {
 #   provider            = azurerm
-#   name                = "${var.tag_name}-${random_pet.name.id}-vng1"
+#   name                = "${var.resource_name}-${random_pet.name.id}-vng1"
 #   location            = azurerm_resource_group.resource_group_1.location
 #   resource_group_name = azurerm_resource_group.resource_group_1.name
 #   type                = "ExpressRoute"
@@ -122,7 +123,7 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
 #     subnet_id                     = azurerm_subnet.subnet_gw.id
 #   }
 #   tags = {
-#     environment = "${var.tag_name}-${random_pet.name.id}"
+#     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }
 #   depends_on = [
 #     azurerm_public_ip.public_ip_vng_1
@@ -132,7 +133,7 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
 # # From the Microsoft side: Link a virtual network gateway to the ExpressRoute circuit.
 # resource "azurerm_virtual_network_gateway_connection" "vng_connection_1" {
 #   provider                   = azurerm
-#   name                       = "${var.tag_name}-${random_pet.name.id}-vng_connection_1"
+#   name                       = "${var.resource_name}-${random_pet.name.id}-vng_connection_1"
 #   location                   = azurerm_resource_group.resource_group_1.location
 #   resource_group_name        = azurerm_resource_group.resource_group_1.name
 #   type                       = "ExpressRoute"
@@ -140,6 +141,6 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
 #   virtual_network_gateway_id = azurerm_virtual_network_gateway.vng_1.id
 #   routing_weight             = 0
 #   tags = {
-#     environment = "${var.tag_name}-${random_pet.name.id}"
+#     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }
 # }

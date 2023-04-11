@@ -17,25 +17,23 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_oracle" "crc6" {
   provider    = packetfabric
-  description = var.pf_crc_description
+  description = "hello world"
   circuit_id  = packetfabric_cloud_router.cr1.id
-  region      = var.pf_crc_oracle_region
+  region      = "us-ashburn-1"
   vc_ocid     = var.pf_crc_oracle_vc_ocid
-  pop         = var.pf_crc_pop
-  zone        = var.pf_crc_zone
-  maybe_nat   = var.pf_crc_maybe_nat
-}
-
-output "packetfabric_cloud_router_connection_oracle" {
-  value = packetfabric_cloud_router_connection_oracle.crc6
+  pop         = "SFO1"
+  zone        = "A"
+  maybe_nat   = false
+  labels      = ["terraform", "dev"]
 }
 ```
 

@@ -33,24 +33,22 @@ output "cc1_vlan_private" {
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US", "UK"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_azure" "crc4" {
   provider          = packetfabric
-  description       = var.pf_crc_description
+  description       = "hello world"
   circuit_id        = packetfabric_cloud_router.cr1.id
   azure_service_key = var.pf_crc_azure_service_key
-  speed             = var.pf_crc_speed
-  maybe_nat         = var.pf_crc_maybe_nat
-  is_public         = var.pf_crc_is_public
-}
-
-output "packetfabric_cloud_router_connection_azure" {
-  value = packetfabric_cloud_router_connection_azure.crc4
+  speed             = "1Gbps"
+  maybe_nat         = false
+  is_public         = false
+  labels            = ["terraform", "dev"]
 }
 ```
 

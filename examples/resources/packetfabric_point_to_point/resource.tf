@@ -1,17 +1,18 @@
 resource "packetfabric_point_to_point" "ptp1" {
   provider          = packetfabric
-  description       = var.pf_description
-  speed             = var.pf_ptp_speed
-  media             = var.pf_ptp_media
-  subscription_term = var.pf_ptp_subterm
+  description       = "hello world"
+  speed             = "1Gbps"
+  media             = "LX"
+  subscription_term = 1
   endpoints {
-    pop     = var.pf_ptp_pop1
-    zone    = var.pf_ptp_zone1
-    autoneg = var.pf_ptp_autoneg
+    pop     = "SEA3"
+    zone    = "A"
+    autoneg = true
   }
   endpoints {
-    pop     = var.pf_ptp_pop2
-    zone    = var.pf_ptp_zone2
-    autoneg = var.pf_ptp_autoneg
+    pop     = "NYC5"
+    zone    = "A"
+    autoneg = true
   }
+  labels = ["terraform", "dev"]
 }

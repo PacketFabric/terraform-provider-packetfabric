@@ -15,7 +15,7 @@ This is the LOA issued by PacketFabric for one of our ports. You can use this to
 ```terraform
 resource "packetfabric_port_loa" "new" {
   provider          = packetfabric
-  port_circuit_id   = var.pf_port_circuit_id
+  port_circuit_id   = packetfabric_port.port_1.id_circuit_id
   loa_customer_name = "MyName"
   destination_email = "email@mydomain.com"
 }

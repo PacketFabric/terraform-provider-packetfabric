@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "security_group_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-sg1"
+  name                = "${var.resource_name}-${random_pet.name.id}-sg1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   security_rule {
@@ -59,35 +59,35 @@ resource "azurerm_network_security_group" "security_group_1" {
     destination_address_prefix = "*"
   }
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
 resource "azurerm_public_ip" "public_ip_vm_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-public-ip-vm1"
+  name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vm1"
   resource_group_name = azurerm_resource_group.resource_group_1.name
   location            = azurerm_resource_group.resource_group_1.location
   allocation_method   = "Dynamic"
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
 resource "azurerm_network_interface" "nic_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-nic1"
+  name                = "${var.resource_name}-${random_pet.name.id}-nic1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
 
   ip_configuration {
-    name                          = "${var.tag_name}-${random_pet.name.id}"
+    name                          = "${var.resource_name}-${random_pet.name.id}"
     subnet_id                     = azurerm_subnet.subnet_1.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip_vm_1.id
   }
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -99,7 +99,7 @@ resource "azurerm_network_interface_security_group_association" "association_1" 
 
 resource "azurerm_ssh_public_key" "ssh_public_key" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-sshkey"
+  name                = "${var.resource_name}-${random_pet.name.id}-sshkey"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
   public_key          = var.public_key
@@ -107,7 +107,7 @@ resource "azurerm_ssh_public_key" "ssh_public_key" {
 
 resource "azurerm_virtual_machine" "vm_1" {
   provider                         = azurerm
-  name                             = "${var.tag_name}-${random_pet.name.id}-vm1"
+  name                             = "${var.resource_name}-${random_pet.name.id}-vm1"
   location                         = azurerm_resource_group.resource_group_1.location
   resource_group_name              = azurerm_resource_group.resource_group_1.name
   network_interface_ids            = [azurerm_network_interface.nic_1.id]
@@ -122,13 +122,13 @@ resource "azurerm_virtual_machine" "vm_1" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "${var.tag_name}-${random_pet.name.id}-disk"
+    name              = "${var.resource_name}-${random_pet.name.id}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "${var.tag_name}-${random_pet.name.id}-azure"
+    computer_name  = "${var.resource_name}-${random_pet.name.id}-azure"
     admin_username = "ubuntu"
     custom_data    = file("./user-data-ubuntu.sh")
   }
@@ -143,13 +143,13 @@ resource "azurerm_virtual_machine" "vm_1" {
     azurerm_network_interface.nic_1 # shouldn't be needed but it sounds like Azure TF doesn't track the dependency properly
   ]
   tags = {
-    environment = "${var.tag_name}-${random_pet.name.id}"
+    environment = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
 data "azurerm_network_interface" "nic_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-nic1"
+  name                = "${var.resource_name}-${random_pet.name.id}-nic1"
   resource_group_name = azurerm_resource_group.resource_group_1.name
   depends_on = [
     azurerm_virtual_machine.vm_1
@@ -162,7 +162,7 @@ output "private_ip_vm_1" {
 
 data "azurerm_public_ip" "public_ip_vm_1" {
   provider            = azurerm
-  name                = "${var.tag_name}-${random_pet.name.id}-public-ip-vm1"
+  name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vm1"
   resource_group_name = azurerm_resource_group.resource_group_1.name
   depends_on = [
     azurerm_virtual_machine.vm_1

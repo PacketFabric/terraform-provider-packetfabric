@@ -1,8 +1,13 @@
 ## General VARs
-variable "tag_name" {
+variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
   default     = "demo-pf-google"
+}
+variable "pf_labels" {
+  type        = list(string)
+  description = "A list of labels to be applied to PacketFabric resources. These labels will be visible in the PacketFabric Portal and can be searched for easier resource identification."
+  default     = ["terraform"] # Example: ["terraform", "dev"]
 }
 
 ## PacketFabic VARs
@@ -52,8 +57,7 @@ variable "pf_cs_vlan1" {
 
 # GCP VARs
 variable "gcp_project_id" {
-  type = string
-  # sensitive   = true
+  type        = string
   description = "Google Cloud project ID"
 }
 # https://cloud.google.com/compute/docs/regions-zones
@@ -72,9 +76,11 @@ variable "subnet_cidr1" {
   description = "CIDR for the subnet"
   default     = "10.5.1.0/24"
 }
-# You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
-variable "gcp_side_asn1" {
-  type        = number
-  default     = 16550
-  description = "Google Cloud ASN"
+variable "pf_cs_google_customer_asn" {
+  type    = number
+  default = 64517
+}
+variable "pf_cs_google_bgp_md5" {
+  type    = string
+  default = "changeme"
 }

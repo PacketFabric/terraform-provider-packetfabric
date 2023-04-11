@@ -69,7 +69,7 @@ func (c *PFClient) GetLocationPortAvailability(pop string) ([]PortAvailability, 
 	return resp, nil
 }
 
-func (c *PFClient) GetLocarionsZones(pop string) ([]string, error) {
+func (c *PFClient) GetLocationsZones(pop string) ([]string, error) {
 	formatedURI := fmt.Sprintf(locationsZonesURI, pop)
 	expectedResp := make([]string, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)

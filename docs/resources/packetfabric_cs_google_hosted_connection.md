@@ -15,20 +15,48 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 ## Example Usage
 
 ```terraform
+# Example PacketFabric side provisioning only
 resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   provider                    = packetfabric
-  description                 = var.pf_description
-  port                        = var.pf_port
-  speed                       = var.pf_cs_speed
+  description                 = "hello world"
+  port                        = packetfabric_port.port_1.id
+  speed                       = "10Gbps"
   google_pairing_key          = var.google_pairing_key
   google_vlan_attachment_name = var.google_vlan_attachment_name
-  pop                         = var.pf_cs_pop
-  vlan                        = var.pf_cs_vlan
+  pop                         = "BOS1"
+  vlan                        = 102
+  labels                      = ["terraform", "dev"]
 }
 
-output "packetfabric_cs_google_hosted_connection" {
-  value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
-  sensitive = true
+# Example PacketFabric side + Google side provisioning
+resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
+  provider               = packetfabric
+  description            = "Google Staging Environement"
+  google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
+}
+
+resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
+  provider                    = packetfabric
+  description                 = "hello world"
+  port                        = packetfabric_port.port_1.id
+  speed                       = "10Gbps"
+  google_vlan_attachment_name = "my-google-vlan-attachment-primary"
+  pop                         = "BOS1"
+  vlan                        = 102
+  zone                        = "A"
+  cloud_settings {
+    credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
+    google_region                   = "us-west1"
+    google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
+    google_cloud_router_name        = "my-google-cloud-router"
+    google_vpc_name                 = "my-google-vpc"
+    google_edge_availability_domain = 1 # primary
+    bgp_settings {
+      customer_asn = 65537
+      md5          = "changeme"
+    }
+  }
+  labels = ["terraform", "dev"]
 }
 ```
 
@@ -40,7 +68,6 @@ output "packetfabric_cs_google_hosted_connection" {
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
-- `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Google. This starts with "PF-AP-".
@@ -51,6 +78,8 @@ output "packetfabric_cs_google_hosted_connection" {
 
 ### Optional
 
+- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
+- `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -59,6 +88,46 @@ output "packetfabric_cs_google_hosted_connection" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Required:
+
+- `bgp_settings` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings))
+- `credentials_uuid` (String) The UUID of the credentials to be used with this connection.
+- `google_cloud_router_name` (String) The Google Cloud Router Attachment name. No whitespace allowed.
+- `google_region` (String) The Google region that should be used.
+
+	Enum: Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
+- `google_vlan_attachment_name` (String) The Google Interconnect Attachment name. No whitespace allowed.
+
+Optional:
+
+- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 or 2.
+
+	Enum: ["1", "2"] Defaults: 1
+- `google_project_id` (String) The Google Project Id to be used. If not present the project id of the credentials will be used.
+- `google_vpc_name` (String) The Google VPC name. Required if a new router needs to be created.
+- `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
+
+	Enum: ["1500", "1440"] Defaults: 1500
+
+<a id="nestedblock--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Required:
+
+- `customer_asn` (Number) The customer ASN of this connection.
+
+Optional:
+
+- `google_advertised_ip_ranges` (List of String) An array of prefixes that will be advertised. Advertise Mode set to DEFAULT if not set.
+- `google_keepalive_interval` (Number) The Keepalive Interval. Must be between 20 and 60. Defaults: 20
+- `md5` (String) The MD5 value of the authenticated BGP sessions.
+- `remote_asn` (Number) The Google ASN of this connection. Must be 16550, between 64512 and 65534, or between 4200000000 and 4294967294.Defaults: 16550
+
+
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
