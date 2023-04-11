@@ -24,14 +24,18 @@ func TestAccIBMRouteCloudConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             cloudRouterConnectionIBMResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: cloudRouterConnectionIBMResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(cloudRouterConnectionIBMResult.ResourceName, "description", cloudRouterConnectionIBMResult.Desc),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIBMResult.ResourceName, "pop", cloudRouterConnectionIBMResult.Pop),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIBMResult.ResourceName, "ibm_bgp_asn", strconv.Itoa(cloudRouterConnectionIBMResult.IbmBgpAsn)),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIBMResult.ResourceName, "speed", cloudRouterConnectionIBMResult.Speed),
 				),
+			},
+			{
+				ResourceName:      cloudRouterConnectionIBMResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
