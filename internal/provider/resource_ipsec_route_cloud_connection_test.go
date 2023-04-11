@@ -42,6 +42,11 @@ func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionIpsecResult.ResourceName, "shared_key", cloudRouterConnectionIpsecResult.SharedKey),
 				),
 			},
+			{
+				ResourceName:      cloudRouterConnectionIpsecResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
