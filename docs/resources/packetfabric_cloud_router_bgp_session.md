@@ -191,7 +191,6 @@ Optional:
 - `med` (Number) The MED of this prefix. It is used when type = out.
 
 	Available range is 1 through 4294967295.
-- `order` (Number, Deprecated) The order of this prefix against the others.
 
 
 <a id="nestedblock--nat"></a>

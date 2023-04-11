@@ -330,7 +330,6 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["med"] = prefix.Med
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
-			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens

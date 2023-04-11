@@ -443,19 +443,19 @@ resource "random_pet" "name" {}
 #   vlan                        = var.pf_cs_vlan1
 #   labels                      = var.pf_labels
 #   po_number                   = var.pf_po_number
-#   # for cloud side provisioning - optional
-#   cloud_settings {
-#     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
-#     google_region                   = var.pf_cs_google_region
-#     google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
-#     google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
-#     google_vpc_name                 = var.pf_cs_google_vpc_name
-#     google_edge_availability_domain = 1
-#     bgp_settings {
-#       customer_asn = var.pf_cs_google_customer_asn
-#       md5          = var.pf_cs_google_bgp_md5
-#     }
-#   }
+#   # # for cloud side provisioning - optional
+#   # cloud_settings {
+#   #   credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
+#   #   google_region                   = var.pf_cs_google_region
+#   #   google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_vpc_name                 = var.pf_cs_google_vpc_name
+#   #   google_edge_availability_domain = 1
+#   #   bgp_settings {
+#   #     customer_asn = var.pf_cs_google_customer_asn
+#   #     md5          = var.pf_cs_google_bgp_md5
+#   #   }
+#   # }
 # }
 # output "packetfabric_cs_google_hosted_connection" {
 #   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
@@ -905,6 +905,26 @@ resource "random_pet" "name" {}
 #   maybe_dnat                  = var.pf_crc_maybe_dnat
 #   labels                      = var.pf_labels
 #   po_number                   = var.pf_po_number
+#   # # for cloud side provisioning - optional
+#   # cloud_settings {
+#   #   credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
+#   #   google_region                   = var.pf_cs_google_region
+#   #   google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_vpc_name                 = var.pf_cs_google_vpc_name
+#   #   google_edge_availability_domain = 1
+#   #   bgp_settings {
+#   #     md5          = var.pf_cs_google_bgp_md5
+#   #     prefixes {
+#   #       prefix = "0.0.0.0/0"
+#   #       type   = "out" # Allowed Prefixes to Cloud
+#   #     }
+#   #     prefixes {
+#   #       prefix = "0.0.0.0/0"
+#   #       type   = "in" # Allowed Prefixes from Cloud
+#   #     }
+#   #   }
+#   # }
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {

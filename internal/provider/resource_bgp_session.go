@@ -256,13 +256,6 @@ func resourceBgpSession() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
 							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
 						},
-						"order": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     0,
-							Description: "The order of this prefix against the others. ",
-							Deprecated:  "This field is deprecated and will be removed in a future release. ",
-						},
 					},
 				},
 			},
@@ -554,7 +547,6 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 				Med:             pref.(map[string]interface{})["med"].(int),
 				LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
 				Type:            pref.(map[string]interface{})["type"].(string),
-				Order:           pref.(map[string]interface{})["order"].(int),
 			})
 		}
 		return sessionPrefixes
@@ -650,7 +642,6 @@ func flattenPrefixConfiguration(prefixes []packetfabric.BgpPrefix) []interface{}
 		data["med"] = prefix.Med
 		data["local_preference"] = prefix.LocalPreference
 		data["type"] = prefix.Type
-		data["order"] = prefix.Order
 		result[i] = data
 	}
 	return result

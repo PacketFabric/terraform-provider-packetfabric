@@ -182,18 +182,31 @@ type CloudState struct {
 }
 
 type BgpSettings struct {
-	CustomerAsn              int      `json:"customer_asn,omitempty"`
-	RemoteAsn                int      `json:"remote_asn,omitempty"`
-	L3Address                string   `json:"l3_address,omitempty"`
-	RemoteAddress            string   `json:"remote_address,omitempty"`
-	AddressFamily            string   `json:"address_family,omitempty"`
-	Md5                      string   `json:"md5,omitempty"`
-	AdvertisedPrefixes       []string `json:"advertised_prefixes,omitempty"`
-	CustomerRouterIp         string   `json:"customer_router_ip,omitempty"`
-	RemoteRouterIp           string   `json:"remote_router_ip,omitempty"`
-	GoogleAdvertiseMode      string   `json:"google_advertise_mode,omitempty"`
-	GoogleKeepaliveInterval  int      `json:"google_keepalive_interval,omitempty"`
-	GoogleAdvertisedIPRanges []string `json:"google_advertised_ip_ranges,omitempty"`
+	AddressFamily            string      `json:"address_family,omitempty"`
+	AdvertisedPrefixes       []string    `json:"advertised_prefixes,omitempty"`
+	AsPrepend                int         `json:"as_prepend,omitempty"`
+	BfdInterval              int         `json:"bfd_interval,omitempty"`
+	BfdMultiplier            int         `json:"bfd_multiplier,omitempty"`
+	Community                int         `json:"community,omitempty"`
+	CustomerAsn              int         `json:"customer_asn,omitempty"`
+	CustomerRouterIp         string      `json:"customer_router_ip,omitempty"`
+	Disabled                 bool        `json:"disabled,omitempty"`
+	GoogleAdvertiseMode      string      `json:"google_advertise_mode,omitempty"`
+	GoogleAdvertisedIPRanges []string    `json:"google_advertised_ip_ranges,omitempty"`
+	GoogleKeepaliveInterval  int         `json:"google_keepalive_interval,omitempty"`
+	L3Address                string      `json:"l3_address,omitempty"`
+	LocalPreference          int         `json:"local_preference,omitempty"`
+	Md5                      string      `json:"md5,omitempty"`
+	Med                      int         `json:"med,omitempty"`
+	MultihopTTL              int         `json:"multihop_ttl,omitempty"`
+	Nat                      *BgpNat     `json:"nat,omitempty"`
+	Orlonger                 bool        `json:"orlonger,omitempty"`
+	Prefixes                 []BgpPrefix `json:"prefixes,omitempty"`
+	PrimarySubnet            string      `json:"primary_subnet,omitempty"`
+	RemoteAddress            string      `json:"remote_address,omitempty"`
+	RemoteAsn                int         `json:"remote_asn,omitempty"`
+	RemoteRouterIp           string      `json:"remote_router_ip,omitempty"`
+	SecondarySubnet          string      `json:"secondary_subnet,omitempty"`
 }
 
 type AwsGateway struct {

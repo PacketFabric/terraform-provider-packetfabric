@@ -13,24 +13,24 @@ const bgpSessionSettingsByUUIDURI = "/v2/services/cloud-routers/%s/connections/%
 // This struct represents a Bgp Session for an existing Cloud Router connection
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_bgp_create
 type BgpSession struct {
-	Md5             string      `json:"md5,omitempty"`
-	L3Address       string      `json:"l3_address,omitempty"`
-	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
-	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 	AddressFamily   string      `json:"address_family"`
-	RemoteAddress   string      `json:"remote_address,omitempty"`
-	RemoteAsn       int         `json:"remote_asn"`
-	MultihopTTL     int         `json:"multihop_ttl,omitempty"`
-	LocalPreference int         `json:"local_preference,omitempty"`
-	Med             int         `json:"med,omitempty"`
-	Community       int         `json:"community,omitempty"`
 	AsPrepend       int         `json:"as_prepend,omitempty"`
-	Orlonger        bool        `json:"orlonger,omitempty"`
 	BfdInterval     int         `json:"bfd_interval,omitempty"`
 	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
+	Community       int         `json:"community,omitempty"`
 	Disabled        bool        `json:"disabled,omitempty"`
-	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	L3Address       string      `json:"l3_address,omitempty"`
+	LocalPreference int         `json:"local_preference,omitempty"`
+	Md5             string      `json:"md5,omitempty"`
+	Med             int         `json:"med,omitempty"`
+	MultihopTTL     int         `json:"multihop_ttl,omitempty"`
 	Nat             *BgpNat     `json:"nat,omitempty"`
+	Orlonger        bool        `json:"orlonger,omitempty"`
+	Prefixes        []BgpPrefix `json:"prefixes,omitempty"`
+	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
+	RemoteAddress   string      `json:"remote_address,omitempty"`
+	RemoteAsn       int         `json:"remote_asn"`
+	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
 }
 
 type BgpSessionUpdate struct {
@@ -71,7 +71,6 @@ type BgpPrefix struct {
 	Med             int    `json:"med,omitempty"`
 	LocalPreference int    `json:"local_preference,omitempty"`
 	Type            string `json:"type,omitempty"`
-	Order           int    `json:"order,omitempty"`
 }
 
 type BgpSessionCreateResp struct {

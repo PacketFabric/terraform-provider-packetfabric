@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -17,10 +18,10 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 		UpdateContext: resourceGoogleCloudRouterConnUpdate,
 		DeleteContext: resourceGoogleCloudRouterConnDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -57,17 +58,17 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 			},
 			"google_pairing_key": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Google pairing key to use for this connection. This is generated when you create your Google Cloud VLAN attachment.",
+				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.",
 			},
 			"google_vlan_attachment_name": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Google VLAN attachment name.",
+				Description:  "The name you used for your VLAN attachment in Google.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -108,6 +109,297 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"cloud_settings": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"credentials_uuid": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.IsUUID,
+							Description:  "The UUID of the credentials to be used with this connection.",
+						},
+						"mtu": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1500,
+							ValidateFunc: validation.IntInSlice([]int{1500, 1440}),
+							Description:  "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"1440\"] ",
+						},
+						"google_region": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The Google region that should be used.\n\n\tEnum: Enum: [\"asia-east1\", \"asia-east2\", \"asia-northeast1\", \"asia-northeast2\", \"asia-northeast3\", \"asia-south1\", \"asia-southeast1\", \"asia-southeast2\", \"australia-southeast1\", \"europe-north1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west6\", \"northamerica-northeast1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-west1\", \"us-west2\", \"us-west3\", \"us-west4\"]",
+							ValidateFunc: validation.StringInSlice([]string{
+								"asia-east1",
+								"asia-east2",
+								"asia-northeast1",
+								"asia-northeast2",
+								"asia-northeast3",
+								"asia-south1",
+								"asia-southeast1",
+								"asia-southeast2",
+								"australia-southeast1",
+								"europe-north1",
+								"europe-west1",
+								"europe-west2",
+								"europe-west3",
+								"europe-west4",
+								"europe-west6",
+								"northamerica-northeast1",
+								"southamerica-east1",
+								"us-central1",
+								"us-east1",
+								"us-east4",
+								"us-west1",
+								"us-west2",
+								"us-west3",
+								"us-west4",
+							}, false),
+						},
+						"google_project_id": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Project Id to be used. If not present the project id of the credentials will be used.",
+						},
+						"google_vlan_attachment_name": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Interconnect Attachment name. No whitespace allowed.",
+						},
+						"google_pairing_key": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+							Description: "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.",
+						},
+						"google_cloud_router_name": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Cloud Router Attachment name. No whitespace allowed.",
+						},
+						"google_vpc_name": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google VPC name. Required if a new router needs to be created.",
+						},
+						"google_edge_availability_domain": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1,
+							ValidateFunc: validation.IntInSlice([]int{1, 2}),
+							Description:  "The Google Edge Availability Domain. Must be 1 or 2.\n\n\tEnum: [\"1\", \"2\"] ",
+						},
+						"bgp_settings": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bgp_settings_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"md5": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The MD5 value of the authenticated BGP sessions. Required for AWS.",
+									},
+									"remote_asn": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     16550,
+										Description: "The Google ASN of this connection. Must be 16550, between 64512 and 65534, or between 4200000000 and 4294967294.",
+									},
+									"local_preference": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     0,
+										Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+									},
+									"med": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     0,
+										Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+									},
+									"as_prepend": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(1, 5),
+										Description:  "The BGP prepend value for this instance. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
+									},
+									"orlonger": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Whether to use exact match or longer for all prefixes. ",
+									},
+									"bfd_interval": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(3, 30000),
+										Description:  "If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.\n\n\tAvailable range is 3 through 30000. ",
+									},
+									"bfd_multiplier": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(2, 16),
+										Description:  "If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.\n\n\tAvailable range is 2 through 16. ",
+									},
+									"disabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Whether this BGP session is disabled. ",
+									},
+									"nat": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Translate the source or destination IP address.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"pre_nat_sources": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
+													Elem: &schema.Schema{
+														Type:        schema.TypeString,
+														Description: "IP prefix using CIDR format.",
+													},
+												},
+												"pool_prefixes": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
+													Elem: &schema.Schema{
+														Type:        schema.TypeString,
+														Description: "IP prefix using CIDR format.",
+													},
+												},
+												"direction": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "output",
+													ValidateFunc: validation.StringInSlice([]string{"output", "input"}, true),
+													Description:  "If using NAT overload, the direction of the NAT connection. \n\t\tEnum: output, input. ",
+												},
+												"nat_type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "overload",
+													ValidateFunc: validation.StringInSlice([]string{"overload", "inline_dnat"}, true),
+													Description:  "The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). \n\t\tEnum: overload, inline_dnat. ",
+												},
+												"dnat_mappings": {
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Description: "Translate the destination IP address.",
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"private_prefix": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The private prefix of this DNAT mapping.",
+															},
+															"public_prefix": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The public prefix of this DNAT mapping.",
+															},
+															"conditional_prefix": {
+																Type:         schema.TypeString,
+																Optional:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The conditional prefix prefix of this DNAT mapping.",
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"prefixes": {
+										Type:        schema.TypeSet,
+										Required:    true,
+										Description: "The list of BGP prefixes",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"prefix": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: validateIPAddressWithPrefix,
+													Description:  "The actual IP Prefix of this instance.",
+												},
+												"match_type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "exact",
+													ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
+													Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
+												},
+												"as_prepend": {
+													Type:         schema.TypeInt,
+													Optional:     true,
+													Default:      0,
+													ValidateFunc: validation.IntBetween(1, 5),
+													Description:  "The BGP prepend value of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
+												},
+												"med": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Default:     0,
+													Description: "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+												},
+												"local_preference": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Default:     0,
+													Description: "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+												},
+												"type": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
+													Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
+												},
+											},
+										},
+									},
+									"google_keepalive_interval": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      20,
+										ValidateFunc: validation.IntBetween(20, 60),
+										Description:  "The Keepalive Interval. Must be between 20 and 60. ",
+									},
+									"google_advertised_ip_ranges": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of prefixes that will be advertised. Advertise Mode set to DEFAULT if not set.",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -120,8 +412,24 @@ func resourceGoogleCloudRouterConnCreate(ctx context.Context, d *schema.Resource
 	c.Ctx = ctx
 
 	var diags diag.Diagnostics
-	googleRoute := extractGoogleRouteConn(d)
+	googleRoute := extractGoogleRouterConn(d)
 	if cid, ok := d.GetOk("circuit_id"); ok {
+
+		cloudSettingsList := d.Get("cloud_settings").([]interface{})
+		if len(cloudSettingsList) != 0 {
+			cloudSettings := cloudSettingsList[0].(map[string]interface{})
+			bgpSettingsList := cloudSettings["bgp_settings"].([]interface{})
+			if len(bgpSettingsList) != 0 {
+				bgpSettings := bgpSettingsList[0].(map[string]interface{})
+				prefixesValue := bgpSettings["prefixes"]
+				prefixesSet := prefixesValue.(*schema.Set)
+				prefixesList := prefixesSet.List()
+				if err := validatePrefixes(prefixesList); err != nil {
+					return diag.FromErr(err)
+				}
+			}
+		}
+
 		resp, err := c.CreateGoogleCloudRouterConn(googleRoute, cid.(string))
 		if err != nil {
 			return diag.FromErr(err)
@@ -172,14 +480,61 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
-		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
+		if _, ok := d.GetOk("google_pairing_key"); ok {
+			_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
+		}
+		if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
+			_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
+		}
 		_ = d.Set("po_number", resp.PONumber)
 
-		if resp.CloudSettings.PublicIP != "" {
-			_ = d.Set("is_public", true)
-		} else {
-			_ = d.Set("is_public", false)
+		if _, ok := d.GetOk("cloud_settings"); ok {
+			// Extract the BGP settings UUID
+			var bgpSettingsUUID string
+			if len(resp.BgpStateList) > 0 {
+				bgpSettingsUUID = resp.BgpStateList[0].BgpSettingsUUID
+			}
+			bgp, err := c.GetBgpSessionBy(cid.(string), cloudConnCID.(string), bgpSettingsUUID)
+			if err != nil {
+				return diag.FromErr(errors.New("could not retrieve bgp session"))
+			}
+			cloudSettings := make(map[string]interface{})
+			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
+			cloudSettings["google_region"] = resp.CloudSettings.GoogleRegion
+			if googleProjectID, ok := d.GetOk("cloud_settings.0.google_project_id"); ok {
+				cloudSettings["google_project_id"] = googleProjectID
+			}
+			cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
+			cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
+			cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
+			cloudSettings["google_edge_availability_domain"] = resp.CloudSettings.GoogleEdgeAvailabilityDomain
+			if googleVpcName, ok := d.GetOk("cloud_settings.0.google_vpc_name"); ok {
+				cloudSettings["google_vpc_name"] = googleVpcName
+			}
+			cloudSettings["mtu"] = resp.CloudSettings.Mtu
+			bgpSettings := make(map[string]interface{})
+			bgpSettings["bgp_settings_id"] = bgpSettingsUUID
+			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
+			if googleAdvertisedIPRanges, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_advertised_ip_ranges"); ok {
+				bgpSettings["google_advertised_ip_ranges"] = googleAdvertisedIPRanges
+			}
+			bgpSettings["remote_asn"] = bgp.RemoteAsn
+			bgpSettings["disabled"] = bgp.Disabled
+			bgpSettings["orlonger"] = bgp.Orlonger
+			bgpSettings["md5"] = bgp.Md5
+			bgpSettings["med"] = bgp.Med
+			bgpSettings["as_prepend"] = bgp.AsPrepend
+			bgpSettings["local_preference"] = bgp.LocalPreference
+			bgpSettings["bfd_interval"] = bgp.BfdInterval
+			bgpSettings["bfd_multiplier"] = bgp.BfdMultiplier
+			if bgp.Nat != nil {
+				nat := flattenNatConfiguration(bgp.Nat)
+				bgpSettings["nat"] = nat
+			}
+			prefixes := flattenPrefixConfiguration(bgp.Prefixes)
+			bgpSettings["prefixes"] = prefixes
+			cloudSettings["bgp_settings"] = []interface{}{bgpSettings}
+			_ = d.Set("cloud_settings", []interface{}{cloudSettings})
 		}
 		// unsetFields: published_quote_line_uuid
 	}
@@ -200,7 +555,7 @@ func resourceGoogleCloudRouterConnDelete(ctx context.Context, d *schema.Resource
 	return resourceCloudRouterConnDelete(ctx, d, m)
 }
 
-func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRouterConn {
+func extractGoogleRouterConn(d *schema.ResourceData) packetfabric.GoogleCloudRouterConn {
 	googleRoute := packetfabric.GoogleCloudRouterConn{}
 	if accountUUID, ok := d.GetOk("account_uuid"); ok {
 		googleRoute.AccountUUID = accountUUID.(string)
@@ -232,5 +587,105 @@ func extractGoogleRouteConn(d *schema.ResourceData) packetfabric.GoogleCloudRout
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		googleRoute.PONumber = poNumber.(string)
 	}
+	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
+		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
+		googleRoute.CloudSettings = extractGoogleRouterCloudConnSettings(cs)
+	}
 	return googleRoute
+}
+
+func extractGoogleRouterCloudConnSettings(cs map[string]interface{}) *packetfabric.CloudSettings {
+	cloudSettings := &packetfabric.CloudSettings{}
+	cloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
+	cloudSettings.GoogleRegion = cs["google_region"].(string)
+
+	if googleProjectID, ok := cs["google_project_id"]; ok {
+		cloudSettings.GoogleProjectID = googleProjectID.(string)
+	}
+	cloudSettings.GoogleVlanAttachmentName = cs["google_vlan_attachment_name"].(string)
+	cloudSettings.GoogleCloudRouterName = cs["google_cloud_router_name"].(string)
+
+	if googleVPCName, ok := cs["google_vpc_name"]; ok {
+		cloudSettings.GoogleVPCName = googleVPCName.(string)
+	}
+	if googleEdgeAvailabilityDomain, ok := cs["google_edge_availability_domain"]; ok {
+		cloudSettings.GoogleEdgeAvailabilityDomain = googleEdgeAvailabilityDomain.(int)
+	}
+	if mtu, ok := cs["mtu"]; ok {
+		cloudSettings.Mtu = mtu.(int)
+	}
+	if bgpSettings, ok := cs["bgp_settings"]; ok {
+		bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
+		cloudSettings.BgpSettings = extractGoogleRouterConnBgpSettings(bgpSettingsMap)
+	}
+
+	return cloudSettings
+}
+
+func extractGoogleRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *packetfabric.BgpSettings {
+	bgpSettings := &packetfabric.BgpSettings{}
+
+	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
+		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
+	}
+	if googleAdvertisedIPRangesInterface, ok := bgpSettingsMap["google_advertised_ip_ranges"].([]interface{}); ok {
+		googleAdvertisedIPRanges := make([]string, len(googleAdvertisedIPRangesInterface))
+		for i, elem := range googleAdvertisedIPRangesInterface {
+			googleAdvertisedIPRanges[i] = elem.(string)
+		}
+		bgpSettings.GoogleAdvertisedIPRanges = googleAdvertisedIPRanges
+	}
+	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
+
+	if md5, ok := bgpSettingsMap["md5"]; ok {
+		bgpSettings.Md5 = md5.(string)
+	}
+	if localPreference, ok := bgpSettingsMap["local_preference"]; ok {
+		bgpSettings.LocalPreference = localPreference.(int)
+	}
+	if med, ok := bgpSettingsMap["med"]; ok {
+		bgpSettings.Med = med.(int)
+	}
+	if asPrepend, ok := bgpSettingsMap["as_prepend"]; ok {
+		bgpSettings.AsPrepend = asPrepend.(int)
+	}
+	if orlonger, ok := bgpSettingsMap["orlonger"]; ok {
+		bgpSettings.Orlonger = orlonger.(bool)
+	}
+	if bfdInterval, ok := bgpSettingsMap["bfd_interval"]; ok {
+		bgpSettings.BfdInterval = bfdInterval.(int)
+	}
+	if bfdMultiplier, ok := bgpSettingsMap["bfd_multiplier"]; ok {
+		bgpSettings.BfdMultiplier = bfdMultiplier.(int)
+	}
+	if nat, ok := bgpSettingsMap["nat"]; ok {
+		for _, nat := range nat.(*schema.Set).List() {
+			bgpSettings.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+		}
+	} else {
+		bgpSettings.Nat = nil
+	}
+
+	prefixesSet := bgpSettingsMap["prefixes"].(*schema.Set)
+	prefixesList := prefixesSet.List()
+	bgpSettings.Prefixes = extractConnBgpSessionPrefixesFromMap(prefixesList)
+
+	return bgpSettings
+}
+
+func extractConnBgpSessionPrefixesFromMap(prefixesList []interface{}) []packetfabric.BgpPrefix {
+	sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
+	for _, prefInterface := range prefixesList {
+		pref := prefInterface.(map[string]interface{})
+		sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
+			Prefix:          pref["prefix"].(string),
+			MatchType:       pref["match_type"].(string),
+			AsPrepend:       pref["as_prepend"].(int),
+			Med:             pref["med"].(int),
+			LocalPreference: pref["local_preference"].(int),
+			Type:            pref["type"].(string),
+		})
+	}
+
+	return sessionPrefixes
 }
