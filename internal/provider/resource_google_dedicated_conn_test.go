@@ -23,8 +23,7 @@ func TestAccGoogleDedicatedConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             csGoogleDedicatedConnectionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: csGoogleDedicatedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csGoogleDedicatedConnectionResult.ResourceName, "description", csGoogleDedicatedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(csGoogleDedicatedConnectionResult.ResourceName, "autoneg", strconv.FormatBool(csGoogleDedicatedConnectionResult.Autoneg)),
@@ -34,6 +33,11 @@ func TestAccGoogleDedicatedConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csGoogleDedicatedConnectionResult.ResourceName, "speed", csGoogleDedicatedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(csGoogleDedicatedConnectionResult.ResourceName, "zone", csGoogleDedicatedConnectionResult.Zone),
 				),
+			},
+			{
+				ResourceName:      csGoogleDedicatedConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
