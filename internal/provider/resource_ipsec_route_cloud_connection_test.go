@@ -67,6 +67,9 @@ func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
 					return id, nil
 				},
+				ResourceName:      cloudRouterConnectionIpsecResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
