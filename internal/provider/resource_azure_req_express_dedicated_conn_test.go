@@ -24,7 +24,6 @@ func TestAccAzureDedicatedConnectionRequiredFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:                    csAzureDedicatedConnectionResult.Hcl,
-				ExpectNonEmptyPlan:        true,
 				Destroy:                   !testutil.IsDevEnv(),
 				PreventPostDestroyRefresh: testutil.IsDevEnv(),
 				Check: resource.ComposeTestCheckFunc(
@@ -36,6 +35,11 @@ func TestAccAzureDedicatedConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "encapsulation", csAzureDedicatedConnectionResult.Encapsulation),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "port_category", csAzureDedicatedConnectionResult.PortCategory),
 				),
+			},
+			{
+				ResourceName:      csAzureDedicatedConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
