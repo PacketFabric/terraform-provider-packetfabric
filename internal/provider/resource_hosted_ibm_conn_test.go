@@ -24,8 +24,7 @@ func TestAccIBMHostedConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             csIBMHostedConnectionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: csIBMHostedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csIBMHostedConnectionResult.ResourceName, "description", csIBMHostedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(csIBMHostedConnectionResult.ResourceName, "pop", csIBMHostedConnectionResult.Pop),
@@ -33,6 +32,11 @@ func TestAccIBMHostedConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csIBMHostedConnectionResult.ResourceName, "vlan", strconv.Itoa(csIBMHostedConnectionResult.Vlan)),
 					resource.TestCheckResourceAttr(csIBMHostedConnectionResult.ResourceName, "speed", csIBMHostedConnectionResult.Speed),
 				),
+			},
+			{
+				ResourceName:      csIBMHostedConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
