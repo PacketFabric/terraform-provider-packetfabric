@@ -33,6 +33,11 @@ func TestAccAzureHostedMktConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csAzureHostedMarketplaceConnectionResult.ResourceName, "speed", csAzureHostedMarketplaceConnectionResult.Speed),
 				),
 			},
+			{
+				ResourceName:      csAzureHostedMarketplaceConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
