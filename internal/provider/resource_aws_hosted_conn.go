@@ -400,7 +400,7 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	}
 	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
 		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
-		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
+		hostedAwsConn.CloudSettings = &packetfabric.CloudSettings{}
 		hostedAwsConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
 		if awsRegion, ok := cs["aws_region"]; ok {
 			hostedAwsConn.CloudSettings.AwsRegion = awsRegion.(string)
