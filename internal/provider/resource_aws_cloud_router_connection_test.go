@@ -31,6 +31,11 @@ func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "speed", crConnAwsResult.Speed),
 				),
 			},
+			{
+				ResourceName:      crConnAwsResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
