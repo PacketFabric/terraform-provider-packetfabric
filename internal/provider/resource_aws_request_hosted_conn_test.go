@@ -23,12 +23,16 @@ func TestAccAwsHostedConnectionRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             awsHostedConnectionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: awsHostedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "pop", awsHostedConnectionResult.Pop),
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "description", awsHostedConnectionResult.Desc),
 				),
+			},
+			{
+				ResourceName:      awsHostedConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
