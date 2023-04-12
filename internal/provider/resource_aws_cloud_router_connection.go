@@ -133,13 +133,7 @@ func resourceRouterConnectionAwsCreate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	createOkCh := make(chan bool)
-	defer close(createOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), conn.CloudCircuitID)
-	}
-	go c.CheckServiceStatus(createOkCh, fn)
-	if !<-createOkCh {
+	if err := checkCloudRouterConnectionStatus(c, cID.(string), conn.CloudCircuitID); err != nil {
 		return diag.FromErr(err)
 	}
 	if conn != nil {
