@@ -18,7 +18,7 @@ func datasourceInterfaces() *schema.Resource {
 
 func interfacesSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"ports": {
+		"interfaces": {
 			Type:     schema.TypeList,
 			Computed: true,
 			Elem: &schema.Resource{
