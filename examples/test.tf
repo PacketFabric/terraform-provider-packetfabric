@@ -125,12 +125,12 @@ resource "random_pet" "name" {}
 #   value = packetfabric_port.port_2
 # }
 
-# data "packetfabric_port" "ports_all" {
+# data "packetfabric_ports" "ports_all" {
 #   provider   = packetfabric
 #   depends_on = [packetfabric_port.port_2]
 # }
 # locals {
-#   port_2_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_2.id])
+#   port_2_details = toset([for each in data.packetfabric_ports.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_2.id])
 # }
 # output "packetfabric_port_2_details" {
 #   value = local.port_2_details
