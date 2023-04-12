@@ -97,7 +97,9 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 						return diag.FromErr(err)
 					}
 					// Update the bgp_settings_id within the bgp_settings block
-					d.Set("cloud_settings.0.bgp_settings.0.bgp_settings_id", resp.BgpSettingsUUID)
+					if err := d.Set("cloud_settings.0.bgp_settings.0.bgp_settings_id", resp.BgpSettingsUUID); err != nil {
+						return diag.FromErr(err)
+					}
 					return nil
 				},
 			},
