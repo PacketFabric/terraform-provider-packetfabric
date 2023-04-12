@@ -132,7 +132,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_ibm_hosted_connection":           datasourceHostedIBMConn(),
 			"packetfabric_cs_dedicated_connections":           datasourceDedicatedConn(),
 			"packetfabric_billing":                            dataSourceBilling(),
-			"packetfabric_port":                               datasourceInterfaces(),
+			"packetfabric_ports":                              datasourceInterfaces(),
 			"packetfabric_locations":                          dataSourceLocations(),
 			"packetfabric_link_aggregation_group":             datasourceLinkAggregationGroups(),
 			"packetfabric_outbound_cross_connect":             dataSourceOutboundCrossConnect(),

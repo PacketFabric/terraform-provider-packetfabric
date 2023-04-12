@@ -52,18 +52,18 @@ type GoogleMktCloudConnCreateResp struct {
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/google_hosted_connection_post
 type GoogleReqHostedConn struct {
-	AccountUUID              string               `json:"account_uuid,omitempty"`
-	GooglePairingKey         string               `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName string               `json:"google_vlan_attachment_name,omitempty"`
-	Description              string               `json:"description,omitempty"`
-	Port                     string               `json:"port,omitempty"`
-	Vlan                     int                  `json:"vlan,omitempty"`
-	SrcSvlan                 int                  `json:"src_svlan,omitempty"`
-	Pop                      string               `json:"pop,omitempty"`
-	Speed                    string               `json:"speed,omitempty"`
-	PublishedQuoteLineUUID   string               `json:"published_quote_line_uuid,omitempty"`
-	PONumber                 string               `json:"po_number,omitempty"`
-	CloudSettings            *CloudSettingsHosted `json:"cloud_settings,omitempty"`
+	AccountUUID              string         `json:"account_uuid,omitempty"`
+	GooglePairingKey         string         `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string         `json:"google_vlan_attachment_name,omitempty"`
+	Description              string         `json:"description,omitempty"`
+	Port                     string         `json:"port,omitempty"`
+	Vlan                     int            `json:"vlan,omitempty"`
+	SrcSvlan                 int            `json:"src_svlan,omitempty"`
+	Pop                      string         `json:"pop,omitempty"`
+	Speed                    string         `json:"speed,omitempty"`
+	PublishedQuoteLineUUID   string         `json:"published_quote_line_uuid,omitempty"`
+	PONumber                 string         `json:"po_number,omitempty"`
+	CloudSettings            *CloudSettings `json:"cloud_settings,omitempty"`
 }
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/google_dedicated_connection_post
