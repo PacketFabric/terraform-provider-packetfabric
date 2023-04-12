@@ -288,14 +288,7 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
-	// check Cloud Router Connection status
-	createOkCh := make(chan bool)
-	defer close(createOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
-	}
-	go c.CheckServiceStatus(createOkCh, fn)
-	if !<-createOkCh {
+	if err := checkCloudRouterConnectionStatus(c, cID.(string), connCID.(string)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.BgpSettingsUUID)
@@ -386,14 +379,7 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	// check Cloud Router Connection status
-	updateOkCh := make(chan bool)
-	defer close(updateOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
-	}
-	go c.CheckServiceStatus(updateOkCh, fn)
-	if !<-updateOkCh {
+	if err := checkCloudRouterConnectionStatus(c, cID.(string), connCID.(string)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.BgpSettingsUUID)

@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -30,27 +31,83 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 
 	if cid, ok := d.GetOk("circuit_id"); ok {
-		if d.HasChange("description") || d.HasChange("po_number") {
-			updateData := packetfabric.CloudRouterUpdateData{}
-			if desc, descOk := d.GetOk("description"); descOk {
-				updateData.Description = desc.(string)
-			}
-			if poNumber, ok := d.GetOk("po_number"); ok {
-				updateData.PONumber = poNumber.(string)
-			}
-			if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), updateData); err != nil {
-				return diag.FromErr(err)
-			}
+		sectionsToUpdate := []struct {
+			condition bool
+			action    func() diag.Diagnostics
+		}{
+			{
+				condition: d.HasChange("description") ||
+					d.HasChange("po_number") ||
+					d.HasChange("cloud_settings.0.credentials_uuid") ||
+					d.HasChange("cloud_settings.0.mtu") ||
+					d.HasChange("cloud_settings.0.bgp_settings.0.google_keepalive_interval"),
+				action: func() diag.Diagnostics {
+					updateData := packetfabric.CloudRouterUpdateData{}
+					if desc, descOk := d.GetOk("description"); descOk {
+						updateData.Description = desc.(string)
+					}
+					if poNumber, ok := d.GetOk("po_number"); ok {
+						updateData.PONumber = poNumber.(string)
+					}
+					if credentialsUUID, ok := d.GetOk("cloud_settings.0.credentials_uuid"); ok {
+						updateData.CloudSettings.CredentialsUUID = credentialsUUID.(string)
+					}
+					if mtu, ok := d.GetOk("cloud_settings.0.mtu"); ok {
+						updateData.CloudSettings.Mtu = mtu.(int)
+					}
+					if googleKeepaliveInterval, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_keepalive_interval"); ok {
+						updateData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
+						updateData.CloudSettings.BgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
+					}
+					if _, err := c.UpdateCloudRouterConnection(cid.(string), d.Id(), updateData); err != nil {
+						return diag.FromErr(err)
+					}
+					return diag.FromErr(checkCloudRouterConnectionStatus(c, cid.(string), d.Id()))
+				},
+			},
+			{
+				condition: d.HasChange("speed"),
+				action: func() diag.Diagnostics {
+					speed, _ := d.GetOk("speed")
+					billing := packetfabric.BillingUpgrade{Speed: speed.(string)}
+					if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
+						return diag.FromErr(err)
+					}
+					if err := checkCloudRouterConnectionStatus(c, cid.(string), d.Id()); err != nil {
+						return diag.FromErr(err)
+					}
+					_ = d.Set("speed", speed.(string))
+					return nil
+				},
+			},
+			{
+				condition: d.HasChange("cloud_settings.0.bgp_settings"),
+				action: func() diag.Diagnostics {
+					prefixesSet := d.Get("cloud_settings.0.bgp_settings.0.prefixes").(*schema.Set)
+					prefixesList := prefixesSet.List()
+					if err := validatePrefixes(prefixesList); err != nil {
+						return diag.FromErr(err)
+					}
+					session := extractBgpSessionUpdate(d)
+					_, resp, err := c.UpdateBgpSession(session, cid.(string), d.Id())
+					if err != nil {
+						return diag.FromErr(err)
+					}
+					if err := checkCloudRouterConnectionStatus(c, cid.(string), d.Id()); err != nil {
+						return diag.FromErr(err)
+					}
+					// Update the bgp_settings_id within the bgp_settings block
+					d.Set("cloud_settings.0.bgp_settings.0.bgp_settings_id", resp.BgpSettingsUUID)
+					return nil
+				},
+			},
 		}
-		if d.HasChange("speed") {
-			if speed, ok := d.GetOk("speed"); ok {
-				billing := packetfabric.BillingUpgrade{
-					Speed: speed.(string),
+
+		for _, section := range sectionsToUpdate {
+			if section.condition {
+				if diags := section.action(); diags.HasError() {
+					return diags
 				}
-				if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
-					return diag.FromErr(err)
-				}
-				_ = d.Set("speed", speed.(string))
 			}
 		}
 	}
@@ -74,13 +131,7 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
 			diags = diag.FromErr(err)
 		} else {
-			deleteOk := make(chan bool)
-			defer close(deleteOk)
-			fn := func() (*packetfabric.ServiceState, error) {
-				return c.GetCloudConnectionStatus(cid.(string), cloudConnCID.(string))
-			}
-			go c.CheckServiceStatus(deleteOk, fn)
-			if !<-deleteOk {
+			if err := checkCloudRouterConnectionStatus(c, cid.(string), cloudConnCID.(string)); err != nil {
 				return diag.FromErr(err)
 			}
 			d.SetId("")
@@ -127,4 +178,19 @@ func BgpImportStatePassthroughContext(ctx context.Context, d *schema.ResourceDat
 	d.SetId(CloudRouterCircuitBgpIdData.bgpSessionUUID)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func checkCloudRouterConnectionStatus(c *packetfabric.PFClient, cid string, id string) error {
+	updateOk := make(chan bool)
+	defer close(updateOk)
+
+	fn := func() (*packetfabric.ServiceState, error) {
+		return c.GetCloudConnectionStatus(cid, id)
+	}
+	go c.CheckServiceStatus(updateOk, fn)
+
+	if !<-updateOk {
+		return fmt.Errorf("Failed to update connection status")
+	}
+	return nil
 }

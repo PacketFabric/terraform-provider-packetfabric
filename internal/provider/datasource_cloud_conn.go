@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -378,7 +377,7 @@ func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	d.SetId(cID.(string) + "-data")
 	return diags
 }
 

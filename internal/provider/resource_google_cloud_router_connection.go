@@ -388,12 +388,6 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 										ValidateFunc: validation.IntBetween(20, 60),
 										Description:  "The Keepalive Interval. Must be between 20 and 60. ",
 									},
-									"google_advertised_ip_ranges": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Elem:        &schema.Schema{Type: schema.TypeString},
-										Description: "An array of prefixes that will be advertised. Advertise Mode set to DEFAULT if not set.",
-									},
 								},
 							},
 						},
@@ -434,13 +428,7 @@ func resourceGoogleCloudRouterConnCreate(ctx context.Context, d *schema.Resource
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
+		if err := checkCloudRouterConnectionStatus(c, cid.(string), resp.CloudCircuitID); err != nil {
 			return diag.FromErr(err)
 		}
 		if resp != nil {
@@ -515,9 +503,6 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 			bgpSettings := make(map[string]interface{})
 			bgpSettings["bgp_settings_id"] = bgpSettingsUUID
 			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
-			if googleAdvertisedIPRanges, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_advertised_ip_ranges"); ok {
-				bgpSettings["google_advertised_ip_ranges"] = googleAdvertisedIPRanges
-			}
 			bgpSettings["remote_asn"] = bgp.RemoteAsn
 			bgpSettings["disabled"] = bgp.Disabled
 			bgpSettings["orlonger"] = bgp.Orlonger
@@ -627,13 +612,6 @@ func extractGoogleRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *
 
 	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
 		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
-	}
-	if googleAdvertisedIPRangesInterface, ok := bgpSettingsMap["google_advertised_ip_ranges"].([]interface{}); ok {
-		googleAdvertisedIPRanges := make([]string, len(googleAdvertisedIPRangesInterface))
-		for i, elem := range googleAdvertisedIPRangesInterface {
-			googleAdvertisedIPRanges[i] = elem.(string)
-		}
-		bgpSettings.GoogleAdvertisedIPRanges = googleAdvertisedIPRanges
 	}
 	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
 

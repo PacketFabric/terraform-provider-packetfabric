@@ -132,8 +132,9 @@ type AwsComponents struct {
 }
 
 type CloudRouterUpdateData struct {
-	Description string `json:"description"`
-	PONumber    string `json:"po_number,omitempty"`
+	Description   string        `json:"description"`
+	PONumber      string        `json:"po_number,omitempty"`
+	CloudSettings CloudSettings `json:"cloud_settings,omitempty"`
 }
 
 type ConnectionDeleteResp struct {
