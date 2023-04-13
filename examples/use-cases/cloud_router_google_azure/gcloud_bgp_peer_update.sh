@@ -10,7 +10,7 @@ GCLOUD=$(command -v gcloud)
 echo "Using gcloud from $GCLOUD"
 
 JQ=$(command -v jq)
-echo "Using gcloud from $JQ"
+echo "Using jq from $JQ"
 
 if ! command -v gcloud --version &> /dev/null
 then
@@ -37,8 +37,12 @@ echo "running $GCLOUD compute routers describe $google_compute_router_name --pro
 google_cloud_router_bgp_peer_name=$($GCLOUD compute routers describe $google_compute_router_name --project=$project --region=$region --format=json | $JQ '.bgpPeers[]'.name)
 echo "google_cloud_router_bgp_peer_name=$google_cloud_router_bgp_peer_name"
 
-echo "running $GCLOUD compute routers update-bgp-peer $google_compute_router_name --peer-asn=$google_compute_router_asn --peer-name=${google_cloud_router_bgp_peer_name:1:-1} --project=$project --region=$region"
-$GCLOUD compute routers update-bgp-peer $google_compute_router_name --peer-asn=$google_compute_router_asn --peer-name=${google_cloud_router_bgp_peer_name:1:-1} --project=$project --region=$region
+google_cloud_router_bgp_peer_name_fixed="${google_cloud_router_bgp_peer_name#?}"
+google_cloud_router_bgp_peer_name_fixed="${google_cloud_router_bgp_peer_name_fixed%?}"
+echo "google_cloud_router_bgp_peer_name_fixed=$google_cloud_router_bgp_peer_name_fixed"
+
+echo "running $GCLOUD compute routers update-bgp-peer $google_compute_router_name --peer-asn=$google_compute_router_asn --peer-name=$google_cloud_router_bgp_peer_name_fixed --project=$project --region=$region"
+$GCLOUD compute routers update-bgp-peer $google_compute_router_name --peer-asn=$google_compute_router_asn --peer-name=$google_cloud_router_bgp_peer_name_fixed --project=$project --region=$region
 
 echo "running $GCLOUD compute routers describe $google_compute_router_name --project=$project --region=$region"
 $GCLOUD compute routers describe $google_compute_router_name --project=$project --region=$region

@@ -9,7 +9,7 @@ GCLOUD=$(command -v gcloud)
 echo "Using gcloud from $GCLOUD"
 
 JQ=$(command -v jq)
-echo "Using gcloud from $JQ"
+echo "Using jq from $JQ"
 
 if ! command -v gcloud --version &> /dev/null
 then
@@ -64,8 +64,8 @@ customer_router_ip_address="${customer_router_ip_address#\"}"
 cloud_router_ip_address="${cloud_router_ip_address%\"}"
 cloud_router_ip_address="${cloud_router_ip_address#\"}"
 
-echo "${customer_router_ip_address}/${subnet}" > customer_router_ip_address.txt
-echo "${cloud_router_ip_address}/${subnet}" > cloud_router_ip_address.txt
+echo "${customer_router_ip_address}/${subnet}" | tr -d '\n' > customer_router_ip_address.txt
+echo "${cloud_router_ip_address}/${subnet}" | tr -d '\n' > cloud_router_ip_address.txt
 
 echo "cat cloud_router_ip_address.txt"
 cat cloud_router_ip_address.txt
