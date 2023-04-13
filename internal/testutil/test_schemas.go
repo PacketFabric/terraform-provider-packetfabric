@@ -306,7 +306,7 @@ const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_
   description = "%s"
   vc_ocid     = "%s"
   region      = "%s"
-  routing_id  = %s.id
+  routing_id  = "%s"
   market      = "%s"
   pop         = "%s"
 }`

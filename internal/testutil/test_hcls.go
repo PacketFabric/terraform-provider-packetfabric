@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsOracleHostedMktConn = "packetfabric_cs_oracle_hosted_marketplace_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -37,7 +38,9 @@ const CloudRouterASN = 4556
 
 // packetfabric_cs_aws_hosted_connection
 // packetfabric_cloud_router_connection_aws
+// packetfabric_cs_oracle_hosted_marketplace_connection
 const CloudRouterConnAwsSpeed = "50Mbps"
+const CloudRouterConnOracleSpeed = "1Gbps"
 const CloudRouterConnAwsVlan = 100
 
 // packetfabric_cloud_router_bg_session
@@ -115,6 +118,16 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type RHclCsOracleHostedMarketplaceConnectionResult struct {
+	HclResultBase
+	RoutingID   string
+	Description string
+	VcOCID      string
+	Region      string
+	Market      string
+	Pop         string
 }
 
 // Patterns:
@@ -325,6 +338,53 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func RHclCsOracleHostedMarketplaceConnection() RHclCsOracleHostedMarketplaceConnectionResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          CloudRouterConnOracleSpeed,
+		DesiredProvider:       "oracle",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+
+	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+	if pop == "" {
+		log.Fatalf("Resource: %s: %s", pfCsAwsHostedConn, "pop cannot be empty")
+	}
+
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsOracleHostedMktConn)
+	resourceName, hclName := _generateResourceName(pfCsOracleHostedMktConn)
+
+	hcl := fmt.Sprintf(
+		RResourceCSOracleHostedMarketplaceConnection,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_CS_ORACLE_MKT_CONN_OCID_KEY),
+		os.Getenv(PF_CS_ORACLE_MKT_CONN_REGION_KEY),
+		os.Getenv(PF_CS_ORACLE_MKT_CONN_ROUTING_ID_KEY),
+		os.Getenv(PF_CS_ORACLE_MKT_CONN_MARKET_KEY),
+		pop,
+	)
+	return RHclCsOracleHostedMarketplaceConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsOracleHostedMktConn,
+			ResourceName: resourceName,
+		},
+		Description: uniqueDesc,
+		RoutingID:   os.Getenv(PF_CS_ORACLE_MKT_CONN_ROUTING_ID_KEY),
+		VcOCID:      os.Getenv(PF_CS_ORACLE_MKT_CONN_OCID_KEY),
+		Region:      os.Getenv(PF_CS_ORACLE_MKT_CONN_REGION_KEY),
+		Market:      os.Getenv(PF_CS_ORACLE_MKT_CONN_MARKET_KEY),
+		Pop:         pop,
 	}
 }
 
