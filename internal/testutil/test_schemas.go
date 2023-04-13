@@ -308,8 +308,7 @@ const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_
 // Resource: packetfabric_ix_virtual_circuit_marketplace
 const RResourceIXVirtualCircuitMarketplace = `resource "packetfabric_ix_virtual_circuit_marketplace" "%s" {
   provider    = packetfabric
-  description = "%s"
-  routing_id  = %s.id
+  routing_id  = "%s"
   market      = "%s"
   asn         = %v
   interface {
@@ -318,7 +317,7 @@ const RResourceIXVirtualCircuitMarketplace = `resource "packetfabric_ix_virtual_
     vlan            = %v
   }
   bandwidth {
-    longhaul_type     = "%s"
+    account_uuid      = "%s"
     speed             = "%s"
     subscription_term = %v
   }
