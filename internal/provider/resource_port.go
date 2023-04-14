@@ -166,13 +166,17 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 	if resp != nil {
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("autoneg", resp.Autoneg)
+		if _, ok := d.GetOk("autoneg"); ok {
+			_ = d.Set("autoneg", resp.Autoneg)
+		}
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("nni", resp.IsNni)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		_ = d.Set("zone", resp.Zone)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp.Zone)
+		}
 		_ = d.Set("po_number", resp.PONumber)
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
