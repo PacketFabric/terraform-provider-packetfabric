@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,11 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+const CSAwsDedicatedConnectionSubscriptionTerm = 1
+const CSAwsDedicatedConnectionServiceClass = "longhaul"
+const CSAwsDedicatedConnectionAutoneg = false
+const CSAwsDedicatedConnectionSpeed = "50Mbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -115,6 +121,18 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_aws_dedicated_connection
+type RHclCsAwsDedicatedConnectionResult struct {
+	HclResultBase
+	AwsRegion        string
+	Description      string
+	Pop              string
+	SubscriptionTerm int
+	ServiceClass     string
+	Autoneg          bool
+	Speed            string
 }
 
 // Patterns:
@@ -325,6 +343,51 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_aws_dedicated_connection
+func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	resourceName, hclName := _generateResourceName(pfCSAwsDedicatedConnection)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCSAwsDedicatedConnection)
+	cloudLocations, err := c.GetCloudLocations("aws", "dedicated", false, true, false, "", "", "", "", "")
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	location := cloudLocations[0]
+
+	hcl := fmt.Sprintf(
+		RResourceCSAwsDedicatedConnection,
+		hclName,
+		location.CloudConnectionDetails.Region,
+		uniqueDesc,
+		location.Pop,
+		CSAwsDedicatedConnectionSubscriptionTerm,
+		CSAwsDedicatedConnectionServiceClass,
+		CSAwsDedicatedConnectionAutoneg,
+		CSAwsDedicatedConnectionSpeed,
+	)
+
+	return RHclCsAwsDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCSAwsDedicatedConnection,
+			ResourceName: resourceName,
+		},
+		AwsRegion:        location.Region,
+		Description:      uniqueDesc,
+		Pop:              location.Pop,
+		SubscriptionTerm: CSAwsDedicatedConnectionSubscriptionTerm,
+		ServiceClass:     CSAwsDedicatedConnectionServiceClass,
+		Autoneg:          CSAwsDedicatedConnectionAutoneg,
+		Speed:            CSAwsDedicatedConnectionSpeed,
 	}
 }
 
