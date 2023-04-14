@@ -6,17 +6,17 @@ description: |-
   
 ---
 
-# packetfabric_port (Data Source)
+# packetfabric_ports (Data Source)
 
 
 ## Example Usage
 
 ```terraform
-data "packetfabric_port" "ports_all" {
+data "packetfabric_ports" "ports_all" {
   provider = packetfabric
 }
 output "packetfabric_ports_all" {
-  value = data.packetfabric_port.ports_all
+  value = data.packetfabric_ports.ports_all
 }
 ```
 

@@ -394,7 +394,7 @@ func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedCo
 	}
 	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
 		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
-		hostedGoogleConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
+		hostedGoogleConn.CloudSettings = &packetfabric.CloudSettings{}
 		hostedGoogleConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
 		hostedGoogleConn.CloudSettings.GoogleRegion = cs["google_region"].(string)
 		if googleProjectID, ok := cs["google_project_id"]; ok {

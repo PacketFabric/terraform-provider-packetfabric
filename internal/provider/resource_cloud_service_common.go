@@ -34,7 +34,7 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	if d.HasChange("cloud_settings") {
 		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
 			cs := cloudSettings.(map[string]interface{})
-			updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{}
+			updateServiceConnData.CloudSettings = &packetfabric.CloudSettings{}
 			if credentialsUUID, ok := cs["credentials_uuid"].(string); ok {
 				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
 			}
