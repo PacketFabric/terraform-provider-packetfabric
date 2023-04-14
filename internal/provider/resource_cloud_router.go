@@ -135,11 +135,13 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		_ = d.Set("po_number", resp.PONumber)
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
