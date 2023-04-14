@@ -166,7 +166,7 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
-	if _, ok := d.GetOk("po_number"); ok {
+	if d.HasChange("po_number") {
 		_ = d.Set("po_number", resp.PONumber)
 	}
 
