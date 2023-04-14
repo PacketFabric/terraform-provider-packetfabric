@@ -125,7 +125,7 @@ resource "packetfabric_port" "port_1" {
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
-  labels            = var.pf_labels
+  labels            = sort(var.pf_labels)
 }
 # output "packetfabric_port_1" {
 #   value = packetfabric_port.port_1
@@ -141,7 +141,7 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}"
-  labels      = var.pf_labels
+  labels      = sort(var.pf_labels)
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1

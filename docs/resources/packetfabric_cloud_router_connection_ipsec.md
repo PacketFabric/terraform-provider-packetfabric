@@ -23,7 +23,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = "hello world"
   capacity = "10Gbps"
   regions  = ["US", "UK"]
-  labels   = ["terraform", "dev"]
+  labels   = sort(["terraform", "dev"])
 }
 
 resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
@@ -44,7 +44,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
   phase2_authentication_algo   = "hmac-sha-256-128"
   phase2_lifetime              = 28800
   shared_key                   = "superCoolKey"
-  labels                       = ["terraform", "dev"]
+  labels                       = sort(["terraform", "dev"])
 }
 ```
 

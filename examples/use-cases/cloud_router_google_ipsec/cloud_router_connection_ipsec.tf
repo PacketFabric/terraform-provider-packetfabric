@@ -1,7 +1,7 @@
 resource "packetfabric_cloud_router_connection_ipsec" "crc_2" {
   provider                     = packetfabric
   description                  = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  labels                       = var.pf_labels
+  labels                       = sort(var.pf_labels)
   circuit_id                   = packetfabric_cloud_router.cr.id
   pop                          = var.pf_crc_pop2
   speed                        = var.pf_crc_speed

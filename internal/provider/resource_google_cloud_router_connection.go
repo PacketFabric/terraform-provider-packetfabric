@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -189,6 +190,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
+		sort.Strings(labels)
 		_ = d.Set("labels", labels)
 	}
 	return diags

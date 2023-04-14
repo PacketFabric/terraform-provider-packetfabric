@@ -8,7 +8,7 @@ resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
   google_vlan_attachment_name = var.google_vlan_attachment_name
   pop                         = "BOS1"
   vlan                        = 102
-  labels                      = ["terraform", "dev"]
+  labels                      = sort(["terraform", "dev"])
 }
 
 # Example PacketFabric side + Google side provisioning
@@ -39,5 +39,5 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
       md5          = "changeme"
     }
   }
-  labels = ["terraform", "dev"]
+  labels = sort(["terraform", "dev"])
 }

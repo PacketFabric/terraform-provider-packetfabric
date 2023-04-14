@@ -9,5 +9,5 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
   autoneg           = false
   speed             = "10Gbps"
   should_create_lag = true
-  labels            = ["terraform", "dev"]
+  labels            = sort(["terraform", "dev"])
 }

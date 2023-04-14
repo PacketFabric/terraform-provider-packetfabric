@@ -55,7 +55,7 @@ resource "oci_core_virtual_circuit" "fast_connect_1" {
 resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  labels      = var.pf_labels
+  labels      = sort(var.pf_labels)
   circuit_id  = packetfabric_cloud_router.cr.id
   region      = var.oracle_region1
   vc_ocid     = oci_core_virtual_circuit.fast_connect_1.id

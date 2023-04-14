@@ -4,7 +4,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = "hello world"
   capacity = "10Gbps"
   regions  = ["US", "UK"]
-  labels   = ["terraform", "dev"]
+  labels   = sort(["terraform", "dev"])
 }
 
 resource "packetfabric_cloud_router_connection_oracle" "crc6" {
@@ -16,5 +16,5 @@ resource "packetfabric_cloud_router_connection_oracle" "crc6" {
   pop         = "SFO1"
   zone        = "A"
   maybe_nat   = false
-  labels      = ["terraform", "dev"]
+  labels      = sort(["terraform", "dev"])
 }

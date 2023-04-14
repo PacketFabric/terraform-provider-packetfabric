@@ -30,7 +30,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect_1" {
 resource "packetfabric_cloud_router_connection_google" "crc_1" {
   provider                    = packetfabric
   description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  labels                      = var.pf_labels
+  labels                      = sort(var.pf_labels)
   circuit_id                  = packetfabric_cloud_router.cr.id
   google_pairing_key          = google_compute_interconnect_attachment.google_interconnect_1.pairing_key
   google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect_1.name
