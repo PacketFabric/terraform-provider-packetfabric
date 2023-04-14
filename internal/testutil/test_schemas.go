@@ -70,9 +70,9 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   regions       = ["%s", "%s"]
   }
   
-  resource "time_sleep" "wait_60_seconds" {
+  resource "time_sleep" "wait_10_seconds" {
     depends_on = [%s]
-    destroy_duration = "60s"
+    destroy_duration = "10s"
   }
   `
 
