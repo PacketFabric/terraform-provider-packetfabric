@@ -187,7 +187,7 @@ func extractFlexBandwidth(d *schema.ResourceData) packetfabric.FlexBandwidth {
 		flex.Capacity = capacity.(string)
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
-		flex.PoNumber = poNumber.(string)
+		flex.PONumber = poNumber.(string)
 	}
 	return flex
 }
