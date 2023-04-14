@@ -191,7 +191,9 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("zone", resp.Zone)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		// unsetFields: published_quote_line_uuid
 	}
 

@@ -173,7 +173,9 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		_ = d.Set("zone", resp.Zone)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
 		} else {

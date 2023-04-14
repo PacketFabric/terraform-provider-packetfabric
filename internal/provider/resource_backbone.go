@@ -293,7 +293,9 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		} else {
 			_ = d.Set("flex_bandwidth_id", nil)
 		}
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 
 	labels, err2 := getLabels(c, d.Id())
