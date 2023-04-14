@@ -51,7 +51,7 @@ const CloudRouterBgpSessionType2 = "out"
 const CSAwsDedicatedConnectionSubscriptionTerm = 1
 const CSAwsDedicatedConnectionServiceClass = "longhaul"
 const CSAwsDedicatedConnectionAutoneg = false
-const CSAwsDedicatedConnectionSpeed = "50Mbps"
+const CSAwsDedicatedConnectionSpeed = "1Gbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
