@@ -14,5 +14,5 @@ resource "packetfabric_point_to_point" "ptp1" {
     zone    = "A"
     autoneg = true
   }
-  labels = sort(["terraform", "dev"])
+  labels = ["terraform", "dev"]
 }

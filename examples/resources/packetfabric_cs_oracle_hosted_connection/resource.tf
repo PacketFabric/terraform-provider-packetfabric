@@ -7,5 +7,5 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
   pop         = "A"
   zone        = "BOS1"
   vlan        = 102
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }

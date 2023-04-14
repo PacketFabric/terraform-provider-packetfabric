@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"sort"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -199,7 +198,6 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		sort.Strings(labels)
 		_ = d.Set("labels", labels)
 	}
 	return diags

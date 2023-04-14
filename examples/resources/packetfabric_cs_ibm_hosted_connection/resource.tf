@@ -6,5 +6,5 @@ resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
   port        = packetfabric_port.port_1.id
   vlan        = 102
   speed       = "10Gbps"
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }

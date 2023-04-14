@@ -47,7 +47,7 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 #   lifecycle {
 #     ignore_changes = [
@@ -73,7 +73,7 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = tolist(local.zones_pop1)[0] # var.pf_port_avzone1
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 #   lifecycle {
 #     ignore_changes = [
@@ -95,7 +95,7 @@ resource "random_pet" "name" {}
 #   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
 #   #members = [packetfabric_port.port_1a.id]
 #   pop       = var.pf_port_pop1
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 
@@ -118,7 +118,7 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_port_speed
 #   subscription_term = var.pf_port_subterm
 #   zone              = var.pf_port_avzone2
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 # }
 # output "packetfabric_port_2" {
@@ -180,7 +180,7 @@ resource "random_pet" "name" {}
 #     speed             = var.pf_vc_speed
 #     subscription_term = var.pf_vc_subterm
 #   }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_backbone_virtual_circuit" {
@@ -228,7 +228,7 @@ resource "random_pet" "name" {}
 #     zone    = var.pf_ptp_zone2
 #     autoneg = var.pf_ptp_autoneg
 #   }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_point_to_point" {
@@ -382,7 +382,7 @@ resource "random_pet" "name" {}
 #   #     vpc_id = var.pf_cs_aws_vpc_id
 #   #   }
 #   # }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_cs_aws_hosted_connection" {
@@ -415,7 +415,7 @@ resource "random_pet" "name" {}
 #   speed             = var.pf_cs_speed1 # will be deprecated
 #   vlan_private      = var.pf_cs_vlan_private
 #   #vlan_microsoft = var.pf_cs_vlan_microsoft
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_cs_azure_hosted_connection" {
@@ -441,7 +441,7 @@ resource "random_pet" "name" {}
 #   # google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
 #   pop                         = var.pf_cs_pop1
 #   vlan                        = var.pf_cs_vlan1
-#   labels                      = sort(var.pf_labels)
+#   labels                      = var.pf_labels
 #   po_number                   = var.pf_po_number
 #   # for cloud side provisioning - optional
 #   cloud_settings {
@@ -480,7 +480,7 @@ resource "random_pet" "name" {}
 #   pop         = var.pf_cs_pop6
 #   zone        = var.pf_cs_zone6
 #   vlan        = var.pf_cs_vlan6
-#   labels      = sort(var.pf_labels)
+#   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
 # }
 # output "packetfabric_cs_oracle_hosted_connection" {
@@ -504,7 +504,7 @@ resource "random_pet" "name" {}
 #   port        = packetfabric_port.port_1a.id
 #   vlan        = var.pf_cs_vlan7
 #   speed       = var.pf_cs_speed1
-#   labels      = sort(var.pf_labels)
+#   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
 #   lifecycle {
 #     ignore_changes = [
@@ -770,7 +770,7 @@ resource "random_pet" "name" {}
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed3
 #   should_create_lag = var.should_create_lag
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 # }
 
@@ -784,7 +784,7 @@ resource "random_pet" "name" {}
 #   service_class     = var.pf_cs_srvclass
 #   autoneg           = var.pf_cs_autoneg
 #   speed             = var.pf_cs_speed4
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 # }
 # output "packetfabric_cs_google_dedicated_connection" {
@@ -802,7 +802,7 @@ resource "random_pet" "name" {}
 #   encapsulation     = var.encapsulation
 #   port_category     = var.port_category
 #   speed             = var.pf_cs_speed5
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 # }
 
@@ -823,7 +823,7 @@ resource "random_pet" "name" {}
 #   name     = "${var.resource_name}-${random_pet.name.id}"
 #   capacity = var.pf_cr_capacity
 #   regions  = var.pf_cr_regions
-#   labels   = sort(var.pf_labels)
+#   labels   = var.pf_labels
 # }
 
 # resource "packetfabric_cloud_router_connection_aws" "crc_1" {
@@ -836,7 +836,7 @@ resource "random_pet" "name" {}
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
 #   is_public   = var.pf_crc_is_public
-#   labels      = sort(var.pf_labels)
+#   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
 # }
 
@@ -876,7 +876,7 @@ resource "random_pet" "name" {}
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_1" {
@@ -903,7 +903,7 @@ resource "random_pet" "name" {}
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
 #   maybe_dnat                  = var.pf_crc_maybe_dnat
-#   labels                      = sort(var.pf_labels)
+#   labels                      = var.pf_labels
 #   po_number                   = var.pf_po_number
 # }
 
@@ -925,7 +925,7 @@ resource "random_pet" "name" {}
 #   phase2_authentication_algo   = var.pf_crc_phase2_authentication_algo
 #   phase2_lifetime              = var.pf_crc_phase2_lifetime
 #   shared_key                   = var.pf_crc_shared_key
-#   labels                       = sort(var.pf_labels)
+#   labels                       = var.pf_labels
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
@@ -946,7 +946,7 @@ resource "random_pet" "name" {}
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3" {
@@ -972,7 +972,7 @@ resource "random_pet" "name" {}
 #   maybe_nat         = var.pf_crc_maybe_nat
 #   maybe_dnat        = var.pf_crc_maybe_dnat
 #   is_public         = var.pf_crc_is_public
-#   labels            = sort(var.pf_labels)
+#   labels            = var.pf_labels
 #   po_number         = var.pf_po_number
 # }
 
@@ -986,7 +986,7 @@ resource "random_pet" "name" {}
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
 #   speed       = var.pf_crc_speed
-#   labels      = sort(var.pf_labels)
+#   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
 #   lifecycle {
 #     ignore_changes = [
@@ -1006,7 +1006,7 @@ resource "random_pet" "name" {}
 #   zone        = var.pf_crc_zone5
 #   maybe_nat   = var.pf_crc_maybe_nat
 #   maybe_dnat  = var.pf_crc_maybe_dnat
-#   labels      = sort(var.pf_labels)
+#   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
 # }
 
@@ -1020,7 +1020,7 @@ resource "random_pet" "name" {}
 #   is_public       = var.pf_crc_is_public
 #   maybe_nat       = var.pf_crc_maybe_nat
 #   maybe_dnat      = var.pf_crc_maybe_dnat
-#   labels          = sort(var.pf_labels)
+#   labels          = var.pf_labels
 # }
 
 # data "packetfabric_cloud_router_connections" "all_crc" {
@@ -1045,7 +1045,7 @@ resource "random_pet" "name" {}
 #     prefix     = var.pf_return_filters_prefix2
 #     match_type = var.pf_return_filters_match_type2
 #   }
-#   labels    = sort(var.pf_labels)
+#   labels    = var.pf_labels
 #   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_quick_connect" {

@@ -30,7 +30,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = "hello world"
   capacity = "10Gbps"
   regions  = ["US", "UK"]
-  labels   = sort(["terraform", "dev"])
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_google" "crc2" {
@@ -42,7 +42,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
   pop                         = "PDX2"
   speed                       = "1Gbps"
   maybe_nat                   = false
-  labels                      = sort(["terraform", "dev"])
+  labels                      = ["terraform", "dev"]
 }
 ```
 

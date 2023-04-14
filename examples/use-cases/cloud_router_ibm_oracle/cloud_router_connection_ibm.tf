@@ -2,7 +2,7 @@
 resource "packetfabric_cloud_router_connection_ibm" "crc_1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  labels      = sort(var.pf_labels)
+  labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   ibm_bgp_asn = packetfabric_cloud_router.cr.asn
   pop         = var.pf_crc_pop1

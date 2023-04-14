@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"errors"
-	"sort"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -183,7 +182,6 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		sort.Strings(labels)
 		_ = d.Set("labels", labels)
 	}
 	return diags

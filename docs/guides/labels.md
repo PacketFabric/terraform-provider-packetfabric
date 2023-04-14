@@ -24,6 +24,6 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = "hello world"
   capacity = "10Gbps"
   regions  = ["US", "UK"]
-  labels   = sort(["terraform", "dev"])
+  labels   = ["terraform", "dev"]
 }
 ```

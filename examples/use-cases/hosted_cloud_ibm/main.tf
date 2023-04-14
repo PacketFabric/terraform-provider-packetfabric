@@ -65,7 +65,7 @@ resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
   description       = "${var.resource_name}-${random_pet.name.id}"
-  labels            = sort(var.pf_labels)
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -81,7 +81,7 @@ resource "packetfabric_port" "port_1" {
 resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}"
-  labels      = sort(var.pf_labels)
+  labels      = var.pf_labels
   ibm_bgp_asn = var.pf_cs_peer_asn
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed

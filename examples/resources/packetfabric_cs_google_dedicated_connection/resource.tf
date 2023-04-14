@@ -8,5 +8,5 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
   service_class     = "longhaul"
   autoneg           = false
   speed             = "10Gbps"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }

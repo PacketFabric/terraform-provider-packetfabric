@@ -24,7 +24,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   pop         = "BOS1"
   vlan        = 102
   zone        = "A"
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }
 
 # Example PacketFabric side + AWS side provisioning
@@ -63,7 +63,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
       vpc_id = "vpc-bea401c4"
     }
   }
-  labels = sort(["terraform", "dev"])
+  labels = ["terraform", "dev"]
 }
 ```
 

@@ -8,7 +8,7 @@ resource "packetfabric_port" "port_1" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "A"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {

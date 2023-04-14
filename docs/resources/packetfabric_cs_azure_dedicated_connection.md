@@ -23,7 +23,7 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
   encapsulation     = "dot1q"
   port_category     = "primary" # secondary
   speed             = "10Gbps"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 ```
 

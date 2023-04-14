@@ -4,7 +4,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  labels      = sort(var.pf_labels)
+  labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   pop         = var.pf_crc_pop1
   zone        = var.pf_crc_zone1
@@ -15,7 +15,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 resource "packetfabric_cloud_router_connection_aws" "crc_2" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  labels      = sort(var.pf_labels)
+  labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   pop         = var.pf_crc_pop2
   zone        = var.pf_crc_zone2

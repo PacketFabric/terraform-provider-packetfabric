@@ -39,7 +39,7 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
   speed             = "10Gbps" # will be deprecated
   vlan_private      = 102
   vlan_microsoft    = 103
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 ```
 

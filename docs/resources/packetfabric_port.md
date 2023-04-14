@@ -24,7 +24,7 @@ resource "packetfabric_port" "port_1" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "A"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 ```
 

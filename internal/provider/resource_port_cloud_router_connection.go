@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"sort"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -187,7 +186,6 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		sort.Strings(labels)
 		_ = d.Set("labels", labels)
 	}
 	return diags

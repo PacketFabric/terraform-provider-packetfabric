@@ -24,7 +24,7 @@ resource "packetfabric_port" "port_1a" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "A"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 
 ## 2nd port in the same location same zone to create a LAG
@@ -38,7 +38,7 @@ resource "packetfabric_port" "port_1b" {
   speed             = "1Gbps"
   subscription_term = 1
   zone              = "B"
-  labels            = sort(["terraform", "dev"])
+  labels            = ["terraform", "dev"]
 }
 
 resource "packetfabric_link_aggregation_group" "lag_1" {
@@ -47,7 +47,7 @@ resource "packetfabric_link_aggregation_group" "lag_1" {
   interval    = "fast" # or slow
   members     = [packetfabric_port.port_1a.id, packetfabric_port.port_1b.id]
   pop         = "SEA2"
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }
 ```
 

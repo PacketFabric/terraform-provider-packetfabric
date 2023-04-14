@@ -48,7 +48,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   zone        = "A"
   is_public   = false
   speed       = "1Gbps"
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }
 
 # Wait for the connection to show up in AWS

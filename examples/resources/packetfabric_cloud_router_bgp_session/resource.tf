@@ -4,7 +4,7 @@ resource "packetfabric_cloud_router" "cr1" {
   name     = "hello world"
   capacity = "10Gbps"
   regions  = ["US", "UK"]
-  labels   = sort(["terraform", "dev"])
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
@@ -17,7 +17,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   zone        = "A"
   is_public   = false
   speed       = "1Gbps"
-  labels      = sort(["terraform", "dev"])
+  labels      = ["terraform", "dev"]
 }
 
 # Example maybe_nat set to false
