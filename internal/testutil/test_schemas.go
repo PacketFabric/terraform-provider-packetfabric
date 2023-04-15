@@ -405,3 +405,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
+  provider  = packetfabric
+  pop       = "%s"
+}`
