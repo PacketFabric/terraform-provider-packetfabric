@@ -405,3 +405,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+
+const DDatasourceCloudConn = `data "packetfabric_cloud_router_connections" "%s" {
+  circuit_id        = %s.id
+}`
