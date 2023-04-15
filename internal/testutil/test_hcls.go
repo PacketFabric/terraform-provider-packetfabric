@@ -1,6 +1,7 @@
 package testutil
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -21,6 +22,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDatasourceBilling = "data.packetfabric_billing."
 
 // data-sources
 const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
@@ -266,6 +268,11 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
+}
+
+// data packetfabric_billing
+type DHclDatasourceBillingResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -589,6 +596,59 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
+	}
+}
+
+func DHclDatasourceBilling() DHclDatasourceBillingResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		IsCloudConnection: true,
+	}
+
+	hclPortResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfDatasourceBilling)
+
+	billingHcl := fmt.Sprintf(DDatasourceBilling,
+		hclName,
+		hclPortResult.ResourceReference)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, billingHcl)
+
+	return DHclDatasourceBillingResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
+	popsAvailable, _ := details.FetchCloudPops()
+	popsToSkip := make([]string, 0)
+	for _, popAvailable := range popsAvailable {
+		if len(popsToSkip) == len(popsAvailable) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, pop) {
+			continue
+		}
+		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
+			popsToSkip = append(popsToSkip, popAvailable)
+			continue
+		} else {
+			pop = popAvailable
+			media = mediaAvailable
+			zone = zoneAvailable
+			return
+		}
 	}
 }
 
