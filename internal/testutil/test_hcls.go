@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDatasourceBilling = "data.packetfabric_billing."
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -116,6 +117,11 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// data packetfabric_billing
+type DHclDatasourceBillingResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -326,6 +332,37 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func DHclDatasourceBilling() DHclDatasourceBillingResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		IsCloudConnection: true,
+	}
+
+	hclPortResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfDatasourceBilling)
+
+	billingHcl := fmt.Sprintf(DDatasourceBilling,
+		hclName,
+		hclPortResult.ResourceReference)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, billingHcl)
+
+	return DHclDatasourceBillingResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceBilling,
+			ResourceName: resourceName,
+		},
 	}
 }
 
