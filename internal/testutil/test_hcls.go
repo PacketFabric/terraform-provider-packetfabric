@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDataAwsDedicatedConn = "data.packetfabric_cs_dedicated_connections."
 const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
 
 // ########################################
@@ -121,6 +122,11 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// data packetfabric_cs_dedicated_connections
+type DHclAwsDedicatedConnResult struct {
+	HclResultBase
 }
 
 // packetfabric_cs_aws_dedicated_connection
@@ -343,6 +349,20 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func DHclAwsDedicatedConnection() DHclAwsDedicatedConnResult {
+
+	resourceName, hclName := _generateResourceName(pfDataAwsDedicatedConn)
+	hcl := fmt.Sprintf(DDatasourceAwsDedicatedConn, hclName)
+
+	return DHclAwsDedicatedConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataAwsDedicatedConn,
+			ResourceName: resourceName,
+		},
 	}
 }
 

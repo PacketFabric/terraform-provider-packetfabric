@@ -405,3 +405,6 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+
+const DDatasourceAwsDedicatedConn = `data "packetfabric_cs_dedicated_connections" "%s" {
+}`
