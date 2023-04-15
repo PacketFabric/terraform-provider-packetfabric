@@ -754,3 +754,9 @@ const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_gr
   provider       = packetfabric
   lag_circuit_id = %s.id
 }`
+
+// Datasource: packetfabric_port_device_info
+const DDataSourcePortDeviceInfo = `data "packetfabric_port_device_info" "%s" {
+  provider          = packetfabric
+  port_circuit_id   = %s.id
+}`
