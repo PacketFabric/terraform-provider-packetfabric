@@ -428,3 +428,5 @@ const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
 const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
   provider = packetfabric
 }`
+const DDataSourcePorts = `data "packetfabric_port" "%s" {
+  }`
