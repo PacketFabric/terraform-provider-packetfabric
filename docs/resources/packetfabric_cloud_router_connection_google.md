@@ -234,6 +234,8 @@ Optional:
 
 ## Import
 
+->**Note:** Import is not supported if `cloud_settings` are used.
+
 Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
 
 ```bash
