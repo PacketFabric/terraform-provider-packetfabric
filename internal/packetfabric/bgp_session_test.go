@@ -31,7 +31,6 @@ func init() {
 		RemoteAsn:       4556,
 		MultihopTTL:     1,
 		LocalPreference: 1,
-		Community:       "1",
 		AsPrepend:       1,
 		Med:             1,
 		Orlonger:        true,

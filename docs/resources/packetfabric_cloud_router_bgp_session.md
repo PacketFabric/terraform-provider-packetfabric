@@ -144,7 +144,6 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 - `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
 
 	Available range is 2 through 16.
-- `community` (Number, Deprecated) The BGP community for this instance.
 - `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
 - `l3_address` (String) The L3 address of this instance. Not used for Azure connections. Required for all other CSP.
 - `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
