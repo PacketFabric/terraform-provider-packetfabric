@@ -838,6 +838,33 @@ resource "random_pet" "name" {}
 #   is_public   = var.pf_crc_is_public
 #   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
+#   cloud_settings {
+#     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+#     aws_region       = var.aws_region1
+#     aws_vif_type     = "transit"
+#     aws_gateways {
+#       type = "directconnect"
+#       id   = aws_dx_gateway.direct_connect_gw_1.id
+#     }
+#     aws_gateways {
+#       type   = "transit"
+#       id     = aws_ec2_transit_gateway.transit_gw_1.id
+#       vpc_id = aws_vpc.vpc_1.id
+#     }
+#     bgp_settings {
+#       multihop_ttl   = var.pf_crbs_mhttl
+#       remote_asn     = var.aws_side_asn1
+#       orlonger       = var.pf_crbs_orlonger
+#       prefixes {
+#         prefix = "10.0.0.0/8"
+#         type   = "out" # Allowed Prefixes to Cloud
+#       }
+#       prefixes {
+#         prefix = "192.168.1.0/24"
+#         type   = "in" # Allowed Prefixes from Cloud
+#       }
+#     }
+#   }
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
