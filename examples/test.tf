@@ -362,7 +362,7 @@ resource "random_pet" "name" {}
 #   #   credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
 #   #   aws_region       = var.pf_cs_aws_region
 #   #   mtu              = var.pf_cs_mtu
-#   #   aws_vif_type     = var.pf_cs_aws_vif_type
+#   #   aws_vif_type     = "private"
 #   #   bgp_settings {
 #   #     customer_asn   = var.pf_cs_customer_asn
 #   #     address_family = var.pf_cs_address_family
@@ -377,7 +377,7 @@ resource "random_pet" "name" {}
 #   #     ]
 #   #   }
 #   #   aws_gateways {
-#   #     type   = var.pf_cs_aws_vif_type
+#   #     type   = "private"
 #   #     name   = "${var.resource_name}-${random_pet.name.id}"
 #   #     vpc_id = var.pf_cs_aws_vpc_id
 #   #   }
@@ -406,32 +406,7 @@ resource "random_pet" "name" {}
 #   content  = data.packetfabric_cs_hosted_connection_router_config.router_aws_cisco2900.router_config
 # }
 
-# # Create a Azure Hosted Connection 
-# resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
-#   provider          = packetfabric
-#   description       = "${var.resource_name}-${random_pet.name.id}"
-#   azure_service_key = var.azure_service_key
-#   port              = packetfabric_port.port_1a.id
-#   speed             = var.pf_cs_speed1 # will be deprecated
-#   vlan_private      = var.pf_cs_vlan_private
-#   #vlan_microsoft = var.pf_cs_vlan_microsoft
-#   labels    = var.pf_labels
-#   po_number = var.pf_po_number
-# }
-# output "packetfabric_cs_azure_hosted_connection" {
-#   sensitive = true
-#   value     = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure
-# }
-
-# data "packetfabric_cs_azure_hosted_connection" "current" {
-#   provider         = packetfabric
-#   cloud_circuit_id = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure.id
-# }
-# output "packetfabric_cs_azure_hosted_connection_data" {
-#   value = data.packetfabric_cs_azure_hosted_connection.current
-# }
-
-# # Create a GCP Hosted Connection 
+# # Create a Google Hosted Connection 
 # resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
 #   provider                    = packetfabric
 #   description                 = "${var.resource_name}-${random_pet.name.id}"
@@ -468,6 +443,40 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cs_google_hosted_connection_data" {
 #   value = data.packetfabric_cs_google_hosted_connection.current
+# }
+
+# data "packetfabric_cs_hosted_connection_router_config" "router_google_cisco2900" {
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
+#   router_type      = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+# }
+# resource "local_file" "router_google_cisco2900_file" {
+#   filename = "router_config_google_cisco2900.txt"
+#   content  = data.packetfabric_cs_hosted_connection_router_config.router_google_cisco2900.router_config
+# }
+
+# # Create a Azure Hosted Connection 
+# resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
+#   provider          = packetfabric
+#   description       = "${var.resource_name}-${random_pet.name.id}"
+#   azure_service_key = var.azure_service_key
+#   port              = packetfabric_port.port_1a.id
+#   speed             = var.pf_cs_speed1 # will be deprecated
+#   vlan_private      = var.pf_cs_vlan_private
+#   #vlan_microsoft = var.pf_cs_vlan_microsoft
+#   labels    = var.pf_labels
+#   po_number = var.pf_po_number
+# }
+# output "packetfabric_cs_azure_hosted_connection" {
+#   sensitive = true
+#   value     = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure
+# }
+
+# data "packetfabric_cs_azure_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure.id
+# }
+# output "packetfabric_cs_azure_hosted_connection_data" {
+#   value = data.packetfabric_cs_azure_hosted_connection.current
 # }
 
 # # Create a Oracle Hosted Connection 
@@ -644,7 +653,7 @@ resource "random_pet" "name" {}
 #   value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure
 # }
 
-# # Create a GCP Hosted Marketplace Connection 
+# # Create a Google Hosted Marketplace Connection 
 # resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_marketplace_google" {
 #   provider                    = packetfabric
 #   description                 = "${var.resource_name}-${random_pet.name.id}"
@@ -774,7 +783,7 @@ resource "random_pet" "name" {}
 #   po_number         = var.pf_po_number
 # }
 
-# # GCP Dedicated Connection
+# # Google Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
 #   provider          = packetfabric
 #   description       = "${var.resource_name}-${random_pet.name.id}"
@@ -840,20 +849,20 @@ resource "random_pet" "name" {}
 #   po_number   = var.pf_po_number
 #   cloud_settings {
 #     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
-#     aws_region       = var.aws_region1
+#     aws_region       = var.pf_cs_aws_region
 #     aws_vif_type     = "transit"
 #     aws_gateways {
 #       type = "directconnect"
-#       id   = aws_dx_gateway.direct_connect_gw_1.id
+#       name = "${var.resource_name}-${random_pet.name.id}"
 #     }
 #     aws_gateways {
 #       type   = "transit"
-#       id     = aws_ec2_transit_gateway.transit_gw_1.id
-#       vpc_id = aws_vpc.vpc_1.id
+#       name   = "${var.resource_name}-${random_pet.name.id}"
+#       vpc_id = var.pf_cs_aws_vpc_id
 #     }
 #     bgp_settings {
 #       multihop_ttl   = var.pf_crbs_mhttl
-#       remote_asn     = var.aws_side_asn1
+#       remote_asn     = var.pf_cs_directconnect_gw_asn
 #       orlonger       = var.pf_crbs_orlonger
 #       prefixes {
 #         prefix = "10.0.0.0/8"
