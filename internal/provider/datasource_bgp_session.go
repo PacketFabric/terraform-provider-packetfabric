@@ -65,12 +65,6 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "The preference for this instance. Deprecated.",
 						},
-						"community": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: "The BGP community for this instance. Deprecated.",
-						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Computed:    true,
@@ -297,7 +291,6 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["remote_asn"] = session.RemoteAsn
 			flatten["multihop_ttl"] = session.MultihopTTL
 			flatten["local_preference"] = session.LocalPreference
-			flatten["community"] = session.Community
 			flatten["as_prepend"] = session.AsPrepend
 			flatten["l3_address"] = session.L3Address
 			flatten["med"] = session.Med

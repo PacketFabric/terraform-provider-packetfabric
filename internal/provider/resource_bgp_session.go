@@ -103,13 +103,6 @@ func resourceBgpSession() *schema.Resource {
 				Default:     0,
 				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
 			},
-			"community": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     0,
-				Description: "The BGP community for this instance. ",
-				Deprecated:  "This field is deprecated and will be removed in a future release. ",
-			},
 			"as_prepend": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -336,7 +329,6 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("med", bgp.Med)
 	_ = d.Set("as_prepend", bgp.AsPrepend)
 	_ = d.Set("local_preference", bgp.LocalPreference)
-	_ = d.Set("community", bgp.Community)
 	_ = d.Set("bfd_interval", bgp.BfdInterval)
 	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 
@@ -427,9 +419,6 @@ func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	if med, ok := d.GetOk("med"); ok {
 		bgpSession.Med = med.(int)
 	}
-	if community, ok := d.GetOk("community"); ok {
-		bgpSession.Community = community.(int)
-	}
 	if asPrepend, ok := d.GetOk("as_prepend"); ok {
 		bgpSession.AsPrepend = asPrepend.(int)
 	}
@@ -491,9 +480,6 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 	}
 	if med, ok := d.GetOk("med"); ok {
 		bgpSession.Med = med.(int)
-	}
-	if community, ok := d.GetOk("community"); ok {
-		bgpSession.Community = community.(int)
 	}
 	if asPrepend, ok := d.GetOk("as_prepend"); ok {
 		bgpSession.AsPrepend = asPrepend.(int)

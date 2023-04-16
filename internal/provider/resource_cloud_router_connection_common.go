@@ -81,15 +81,104 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 				},
 			},
 			{
-				condition: d.HasChange("cloud_settings.0.bgp_settings"),
+				condition: d.HasChange("cloud_settings.0.bgp_settings") &&
+					!d.HasChange("cloud_settings.0.bgp_settings.0.google_keepalive_interval"),
 				action: func() diag.Diagnostics {
 					prefixesSet := d.Get("cloud_settings.0.bgp_settings.0.prefixes").(*schema.Set)
 					prefixesList := prefixesSet.List()
 					if err := validatePrefixes(prefixesList); err != nil {
 						return diag.FromErr(err)
 					}
-					session := extractBgpSessionUpdate(d)
-					_, resp, err := c.UpdateBgpSession(session, cid.(string), d.Id())
+
+					bgpSettings := d.Get("cloud_settings.0.bgp_settings.0").(map[string]interface{})
+					bgpSession := packetfabric.BgpSession{}
+					if l3Address, ok := bgpSettings["l3_address"]; ok {
+						bgpSession.L3Address = l3Address.(string)
+					} else {
+						// we must ge the l3address if missing as it is a required field for BGP PUT API call
+						if bgpSettingsUUID, ok := d.GetOk("cloud_settings.0.bgp_settings.0.bgp_settings_id"); ok {
+							bgp, err := c.GetBgpSessionBy(cid.(string), d.Id(), bgpSettingsUUID.(string))
+							if err != nil {
+								return diag.FromErr(errors.New("could not retrieve bgp session"))
+							}
+							bgpSession.L3Address = bgp.L3Address
+						}
+					}
+					if d.HasChange("cloud_settings.0.bgp_settings.0.primary_subnet") {
+						if primarySubnet, ok := bgpSettings["primary_subnet"]; ok {
+							bgpSession.L3Address = primarySubnet.(string)
+						}
+					}
+					if d.HasChange("cloud_settings.0.bgp_settings.0.secondary_subnet") {
+						if secondarySubnet, ok := bgpSettings["secondary_subnet"]; ok {
+							bgpSession.L3Address = secondarySubnet.(string)
+						}
+					}
+					if addressFamily, ok := bgpSettings["address_family"]; ok {
+						bgpSession.AddressFamily = addressFamily.(string)
+					} else {
+						bgpSession.AddressFamily = "v4"
+					}
+					if remoteAddress, ok := bgpSettings["remote_address"]; ok {
+						bgpSession.RemoteAddress = remoteAddress.(string)
+					} else {
+						// we must ge the remoteAddress if missing as it is a required field for BGP PUT API call
+						if bgpSettingsUUID, ok := d.GetOk("cloud_settings.0.bgp_settings.0.bgp_settings_id"); ok {
+							bgp, err := c.GetBgpSessionBy(cid.(string), d.Id(), bgpSettingsUUID.(string))
+							if err != nil {
+								return diag.FromErr(errors.New("could not retrieve bgp session"))
+							}
+							bgpSession.RemoteAddress = bgp.RemoteAddress
+						}
+					}
+					if remoteAsn, ok := bgpSettings["remote_asn"]; ok {
+						bgpSession.RemoteAsn = remoteAsn.(int)
+					}
+					if multihopTTL, ok := bgpSettings["multihop_ttl"]; ok {
+						bgpSession.MultihopTTL = multihopTTL.(int)
+					}
+					if localPreference, ok := bgpSettings["local_preference"]; ok {
+						bgpSession.LocalPreference = localPreference.(int)
+					}
+					if med, ok := bgpSettings["med"]; ok {
+						bgpSession.Med = med.(int)
+					}
+					if asPrepend, ok := bgpSettings["as_prepend"]; ok {
+						bgpSession.AsPrepend = asPrepend.(int)
+					}
+					if orlonger, ok := bgpSettings["orlonger"]; ok {
+						bgpSession.Orlonger = orlonger.(bool)
+					}
+					if bfdInterval, ok := bgpSettings["bfd_interval"]; ok {
+						bgpSession.BfdInterval = bfdInterval.(int)
+					}
+					if bfdMultiplier, ok := bgpSettings["bfd_multiplier"]; ok {
+						bgpSession.BfdMultiplier = bfdMultiplier.(int)
+					}
+					if md5, ok := bgpSettings["md5"]; ok {
+						bgpSession.Md5 = md5.(string)
+					}
+					if nat, ok := bgpSettings["nat"]; ok {
+						for _, nat := range nat.(*schema.Set).List() {
+							bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+						}
+					} else {
+						bgpSession.Nat = nil
+					}
+
+					bgpSession.Prefixes = make([]packetfabric.BgpPrefix, 0)
+					for _, pref := range bgpSettings["prefixes"].(*schema.Set).List() {
+						bgpSession.Prefixes = append(bgpSession.Prefixes, packetfabric.BgpPrefix{
+							Prefix:          pref.(map[string]interface{})["prefix"].(string),
+							MatchType:       pref.(map[string]interface{})["match_type"].(string),
+							AsPrepend:       pref.(map[string]interface{})["as_prepend"].(int),
+							Med:             pref.(map[string]interface{})["med"].(int),
+							LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
+							Type:            pref.(map[string]interface{})["type"].(string),
+						})
+					}
+
+					_, resp, err := c.UpdateBgpSession(bgpSession, cid.(string), d.Id())
 					if err != nil {
 						return diag.FromErr(err)
 					}

@@ -17,7 +17,6 @@ type BgpSession struct {
 	AsPrepend       int         `json:"as_prepend,omitempty"`
 	BfdInterval     int         `json:"bfd_interval,omitempty"`
 	BfdMultiplier   int         `json:"bfd_multiplier,omitempty"`
-	Community       int         `json:"community,omitempty"`
 	Disabled        bool        `json:"disabled,omitempty"`
 	L3Address       string      `json:"l3_address,omitempty"`
 	LocalPreference int         `json:"local_preference,omitempty"`
@@ -80,7 +79,6 @@ type BgpSessionCreateResp struct {
 	RemoteAsn       int         `json:"remote_asn"`
 	MultihopTTL     int         `json:"multihop_ttl"`
 	LocalPreference int         `json:"local_preference"`
-	Community       string      `json:"community"`
 	AsPrepend       int         `json:"as_prepend"`
 	L3Address       string      `json:"l3_address"`
 	Med             int         `json:"med"`
@@ -108,7 +106,6 @@ type BgpSessionBySettingsUUID struct {
 	L3Address       string      `json:"l3_address,omitempty"`
 	PrimarySubnet   string      `json:"primary_subnet,omitempty"`
 	SecondarySubnet string      `json:"secondary_subnet,omitempty"`
-	Community       interface{} `json:"community,omitempty"`
 	AsPrepend       int         `json:"as_prepend,omitempty"`
 	Orlonger        bool        `json:"orlonger"`
 	BfdInterval     int         `json:"bfd_interval,omitempty"`
@@ -129,7 +126,6 @@ type BgpSessionAssociatedResp struct {
 	RemoteAsn       int         `json:"remote_asn"`
 	MultihopTTL     int         `json:"multihop_ttl"`
 	LocalPreference int         `json:"local_preference"`
-	Community       string      `json:"community"`
 	AsPrepend       int         `json:"as_prepend"`
 	Med             int         `json:"med"`
 	L3Address       string      `json:"l3_address"`
