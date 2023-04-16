@@ -39,6 +39,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions  = ["US", "UK"]
 }
 
+# Example PacketFabric side provisioning only
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider    = packetfabric
   circuit_id  = packetfabric_cloud_router.cr1.id
@@ -51,25 +52,39 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   labels      = ["terraform", "dev"]
 }
 
-# Wait for the connection to show up in AWS
-resource "time_sleep" "wait_aws_connection" {
-  create_duration = "2m"
-  depends_on = [
-    packetfabric_cloud_router_connection_aws.crc1
-  ]
+# Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider       = packetfabric
+  description    = "AWS Staging Environement"
+  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
 }
 
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current" {
-  provider   = aws
-  name       = "hello world"
-  depends_on = [time_sleep.wait_aws_connection]
-}
-
-# Accept the connection
-resource "aws_dx_connection_confirmation" "confirmation" {
-  provider      = aws
-  connection_id = data.aws_dx_connection.current.id
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
+  provider    = packetfabric
+  circuit_id  = packetfabric_cloud_router.cr1.id
+  maybe_nat   = false
+  description = "hello world"
+  pop         = "PDX2"
+  zone        = "A"
+  is_public   = false
+  speed       = "1Gbps"
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = "us-west-1"
+    mtu              = 1500
+    aws_vif_type     = "private"
+    aws_gateways {
+      type = "directconnect"
+      id   = "760f047b-53ce-4a9d-9ed6-6fac5ca2fa81"
+    }
+    aws_gateways {
+      type   = "private"
+      id     = "vgw-066eb6dcd07dcbb65"
+      vpc_id = "vpc-bea401c4"
+    }
+  }
+  labels      = ["terraform", "dev"]
 }
 ```
 
@@ -89,6 +104,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 
 ### Optional
 
+- `bgp_settings_uuid` (String) BGP session ID generated when the cloud-side connection is provisioned by PacketFabric.
+- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. Defaults: false
 - `labels` (List of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
@@ -101,6 +118,51 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Required:
+
+- `aws_vif_type` (String) The type of VIF to use for this connection.
+- `bgp_settings` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings))
+- `credentials_uuid` (String) The UUID of the credentials to be used with this connection.
+
+Optional:
+
+- `aws_gateways` (Block List, Max: 2) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_region` (String) The AWS region that should be used.
+- `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
+
+	Enum: ["1500", "9001"] Defaults: 1500
+
+<a id="nestedblock--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Optional:
+
+- `address_family` (String) The address family that should be used. Defaults: ipv4
+- `l3_address` (String) The prefix of the customer router. Required for public VIFs.
+- `md5` (String) The MD5 value of the authenticated BGP sessions.
+- `remote_address` (String) The prefix of the remote router. Required for public VIFs.
+
+
+<a id="nestedblock--cloud_settings--aws_gateways"></a>
+### Nested Schema for `cloud_settings.aws_gateways`
+
+Required:
+
+- `type` (String) The type of this AWS Gateway.
+
+Optional:
+
+- `asn` (Number) The ASN of the AWS Gateway to be used.
+- `id` (String) The ID of the AWS Gateway to be used.
+- `name` (String) The name of the AWS Gateway, required if creating a new DirectConnect Gateway.
+- `subnet_ids` (List of String) An array of subnet IDs to associate with this Gateway. Required for transit Gateways.
+- `vpc_id` (String) The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.
+
+
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
@@ -116,6 +178,8 @@ Optional:
 
 
 ## Import
+
+->**Note:** Import is not supported if `cloud_settings` are used.
 
 Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
 

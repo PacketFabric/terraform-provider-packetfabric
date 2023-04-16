@@ -248,7 +248,7 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	reqConn := extractReqConn(d)
+	reqConn := extractAwsReqConn(d)
 	expectedResp, err := c.CreateAwsHostedConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
@@ -366,7 +366,7 @@ func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
-func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
+func extractAwsReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	hostedAwsConn := packetfabric.HostedAwsConnection{}
 	if awsAccountID, ok := d.GetOk("aws_account_id"); ok {
 		hostedAwsConn.AwsAccountID = awsAccountID.(string)

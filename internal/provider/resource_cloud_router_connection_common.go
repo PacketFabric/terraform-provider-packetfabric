@@ -55,6 +55,12 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 					if mtu, ok := d.GetOk("cloud_settings.0.mtu"); ok {
 						updateData.CloudSettings.Mtu = mtu.(int)
 					}
+					if awsRegion, ok := d.GetOk("cloud_settings.0.aws_region"); ok {
+						updateData.CloudSettings.AwsRegion = awsRegion.(string)
+					}
+					if mtu, ok := d.GetOk("cloud_settings.0.mtu"); ok {
+						updateData.CloudSettings.Mtu = mtu.(int)
+					}
 					if googleKeepaliveInterval, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_keepalive_interval"); ok {
 						updateData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
 						updateData.CloudSettings.BgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
@@ -287,4 +293,66 @@ func checkCloudRouterConnectionStatus(c *packetfabric.PFClient, cid string, id s
 		return fmt.Errorf("Failed to update connection status")
 	}
 	return nil
+}
+
+// Use for AWS and Google Cloud Router Connection creation with Cloud Side
+func extractRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *packetfabric.BgpSettings {
+	bgpSettings := &packetfabric.BgpSettings{}
+
+	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
+		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
+	}
+	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
+
+	if md5, ok := bgpSettingsMap["md5"]; ok {
+		bgpSettings.Md5 = md5.(string)
+	}
+	if localPreference, ok := bgpSettingsMap["local_preference"]; ok {
+		bgpSettings.LocalPreference = localPreference.(int)
+	}
+	if med, ok := bgpSettingsMap["med"]; ok {
+		bgpSettings.Med = med.(int)
+	}
+	if asPrepend, ok := bgpSettingsMap["as_prepend"]; ok {
+		bgpSettings.AsPrepend = asPrepend.(int)
+	}
+	if orlonger, ok := bgpSettingsMap["orlonger"]; ok {
+		bgpSettings.Orlonger = orlonger.(bool)
+	}
+	if bfdInterval, ok := bgpSettingsMap["bfd_interval"]; ok {
+		bgpSettings.BfdInterval = bfdInterval.(int)
+	}
+	if bfdMultiplier, ok := bgpSettingsMap["bfd_multiplier"]; ok {
+		bgpSettings.BfdMultiplier = bfdMultiplier.(int)
+	}
+	if nat, ok := bgpSettingsMap["nat"]; ok {
+		for _, nat := range nat.(*schema.Set).List() {
+			bgpSettings.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
+		}
+	} else {
+		bgpSettings.Nat = nil
+	}
+
+	prefixesSet := bgpSettingsMap["prefixes"].(*schema.Set)
+	prefixesList := prefixesSet.List()
+	bgpSettings.Prefixes = extractConnBgpSessionPrefixesFromMap(prefixesList)
+
+	return bgpSettings
+}
+
+func extractConnBgpSessionPrefixesFromMap(prefixesList []interface{}) []packetfabric.BgpPrefix {
+	sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
+	for _, prefInterface := range prefixesList {
+		pref := prefInterface.(map[string]interface{})
+		sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
+			Prefix:          pref["prefix"].(string),
+			MatchType:       pref["match_type"].(string),
+			AsPrepend:       pref["as_prepend"].(int),
+			Med:             pref["med"].(int),
+			LocalPreference: pref["local_preference"].(int),
+			Type:            pref["type"].(string),
+		})
+	}
+
+	return sessionPrefixes
 }

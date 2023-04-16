@@ -612,69 +612,8 @@ func extractGoogleRouterCloudConnSettings(cs map[string]interface{}) *packetfabr
 	}
 	if bgpSettings, ok := cs["bgp_settings"]; ok {
 		bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
-		cloudSettings.BgpSettings = extractGoogleRouterConnBgpSettings(bgpSettingsMap)
+		cloudSettings.BgpSettings = extractRouterConnBgpSettings(bgpSettingsMap)
 	}
 
 	return cloudSettings
-}
-
-func extractGoogleRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *packetfabric.BgpSettings {
-	bgpSettings := &packetfabric.BgpSettings{}
-
-	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
-		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
-	}
-	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
-
-	if md5, ok := bgpSettingsMap["md5"]; ok {
-		bgpSettings.Md5 = md5.(string)
-	}
-	if localPreference, ok := bgpSettingsMap["local_preference"]; ok {
-		bgpSettings.LocalPreference = localPreference.(int)
-	}
-	if med, ok := bgpSettingsMap["med"]; ok {
-		bgpSettings.Med = med.(int)
-	}
-	if asPrepend, ok := bgpSettingsMap["as_prepend"]; ok {
-		bgpSettings.AsPrepend = asPrepend.(int)
-	}
-	if orlonger, ok := bgpSettingsMap["orlonger"]; ok {
-		bgpSettings.Orlonger = orlonger.(bool)
-	}
-	if bfdInterval, ok := bgpSettingsMap["bfd_interval"]; ok {
-		bgpSettings.BfdInterval = bfdInterval.(int)
-	}
-	if bfdMultiplier, ok := bgpSettingsMap["bfd_multiplier"]; ok {
-		bgpSettings.BfdMultiplier = bfdMultiplier.(int)
-	}
-	if nat, ok := bgpSettingsMap["nat"]; ok {
-		for _, nat := range nat.(*schema.Set).List() {
-			bgpSettings.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
-		}
-	} else {
-		bgpSettings.Nat = nil
-	}
-
-	prefixesSet := bgpSettingsMap["prefixes"].(*schema.Set)
-	prefixesList := prefixesSet.List()
-	bgpSettings.Prefixes = extractConnBgpSessionPrefixesFromMap(prefixesList)
-
-	return bgpSettings
-}
-
-func extractConnBgpSessionPrefixesFromMap(prefixesList []interface{}) []packetfabric.BgpPrefix {
-	sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
-	for _, prefInterface := range prefixesList {
-		pref := prefInterface.(map[string]interface{})
-		sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
-			Prefix:          pref["prefix"].(string),
-			MatchType:       pref["match_type"].(string),
-			AsPrepend:       pref["as_prepend"].(int),
-			Med:             pref["med"].(int),
-			LocalPreference: pref["local_preference"].(int),
-			Type:            pref["type"].(string),
-		})
-	}
-
-	return sessionPrefixes
 }

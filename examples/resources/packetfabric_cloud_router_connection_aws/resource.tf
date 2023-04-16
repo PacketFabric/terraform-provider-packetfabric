@@ -6,6 +6,7 @@ resource "packetfabric_cloud_router" "cr1" {
   regions  = ["US", "UK"]
 }
 
+# Example PacketFabric side provisioning only
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider    = packetfabric
   circuit_id  = packetfabric_cloud_router.cr1.id
@@ -18,23 +19,37 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   labels      = ["terraform", "dev"]
 }
 
-# Wait for the connection to show up in AWS
-resource "time_sleep" "wait_aws_connection" {
-  create_duration = "2m"
-  depends_on = [
-    packetfabric_cloud_router_connection_aws.crc1
-  ]
+# Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider       = packetfabric
+  description    = "AWS Staging Environement"
+  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
 }
 
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current" {
-  provider   = aws
-  name       = "hello world"
-  depends_on = [time_sleep.wait_aws_connection]
-}
-
-# Accept the connection
-resource "aws_dx_connection_confirmation" "confirmation" {
-  provider      = aws
-  connection_id = data.aws_dx_connection.current.id
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
+  provider    = packetfabric
+  circuit_id  = packetfabric_cloud_router.cr1.id
+  maybe_nat   = false
+  description = "hello world"
+  pop         = "PDX2"
+  zone        = "A"
+  is_public   = false
+  speed       = "1Gbps"
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = "us-west-1"
+    mtu              = 1500
+    aws_vif_type     = "private"
+    aws_gateways {
+      type = "directconnect"
+      id   = "760f047b-53ce-4a9d-9ed6-6fac5ca2fa81"
+    }
+    aws_gateways {
+      type   = "private"
+      id     = "vgw-066eb6dcd07dcbb65"
+      vpc_id = "vpc-bea401c4"
+    }
+  }
+  labels      = ["terraform", "dev"]
 }

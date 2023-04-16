@@ -16,17 +16,18 @@ const ipsecConnServiceByCidURI = "/v2/services/ipsec/%s"
 const oracleCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
-	AwsAccountID           string `json:"aws_account_id,omitempty"`
-	AccountUUID            string `json:"account_uuid,omitempty"`
-	MaybeNat               bool   `json:"maybe_nat,omitempty"`
-	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
-	Description            string `json:"description,omitempty"`
-	Pop                    string `json:"pop,omitempty"`
-	Zone                   string `json:"zone,omitempty"`
-	IsPublic               bool   `json:"is_public,omitempty"`
-	Speed                  string `json:"speed,omitempty"`
-	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
-	PONumber               string `json:"po_number,omitempty"`
+	AwsAccountID           string         `json:"aws_account_id,omitempty"`
+	AccountUUID            string         `json:"account_uuid,omitempty"`
+	MaybeNat               bool           `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool           `json:"maybe_dnat,omitempty"`
+	Description            string         `json:"description,omitempty"`
+	Pop                    string         `json:"pop,omitempty"`
+	Zone                   string         `json:"zone,omitempty"`
+	IsPublic               bool           `json:"is_public,omitempty"`
+	Speed                  string         `json:"speed,omitempty"`
+	PublishedQuoteLineUUID string         `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string         `json:"po_number,omitempty"`
+	CloudSettings          *CloudSettings `json:"cloud_settings,omitempty"`
 }
 
 type AwsConnectionCreateResponse struct {

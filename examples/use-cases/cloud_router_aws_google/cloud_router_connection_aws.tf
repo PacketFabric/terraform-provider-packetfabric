@@ -1,8 +1,6 @@
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   provider = packetfabric
-  # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
-  # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
@@ -11,63 +9,31 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   speed       = var.pf_crc_speed
   maybe_nat   = var.pf_crc_maybe_nat
   is_public   = var.pf_crc_is_public
-}
-
-# From the AWS side: Accept the connection
-# Wait for the connection to show up in AWS
-resource "time_sleep" "wait_aws_connection" {
-  create_duration = "2m"
-  depends_on = [
-    packetfabric_cloud_router_connection_aws.crc_1
-  ]
-}
-
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current" {
-  provider   = aws
-  name       = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
-  depends_on = [time_sleep.wait_aws_connection]
-}
-# output "aws_dx_connection_1" {
-#   value = data.aws_dx_connection.current
-# }
-
-# Sometimes, it takes more than 10min for the connection to become available
-# Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
-# https://github.com/hashicorp/terraform-provider-aws/issues/26335
-
-resource "aws_dx_connection_confirmation" "confirmation" {
-  provider      = aws
-  connection_id = data.aws_dx_connection.current.id
-
-  lifecycle {
-    ignore_changes = [
-      connection_id
-    ]
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = var.aws_region1
+    aws_vif_type     = "transit"
+    aws_gateways {
+      type = "directconnect"
+      id   = aws_dx_gateway.direct_connect_gw_1.id
+    }
+    aws_gateways {
+      type   = "transit"
+      id     = aws_ec2_transit_gateway.transit_gw_1.id
+      vpc_id = aws_vpc.vpc_1.id
+    }
+    bgp_settings {
+      multihop_ttl   = var.pf_crbs_mhttl
+      remote_asn     = var.amazon_side_asn1
+      orlonger       = var.pf_crbs_orlonger
+      prefixes {
+        prefix = var.gcp_subnet_cidr1
+        type   = "out" # Allowed Prefixes to Cloud
+      }
+      prefixes {
+        prefix = var.aws_vpc_cidr1
+        type   = "in" # Allowed Prefixes from Cloud
+      }
+    }
   }
 }
-
-# From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
-  provider       = packetfabric
-  circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_aws.crc_1.id
-  address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
-  remote_asn     = var.amazon_side_asn1
-  orlonger       = var.pf_crbs_orlonger
-  remote_address = aws_dx_transit_virtual_interface.direct_connect_vip_1.amazon_address   # AWS side
-  l3_address     = aws_dx_transit_virtual_interface.direct_connect_vip_1.customer_address # PF side
-  md5            = aws_dx_transit_virtual_interface.direct_connect_vip_1.bgp_auth_key
-  prefixes {
-    prefix = var.gcp_subnet_cidr1
-    type   = "out" # Allowed Prefixes to Cloud
-  }
-  prefixes {
-    prefix = var.aws_vpc_cidr1
-    type   = "in" # Allowed Prefixes from Cloud
-  }
-}
-# output "packetfabric_cloud_router_bgp_session_crbs_1" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_1
-# }
