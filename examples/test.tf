@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.3.0"
+      version = ">= 1.5.0"
     }
   }
 }
@@ -897,8 +897,8 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
-#   google_pairing_key          = var.pf_crc_google_pairing_key
-#   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
+#   # google_pairing_key          = var.pf_crc_google_pairing_key
+#   # google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
 #   pop                         = var.pf_crc_pop2
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat

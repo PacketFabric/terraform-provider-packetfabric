@@ -49,8 +49,6 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider                    = packetfabric
   description                 = "hello world"
   circuit_id                  = packetfabric_cloud_router.cr1.id
-  google_pairing_key          = var.pf_crc_google_pairing_key
-  google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
   pop                         = "PDX2"
   speed                       = "1Gbps"
   maybe_nat                   = false
@@ -92,7 +90,8 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
 
 ### Optional
 
-- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
+- `bgp_settings_uuid` (String) BGP session ID generated when the cloud-side connection is provisioned by PacketFabric.
+- `cloud_settings` (Block List, Max: 1) Provision the cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
 - `labels` (List of String) Label value linked to an object.
@@ -149,9 +148,7 @@ Optional:
 - `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
 
 	Available range is 2 through 16.
-- `bgp_settings_id` (String)
 - `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
-- `google_advertised_ip_ranges` (List of String) An array of prefixes that will be advertised. Advertise Mode set to DEFAULT if not set.
 - `google_keepalive_interval` (Number) The Keepalive Interval. Must be between 20 and 60. Defaults: 20
 - `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
 

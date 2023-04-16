@@ -35,6 +35,12 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
 			},
+			"bgp_settings_uuid": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "BGP session ID generated when the cloud-side connection is provisioned by PacketFabric.",
+			},
 			"account_uuid": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -112,7 +118,7 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 			"cloud_settings": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				Description: "Provision the cloud side of the connection with PacketFabric.",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -203,11 +209,6 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"bgp_settings_id": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
 									"md5": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -433,7 +434,17 @@ func resourceGoogleCloudRouterConnCreate(ctx context.Context, d *schema.Resource
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
-
+			if _, ok := d.GetOk("cloud_settings"); ok {
+				// Extract the BGP settings UUID
+				resp, err := c.ReadCloudRouterConnection(cid.(string), resp.CloudCircuitID)
+				if err != nil {
+					diags = diag.FromErr(err)
+					return diags
+				}
+				if len(resp.BgpStateList) > 0 {
+					_ = d.Set("bgp_settings_uuid", resp.BgpStateList[0].BgpSettingsUUID)
+				}
+			}
 			if labels, ok := d.GetOk("labels"); ok {
 				diagnostics, created := createLabels(c, d.Id(), labels)
 				if !created {
@@ -481,6 +492,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 			var bgpSettingsUUID string
 			if len(resp.BgpStateList) > 0 {
 				bgpSettingsUUID = resp.BgpStateList[0].BgpSettingsUUID
+				_ = d.Set("bgp_settings_uuid", bgpSettingsUUID)
 			}
 			bgp, err := c.GetBgpSessionBy(cid.(string), cloudConnCID.(string), bgpSettingsUUID)
 			if err != nil {
@@ -501,7 +513,6 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 			}
 			cloudSettings["mtu"] = resp.CloudSettings.Mtu
 			bgpSettings := make(map[string]interface{})
-			bgpSettings["bgp_settings_id"] = bgpSettingsUUID
 			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
 			bgpSettings["remote_asn"] = bgp.RemoteAsn
 			bgpSettings["disabled"] = bgp.Disabled

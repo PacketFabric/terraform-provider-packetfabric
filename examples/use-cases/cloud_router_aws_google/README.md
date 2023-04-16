@@ -12,7 +12,7 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
-- [Google Cloud CLI Terraform Module](https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest)
+<!-- - [Google Cloud CLI Terraform Module](https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest) -->
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Demo video
@@ -40,9 +40,9 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - "time_sleep"
 - "aws_dx_connection_confirmation"
 - "google_compute_router"
-- "google_compute_interconnect_attachment"
+<!-- - "google_compute_interconnect_attachment" -->
 - "packetfabric_cloud_router_connection_google"
-- "packetfabric_cloud_router_bgp_session"
+<!-- - "packetfabric_cloud_router_bgp_session" -->
 - "google_compute_firewall"
 - "google_compute_instance"
 - "google_compute_network"
@@ -50,8 +50,8 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - "random_pet"
 
 **Estimated time:** ~10 min for Google, AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Transit Gateway
-
-**Note**: Because the BGP session is created automatically, we use gcloud terraform module to retreive the BGP addresses and set the PacketFabric Cloud Router ASN in the BGP settings in the Google Cloud Router. Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/11458), [vote](https://github.com/hashicorp/terraform-provider-google/issues/12624) and [vote](https://github.com/hashicorp/terraform-provider-google/issues/12630) for these issues on GitHub.
+<!-- 
+**Note**: Because the BGP session is created automatically, we use gcloud terraform module to retreive the BGP addresses and set the PacketFabric Cloud Router ASN in the BGP settings in the Google Cloud Router. Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/11458), [vote](https://github.com/hashicorp/terraform-provider-google/issues/12624) and [vote](https://github.com/hashicorp/terraform-provider-google/issues/12630) for these issues on GitHub. -->
 
 ## Before you begin
 
@@ -66,8 +66,8 @@ Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
-- [gcloud](https://cloud.google.com/sdk/docs/install)
-- [jq](https://stedolan.github.io/jq/download/)
+<!-- - [gcloud](https://cloud.google.com/sdk/docs/install) -->
+<!-- - [jq](https://stedolan.github.io/jq/download/) -->
 
 Ensure you have the following items available:
 
@@ -143,14 +143,14 @@ terraform destroy
 
 This seems to be a problem with Google Terraform Provider, run again the terraform destroy command and the destroy will complete correctly the 2nd try.
 Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/12631) for this issue on GitHub.
-
+<!-- 
 2. In case the ``gcloud_bgp_address`` module fails, check the error, fix it and manually remove the state before re-running the terraform config.
 
 ```sh
 terraform state rm module.gcloud_bgp_addresses
 terraform state rm module.gcloud_bgp_peer_update
-```
-
+``` -->
+<!-- 
 3. In case you get the following error:
 
 ```
@@ -196,4 +196,4 @@ data "packetfabric_cloud_router_connections" "current" {
 Then remove the `confirmation` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
 ```
 terraform apply
-```
+``` -->
