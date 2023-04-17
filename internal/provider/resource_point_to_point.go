@@ -212,11 +212,13 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 	// unsetFields: loa, autoneg, published_quote_line_uuid
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
