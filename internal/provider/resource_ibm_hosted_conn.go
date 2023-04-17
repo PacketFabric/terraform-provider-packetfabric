@@ -215,7 +215,9 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
 		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
 		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
