@@ -1126,16 +1126,3 @@ resource "random_pet" "name" {}
 #     events = ["metrics"]
 #   }
 # }
-
-# data "packetfabric_streaming_events" "example" {
-#   provider    = packetfabric
-#   subscription_id = packetfabric_streaming_events.example.id
-#   stream_time     = 1 # min
-# }
-# output "packetfabric_streaming_events_result" {
-#   value = data.packetfabric_streaming_events.example.events
-# }
-# resource "local_file" "packetfabric_streaming_events_output" {
-#   content  = jsonencode(data.packetfabric_streaming_events.example.events)
-#   filename = "packetfabric_streaming_events_output.json"
-# }
