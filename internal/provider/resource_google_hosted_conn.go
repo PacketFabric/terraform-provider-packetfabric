@@ -308,7 +308,9 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 				_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
 			}
 		}
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
