@@ -31,10 +31,10 @@ func updateLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 	return diag.Diagnostics{}, true
 }
 
-func getLabels(c *packetfabric.PFClient, circuitId string) (*packetfabric.LabelsResponse, error) {
+func getLabels(c *packetfabric.PFClient, circuitId string) ([]string, error) {
 	resp, err := c.GetLabels(circuitId)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return resp.Labels, nil
 }

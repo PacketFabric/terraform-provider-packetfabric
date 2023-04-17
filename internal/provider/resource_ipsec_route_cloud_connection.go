@@ -238,7 +238,9 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		// unsetFields: published_quote_line_uuid
 	}
 

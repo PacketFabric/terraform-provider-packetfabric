@@ -177,7 +177,9 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		if _, ok := d.GetOk("zone"); ok {
 			_ = d.Set("zone", resp.Zone)
 		}
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
 		} else {
@@ -185,11 +187,13 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
