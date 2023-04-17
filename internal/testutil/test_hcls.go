@@ -51,6 +51,7 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs."
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -567,6 +568,10 @@ type DHclDatasourceBillingResult struct {
 
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
+	HclResultBase
+}
+
+type DHclDatasourcePortRouterLogsResult struct {
 	HclResultBase
 }
 
@@ -1415,6 +1420,37 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		Pop:          pop,
 		Zone:         zone,
 		Vlan:         HostedCloudVlan1,
+	}
+}
+
+func DHclDataSourcePortRouterLogs() DHclDatasourcePortRouterLogsResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	resourceName, hclName := _generateResourceName(pfDataSourcePortRouterLogs)
+	dataSourcePortRouterLogsHcl := fmt.Sprintf(
+		DDataSourcePortRouterLogs,
+		hclName,
+		portDetails.RHclPort().ResourceReference,
+		os.Getenv(PF_DTS_TIME_FROM_KEY),
+		os.Getenv(PF_DTS_TIME_TO_KEY),
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort().Hcl, dataSourcePortRouterLogsHcl)
+
+	return DHclDatasourcePortRouterLogsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourcePortRouterLogs,
+			ResourceName: resourceName,
+		},
 	}
 }
 
