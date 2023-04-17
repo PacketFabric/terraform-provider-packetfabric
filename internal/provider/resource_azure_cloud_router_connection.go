@@ -168,7 +168,9 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
@@ -178,11 +180,13 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 		// unsetFields: published_quote_line_uuid
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
