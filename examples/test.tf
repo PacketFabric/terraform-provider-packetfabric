@@ -1130,4 +1130,3 @@ resource "random_pet" "name" {}
 #     command = "python3 packetfabric_streaming_events.py --subscription_uuid ${packetfabric_streaming_events.example.id} --duration_seconds 60 --output_file pf_events.json"
 #   }
 # }
-
