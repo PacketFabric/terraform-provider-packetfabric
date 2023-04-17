@@ -1102,3 +1102,40 @@ resource "random_pet" "name" {}
 #   value     = packetfabric_cloud_provider_credential_google.google_creds1
 #   sensitive = true
 # }
+
+# #######################################
+# ##### Streaming Events
+# #######################################
+
+# resource "packetfabric_streaming_events" "example" {
+#   provider    = packetfabric
+#   streams {
+#     type   = "customer"
+#     events = ["auth", "physical_interface"]
+#   }
+
+#   streams {
+#     type   = "port"
+#     ifds   = ["PF-AP-LAB1-2999387", "PF-AP-LAB6-3001683"]
+#     events = ["errors", "etherstats", "metrics", "optical"]
+#   }
+
+#   streams {
+#     type   = "vc"
+#     vcs    = ["PF-BC-NYC-LAB-3011206-PF&PF-AP-LAB6-3001683", "PF-BC-NYC-LAB-3011206-PF&PF-AP-LAB1-2999387"]
+#     events = ["metrics"]
+#   }
+# }
+
+# data "packetfabric_streaming_events" "example" {
+#   provider    = packetfabric
+#   subscription_id = packetfabric_streaming_events.example.id
+#   stream_time     = 1 # min
+# }
+# output "packetfabric_streaming_events_result" {
+#   value = data.packetfabric_streaming_events.example.events
+# }
+# resource "local_file" "packetfabric_streaming_events_output" {
+#   content  = jsonencode(data.packetfabric_streaming_events.example.events)
+#   filename = "packetfabric_streaming_events_output.json"
+# }

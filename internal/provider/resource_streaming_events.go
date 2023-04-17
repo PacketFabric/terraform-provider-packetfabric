@@ -2,9 +2,10 @@ package provider
 
 import (
 	"context"
+	"time"
+
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,17 +35,21 @@ func resourceStreamingEvents() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Type of events to subscribe to.",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"customer", "port", "vc"}, false),
+							Description:  "Type of events to subscribe to.\n\n\tEnum: [\"customer\" \"port\" \"vc\"]",
 						},
 						"events": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Categories of events to subscribe to. If not specified, then all event categories are assumed.",
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: "Categories of events to subscribe to based on the type. If not specified, then all event categories are assumed.\n\n\tEnum: " +
+								"\tFor \"customer\": [ \"auth\", \"document\", \"lag_interface\", \"logical_interface\", \"physical_interface\", \"outbound_cross_connect\", \"point_to_point\", \"rate_limit\", \"user\", \"virtual_circuit\" ]\n" +
+								"\tFor \"port\": [ \"errors\", \"etherstats\", \"metrics\", \"optical\" ]\n" +
+								"\tFor \"vc\": [ \"metrics\" ]",
 							Elem: &schema.Schema{
 								Type:         schema.TypeString,
-								ValidateFunc: validation.StringIsNotEmpty,
+								ValidateFunc: validation.StringInSlice([]string{"auth", "bgp", "cloud_connection", "cloud_router", "document", "lag_interface", "logical_interface", "physical_interface", "outbound_cross_connect", "point_to_point", "rate_limit", "user", "virtual_circuit", "errors", "etherstats", "metrics", "optical"}, false),
 							},
 						},
 						"vcs": {
@@ -69,9 +74,6 @@ func resourceStreamingEvents() *schema.Resource {
 				},
 				ForceNew: true,
 			},
-		},
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -117,12 +119,23 @@ func resourceStreamingEventsCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
+	warning := diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Streaming Events.",
+		Detail:   "Each subscription bundle is permanently associated with the session that created it and can only be streamed within that session. you must begin streaming your new subscription bundle within 5 minutes of creation or it will expire.",
+	}
+	diags = append(diags, warning)
+
 	d.SetId(resp.SubscriptionUUID)
 	return diags
 }
 
 func resourceStreamingEventsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diag.Diagnostics{}
+	return diag.Diagnostics{diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Streaming Events.",
+		Detail:   "Each subscription bundle is permanently associated with the session that created it and can only be streamed within that session. you must begin streaming your new subscription bundle within 5 minutes of creation or it will expire.",
+	}}
 }
 
 func resourceStreamingEventsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

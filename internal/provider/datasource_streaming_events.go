@@ -32,6 +32,7 @@ func datasourceStreamingEvents() *schema.Resource {
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
 				},
+				Computed: true,
 				Optional: true,
 			},
 			"stream_time": {
@@ -104,7 +105,7 @@ func datasourceStreamingEventsRead(ctx context.Context, d *schema.ResourceData, 
 		resp.StatusCode == http.StatusUnauthorized ||
 		resp.StatusCode == http.StatusNotFound {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return diag.FromErr(fmt.Errorf("Status: %d, body: %s", resp.StatusCode, body))
+		return diag.FromErr(fmt.Errorf("status: %d, body: %s", resp.StatusCode, body))
 	}
 
 	defer resp.Body.Close()
