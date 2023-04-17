@@ -1,6 +1,6 @@
 resource "aws_security_group" "ingress_all_1" {
   provider = aws
-  name     = "${var.tag_name}-${random_pet.name.id}-sg1"
+  name     = "${var.resource_name}-${random_pet.name.id}-sg1"
   vpc_id   = aws_vpc.vpc_1.id
   ingress {
     from_port   = 22
@@ -40,7 +40,7 @@ resource "aws_security_group" "ingress_all_1" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_network_interface" "nic1" {
   subnet_id       = aws_subnet.subnet_1.id
   security_groups = ["${aws_security_group.ingress_all_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   # need to wait for the route table to be attached to the VPC before we start building the EC2 instance
   depends_on = [
@@ -64,7 +64,7 @@ resource "aws_key_pair" "ssh_key_1" {
   key_name   = "ssh_key-${random_pet.name.id}"
   public_key = var.public_key
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -80,7 +80,7 @@ resource "aws_instance" "ec2_instance_1" {
   key_name  = aws_key_pair.ssh_key_1.id
   user_data = file("user-data-ubuntu.sh")
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -90,7 +90,7 @@ resource "aws_eip" "public_ip_1" {
   instance = aws_instance.ec2_instance_1.id
   vpc      = true
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 

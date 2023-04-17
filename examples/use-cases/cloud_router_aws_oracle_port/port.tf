@@ -1,7 +1,7 @@
 # Create a PacketFabric port
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1

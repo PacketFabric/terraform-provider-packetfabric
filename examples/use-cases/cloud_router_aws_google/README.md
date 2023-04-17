@@ -96,8 +96,8 @@ Set additional environment variables for AWS and Google:
 ```sh
 ### AWS
 export PF_AWS_ACCOUNT_ID="98765432"
-export AWS_ACCESS_KEY_ID = "ABCDEFGH"
-export AWS_SECRET_ACCESS_KEY = "secret"
+export AWS_ACCESS_KEY_ID="ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY="secret"
 
 ### Google
 export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gcloud module

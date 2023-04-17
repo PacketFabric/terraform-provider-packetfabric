@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
@@ -22,18 +22,18 @@ provider "ibm" {
 resource "random_pet" "name" {}
 
 resource "ibm_resource_group" "resource_group_1" {
-  name = "${var.tag_name}-${random_pet.name.id}"
+  name = "${var.resource_name}-${random_pet.name.id}"
 }
 
 resource "ibm_is_vpc" "vpc_1" {
-  name                      = "${var.tag_name}-${random_pet.name.id}"
+  name                      = "${var.resource_name}-${random_pet.name.id}"
   resource_group            = ibm_resource_group.resource_group_1.id
   address_prefix_management = "manual" # no default prefix will be created for each zone in this VPC.
 }
 
 resource "ibm_is_vpc_address_prefix" "vpc_prefix_1" {
   provider = ibm
-  name     = "${var.tag_name}-${random_pet.name.id}"
+  name     = "${var.resource_name}-${random_pet.name.id}"
   zone     = var.ibm_region1_zone1
   vpc      = ibm_is_vpc.vpc_1.id
   cidr     = var.ibm_vpc_cidr1
@@ -41,7 +41,7 @@ resource "ibm_is_vpc_address_prefix" "vpc_prefix_1" {
 
 resource "ibm_is_subnet" "subnet_1" {
   provider        = ibm
-  name            = "${var.tag_name}-${random_pet.name.id}"
+  name            = "${var.resource_name}-${random_pet.name.id}"
   resource_group  = ibm_resource_group.resource_group_1.id
   vpc             = ibm_is_vpc.vpc_1.id
   zone            = var.ibm_region1_zone1
@@ -64,7 +64,8 @@ data "ibm_is_subnet" "subnet_1" {
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
@@ -79,7 +80,8 @@ resource "packetfabric_port" "port_1" {
 # From the PacketFabric side: Create a IBM Hosted Connection 
 resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   ibm_bgp_asn = var.pf_cs_peer_asn
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
@@ -103,7 +105,7 @@ resource "time_sleep" "wait_ibm_connection" {
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {
   provider   = ibm
-  name       = "${var.tag_name}-${random_pet.name.id}"
+  name       = "${var.resource_name}-${random_pet.name.id}"
   depends_on = [time_sleep.wait_ibm_connection]
 }
 # output "ibm_dl_gateway" {
@@ -130,7 +132,7 @@ resource "ibm_dl_gateway_action" "confirmation" {
 
 data "ibm_dl_gateway" "after_approved" {
   provider   = ibm
-  name       = "${var.tag_name}-${random_pet.name.id}"
+  name       = "${var.resource_name}-${random_pet.name.id}"
   depends_on = [ibm_dl_gateway_action.confirmation]
 }
 # output "ibm_dl_gateway_after" {

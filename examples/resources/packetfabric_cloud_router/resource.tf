@@ -6,7 +6,3 @@ resource "packetfabric_cloud_router" "cr1" {
   regions  = ["US", "UK"]
   labels   = ["terraform", "dev"]
 }
-
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
-}

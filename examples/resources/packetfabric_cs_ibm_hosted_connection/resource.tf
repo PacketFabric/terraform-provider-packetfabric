@@ -8,6 +8,3 @@ resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
   speed       = "10Gbps"
   labels      = ["terraform", "dev"]
 }
-output "packetfabric_cs_ibm_hosted_connection" {
-  value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
-}

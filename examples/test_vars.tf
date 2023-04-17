@@ -166,7 +166,7 @@ variable "google_pairing_key" {
 }
 variable "google_vlan_attachment_name" {
   sensitive = true
-  default   = "vlan_attachment_name"
+  default   = "my_vlan_attachment"
 }
 variable "pf_cs_pop1" {
   type    = string
@@ -179,6 +179,23 @@ variable "pf_cs_speed1" {
 variable "pf_cs_vlan1" {
   type    = number
   default = 106
+}
+# Google Cloud Side Provisioning
+variable "pf_cs_google_region" {
+  type    = string
+  default = "us-west1"
+}
+variable "pf_cs_google_vpc_name" {
+  type    = string
+  default = "default"
+}
+variable "pf_cs_google_customer_asn" {
+  type    = number
+  default = 64517
+}
+variable "pf_cs_google_bgp_md5" {
+  type    = string
+  default = "changeme"
 }
 
 # AWS Hosted Connection

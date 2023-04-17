@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.3.0"
     }
   }
 }
@@ -15,7 +15,7 @@ resource "random_pet" "name" {}
 # Create a VC Marketplace Connection 
 resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_conn1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
   routing_id  = var.pf_z_side_routing_id
   market      = var.pf_z_side_market
   interface {
@@ -42,7 +42,7 @@ resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_con
 
 # resource "packetfabric_backbone_virtual_circuit" "vc_marketplace" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = var.pf_a_side_port_id
