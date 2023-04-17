@@ -43,13 +43,13 @@ func resourceStreamingEvents() *schema.Resource {
 						"events": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: "Categories of events to subscribe to based on the type. If not specified, then all event categories are assumed.\n\n\tEnum: " +
-								"\tFor \"customer\": [ \"auth\", \"document\", \"lag_interface\", \"logical_interface\", \"physical_interface\", \"outbound_cross_connect\", \"point_to_point\", \"rate_limit\", \"user\", \"virtual_circuit\" ]\n" +
-								"\tFor \"port\": [ \"errors\", \"etherstats\", \"metrics\", \"optical\" ]\n" +
-								"\tFor \"vc\": [ \"metrics\" ]",
+							Description: "Categories of events to subscribe to based on the type. If not specified, then all event categories are assumed.\n\n" +
+								"\tEnum: For \"customer\": [ \"auth\", \"document\", \"lag_interface\", \"logical_interface\", \"physical_interface\", \"outbound_cross_connect\", \"point_to_point\", \"rate_limit\", \"user\", \"virtual_circuit\" ]\n" +
+								"\tEnum: For \"port\": [ \"errors\", \"etherstats\", \"metrics\", \"optical\" ]\n" +
+								"\tEnum: For \"vc\": [ \"metrics\" ]",
 							Elem: &schema.Schema{
 								Type:         schema.TypeString,
-								ValidateFunc: validation.StringInSlice([]string{"auth", "bgp", "cloud_connection", "cloud_router", "document", "lag_interface", "logical_interface", "physical_interface", "outbound_cross_connect", "point_to_point", "rate_limit", "user", "virtual_circuit", "errors", "etherstats", "metrics", "optical"}, false),
+								ValidateFunc: validation.StringInSlice([]string{"auth", "document", "lag_interface", "logical_interface", "physical_interface", "outbound_cross_connect", "point_to_point", "rate_limit", "user", "virtual_circuit", "errors", "etherstats", "metrics", "optical"}, false),
 							},
 						},
 						"vcs": {

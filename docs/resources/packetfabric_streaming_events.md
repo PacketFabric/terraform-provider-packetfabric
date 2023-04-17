@@ -142,9 +142,9 @@ Optional:
 
 - `events` (List of String) Categories of events to subscribe to based on the type. If not specified, then all event categories are assumed.
 
-	Enum: 	For "customer": [ "auth", "document", "lag_interface", "logical_interface", "physical_interface", "outbound_cross_connect", "point_to_point", "rate_limit", "user", "virtual_circuit" ]
-	For "port": [ "errors", "etherstats", "metrics", "optical" ]
-	For "vc": [ "metrics" ]
+	Enum: For "customer": [ "auth", "document", "lag_interface", "logical_interface", "physical_interface", "outbound_cross_connect", "point_to_point", "rate_limit", "user", "virtual_circuit" ]
+	Enum: For "port": [ "errors", "etherstats", "metrics", "optical" ]
+	Enum: For "vc": [ "metrics" ]
 - `ifds` (List of String) Specific ports you wish to subscribe to, identified by port circuit IDs. If none are supplied, then all ports to which the customer has access are assumed.
 - `vcs` (List of String) Specific logical interfaces you wish to subscribe to, each identified by a combination of the virtual circuit ID and port circuit ID associated with the logical interface. If none are supplied, then all logical interfaces to which the customer has access are assumed.
 
