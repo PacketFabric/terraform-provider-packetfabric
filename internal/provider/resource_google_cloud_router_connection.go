@@ -174,7 +174,9 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)

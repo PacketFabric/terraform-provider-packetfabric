@@ -132,7 +132,9 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			regions = append(regions, region.Code)
 		}
 		_ = d.Set("regions", regions)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 
 	if _, ok := d.GetOk("labels"); ok {
@@ -166,7 +168,9 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
-	_ = d.Set("po_number", resp.PONumber)
+	if d.HasChange("po_number") {
+		_ = d.Set("po_number", resp.PONumber)
+	}
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
