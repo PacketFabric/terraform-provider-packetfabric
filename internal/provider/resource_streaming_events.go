@@ -38,7 +38,7 @@ func resourceStreamingEvents() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"customer", "port", "vc"}, false),
-							Description:  "Type of events to subscribe to.\n\n\tEnum: [\"customer\" \"port\" \"vc\"]",
+							Description:  "Type of events to subscribe to.\n\n\tEnum: [\"customer\", \"port\", \"vc\"]",
 						},
 						"events": {
 							Type:     schema.TypeList,

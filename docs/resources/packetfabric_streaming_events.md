@@ -82,7 +82,7 @@ Required:
 
 - `type` (String) Type of events to subscribe to.
 
-	Enum: ["customer" "port" "vc"]
+	Enum: ["customer", "port", "vc"]
 
 Optional:
 
