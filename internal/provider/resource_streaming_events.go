@@ -99,12 +99,14 @@ func resourceStreamingEventsCreate(ctx context.Context, d *schema.ResourceData, 
 			Events: getStringListData(streamData["events"].([]interface{})),
 		}
 
-		if len(streamData["vcs"].([]interface{})) > 0 {
-			payload.VCS = getStringListData(streamData["vcs"].([]interface{}))
+		vcs := streamData["vcs"].([]interface{})
+		if len(vcs) > 0 {
+			payload.VCS = getStringListData(vcs)
 		}
 
-		if len(streamData["ifds"].([]interface{})) > 0 {
-			payload.IFDs = getStringListData(streamData["ifds"].([]interface{}))
+		ifds := streamData["ifds"].([]interface{})
+		if len(ifds) > 0 {
+			payload.IFDs = getStringListData(ifds)
 		}
 
 		streamsData = append(streamsData, payload)
