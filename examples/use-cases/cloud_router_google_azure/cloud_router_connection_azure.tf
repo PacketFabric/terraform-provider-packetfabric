@@ -29,8 +29,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   circuit_id        = packetfabric_cloud_router.cr.id
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   speed             = var.pf_crc_speed
-  maybe_nat         = var.pf_crc_maybe_nat
-  is_public         = var.pf_crc_is_public
 }
 
 # Get the VLAN ID from PacketFabric

@@ -7,6 +7,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   pop         = var.pf_crc_pop1
   zone        = var.pf_crc_zone1
   speed       = var.pf_crc_speed1
+  # Cloud side provisioning
   cloud_settings {
     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
     aws_region       = var.aws_region1

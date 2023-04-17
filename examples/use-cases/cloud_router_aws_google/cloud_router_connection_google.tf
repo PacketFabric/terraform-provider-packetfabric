@@ -1,16 +1,3 @@
-# From the Google side: Create a Google Cloud Router with ASN 16550.
-resource "google_compute_router" "google_router_1" {
-  provider = google
-  name     = "${var.resource_name}-${random_pet.name.id}"
-  network  = google_compute_network.vpc_1.id
-  bgp {
-    # You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
-    asn               = var.gcp_side_asn1
-    advertise_mode    = "CUSTOM"
-    advertised_groups = ["ALL_SUBNETS"]
-  }
-}
-
 resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-google"
@@ -25,14 +12,13 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
   circuit_id                  = packetfabric_cloud_router.cr.id
   pop                         = var.pf_crc_pop2
   speed                       = var.pf_crc_speed
-  maybe_nat                   = var.pf_crc_maybe_nat
-  # for cloud side provisioning - optional
+  # Cloud side provisioning
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = var.pf_cs_google_region
     google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
-    google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
-    google_vpc_name                 = var.pf_cs_google_vpc_name
+    google_cloud_router_name        = google_compute_router.google_router_1.name
+    google_vpc_name                 = google_compute_network.vpc_1.name
     google_edge_availability_domain = 1
     bgp_settings {
       multihop_ttl   = var.pf_crbs_mhttl
