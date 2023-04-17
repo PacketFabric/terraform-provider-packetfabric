@@ -122,13 +122,3 @@ func datasourceStreamingEventsRead(ctx context.Context, d *schema.ResourceData, 
 	}
 	return diags
 }
-
-func setFields(d *schema.ResourceData, event packetfabric.StreamingEventsGetResponse) {
-	events := d.Get("events")
-	var eventsData []string
-	for _, eventData := range events.([]interface{}) {
-		eventsData = append(eventsData, eventData.(string))
-	}
-	eventsData = append(eventsData, event.Event)
-	_ = d.Set("events", eventsData)
-}
