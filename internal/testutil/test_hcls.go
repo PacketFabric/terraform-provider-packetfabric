@@ -100,8 +100,10 @@ type RHclCloudRouterResult struct {
 type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
 	AwsAccountID string
+	AccountUuid  string
 	Desc         string
 	Pop          string
+	Speed        string
 }
 
 // packetfabric_cloud_router_bgp_session
@@ -229,6 +231,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	}
 
 	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+	fmt.Printf("[DEBUG] pop: %v\n", pop)
 
 	hclCloudRouterRes := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfCloudRouterConnAws)
@@ -250,6 +253,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 			ResourceName: resourceName,
 		},
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		AccountUuid:  os.Getenv(PF_ACCOUNT_ID_KEY),
+		Speed:        CloudRouterConnAwsSpeed,
 		Pop:          pop,
 	}
 }
@@ -335,44 +340,6 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		},
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
-		Pop:          pop,
-	}
-}
-
-// packetfabric_cloud_router_connection_aws
-func RHclCloudRouterConnectioAws() RHclCloudRouterConnectionAWSResult {
-
-	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
-	if pop == "" {
-		log.Fatalf("Resource: %s: %s", pfCsAwsHostedConn, "pop cannot be empty")
-	}
-
-	cloudRouterResult := RHclCloudRouter()
-	resourceName, hclName := _generateResourceName(pfCsAwsHostedConn)
-	uniqueDesc := _generateUniqueNameOrDesc(pfCsAwsHostedConn)
-
-	crConnectionAwsHcl := fmt.Sprintf(
-		RResourceCloudRouterConnectionAws,
-		hclName,
-		cloudRouterResult.ResourceName,
-		os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		uniqueDesc,
-		pop,
-		os.Getenv(PF_CRC_SPEED_KEY))
-
-	hcl := fmt.Sprintf("%s\n%s", cloudRouterResult.Hcl, crConnectionAwsHcl)
-
-	return RHclCloudRouterConnectionAWSResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfCsAwsHostedConn,
-			ResourceName: resourceName,
-		},
-		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		Desc:         uniqueDesc,
-		AccountUuid:  os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		Speed:        os.Getenv(PF_CRC_SPEED_KEY),
 		Pop:          pop,
 	}
 }
