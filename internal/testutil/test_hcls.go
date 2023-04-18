@@ -51,6 +51,7 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+const pfDataSourcePortVlans = "data.packetfabric_port_vlans."
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -567,6 +568,10 @@ type DHclDatasourceBillingResult struct {
 
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
+	HclResultBase
+}
+
+type DHclDatasourcePortVlansResult struct {
 	HclResultBase
 }
 
@@ -1476,6 +1481,35 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		Speed:       HostedCloudSpeed,
 		Pop:         pop,
 		Vlan:        HostedCloudVlan2,
+	}
+}
+
+func DHclDataSourcePortVlans() DHclDatasourcePortVlansResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	resourceName, hclName := _generateResourceName(pfDataSourcePortVlans)
+	portVlansHcl := fmt.Sprintf(
+		DDataSourcePortVlans,
+		hclName,
+		portDetails.RHclPort().ResourceReference)
+
+	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort().Hcl, portVlansHcl)
+
+	return DHclDatasourcePortVlansResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourcePortVlans,
+			ResourceName: resourceName,
+		},
 	}
 }
 
