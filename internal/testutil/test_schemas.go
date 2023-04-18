@@ -405,3 +405,6 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+const DDatasourceVcRequests = `data "packetfabric_marketplace_service_port_requests" "%s" {
+  type        = "%s"
+}`
