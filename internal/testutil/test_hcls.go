@@ -95,10 +95,9 @@ type RHclPortResult struct {
 // packetfabric_cloud_router
 type RHclCloudRouterResult struct {
 	HclResultBase
-	AwsAccountID string
-	Asn          int
-	Capacity     string
-	Regions      []string
+	Asn      int
+	Capacity string
+	Regions  []string
 }
 
 // packetfabric_cloud_router_connection_aws
@@ -201,7 +200,8 @@ func RHclCloudRouter() RHclCloudRouterResult {
 		CloudRouterASN,
 		CloudRouterCapacity,
 		CloudRouterRegionUS,
-		CloudRouterRegionUK)
+		CloudRouterRegionUK,
+		resourceName)
 
 	return RHclCloudRouterResult{
 		HclResultBase: HclResultBase{
@@ -209,10 +209,9 @@ func RHclCloudRouter() RHclCloudRouterResult {
 			Resource:     pfCloudRouter,
 			ResourceName: resourceName,
 		},
-		AwsAccountID: os.Getenv(PF_ACCOUNT_ID_KEY),
-		Asn:          CloudRouterASN,
-		Capacity:     CloudRouterCapacity,
-		Regions:      []string{CloudRouterRegionUK, CloudRouterRegionUS},
+		Asn:      CloudRouterASN,
+		Capacity: CloudRouterCapacity,
+		Regions:  []string{CloudRouterRegionUS, CloudRouterRegionUK},
 	}
 }
 
