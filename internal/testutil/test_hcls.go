@@ -188,7 +188,8 @@ func RHclCloudRouter() RHclCloudRouterResult {
 		CloudRouterASN,
 		CloudRouterCapacity,
 		CloudRouterRegionUS,
-		CloudRouterRegionUK)
+		CloudRouterRegionUK,
+		resourceName)
 
 	return RHclCloudRouterResult{
 		HclResultBase: HclResultBase{
