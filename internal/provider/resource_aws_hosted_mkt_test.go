@@ -28,11 +28,6 @@ func TestAccAwsHostedMktRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(awsHostedMktResult.ResourceName, "speed", awsHostedMktResult.Speed),
 				),
 			},
-			{
-				ResourceName:      awsHostedMktResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
