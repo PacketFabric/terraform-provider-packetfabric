@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDataActivityLog = "data.packetfabric_activitylog"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -115,6 +116,11 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// data packetfabric_activitylog
+type DHclDatasourceActivityLogResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -325,6 +331,23 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
+
+	resourceName, hclName := _generateResourceName(pfDataActivityLog)
+	hcl := fmt.Sprintf(
+		DDatasourceActivityLog,
+		hclName,
+	)
+
+	return DHclDatasourceActivityLogResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataActivityLog,
+			ResourceName: resourceName,
+		},
 	}
 }
 
