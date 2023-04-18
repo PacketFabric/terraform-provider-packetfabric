@@ -92,18 +92,16 @@ func resourceBgpSession() *schema.Resource {
 				Description:  "The TTL of this session. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).\n\n\tAvailable range is 1 through 4. ",
 			},
 			"local_preference": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
-				Description:  "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     0,
+				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
 			},
 			"med": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
-				Description:  "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     0,
+				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
 			},
 			"community": {
 				Type:        schema.TypeInt,
@@ -241,18 +239,16 @@ func resourceBgpSession() *schema.Resource {
 							Description:  "The BGP prepend value of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
 						},
 						"med": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(1, 4294967295),
-							Description:  "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Default:     0,
+							Description: "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 						"local_preference": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(1, 4294967295),
-							Description:  "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Default:     0,
+							Description: "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 						"type": {
 							Type:         schema.TypeString,
@@ -417,8 +413,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	var diags diag.Diagnostics
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "BGP session cannot be deleted.",
-		Detail:   "It will be deleted together with the Cloud Router Connection.",
+		Summary:  "BGP session will be deleted together with the Cloud Router Connection.",
 	})
 	d.SetId("")
 	return diags

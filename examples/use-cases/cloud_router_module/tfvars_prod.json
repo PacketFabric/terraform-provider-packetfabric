@@ -5,13 +5,21 @@
             "capacity": "10Gbps",
             "regions": [
                 "US"
+            ],
+            "labels": [
+                "terraform",
+                "prod"
             ]
         }
     },
     "aws_connections": {
         "prod-environment": {
             "speed": "1Gbps",
-            "pop": "PDX2"
+            "pop": "PDX2",
+            "labels": [
+                "terraform",
+                "prod"
+            ]
         }
     },
     "gcp_connections": {
@@ -19,7 +27,11 @@
             "pairing_key": "redacted",
             "vlan_attachment_name": "prod-env-interconnect",
             "speed": "1Gbps",
-            "pop": "WDC1"
+            "pop": "WDC1",
+            "labels": [
+                "terraform",
+                "prod"
+            ]
         }
     },
     "aws_bgp_sessions": {

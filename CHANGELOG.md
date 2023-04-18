@@ -1,3 +1,33 @@
+## 1.3.0  (April 5, 2023)
+
+FEATURES:
+
+* resource: packetfabric_cloud_provider_credential_aws (#376)
+* resource: packetfabric_cloud_provider_credential_google (#376)
+* resource: [UPDATED] packetfabric_cs_aws_hosted_connection (#408)
+* resource: [UPDATED] packetfabric_cs_google_hosted_connection (#414)
+* data-source: [UPDATED] packetfabric_cs_aws_hosted_connection (#408)
+* data-source: [UPDATED] packetfabric_cs_google_hosted_connection (#414)
+* data-source: packetfabric_cs_hosted_connection_router_config (#409)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add validation on BGP prefix in/ou in BGP session resource (#393)
+* Update Read function for packetfabric_cloud_router_bgp_session (#365)
+* Add defaults and additional validation to packetfabric_cloud_router_bgp_session (#365)
+* Add cloud_router_circuit_id to QuickConnect import request (#400)
+* Add pending_approval to QuickConnect return filters response (#400)
+* Add validation for subscription_term and longhaul_type (#401)
+* Add validation for Marketplace Service creation on Categories (#410)
+* Add new labels page under Guides in Terraform Registry Documentation (#396)
+
+BUG FIXES:
+
+* Handling svlan unset creating config diff with terraform plan after VC creation (#387)
+* Correct pop set in the cloud router connection read functions (#399)
+* Adding back importing page under Guides (#394)
+* Fix po_number reading in all PacketFabric hosted connection (#408)
+
 ## 1.2.1  (March 21, 2023)
 
 IMPROVEMENTS/ENHANCEMENTS:

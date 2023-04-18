@@ -13,10 +13,10 @@ import (
 func resourceAwsRequestHostConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
+			Update: schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceAwsReqHostConnCreate,
 		UpdateContext: resourceAwsReqHostConnUpdate,
@@ -107,9 +107,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				},
 			},
 			"cloud_settings": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"credentials_uuid": {
@@ -144,10 +145,9 @@ func resourceAwsRequestHostConn() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_asn": {
-										Type:         schema.TypeInt,
-										Required:     true,
-										ValidateFunc: validatePublicOrPrivateASN,
-										Description:  "The customer ASN of this connection.",
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
 									},
 									"l3_address": {
 										Type:         schema.TypeString,
@@ -209,10 +209,9 @@ func resourceAwsRequestHostConn() *schema.Resource {
 										Description:  "The ID of the AWS Gateway to be used.",
 									},
 									"asn": {
-										Type:         schema.TypeInt,
-										Optional:     true,
-										ValidateFunc: validatePrivateASN,
-										Description:  "The ASN of the AWS Gateway to be used.",
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: "The ASN of the AWS Gateway to be used.",
 									},
 									"vpc_id": {
 										Type:         schema.TypeString,
@@ -308,12 +307,13 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("po_number", resp.PONumber)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
@@ -401,7 +401,7 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	}
 	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
 		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
-		hostedAwsConn.CloudSettings = &packetfabric.CloudSettingsHosted{}
+		hostedAwsConn.CloudSettings = &packetfabric.CloudSettings{}
 		hostedAwsConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
 		if awsRegion, ok := cs["aws_region"]; ok {
 			hostedAwsConn.CloudSettings.AwsRegion = awsRegion.(string)
@@ -413,9 +413,7 @@ func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 		if bgpSettings, ok := cs["bgp_settings"]; ok {
 			bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
 			hostedAwsConn.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
-			if customerAsn, ok := bgpSettingsMap["customer_asn"]; ok {
-				hostedAwsConn.CloudSettings.BgpSettings.CustomerAsn = customerAsn.(int)
-			}
+			hostedAwsConn.CloudSettings.BgpSettings.CustomerAsn = bgpSettingsMap["customer_asn"].(int)
 			hostedAwsConn.CloudSettings.BgpSettings.AddressFamily = bgpSettingsMap["address_family"].(string)
 		}
 		if awsGateways, ok := cs["aws_gateways"]; ok {
