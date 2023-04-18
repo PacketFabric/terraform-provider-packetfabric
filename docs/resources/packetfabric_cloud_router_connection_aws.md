@@ -139,12 +139,90 @@ Optional:
 <a id="nestedblock--cloud_settings--bgp_settings"></a>
 ### Nested Schema for `cloud_settings.bgp_settings`
 
+Required:
+
+- `prefixes` (Block Set, Min: 1) The list of BGP prefixes (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--prefixes))
+
 Optional:
 
 - `address_family` (String) The address family that should be used. Defaults: ipv4
+- `as_prepend` (Number) The BGP prepend value for this instance. It is used when type = out.
+
+	Available range is 1 through 5.
+- `bfd_interval` (Number) If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.
+
+	Available range is 3 through 30000.
+- `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
+
+	Available range is 2 through 16.
+- `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
 - `l3_address` (String) The prefix of the customer router. Required for public VIFs.
-- `md5` (String) The MD5 value of the authenticated BGP sessions.
+- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
+
+	Available range is 1 through 4294967295.
+- `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
+- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.
+
+	Available range is 1 through 4294967295.
+- `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--nat))
+- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes. Defaults: false
 - `remote_address` (String) The prefix of the remote router. Required for public VIFs.
+
+<a id="nestedblock--cloud_settings--bgp_settings--prefixes"></a>
+### Nested Schema for `cloud_settings.bgp_settings.prefixes`
+
+Required:
+
+- `prefix` (String) The actual IP Prefix of this instance.
+- `type` (String) Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).
+		Enum: in, out.
+
+Optional:
+
+- `as_prepend` (Number) The BGP prepend value of this prefix. It is used when type = out.
+
+	Available range is 1 through 5.
+- `local_preference` (Number) The local_preference of this prefix. It is used when type = in.
+
+	Available range is 1 through 4294967295.
+- `match_type` (String) The match type of this prefix.
+
+	Enum: `"exact"` `"orlonger"` Defaults: exact
+- `med` (Number) The MED of this prefix. It is used when type = out.
+
+	Available range is 1 through 4294967295.
+
+
+<a id="nestedblock--cloud_settings--bgp_settings--nat"></a>
+### Nested Schema for `cloud_settings.bgp_settings.nat`
+
+Optional:
+
+- `direction` (String) If using NAT overload, the direction of the NAT connection. 
+		Enum: output, input. Defaults: output
+- `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--nat--dnat_mappings))
+- `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
+		Enum: overload, inline_dnat. Defaults: overload
+- `pool_prefixes` (List of String) If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.
+
+	Example: 10.0.0.0/32
+- `pre_nat_sources` (List of String) If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.
+
+	Example: 10.0.0.0/24
+
+<a id="nestedblock--cloud_settings--bgp_settings--nat--dnat_mappings"></a>
+### Nested Schema for `cloud_settings.bgp_settings.nat.dnat_mappings`
+
+Required:
+
+- `private_prefix` (String) The private prefix of this DNAT mapping.
+- `public_prefix` (String) The public prefix of this DNAT mapping.
+
+Optional:
+
+- `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
+
+
 
 
 <a id="nestedblock--cloud_settings--aws_gateways"></a>

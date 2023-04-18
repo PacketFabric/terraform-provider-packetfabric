@@ -151,40 +151,6 @@ func resourceRouterConnectionAws() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"private", "transit", "public"}, false),
 							Description:  "The type of VIF to use for this connection.",
 						},
-						"bgp_settings": {
-							Type:     schema.TypeList,
-							Required: true,
-							MaxItems: 1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"l3_address": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringIsNotEmpty,
-										Description:  "The prefix of the customer router. Required for public VIFs.",
-									},
-									"remote_address": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringIsNotEmpty,
-										Description:  "The prefix of the remote router. Required for public VIFs.",
-									},
-									"address_family": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										Default:      "ipv4",
-										Description:  "The address family that should be used. ",
-										ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
-									},
-									"md5": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringIsNotEmpty,
-										Description:  "The MD5 value of the authenticated BGP sessions.",
-									},
-								},
-							},
-						},
 						"aws_gateways": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -226,6 +192,201 @@ func resourceRouterConnectionAws() *schema.Resource {
 										Optional:    true,
 										Elem:        &schema.Schema{Type: schema.TypeString},
 										Description: "An array of subnet IDs to associate with this Gateway. Required for transit Gateways.",
+									},
+								},
+							},
+						},
+						"bgp_settings": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"md5": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The MD5 value of the authenticated BGP sessions. Required for AWS.",
+									},
+									"l3_address": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the customer router. Required for public VIFs.",
+									},
+									"remote_address": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The prefix of the remote router. Required for public VIFs.",
+									},
+									"address_family": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Default:      "ipv4",
+										Description:  "The address family that should be used. ",
+										ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
+									},
+									"local_preference": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     0,
+										Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+									},
+									"med": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     0,
+										Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+									},
+									"as_prepend": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(1, 5),
+										Description:  "The BGP prepend value for this instance. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
+									},
+									"orlonger": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Whether to use exact match or longer for all prefixes. ",
+									},
+									"bfd_interval": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(3, 30000),
+										Description:  "If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.\n\n\tAvailable range is 3 through 30000. ",
+									},
+									"bfd_multiplier": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      0,
+										ValidateFunc: validation.IntBetween(2, 16),
+										Description:  "If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.\n\n\tAvailable range is 2 through 16. ",
+									},
+									"disabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Whether this BGP session is disabled. ",
+									},
+									"nat": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Translate the source or destination IP address.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"pre_nat_sources": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
+													Elem: &schema.Schema{
+														Type:        schema.TypeString,
+														Description: "IP prefix using CIDR format.",
+													},
+												},
+												"pool_prefixes": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
+													Elem: &schema.Schema{
+														Type:        schema.TypeString,
+														Description: "IP prefix using CIDR format.",
+													},
+												},
+												"direction": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "output",
+													ValidateFunc: validation.StringInSlice([]string{"output", "input"}, true),
+													Description:  "If using NAT overload, the direction of the NAT connection. \n\t\tEnum: output, input. ",
+												},
+												"nat_type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "overload",
+													ValidateFunc: validation.StringInSlice([]string{"overload", "inline_dnat"}, true),
+													Description:  "The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). \n\t\tEnum: overload, inline_dnat. ",
+												},
+												"dnat_mappings": {
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Description: "Translate the destination IP address.",
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"private_prefix": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The private prefix of this DNAT mapping.",
+															},
+															"public_prefix": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The public prefix of this DNAT mapping.",
+															},
+															"conditional_prefix": {
+																Type:         schema.TypeString,
+																Optional:     true,
+																ValidateFunc: validateIPAddressWithPrefix,
+																Description:  "The conditional prefix prefix of this DNAT mapping.",
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"prefixes": {
+										Type:        schema.TypeSet,
+										Required:    true,
+										Description: "The list of BGP prefixes",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"prefix": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: validateIPAddressWithPrefix,
+													Description:  "The actual IP Prefix of this instance.",
+												},
+												"match_type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Default:      "exact",
+													ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
+													Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
+												},
+												"as_prepend": {
+													Type:         schema.TypeInt,
+													Optional:     true,
+													Default:      0,
+													ValidateFunc: validation.IntBetween(1, 5),
+													Description:  "The BGP prepend value of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
+												},
+												"med": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Default:     0,
+													Description: "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+												},
+												"local_preference": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Default:     0,
+													Description: "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+												},
+												"type": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
+													Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
+												},
+											},
+										},
 									},
 								},
 							},
