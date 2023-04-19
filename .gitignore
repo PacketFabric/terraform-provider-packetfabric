@@ -30,6 +30,7 @@ terraform.tfstate.backup
 /dist
 terraform.tfstate.d/
 .idea
+.infracost
 
 # Secret
 secret*.tfvars
