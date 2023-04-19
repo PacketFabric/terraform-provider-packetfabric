@@ -234,7 +234,9 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("phase1_lifetime", resp2.Phase1Lifetime)
 		_ = d.Set("phase2_pfs_group", resp2.Phase2PfsGroup)
 		_ = d.Set("phase2_encryption_algo", resp2.Phase2EncryptionAlgo)
-		_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
+		if _, ok := d.GetOk("phase2_authentication_algo"); ok {
+			_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
+		}
 		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
