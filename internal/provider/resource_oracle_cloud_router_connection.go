@@ -169,7 +169,9 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		_ = d.Set("zone", resp.Zone)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp.Zone)
+		}
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
 		}

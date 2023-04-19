@@ -165,7 +165,9 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("port_circuit_id", resp.PortCircuitID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("vlan", resp.Vlan)
+		if _, ok := d.GetOk("vlan"); ok {
+			_ = d.Set("vlan", resp.Vlan)
+		}
 		_ = d.Set("speed", resp.Speed)
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
