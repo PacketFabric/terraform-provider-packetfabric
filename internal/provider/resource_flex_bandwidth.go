@@ -120,7 +120,9 @@ func resourceFlexBandwidthRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("capacity", capacityMbps_string)
 		_ = d.Set("used_capacity_mbps", resp.UsedCapacityMbps)
 		_ = d.Set("available_capacity_mbps", resp.AvailableCapacityMbps)
-		_ = d.Set("po_number", resp.PoNumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 	return diags
 }
@@ -185,7 +187,7 @@ func extractFlexBandwidth(d *schema.ResourceData) packetfabric.FlexBandwidth {
 		flex.Capacity = capacity.(string)
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
-		flex.PoNumber = poNumber.(string)
+		flex.PONumber = poNumber.(string)
 	}
 	return flex
 }

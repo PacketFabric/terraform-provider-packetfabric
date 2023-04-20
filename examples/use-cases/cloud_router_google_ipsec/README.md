@@ -11,6 +11,7 @@ Terraform providers used: PacketFabric VPN connection and Google.
 - [PacketFabric Cloud Router Docs](https://docs.packetfabric.com/cr/)
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
+- [Google Cloud CLI Terraform Module](https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Terraform resources & data-sources used
@@ -43,7 +44,7 @@ Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
-- [gcloud](https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest)
+- [gcloud](https://cloud.google.com/sdk/docs/install)
 - [jq](https://stedolan.github.io/jq/download/)
 
 Ensure you have the following items available:

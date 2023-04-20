@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.3.0"
+      version = ">= 1.4.0"
     }
   }
 }
@@ -1101,4 +1101,32 @@ resource "random_pet" "name" {}
 # output "packetfabric_cloud_provider_credential_google" {
 #   value     = packetfabric_cloud_provider_credential_google.google_creds1
 #   sensitive = true
+# }
+
+# #######################################
+# ##### Streaming Events
+# #######################################
+
+# resource "packetfabric_streaming_events" "example" {
+#   provider    = packetfabric
+#   streams {
+#     type   = "customer"
+#     events = ["auth", "physical_interface"]
+#   }
+#   streams {
+#     type   = "port"
+#     ifds   = ["PF-AP-LAB1-2999387", "PF-AP-LAB6-3001683"]
+#     events = ["errors", "etherstats", "metrics", "optical"]
+#   }
+#   # streams {
+#   #   type   = "vc"
+#   #   vcs    = ["PF-BC-NYC-LAB-3011206-PF&PF-AP-LAB6-3001683", "PF-BC-NYC-LAB-3011206-PF&PF-AP-LAB1-2999387"]
+#   #   events = ["metrics"]
+#   # }
+# }
+
+# resource "null_resource" "stream_events" {
+#   provisioner "local-exec" {
+#     command = "python3 packetfabric_streaming_events.py --subscription_uuid ${packetfabric_streaming_events.example.id} --duration_seconds 60 --output_file pf_events.json"
+#   }
 # }

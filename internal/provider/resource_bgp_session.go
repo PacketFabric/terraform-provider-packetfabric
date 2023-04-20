@@ -413,8 +413,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	var diags diag.Diagnostics
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "BGP session cannot be deleted.",
-		Detail:   "It will be deleted together with the Cloud Router Connection.",
+		Summary:  "BGP session will be deleted together with the Cloud Router Connection.",
 	})
 	d.SetId("")
 	return diags
