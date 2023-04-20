@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsAwsHostedMktConn = "packetfabric_cs_aws_hosted_marketplace_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -37,6 +38,7 @@ const CloudRouterASN = 4556
 
 // packetfabric_cs_aws_hosted_connection
 // packetfabric_cloud_router_connection_aws
+// packetfabric_cs_aws_hosted_marketplace_connection
 const CloudRouterConnAwsSpeed = "50Mbps"
 const CloudRouterConnAwsVlan = 100
 
@@ -115,6 +117,14 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type RHclCSAwsHostedMarketplaceConnResult struct {
+	HclResultBase
+	RoutingID string
+	Market    string
+	Speed     string
+	Pop       string
 }
 
 // Patterns:
@@ -325,6 +335,35 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_aws_hosted_marketplace_connection
+func RHclCSAwsHostedMarketplaceConn() RHclCSAwsHostedMarketplaceConnResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resourceName, hclName := _generateResourceName(pfCsAwsHostedMktConn)
+	mktPop, _ := c.GetMarketplacePopByMarket(os.Getenv(PF_MARKET_KEY))
+	hcl := fmt.Sprintf(
+		RResourceCSAwsHostedMarketplaceConnection,
+		hclName,
+		os.Getenv(PF_ROUTING_ID_KEY),
+		os.Getenv(PF_MARKET_KEY),
+		CloudRouterConnAwsSpeed,
+		mktPop)
+	return RHclCSAwsHostedMarketplaceConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAwsHostedMktConn,
+			ResourceName: resourceName,
+		},
+		RoutingID: os.Getenv(PF_ROUTING_ID_KEY),
+		Market:    os.Getenv(PF_MARKET_KEY),
+		Speed:     CloudRouterConnAwsSpeed,
+		Pop:       mktPop,
 	}
 }
 

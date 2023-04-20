@@ -201,7 +201,7 @@ const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_con
 // Resource: packetfabric_cs_aws_hosted_marketplace_connection
 const RResourceCSAwsHostedMarketplaceConnection = `resource "packetfabric_cs_aws_hosted_marketplace_connection" "%s" {
   provider    = packetfabric
-  routing_id  = %s.id
+  routing_id  = "%s"
   market      = "%s"
   speed       = "%s"
   pop         = "%s"
