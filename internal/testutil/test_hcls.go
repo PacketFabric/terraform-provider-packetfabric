@@ -606,9 +606,8 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 	}
 
 	portDetails := PortDetails{
-		PFClient:          c,
-		DesiredSpeed:      portSpeed,
-		IsCloudConnection: true,
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
 	}
 
 	hclPortResult := portDetails.RHclPort()
