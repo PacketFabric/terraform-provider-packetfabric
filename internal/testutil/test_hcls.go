@@ -352,20 +352,6 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-func DHclAwsDedicatedConnection() DHclAwsDedicatedConnResult {
-
-	resourceName, hclName := _generateResourceName(pfDataAwsDedicatedConn)
-	hcl := fmt.Sprintf(DDatasourceAwsDedicatedConn, hclName)
-
-	return DHclAwsDedicatedConnResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataAwsDedicatedConn,
-			ResourceName: resourceName,
-		},
-	}
-}
-
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	c, err := _createPFClient()
@@ -408,6 +394,23 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		ServiceClass:     CSAwsDedicatedConnectionServiceClass,
 		Autoneg:          CSAwsDedicatedConnectionAutoneg,
 		Speed:            CSAwsDedicatedConnectionSpeed,
+	}
+}
+
+// packetfabric_cs_aws_dedicated_connection
+func DHclAwsDedicatedConnection() DHclAwsDedicatedConnResult {
+
+	resourceName, hclName := _generateResourceName(pfDataAwsDedicatedConn)
+	dedicatedConnHCL := fmt.Sprintf(DDatasourceAwsDedicatedConn, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", RHclCsAwsDedicatedConnection().Hcl, dedicatedConnHCL)
+
+	return DHclAwsDedicatedConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataAwsDedicatedConn,
+			ResourceName: resourceName,
+		},
 	}
 }
 
