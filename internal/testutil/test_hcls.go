@@ -636,8 +636,19 @@ func RHclPortLoa() RHclPortLoaResult {
 
 func DHclDataSourcePorts() DHclPortResult {
 
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
 	resourceName, hclName := _generateResourceName(pfDataPort)
-	hcl := fmt.Sprintf(DDataSourcePorts, hclName)
+	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort().Hcl, dataPortHcl)
 
 	return DHclPortResult{
 		HclResultBase: HclResultBase{
