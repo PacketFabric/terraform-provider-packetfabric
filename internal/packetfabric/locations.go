@@ -7,6 +7,7 @@ import (
 const locationsURI = "/v2/locations"
 const portAvailabilityURI = "/v2/locations/%s/port-availability"
 const locationsZonesURI = "/v2/locations/%s/zones"
+const mktServicesURI = "/v2/marketplace/services?market=%s"
 
 type Location struct {
 	Pop               string `json:"pop"`
@@ -77,4 +78,29 @@ func (c *PFClient) GetLocationsZones(pop string) ([]string, error) {
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) GetMarketplacePopByMarket(market string) (string, error) {
+	type MktServices []struct {
+		Services []struct {
+			Locations []string `json:"locations"`
+		} `json:"services"`
+		Links struct {
+			CustomerImage string `json:"customer_image"`
+		} `json:"_links"`
+	}
+	mktServices := make(MktServices, 0)
+	_, err := c.sendRequest(fmt.Sprintf(mktServicesURI, market), getMethod, nil, &mktServices)
+	if err != nil {
+		return "", err
+	}
+	if len(mktServices) == 0 {
+		return "", fmt.Errorf("empty marketplace services")
+	}
+	services := mktServices
+	if len(services) == 0 {
+		return "", fmt.Errorf("empty marketplace services locations")
+	}
+	locations := services[0].Services
+	return locations[0].Locations[0], nil
 }
