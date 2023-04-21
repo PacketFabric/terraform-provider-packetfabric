@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfIxVirtualCircuitMkt = "packetfabric_ix_virtual_circuit_marketplace"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,14 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+// packetfabric_ix_virtual_circuit_marketplace
+const IXVirtualCircuitMktAsn = 64545
+const IXVirtualCircuitMktUntagged = true
+const IXVirtualCircuitMktVlan = 100
+const IXVirtualCircuitMktLonghaulType = "dedicated"
+const IXVirtualCircuitMktSpeed = "50Mbps"
+const IXVirtualCircuitMktSubsTerm = 1
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -115,6 +124,19 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_ix_virtual_circuit_marketplace
+type RHclThirdPartyVirtualCircuitMktResult struct {
+	HclResultBase
+	Interface        RHclPortResult
+	Description      string
+	RoutingID        string
+	Market           string
+	Asn              int
+	LonghaulType     string
+	Speed            string
+	SubscriptionTerm int
 }
 
 // Patterns:
@@ -325,6 +347,54 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_ix_virtual_circuit_marketplace
+func RHclThirdPartyVirtualCircuitMkt() RHclThirdPartyVirtualCircuitMktResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+	portResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfIxVirtualCircuitMkt)
+	uniqueDesc := _generateUniqueNameOrDesc(pfIxVirtualCircuitMkt)
+
+	vcMktHcl := fmt.Sprintf(
+		RResourceIXVirtualCircuitMarketplace,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_ROUTING_ID_KEY),
+		os.Getenv(PF_MARKET_KEY),
+		IXVirtualCircuitMktAsn,
+		portResult.ResourceReference,
+		IXVirtualCircuitMktUntagged,
+		IXVirtualCircuitMktVlan,
+		IXVirtualCircuitMktLonghaulType,
+		IXVirtualCircuitMktSpeed,
+		IXVirtualCircuitMktSubsTerm,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, vcMktHcl)
+	return RHclThirdPartyVirtualCircuitMktResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIxVirtualCircuitMkt,
+			ResourceName: resourceName,
+		},
+		Interface:        portResult,
+		Description:      uniqueDesc,
+		RoutingID:        os.Getenv(PF_ROUTING_ID_KEY),
+		Market:           os.Getenv(PF_MARKET_KEY),
+		Asn:              IXVirtualCircuitMktAsn,
+		LonghaulType:     IXVirtualCircuitMktLonghaulType,
+		Speed:            IXVirtualCircuitMktSpeed,
+		SubscriptionTerm: IXVirtualCircuitMktSubsTerm,
 	}
 }
 

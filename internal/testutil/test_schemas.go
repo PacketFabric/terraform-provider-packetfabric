@@ -315,7 +315,7 @@ const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_
 const RResourceIXVirtualCircuitMarketplace = `resource "packetfabric_ix_virtual_circuit_marketplace" "%s" {
   provider    = packetfabric
   description = "%s"
-  routing_id  = %s.id
+  routing_id  = "%s"
   market      = "%s"
   asn         = %v
   interface {
