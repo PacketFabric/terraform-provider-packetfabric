@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsGoogleHostedMktConn = "packetfabric_cs_google_hosted_marketplace_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -46,6 +47,9 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+
+// packetfabric_cs_google_hosted_marketplace_connection
+const CsGoogleHostedMktConnSpeed = "50Mbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -115,6 +119,18 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cs_google_hosted_marketplace_connection
+type RHclCsGoogleHostedMktConnResult struct {
+	HclResultBase
+	Description              string
+	GooglePairingKey         string
+	GoogleVlanAttachmentName string
+	RoutingID                string
+	Market                   string
+	Speed                    string
+	Pop                      string
 }
 
 // Patterns:
@@ -325,6 +341,48 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cs_google_hosted_marketplace_connection
+func RHclCsGoogleHostedMktConn() RHclCsGoogleHostedMktConnResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	pop, err := c.GetMarketplacePopByMarket(os.Getenv(PF_MARKET_KEY))
+	if err != nil {
+		log.Fatal(err)
+	}
+	resourceName, hclName := _generateResourceName(pfCsGoogleHostedMktConn)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCsGoogleHostedMktConn)
+
+	hcl := fmt.Sprintf(
+		RResourceCSGGoogleHostedMarketplaceConnection,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_CRC_GOOGLE_PAIRING_KEY),
+		os.Getenv(PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY),
+		os.Getenv(PF_ROUTING_ID_KEY),
+		os.Getenv(PF_MARKET_KEY),
+		CsGoogleHostedMktConnSpeed,
+		pop,
+	)
+	return RHclCsGoogleHostedMktConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsGoogleHostedMktConn,
+			ResourceName: resourceName,
+		},
+		Description:              uniqueDesc,
+		GooglePairingKey:         os.Getenv(PF_CRC_GOOGLE_PAIRING_KEY),
+		GoogleVlanAttachmentName: os.Getenv(PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY),
+		RoutingID:                os.Getenv(PF_ROUTING_ID_KEY),
+		Market:                   os.Getenv(PF_MARKET_KEY),
+		Speed:                    CsGoogleHostedMktConnSpeed,
+		Pop:                      pop,
 	}
 }
 
