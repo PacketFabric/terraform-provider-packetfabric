@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"log"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"

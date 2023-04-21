@@ -2036,11 +2036,36 @@ func DHclPorts() DHclPortsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
+<<<<<<< HEAD
 	portResult := portDetails.RHclPort(false)
 	dataPortHcl := fmt.Sprintf(
 		DDataSourcePorts,
 		hclName,
 		portResult.ResourceName)
+=======
+	resourceName, hclName := _generateResourceName(pfOutboundCrossConnect)
+	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
+
+	locations, err := c.ListLocations()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var site string
+	for _, location := range locations {
+		if location.Pop == hclPortResult.Pop {
+			site = location.SiteCode
+			break
+		}
+	}
+
+	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
+		hclName,
+		uniqueDesc,
+		os.Getenv(PF_DOCUMENT_UUID1_KEY),
+		hclPortResult.ResourceReference,
+		site)
+>>>>>>> 8847b8f (Fetching POP from locations filtered by port POP.)
 
 	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataPortHcl)
 
@@ -2050,6 +2075,12 @@ func DHclPorts() DHclPortsResult {
 			Resource:     pfDataPorts,
 			ResourceName: resourceName,
 		},
+<<<<<<< HEAD
+=======
+		Desc:         uniqueDesc,
+		DocumentUuid: os.Getenv(PF_DOCUMENT_UUID1_KEY),
+		Site:         site,
+>>>>>>> 8847b8f (Fetching POP from locations filtered by port POP.)
 	}
 }
 
