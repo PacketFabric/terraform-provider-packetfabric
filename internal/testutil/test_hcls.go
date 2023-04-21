@@ -50,7 +50,7 @@ const CloudRouterBgpSessionType2 = "out"
 
 // packetfabric_ix_virtual_circuit_marketplace
 const IXVirtualCircuitMktAsn = 64545
-const IXVirtualCircuitMktUntagged = true
+const IXVirtualCircuitMktUntagged = false
 const IXVirtualCircuitMktVlan = 100
 const IXVirtualCircuitMktLonghaulType = "dedicated"
 const IXVirtualCircuitMktSpeed = "50Mbps"
