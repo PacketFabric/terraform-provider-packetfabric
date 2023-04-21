@@ -1260,12 +1260,25 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 	resourceName, hclName := _generateResourceName(pfOutboundCrossConnect)
 	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
 
+	locations, err := c.ListLocations()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var site string
+	for _, location := range locations {
+		if location.Pop == hclPortResult.Pop {
+			site = location.SiteCode
+			break
+		}
+	}
+
 	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
 		hclName,
 		uniqueDesc,
 		os.Getenv(PF_DOCUMENT_UUID1_KEY),
 		hclPortResult.ResourceReference,
-		os.Getenv(PF_OUTBOUND_SITE_KEY))
+		site)
 
 	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, outboundCrossHcl)
 
@@ -1277,7 +1290,7 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 		},
 		Desc:         uniqueDesc,
 		DocumentUuid: os.Getenv(PF_DOCUMENT_UUID1_KEY),
-		Site:         os.Getenv(PF_OUTBOUND_SITE_KEY),
+		Site:         site,
 	}
 }
 
