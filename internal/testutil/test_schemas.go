@@ -235,7 +235,7 @@ const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_a
   provider          = packetfabric
   description       = "%s"
   azure_service_key = "%s"
-  routing_id        = %s.id
+  routing_id        = "%s"
   market            = "%s"
   speed             = "%s"
 }`
