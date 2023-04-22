@@ -32,6 +32,11 @@ func TestAccHclCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "speed", cloudRouterConnectionAwsResult.Speed),
 				),
 			},
+			{
+				ResourceName:      cloudRouterConnectionAwsResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
