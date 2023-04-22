@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"log"
 	"strconv"
 	"testing"
 
@@ -13,7 +12,6 @@ func TestOracleHostedConnectRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	csOracleHostedConnectionResult := testutil.RHclCsOracleHostedConnection()
-	log.Fatal(csOracleHostedConnectionResult.Hcl)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
@@ -32,6 +30,11 @@ func TestOracleHostedConnectRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csOracleHostedConnectionResult.ResourceName, "pop", csOracleHostedConnectionResult.Pop),
 					resource.TestCheckResourceAttr(csOracleHostedConnectionResult.ResourceName, "vlan", strconv.Itoa(csOracleHostedConnectionResult.Vlan)),
 				),
+			},
+			{
+				ResourceName:      csOracleHostedConnectionResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
