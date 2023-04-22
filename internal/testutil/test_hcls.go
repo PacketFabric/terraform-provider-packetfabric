@@ -60,7 +60,7 @@ const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataCloudRouterConnIpsec = "data.packetfabric_cloud_router_connection_ipsec"
 const pfDataCloudRouterConn = "data.packetfabric_cloud_router_connection"
 const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
-const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
+const pfDataSourceOutboundCrossConnect = "data.packetfabric_outbound_cross_connect"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -620,13 +620,8 @@ type DHclCloudRouterConnsResult struct {
 	HclResultBase
 }
 
-// packetfabric_outbound_cross_connect
-type RHclOutboundCrossConnectResult struct {
+type DHclDatasourceOutboundCrossConnectResult struct {
 	HclResultBase
-	Desc         string
-	DocumentUuid string
-	Port         RHclPortResult
-	Site         string
 }
 
 // Patterns:
@@ -2022,7 +2017,6 @@ func DHclBilling() DHclBillingResult {
 
 // data.packetfabric_ports
 func DHclPorts() DHclPortsResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2036,36 +2030,11 @@ func DHclPorts() DHclPortsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
-<<<<<<< HEAD
 	portResult := portDetails.RHclPort(false)
 	dataPortHcl := fmt.Sprintf(
 		DDataSourcePorts,
 		hclName,
 		portResult.ResourceName)
-=======
-	resourceName, hclName := _generateResourceName(pfOutboundCrossConnect)
-	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
-
-	locations, err := c.ListLocations()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var site string
-	for _, location := range locations {
-		if location.Pop == hclPortResult.Pop {
-			site = location.SiteCode
-			break
-		}
-	}
-
-	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
-		hclName,
-		uniqueDesc,
-		os.Getenv(PF_DOCUMENT_UUID1_KEY),
-		hclPortResult.ResourceReference,
-		site)
->>>>>>> 8847b8f (Fetching POP from locations filtered by port POP.)
 
 	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataPortHcl)
 
@@ -2075,18 +2044,28 @@ func DHclPorts() DHclPortsResult {
 			Resource:     pfDataPorts,
 			ResourceName: resourceName,
 		},
-<<<<<<< HEAD
-=======
-		Desc:         uniqueDesc,
-		DocumentUuid: os.Getenv(PF_DOCUMENT_UUID1_KEY),
-		Site:         site,
->>>>>>> 8847b8f (Fetching POP from locations filtered by port POP.)
+	}
+}
+
+func DHclDataSourceOutboundCrossConnect() DHclDatasourceOutboundCrossConnectResult {
+	outboundCrossConnectResult := RHclOutboundCrossConnect()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataSourceOutboundCrossConnect)
+	dataOutboundCrossConnectHcl := fmt.Sprintf(DDatasourceOutboundCrossConnect, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", outboundCrossConnectResult.Hcl, dataOutboundCrossConnectHcl)
+
+	return DHclDatasourceOutboundCrossConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourceOutboundCrossConnect,
+			ResourceName: resourceName,
+		},
 	}
 }
 
 // data.packetfabric_port_vlans
 func DHclPortVlans() DHclPortVlansResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)

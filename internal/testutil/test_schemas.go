@@ -800,3 +800,7 @@ const DDatasourceCloudRouterConnections = `data "packetfabric_cloud_router_conne
   circuit_id = %s.id
   depends_on = [%s]
 }`
+
+const DDatasourceOutboundCrossConnect = `data "packetfabric_outbound_cross_connect" "%s" {
+  provider  = packetfabric
+}`

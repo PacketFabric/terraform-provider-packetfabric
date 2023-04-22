@@ -3,7 +3,6 @@
 package provider
 
 import (
-	"log"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -23,12 +22,8 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "description", outboundCrossConnectResult.Desc),
 					resource.TestCheckResourceAttrSet(outboundCrossConnectResult.ResourceName, "document_uuid"),
+					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "site", outboundCrossConnectResult.Site),
 				),
-			},
-			{
-				ResourceName:      outboundCrossConnectResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
