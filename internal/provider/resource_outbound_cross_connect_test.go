@@ -25,6 +25,11 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 					resource.TestCheckResourceAttrSet(outboundCrossConnectResult.ResourceName, "document_uuid"),
 				),
 			},
+			{
+				ResourceName:      outboundCrossConnectResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
