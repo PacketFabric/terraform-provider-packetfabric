@@ -19,8 +19,7 @@ func TestAccPortLOARequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             portLoaResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: portLoaResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(portLoaResult.ResourceName, "destination_email", portLoaResult.DestinationEmail),
 					resource.TestCheckResourceAttr(portLoaResult.ResourceName, "loa_customer_name", portLoaResult.LoaCustomerName),
