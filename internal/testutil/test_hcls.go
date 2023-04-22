@@ -21,6 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
+const pfDatasourceHostedIbmConn = "data.packetfabric_cs_ibm_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -132,6 +133,10 @@ type RHclCsIBMHostedConnectionResult struct {
 	Port      RHclPortResult
 	Vlan      int
 	Speed     string
+}
+
+type DHclDatasourceHostedIbmConnResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -393,6 +398,28 @@ func RHclCsIBMHostedConnection() RHclCsIBMHostedConnectionResult {
 		Pop:       pop,
 		Vlan:      IBMHostedConnectionVlan,
 		Speed:     IBMHostedConnectionSpeed,
+	}
+}
+
+func DHclDatasourceHostedIbmConn() DHclDatasourceHostedIbmConnResult {
+
+	csIBMHostedConnectionResult := RHclCsIBMHostedConnection()
+	hclCloudRouter := RHclCloudRouter()
+	resourceName, hclName := _generateResourceName(pfDatasourceHostedIbmConn)
+
+	hostedIbmConnHcl := fmt.Sprintf(
+		DDatasourceHostedIbmConn,
+		hclName,
+		hclCloudRouter.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", csIBMHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedIbmConnHcl)
+
+	return DHclDatasourceHostedIbmConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceHostedIbmConn,
+			ResourceName: resourceName,
+		},
 	}
 }
 

@@ -399,3 +399,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+const DDatasourceHostedIbmConn = `data "packetfabric_cs_ibm_hosted_connection" "%s" {
+  provider          = packetfabric
+  circuit_id        = %s.id
+}`
