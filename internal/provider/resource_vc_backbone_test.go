@@ -34,6 +34,11 @@ func TestAccHclVcBackboneRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(backboneVirtulalCircuitResult.ResourceName, "bandwidth.0.subscription_term", strconv.Itoa(backboneVirtulalCircuitResult.SubscriptionTerm)),
 				),
 			},
+			{
+				ResourceName:      backboneVirtulalCircuitResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
