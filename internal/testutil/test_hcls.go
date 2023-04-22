@@ -40,6 +40,7 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
+const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -379,6 +380,10 @@ type RHclLinkAggregationGroupResult struct {
 	Interval string
 	Members  []string
 	Pop      string
+}
+
+type DHclDatasourceLinkAggregationGroupsResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -1026,7 +1031,6 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 
 // packetfabric_cs_google_dedicated_connection
 func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1069,6 +1073,27 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
 		Speed:            DedicatedCloudSpeed,
+	}
+}
+
+func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
+
+	linkAggregationGroupResult := RHclLinkAggregationGroup()
+	resourceName, hclName := _generateResourceName(pfDatasourceLinkAggregationGroups)
+
+	linkAggregationGroupsHcl := fmt.Sprintf(
+		DDatasourceLinkAggregationGroups,
+		hclName,
+		linkAggregationGroupResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
+
+	return DHclDatasourceLinkAggregationGroupsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceLinkAggregationGroups,
+			ResourceName: resourceName,
+		},
 	}
 }
 
