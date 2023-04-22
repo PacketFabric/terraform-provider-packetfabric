@@ -20,12 +20,16 @@ func TestAccAddSpeedBurstRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             backboneVirtualCircuitSpeedBurstResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: backboneVirtualCircuitSpeedBurstResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, "vc_circuit_id", backboneVirtualCircuitSpeedBurstResult.VcCircuitId),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, "speed", backboneVirtualCircuitSpeedBurstResult.Speed),
 				),
+			},
+			{
+				ResourceName:      backboneVirtualCircuitSpeedBurstResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
