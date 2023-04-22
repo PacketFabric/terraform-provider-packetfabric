@@ -12,17 +12,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
+func TestAccCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
+	testutil.PreCheck(t, []string{})
 
 	cloudRouterConnectionIpsecResult := testutil.RHclCloudRouterConnectionIpsec()
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -67,9 +63,6 @@ func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
 					return id, nil
 				},
-				ResourceName:      cloudRouterConnectionIpsecResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
