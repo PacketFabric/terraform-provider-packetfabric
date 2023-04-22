@@ -1435,15 +1435,16 @@ func DHclDataSourcePortRouterLogs() DHclDatasourcePortRouterLogsResult {
 	}
 
 	resourceName, hclName := _generateResourceName(pfDataSourcePortRouterLogs)
+	portResult := portDetails.RHclPort()
 	dataSourcePortRouterLogsHcl := fmt.Sprintf(
 		DDataSourcePortRouterLogs,
 		hclName,
-		portDetails.RHclPort().ResourceReference,
+		portResult.ResourceReference,
 		os.Getenv(PF_DTS_TIME_FROM_KEY),
 		os.Getenv(PF_DTS_TIME_TO_KEY),
 	)
 
-	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort().Hcl, dataSourcePortRouterLogsHcl)
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataSourcePortRouterLogsHcl)
 
 	return DHclDatasourcePortRouterLogsResult{
 		HclResultBase: HclResultBase{
