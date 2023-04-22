@@ -52,6 +52,7 @@ const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs."
+const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs"
 
 // ########################################
 // ###### HARDCODED VALUES
