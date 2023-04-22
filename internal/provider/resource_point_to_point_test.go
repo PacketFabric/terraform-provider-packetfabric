@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"log"
 	"strconv"
 	"testing"
 
@@ -13,7 +12,6 @@ func TestAccPointToPointRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	pointToPointResult := testutil.RHclPointToPoint()
-	log.Fatal(pointToPointResult.Hcl)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{
