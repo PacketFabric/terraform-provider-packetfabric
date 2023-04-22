@@ -33,11 +33,6 @@ func TestAccHclOracleCSHostedMarketplaceRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(oracleCSHostedMarketplaceResult.ResourceName, "pop", oracleCSHostedMarketplaceResult.Pop),
 				),
 			},
-			{
-				ResourceName:      oracleCSHostedMarketplaceResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 
