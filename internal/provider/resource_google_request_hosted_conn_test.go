@@ -27,8 +27,7 @@ func TestAccHclGoogleReqHostedConnectRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             csGoogleReqHostedConnectResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: csGoogleReqHostedConnectResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csGoogleReqHostedConnectResult.ResourceName, "description", csGoogleReqHostedConnectResult.Desc),
 					resource.TestCheckResourceAttr(csGoogleReqHostedConnectResult.ResourceName, "google_pairing_key", csGoogleReqHostedConnectResult.GooglePairingKey),
@@ -37,6 +36,11 @@ func TestAccHclGoogleReqHostedConnectRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(csGoogleReqHostedConnectResult.ResourceName, "speed", csGoogleReqHostedConnectResult.Speed),
 					resource.TestCheckResourceAttr(csGoogleReqHostedConnectResult.ResourceName, "vlan", strconv.Itoa(csGoogleReqHostedConnectResult.Vlan)),
 				),
+			},
+			{
+				ResourceName:      csGoogleReqHostedConnectResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
