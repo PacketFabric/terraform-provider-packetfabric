@@ -20,7 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-const pfDataZones = "data.packetfabric_locations_pop_zones."
+const pfDataZones = "data.packetfabric_locations_pop_zones"
 
 // ########################################
 // ###### HARDCODED VALUES
