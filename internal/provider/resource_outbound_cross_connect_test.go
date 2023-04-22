@@ -30,6 +30,11 @@ func TestOutboundCrossConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "site", outboundCrossConnectResult.Site),
 				),
 			},
+			{
+				ResourceName:      outboundCrossConnectResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
