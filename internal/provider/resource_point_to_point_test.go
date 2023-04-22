@@ -21,8 +21,7 @@ func TestAccPointToPointRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             pointToPointResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: pointToPointResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(pointToPointResult.ResourceName, "description", pointToPointResult.Desc),
 					resource.TestCheckResourceAttr(pointToPointResult.ResourceName, "speed", pointToPointResult.Speed),
@@ -35,6 +34,11 @@ func TestAccPointToPointRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(pointToPointResult.ResourceName, "endpoints.1.zone", pointToPointResult.Zone2),
 					resource.TestCheckResourceAttr(pointToPointResult.ResourceName, "endpoints.1.autoneg", strconv.FormatBool(pointToPointResult.Autoneg2)),
 				),
+			},
+			{
+				ResourceName:      pointToPointResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
