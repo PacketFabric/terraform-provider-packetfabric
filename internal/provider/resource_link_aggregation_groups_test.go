@@ -20,14 +20,18 @@ func TestAccLinkAggregGroupsRequiredFields(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             linkAggregationGroupResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: linkAggregationGroupResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "description", linkAggregationGroupResult.Desc),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "interval", linkAggregationGroupResult.Interval),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "pop", linkAggregationGroupResult.Pop),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "members", linkAggregationGroupResult.Members[0]),
 				),
+			},
+			{
+				ResourceName:      linkAggregationGroupResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
