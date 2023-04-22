@@ -63,7 +63,11 @@ const pfDataCloudRouterConn = "data.packetfabric_cloud_router_connection"
 const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
 =======
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
+<<<<<<< HEAD
 >>>>>>> d65b1a4 (Generating HCL for packetfabric_cloud_router_connection_ipsec)
+=======
+const pfDatasourceIpsec = "data.packetfabric_cloud_router_connection_ipsec"
+>>>>>>> 983b13e (Generating HCL for datasources packetfabric_cloud_router_connection_ipsec)
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -656,6 +660,10 @@ type RHclCloudRouterConnectionIpsecResult struct {
 	Phase2AuthenticationAlgo   string
 	Phase2Lifetime             int
 	SharedKey                  string
+}
+
+type DHclDatasourceIpsecResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -1573,6 +1581,27 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
 		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
 		SharedKey:                  CloudRouterConnIpsecSharedKey,
+	}
+}
+
+func DHclDatasourceIpsec() DHclDatasourceIpsecResult {
+
+	cloudRouterConnectionIpsecResult := RHclCloudRouterConnectionIpsec()
+	resourceName, hclName := _generateResourceName(pfDatasourceIpsec)
+
+	dataCloudRouterIpsecHcl := fmt.Sprintf(
+		DDatasourceIpsec,
+		hclName,
+		cloudRouterConnectionIpsecResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionIpsecResult.Hcl, dataCloudRouterIpsecHcl)
+
+	return DHclDatasourceIpsecResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceIpsec,
+			ResourceName: resourceName,
+		},
 	}
 }
 

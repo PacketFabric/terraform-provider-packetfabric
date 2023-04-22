@@ -688,6 +688,7 @@ const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
 }`
 
 // End of resources templates for required fields only
+<<<<<<< HEAD
 
 // Datasource: packetfabric_locations_cloud
 const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
@@ -799,4 +800,9 @@ const DDatasourceCloudRouterConnection = `data "packetfabric_cloud_router_connec
 const DDatasourceCloudRouterConnections = `data "packetfabric_cloud_router_connections" "%s" {
   circuit_id = %s.id
   depends_on = [%s]
+=======
+const DDatasourceIpsec = `data "packetfabric_cloud_router_connection_ipsec" "%s" {
+  provider       = packetfabric
+  cloud_circuit_id        = %s.id
+>>>>>>> 983b13e (Generating HCL for datasources packetfabric_cloud_router_connection_ipsec)
 }`
