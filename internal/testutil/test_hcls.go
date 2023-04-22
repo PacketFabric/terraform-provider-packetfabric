@@ -21,6 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfPoinToPoint = "packetfabric_point_to_point"
+const pfDataPointToPoint = "data.packetfabric_point_to_point"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -133,6 +134,11 @@ type RHclPointToPointResult struct {
 	Pop2             string
 	Zone2            string
 	Autoneg2         bool
+}
+
+// data packetfabric_point_to_point
+type DHclPointToPointResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -384,6 +390,23 @@ func RHclPointToPoint() RHclPointToPointResult {
 		Pop2:             pop2,
 		Zone2:            zone2,
 		Autoneg2:         false,
+	}
+}
+
+func DHclDataSourcePointToPoint() DHclPointToPointResult {
+
+	pointToPointResult := RHclPointToPoint()
+
+	resourceName, hclName := _generateResourceName(pfDataPointToPoint)
+	dataPointToPointHcl := fmt.Sprintf(DDatasourcePointToPoint, hclName)
+	hcl := fmt.Sprintf("%s\n%s", pointToPointResult.Hcl, dataPointToPointHcl)
+
+	return DHclPointToPointResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataPointToPoint,
+			ResourceName: resourceName,
+		},
 	}
 }
 
