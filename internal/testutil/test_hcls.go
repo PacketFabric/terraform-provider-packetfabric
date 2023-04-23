@@ -410,13 +410,13 @@ func DHclDatasourceHostedGoogleConn() DHclCloudRouterConnectionGoogleResult {
 	hclCloudRouter := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfDatasourceCsGoogleHostedConn)
 
-	hostedIbmConnHcl := fmt.Sprintf(
+	hostedGoogleConnHcl := fmt.Sprintf(
 		DDatasourceCsAwsHostedConn,
 		hclName,
 		hclCloudRouter.ResourceName,
 		"google")
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", csGoogleHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedIbmConnHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", csGoogleHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedGoogleConnHcl)
 
 	return DHclCloudRouterConnectionGoogleResult{
 		HclResultBase: HclResultBase{
