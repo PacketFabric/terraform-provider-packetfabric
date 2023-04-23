@@ -22,6 +22,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
+const pfDatasourceCsGoogleHostedConn = "data.packetfabric_cs_google_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -117,6 +118,10 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type DHclCloudRouterConnectionGoogleResult struct {
+	HclResultBase
 }
 
 // packetfabric_cs_google_hosted_connection
@@ -396,6 +401,29 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 		GoogleVlan:       os.Getenv(PF_CS_GOOGLE_HOS_CONN_VLAN_ATTACHMENT_NAME_KEY),
 		Pop:              pop,
 		Vlan:             vlan,
+	}
+}
+
+func DHclDatasourceHostedGoogleConn() DHclCloudRouterConnectionGoogleResult {
+
+	csGoogleHostedConnectionResult := RHclAwsHostedConnection()
+	hclCloudRouter := RHclCloudRouter()
+	resourceName, hclName := _generateResourceName(pfDatasourceCsGoogleHostedConn)
+
+	hostedIbmConnHcl := fmt.Sprintf(
+		DDatasourceCsAwsHostedConn,
+		hclName,
+		hclCloudRouter.ResourceName,
+		"google")
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", csGoogleHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedIbmConnHcl)
+
+	return DHclCloudRouterConnectionGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceCsGoogleHostedConn,
+			ResourceName: resourceName,
+		},
 	}
 }
 
