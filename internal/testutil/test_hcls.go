@@ -406,7 +406,7 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 
 func DHclDatasourceHostedGoogleConn() DHclCloudRouterConnectionGoogleResult {
 
-	csGoogleHostedConnectionResult := RHclAwsHostedConnection()
+	csGoogleHostedConnectionResult := RHclCsGoogleReqHostedConnect()
 	hclCloudRouter := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfDatasourceCsGoogleHostedConn)
 
