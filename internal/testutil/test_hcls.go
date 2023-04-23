@@ -21,6 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsOracleHostedConn = "packetfabric_cs_oracle_hosted_connection"
+const pfDatasourceCsOracleHostedConn = "data.packetfabric_cs_oracle_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -118,6 +119,10 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type DHclCloudRouterConnectionOracleResult struct {
+	HclResultBase
 }
 
 // packetfabric_cs_oracle_hosted_connection
@@ -392,6 +397,29 @@ func RHclCsOracleHostedConnection() RHclCsOracleHostedConnectionResult {
 		Pop:    pop,
 		Zone:   zone,
 		Vlan:   OracleHostedConnVlan,
+	}
+}
+
+func DHclDatasourceHostedOracleConn() DHclCloudRouterConnectionOracleResult {
+
+	csOracleHostedConnectionResult := RHclCsOracleHostedConnection()
+	hclCloudRouter := RHclCloudRouter()
+	resourceName, hclName := _generateResourceName(pfDatasourceCsOracleHostedConn)
+
+	hostedOracleConnHcl := fmt.Sprintf(
+		DDatasourceCsOracleHostedConn,
+		hclName,
+		hclCloudRouter.ResourceName,
+		"oracle")
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", csOracleHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedOracleConnHcl)
+
+	return DHclCloudRouterConnectionOracleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceCsOracleHostedConn,
+			ResourceName: resourceName,
+		},
 	}
 }
 
