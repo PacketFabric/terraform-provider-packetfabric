@@ -412,13 +412,13 @@ func DHclDatasourceHostedAzureConn() DHclCloudRouterConnectionAzureResult {
 	hclCloudRouter := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfDatasourceCsAzureHostedConn)
 
-	hostedIbmConnHcl := fmt.Sprintf(
+	hostedAzureConnHcl := fmt.Sprintf(
 		DDatasourceCsAwsHostedConn,
 		hclName,
 		hclCloudRouter.ResourceName,
 		"azure")
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", csAzureHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedIbmConnHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", csAzureHostedConnectionResult.Hcl, hclCloudRouter.Hcl, hostedAzureConnHcl)
 
 	return DHclCloudRouterConnectionAzureResult{
 		HclResultBase: HclResultBase{
