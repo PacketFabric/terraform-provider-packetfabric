@@ -406,7 +406,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 
 // End of resources templates for required fields only
 
-const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection" "%s" {
+const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_google_hosted_connection" "%s" {
   provider          = packetfabric
   cloud_circuit_id  = %s.id
   service_provider  = "%s"
