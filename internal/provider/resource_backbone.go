@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -170,6 +173,27 @@ func resourceBackbone() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				attributes := []string{
+					"interface_a.0.port_circuit_id",
+					"interface_z.0.port_circuit_id",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
