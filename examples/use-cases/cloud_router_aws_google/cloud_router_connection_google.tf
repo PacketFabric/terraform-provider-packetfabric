@@ -6,13 +6,12 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 
 # From the PacketFabric side: Create a Cloud Router connection.
 resource "packetfabric_cloud_router_connection_google" "crc_2" {
-  provider                    = packetfabric
-  description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
-  labels                      = var.pf_labels
-  circuit_id                  = packetfabric_cloud_router.cr.id
-  pop                         = var.pf_crc_pop2
-  speed                       = var.pf_crc_speed
-  google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
+  provider    = packetfabric
+  description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  labels      = var.pf_labels
+  circuit_id  = packetfabric_cloud_router.cr.id
+  pop         = var.pf_crc_pop2
+  speed       = var.pf_crc_speed
   # Cloud side provisioning
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
