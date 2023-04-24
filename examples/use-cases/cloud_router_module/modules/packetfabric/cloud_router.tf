@@ -67,7 +67,6 @@ resource "packetfabric_cloud_router_bgp_session" "aws" {
   remote_asn     = each.value.remote_asn
   remote_address = each.value.remote_address
   l3_address     = each.value.l3_address
-  multihop_ttl   = 1
   md5            = each.value.md5
   disabled       = each.value.disabled
 
@@ -101,7 +100,6 @@ resource "packetfabric_cloud_router_bgp_session" "gcp" {
   remote_asn     = each.value.remote_asn
   remote_address = each.value.remote_address
   l3_address     = each.value.l3_address
-  multihop_ttl   = 1
   disabled       = each.value.disabled
 
   # This block creates a dynamic block of in and out prefixes for the BGP session.

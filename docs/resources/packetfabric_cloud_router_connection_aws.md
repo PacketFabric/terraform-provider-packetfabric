@@ -73,18 +73,27 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
     aws_region       = "us-west-1"
     mtu              = 1500
-    aws_vif_type     = "private"
+    aws_vif_type     = "private" # or transit
     aws_gateways {
       type = "directconnect"
       id   = "760f047b-53ce-4a9d-9ed6-6fac5ca2fa81"
     }
-    aws_gateways {
+    aws_gateways { #  Private VIF
       type   = "private"
       id     = "vgw-066eb6dcd07dcbb65"
       vpc_id = "vpc-bea401c4"
     }
+    # aws_gateways { # Transit VIF
+    #   type = "transit"
+    #   id   = "tgw-0b7a1390af74b9728"
+    #   vpc_id = "vpc-bea401c4"
+    #   subnet_ids = [
+    #     "subnet-0c222c8047660ca13",
+    #     "subnet-03838a8ea2270c40a"
+    #   ]
+    # }
   }
-  labels      = ["terraform", "dev"]
+  labels = ["terraform", "dev"]
 }
 ```
 
@@ -145,7 +154,6 @@ Required:
 
 Optional:
 
-- `address_family` (String) The address family that should be used. Defaults: ipv4
 - `as_prepend` (Number) The BGP prepend value for this instance. It is used when type = out.
 
 	Available range is 1 through 5.

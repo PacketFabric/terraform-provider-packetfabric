@@ -140,7 +140,7 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 
 func extractBgpSessionFromCloudSettings(d *schema.ResourceData, bgpSettings map[string]interface{}, bgp *packetfabric.BgpSessionBySettingsUUID) packetfabric.BgpSession {
 	bgpSession := packetfabric.BgpSession{}
-	if l3Address, ok := bgpSettings["l3_address"]; ok {
+	if l3Address, ok := bgpSettings["l3_address"]; ok && l3Address.(string) != "" {
 		bgpSession.L3Address = l3Address.(string)
 	} else {
 		// we must ge the l3address if missing as it is a required field for BGP PUT API call
@@ -161,38 +161,44 @@ func extractBgpSessionFromCloudSettings(d *schema.ResourceData, bgpSettings map[
 	} else {
 		bgpSession.AddressFamily = "v4"
 	}
-	if remoteAddress, ok := bgpSettings["remote_address"]; ok {
+	if remoteAddress, ok := bgpSettings["remote_address"]; ok && remoteAddress.(string) != "" {
 		bgpSession.RemoteAddress = remoteAddress.(string)
 	} else {
 		// we must ge the remoteAddress if missing as it is a required field for BGP PUT API call
 		bgpSession.RemoteAddress = bgp.RemoteAddress
 	}
-	if remoteAsn, ok := bgpSettings["remote_asn"]; ok {
+	if remoteAsn, ok := bgpSettings["remote_asn"]; ok && remoteAsn.(int) != 0 {
 		bgpSession.RemoteAsn = remoteAsn.(int)
+	} else {
+		// we must ge the remoteAsn if missing as it is a required field for BGP PUT API call
+		bgpSession.RemoteAsn = bgp.RemoteAsn
 	}
 	if multihopTTL, ok := bgpSettings["multihop_ttl"]; ok {
 		bgpSession.MultihopTTL = multihopTTL.(int)
 	}
-	if localPreference, ok := bgpSettings["local_preference"]; ok {
+	if localPreference, ok := bgpSettings["local_preference"]; ok && localPreference.(int) != 0 {
 		bgpSession.LocalPreference = localPreference.(int)
 	}
 	if med, ok := bgpSettings["med"]; ok {
 		bgpSession.Med = med.(int)
 	}
-	if asPrepend, ok := bgpSettings["as_prepend"]; ok {
+	if asPrepend, ok := bgpSettings["as_prepend"]; ok && asPrepend.(int) != 0 {
 		bgpSession.AsPrepend = asPrepend.(int)
 	}
 	if orlonger, ok := bgpSettings["orlonger"]; ok {
 		bgpSession.Orlonger = orlonger.(bool)
 	}
-	if bfdInterval, ok := bgpSettings["bfd_interval"]; ok {
+	if bfdInterval, ok := bgpSettings["bfd_interval"]; ok && bfdInterval.(int) != 0 {
 		bgpSession.BfdInterval = bfdInterval.(int)
 	}
-	if bfdMultiplier, ok := bgpSettings["bfd_multiplier"]; ok {
+	if bfdMultiplier, ok := bgpSettings["bfd_multiplier"]; ok && bfdMultiplier.(int) != 0 {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
 	}
-	if md5, ok := bgpSettings["md5"]; ok {
+	if md5, ok := bgpSettings["md5"]; ok && md5.(string) != "" {
 		bgpSession.Md5 = md5.(string)
+	} else {
+		// we must ge the md5 if missing as it is a required field for BGP PUT API call
+		bgpSession.Md5 = bgp.Md5
 	}
 	if nat, ok := bgpSettings["nat"]; ok {
 		for _, nat := range nat.(*schema.Set).List() {
@@ -302,8 +308,9 @@ func extractRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *packet
 	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
 		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
 	}
-	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
-
+	if remoteAsn, ok := bgpSettingsMap["remote_asn"]; ok {
+		bgpSettings.RemoteAsn = remoteAsn.(int)
+	}
 	if md5, ok := bgpSettingsMap["md5"]; ok {
 		bgpSettings.Md5 = md5.(string)
 	}

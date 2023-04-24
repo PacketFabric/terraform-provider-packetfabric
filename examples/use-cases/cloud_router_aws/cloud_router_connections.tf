@@ -1,12 +1,12 @@
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
-  provider       = packetfabric
-  description    = "${var.resource_name}-${random_pet.name.id}-aws"
+  provider    = packetfabric
+  description = "${var.resource_name}-${random_pet.name.id}-aws"
   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
 }
 
 # From the PacketFabric side: Create a cloud router connection to AWS
 resource "packetfabric_cloud_router_connection_aws" "crc_1" {
-  provider = packetfabric
+  provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
@@ -21,6 +21,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
     aws_gateways {
       type = "directconnect"
       id   = aws_dx_gateway.direct_connect_gw_1.id
+      asn  = var.amazon_side_asn1
     }
     aws_gateways {
       type   = "private"
@@ -28,9 +29,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
       vpc_id = aws_vpc.vpc_1.id
     }
     bgp_settings {
-      multihop_ttl   = var.pf_crbs_mhttl
-      remote_asn     = var.amazon_side_asn1
-      orlonger       = var.pf_crbs_orlonger
+      orlonger = var.pf_crbs_orlonger
       prefixes {
         prefix = var.aws_vpc_cidr2
         type   = "out" # Allowed Prefixes to Cloud
@@ -59,6 +58,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_2" {
     aws_gateways {
       type = "directconnect"
       id   = aws_dx_gateway.direct_connect_gw_2.id
+      asn  = var.amazon_side_asn2
     }
     aws_gateways {
       type   = "private"
@@ -66,9 +66,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_2" {
       vpc_id = aws_vpc.vpc_2.id
     }
     bgp_settings {
-      multihop_ttl   = var.pf_crbs_mhttl
-      remote_asn     = var.amazon_side_asn2
-      orlonger       = var.pf_crbs_orlonger
+      orlonger = var.pf_crbs_orlonger
       prefixes {
         prefix = var.aws_vpc_cidr1
         type   = "out" # Allowed Prefixes to Cloud

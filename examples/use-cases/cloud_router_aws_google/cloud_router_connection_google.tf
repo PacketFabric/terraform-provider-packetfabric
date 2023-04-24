@@ -12,6 +12,7 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
   circuit_id                  = packetfabric_cloud_router.cr.id
   pop                         = var.pf_crc_pop2
   speed                       = var.pf_crc_speed
+  google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
   # Cloud side provisioning
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
@@ -21,9 +22,8 @@ resource "packetfabric_cloud_router_connection_google" "crc_2" {
     google_vpc_name                 = google_compute_network.vpc_1.name
     google_edge_availability_domain = 1
     bgp_settings {
-      remote_asn     = var.gcp_side_asn1
-      multihop_ttl   = var.pf_crbs_mhttl
-      orlonger       = var.pf_crbs_orlonger
+      remote_asn = var.gcp_side_asn1
+      orlonger   = var.pf_crbs_orlonger
       prefixes {
         prefix = var.aws_vpc_cidr1
         type   = "out" # Allowed Prefixes to Cloud

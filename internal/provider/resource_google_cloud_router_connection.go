@@ -3,10 +3,13 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -396,6 +399,32 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				attributes := []string{
+					"cloud_settings.0.google_region",
+					"cloud_settings.0.google_project_id",
+					"cloud_settings.0.google_vlan_attachment_name",
+					"cloud_settings.0.google_pairing_key",
+					"cloud_settings.0.google_cloud_router_name",
+					"cloud_settings.0.google_vpc_name",
+					"cloud_settings.0.google_edge_availability_domain",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
 		},
@@ -466,74 +495,103 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
+	circuitID, ok := d.GetOk("circuit_id")
+	if !ok {
+		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
+	}
+
+	cloudConnCID := d.Get("id")
+	resp, err := c.ReadCloudRouterConnection(circuitID.(string), cloudConnCID.(string))
+	if err != nil {
+		diags = diag.FromErr(err)
+		return diags
+	}
+
+	_ = d.Set("account_uuid", resp.AccountUUID)
+	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+	_ = d.Set("description", resp.Description)
+	_ = d.Set("speed", resp.Speed)
+	_ = d.Set("pop", resp.CloudProvider.Pop)
+	if _, ok := d.GetOk("google_pairing_key"); ok {
+		_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
+	}
+	if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
+		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
+	}
+	if _, ok := d.GetOk("po_number"); ok {
+		_ = d.Set("po_number", resp.PONumber)
+	}
+	if _, ok := d.GetOk("cloud_settings"); ok {
+		// Extract the BGP settings UUID
+		var bgpSettingsUUID string
+		if len(resp.BgpStateList) > 0 {
+			bgpSettingsUUID = resp.BgpStateList[0].BgpSettingsUUID
+			_ = d.Set("bgp_settings_uuid", bgpSettingsUUID)
+		}
+		bgp, err := c.GetBgpSessionBy(circuitID.(string), cloudConnCID.(string), bgpSettingsUUID)
 		if err != nil {
-			diags = diag.FromErr(err)
-			return diags
+			return diag.FromErr(errors.New("could not retrieve bgp session"))
 		}
-
-		_ = d.Set("account_uuid", resp.AccountUUID)
-		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("description", resp.Description)
-		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("pop", resp.CloudProvider.Pop)
-		if _, ok := d.GetOk("google_pairing_key"); ok {
-			_ = d.Set("google_pairing_key", resp.CloudSettings.GooglePairingKey)
+		cloudSettings := make(map[string]interface{})
+		cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
+		cloudSettings["google_region"] = resp.CloudSettings.GoogleRegion
+		if googleProjectID, ok := d.GetOk("cloud_settings.0.google_project_id"); ok {
+			cloudSettings["google_project_id"] = googleProjectID
 		}
-		if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
-			_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
-
-		if _, ok := d.GetOk("cloud_settings"); ok {
-			// Extract the BGP settings UUID
-			var bgpSettingsUUID string
-			if len(resp.BgpStateList) > 0 {
-				bgpSettingsUUID = resp.BgpStateList[0].BgpSettingsUUID
-				_ = d.Set("bgp_settings_uuid", bgpSettingsUUID)
-			}
-			bgp, err := c.GetBgpSessionBy(cid.(string), cloudConnCID.(string), bgpSettingsUUID)
-			if err != nil {
-				return diag.FromErr(errors.New("could not retrieve bgp session"))
-			}
-			cloudSettings := make(map[string]interface{})
-			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
-			cloudSettings["google_region"] = resp.CloudSettings.GoogleRegion
-			if googleProjectID, ok := d.GetOk("cloud_settings.0.google_project_id"); ok {
-				cloudSettings["google_project_id"] = googleProjectID
-			}
-			cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
-			cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
-			cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
+		cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
+		cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
+		cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
+		if _, ok := d.GetOk("cloud_settings.0.google_edge_availability_domain"); ok {
 			cloudSettings["google_edge_availability_domain"] = resp.CloudSettings.GoogleEdgeAvailabilityDomain
-			if googleVpcName, ok := d.GetOk("cloud_settings.0.google_vpc_name"); ok {
-				cloudSettings["google_vpc_name"] = googleVpcName
-			}
+		}
+		if googleVpcName, ok := d.GetOk("cloud_settings.0.google_vpc_name"); ok {
+			cloudSettings["google_vpc_name"] = googleVpcName
+		}
+		if _, ok := d.GetOk("cloud_settings.0.mtu"); ok {
 			cloudSettings["mtu"] = resp.CloudSettings.Mtu
-			bgpSettings := make(map[string]interface{})
-			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
-			bgpSettings["remote_asn"] = bgp.RemoteAsn
-			bgpSettings["disabled"] = bgp.Disabled
-			bgpSettings["orlonger"] = bgp.Orlonger
-			bgpSettings["md5"] = bgp.Md5
-			bgpSettings["med"] = bgp.Med
-			bgpSettings["as_prepend"] = bgp.AsPrepend
-			bgpSettings["local_preference"] = bgp.LocalPreference
-			bgpSettings["bfd_interval"] = bgp.BfdInterval
-			bgpSettings["bfd_multiplier"] = bgp.BfdMultiplier
+		}
+		bgpSettings := make(map[string]interface{})
+		if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_keepalive_interval"); ok {
+			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.GoogleKeepaliveInterval
+		}
+		if bgp != nil {
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.remote_asn"); ok {
+				bgpSettings["remote_asn"] = bgp.RemoteAsn
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.disabled"); ok {
+				bgpSettings["disabled"] = bgp.Disabled
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.orlonger"); ok {
+				bgpSettings["orlonger"] = bgp.Orlonger
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.md5"); ok {
+				bgpSettings["md5"] = bgp.Md5
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.med"); ok {
+				bgpSettings["med"] = bgp.Med
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.as_prepend"); ok {
+				bgpSettings["as_prepend"] = bgp.AsPrepend
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.local_preference"); ok {
+				bgpSettings["local_preference"] = bgp.LocalPreference
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.bfd_interval"); ok {
+				bgpSettings["bfd_interval"] = bgp.BfdInterval
+			}
+			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.bfd_multiplier"); ok {
+				bgpSettings["bfd_multiplier"] = bgp.BfdMultiplier
+			}
 			if bgp.Nat != nil {
 				nat := flattenNatConfiguration(bgp.Nat)
 				bgpSettings["nat"] = nat
 			}
 			prefixes := flattenPrefixConfiguration(bgp.Prefixes)
 			bgpSettings["prefixes"] = prefixes
-			cloudSettings["bgp_settings"] = []interface{}{bgpSettings}
-			_ = d.Set("cloud_settings", []interface{}{cloudSettings})
 		}
+		cloudSettings["bgp_settings"] = []interface{}{bgpSettings}
+		_ = d.Set("cloud_settings", []interface{}{cloudSettings})
+
 		// unsetFields: published_quote_line_uuid
 	}
 
