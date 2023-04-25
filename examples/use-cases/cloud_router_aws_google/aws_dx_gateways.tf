@@ -11,11 +11,18 @@ resource "aws_dx_gateway_association" "transit_gw_to_direct_connect_1" {
   provider              = aws
   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
   associated_gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
-  # allowed_prefixes = [
-  #   var.aws_vpc_cidr1
-  # ]
+  # needed for initial creation
+  allowed_prefixes = [
+    var.aws_vpc_cidr1
+  ]
+  # allowed_prefixes managed via BGP prefixes in configured in packetfabric_cloud_router_connection_aws
+  lifecycle {
+    ignore_changes = [
+      allowed_prefixes
+    ]
+  }
   depends_on = [
-    packetfabric_cloud_router_connection_aws.crc_1
+   aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
   ]
   timeouts {
     create = "2h"

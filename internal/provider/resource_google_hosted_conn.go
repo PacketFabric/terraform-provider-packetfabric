@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -228,6 +231,32 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				attributes := []string{
+					"cloud_settings.0.google_region",
+					"cloud_settings.0.google_project_id",
+					"cloud_settings.0.google_vlan_attachment_name",
+					"cloud_settings.0.google_pairing_key",
+					"cloud_settings.0.google_cloud_router_name",
+					"cloud_settings.0.google_vpc_name",
+					"cloud_settings.0.google_edge_availability_domain",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

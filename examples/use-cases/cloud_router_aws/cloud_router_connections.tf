@@ -40,6 +40,9 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
       }
     }
   }
+  depends_on = [
+    aws_dx_gateway_association.virtual_private_gw_to_direct_connect_1
+  ]
 }
 
 resource "packetfabric_cloud_router_connection_aws" "crc_2" {
@@ -53,12 +56,11 @@ resource "packetfabric_cloud_router_connection_aws" "crc_2" {
   # Cloud side provisioning
   cloud_settings {
     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
-    aws_region       = var.aws_region1
+    aws_region       = var.aws_region2
     aws_vif_type     = "private"
     aws_gateways {
       type = "directconnect"
       id   = aws_dx_gateway.direct_connect_gw_2.id
-      asn  = var.amazon_side_asn2
     }
     aws_gateways {
       type   = "private"
@@ -77,4 +79,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_2" {
       }
     }
   }
+  depends_on = [
+    aws_dx_gateway_association.virtual_private_gw_to_direct_connect_2
+  ]
 }

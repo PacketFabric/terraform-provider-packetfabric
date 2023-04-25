@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -238,6 +241,26 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+				attributes := []string{
+					"cloud_settings.0.aws_region",
+					"cloud_settings.0.aws_vif_type",
+					"cloud_settings.0.aws_gateways",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

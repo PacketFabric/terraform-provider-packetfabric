@@ -21,7 +21,6 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
     aws_gateways {
       type = "directconnect"
       id   = aws_dx_gateway.direct_connect_gw_1.id
-      asn  = var.amazon_side_asn1
     }
     aws_gateways {
       type   = "transit"
@@ -47,4 +46,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
       }
     }
   }
+  depends_on = [
+    aws_dx_gateway_association.transit_gw_to_direct_connect_1
+  ]
 }
