@@ -185,18 +185,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	createOk := make(chan bool)
-	defer close(createOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
-				ticker.Stop()
-				createOk <- true
-			}
-		}
-	}()
-	<-createOk
+	checkBackboneComplete(c, resp.VcCircuitID)
 	if resp != nil {
 		d.SetId(resp.VcCircuitID)
 
@@ -325,35 +314,13 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 			return diag.FromErr(err)
 		}
-		updateOk := make(chan bool)
-		defer close(updateOk)
-		ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-		go func() {
-			for range ticker.C {
-				if ok := c.IsBackboneComplete(d.Id()); ok {
-					ticker.Stop()
-					updateOk <- true
-				}
-			}
-		}()
-		<-updateOk
+		checkBackboneComplete(c, d.Id())
 	}
 
 	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(d.Id()); ok {
-				ticker.Stop()
-				updateOk <- true
-			}
-		}
-	}()
-	<-updateOk
+	checkBackboneComplete(c, d.Id())
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -363,6 +330,21 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		}
 	}
 	return diags
+}
+
+func checkBackboneComplete(c *packetfabric.PFClient, id string) {
+	done := make(chan bool)
+	defer close(done)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(id); ok {
+				ticker.Stop()
+				done <- true
+			}
+		}
+	}()
+	<-done
 }
 
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
