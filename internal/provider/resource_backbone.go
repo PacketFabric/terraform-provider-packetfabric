@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -179,15 +178,22 @@ func resourceBackbone() *schema.Resource {
 					return nil
 				}
 
-				attributes := []string{
-					"interface_a.0.port_circuit_id",
-					"interface_z.0.port_circuit_id",
-				}
+				interfaces := []string{"interface_a", "interface_z"}
 
-				for _, attribute := range attributes {
-					oldRaw, newRaw := d.GetChange(attribute)
-					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
-						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+				for _, iface := range interfaces {
+					oldRaw, newRaw := d.GetChange(iface)
+					oldSet := oldRaw.(*schema.Set)
+					newSet := newRaw.(*schema.Set)
+
+					for _, oldElem := range oldSet.List() {
+						for _, newElem := range newSet.List() {
+							oldResource := oldElem.(map[string]interface{})
+							newResource := newElem.(map[string]interface{})
+
+							if oldResource["port_circuit_id"] != newResource["port_circuit_id"] {
+								return fmt.Errorf("updating %s port_circuit_id in-place is not supported, delete and recreate the resource with the updated values", iface)
+							}
+						}
 					}
 				}
 
