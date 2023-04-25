@@ -19,12 +19,15 @@ resource "packetfabric_cloud_router" "cr" {
   labels   = var.labels
 }
 
-# This block creates a data source of type "packetfabric_locations_pop_zones" and is used to retrieve the zone information for a given pop.
+# This block creates a data source of type "packetfabric_locations_cloud" and is used to retrieve the zone information for a given pop.
 # The data source is created for each item in the "aws_connections" variable.
-data "packetfabric_locations_pop_zones" "locations_pop_zones_aws" {
-  for_each = var.aws_connections
-  provider = packetfabric
-  pop      = each.value.pop
+data "packetfabric_locations_cloud" "locations_pop_zones_aws" {
+  count                 = var.module_enabled ? 1 : 0
+  provider              = packetfabric
+  cloud_provider        = "aws"
+  cloud_connection_type = "hosted"
+  has_cloud_router      = true
+  pop                   = each.value.pop
 }
 
 # This block creates a connection to an AWS Virtual Private Cloud (VPC) via the PacketFabric cloud router.
@@ -36,7 +39,7 @@ resource "packetfabric_cloud_router_connection_aws" "aws" {
   labels      = var.labels
   pop         = each.value.pop
   speed       = each.value.speed
-  zone        = data.packetfabric_locations_pop_zones.locations_pop_zones_aws[each.key].locations_zones[0]
+  zone        = data.packetfabric_locations_cloud.locations_pop_zones_aws[each.key].cloud_locations[0].zones[0]
   lifecycle {
     ignore_changes = [
       zone,

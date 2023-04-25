@@ -7,8 +7,11 @@ resource "google_compute_router" "google_router_1" {
     # You must select or create a Cloud Router with its Google ASN set to 16550. This is a Google requirement for all Partner Interconnects.
     asn            = var.gcp_side_asn1
     advertise_mode = "CUSTOM"
-    advertised_ip_ranges {
-      range = var.gcp_subnet_cidr1
-    }
+  }
+  lifecycle {
+    # advertised_ip_ranges managed via BGP prefixes in configured in packetfabric_cloud_router_connection_google
+    ignore_changes = [
+      bgp[0].advertised_ip_ranges
+    ]
   }
 }
