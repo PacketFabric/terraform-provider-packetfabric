@@ -45,10 +45,10 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			},
 			"google_vlan_attachment_name": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The name you used for your VLAN attachment in Google.",
+				Description:  "The name you used for your VLAN attachment in Google. Required if not using cloud_settings.",
 			},
 			"description": {
 				Type:         schema.TypeString,
