@@ -56,7 +56,6 @@ Optional:
 		Example: 3d78949f-1396-4163-b0ca-3eba3592abcd
 - `bgp_state` (String) The status of the BGP session
 		Enum: established, configuring, fetching, etc.
-- `community` (String) The BGP community for this instance. Deprecated.
 - `disabled` (Boolean) Whether this BGP session is disabled.
 		Default "false"
 - `l3_address` (String) The L3 address of this instance.
