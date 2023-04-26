@@ -29,8 +29,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   circuit_id        = packetfabric_cloud_router.cr.id
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   speed             = var.pf_crc_speed
-  maybe_nat         = var.pf_crc_maybe_nat
-  is_public         = var.pf_crc_is_public
 }
 
 # Get the VLAN ID from PacketFabric
@@ -76,7 +74,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_azure.crc_2.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.azure_side_asn1
   orlonger       = var.pf_crbs_orlonger
   # Only specify either the primary_subnet OR the secondary_subnet

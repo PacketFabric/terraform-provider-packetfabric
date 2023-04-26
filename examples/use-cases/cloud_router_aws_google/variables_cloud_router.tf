@@ -22,18 +22,8 @@ variable "pf_crc_speed" {
   description = "The speed of the new connection"
   default     = "50Mbps"
 }
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
-}
 
 # PacketFabric Cloud Router Connection - AWS
-variable "pf_crc_is_public" {
-  type        = bool
-  description = "Whether PacketFabric should allocate a public IP address for this connection"
-  default     = false
-}
 variable "pf_crc_pop1" {
   type        = string
   description = "The POP in which you want to provision the connection"

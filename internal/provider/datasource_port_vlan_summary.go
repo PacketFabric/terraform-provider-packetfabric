@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -48,6 +47,6 @@ func dataSourcePortVlanSummaryRead(ctx context.Context, d *schema.ResourceData, 
 	}
 	_ = d.Set("lowest_available_vlan", summary.LowestAvailableVlan)
 	_ = d.Set("max_vlan", summary.MaxVlan)
-	d.SetId(uuid.New().String())
+	d.SetId(portCID.(string) + "-data")
 	return diags
 }

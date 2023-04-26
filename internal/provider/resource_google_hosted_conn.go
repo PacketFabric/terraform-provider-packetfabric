@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -228,6 +231,32 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				attributes := []string{
+					"cloud_settings.0.google_region",
+					"cloud_settings.0.google_project_id",
+					"cloud_settings.0.google_vlan_attachment_name",
+					"cloud_settings.0.google_pairing_key",
+					"cloud_settings.0.google_cloud_router_name",
+					"cloud_settings.0.google_vpc_name",
+					"cloud_settings.0.google_edge_availability_domain",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -320,7 +349,6 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 			cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
 			cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
 			cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
-			cloudSettings["google_vpc_name"] = resp.CloudSettings.GoogleVPCName
 			cloudSettings["google_edge_availability_domain"] = resp.CloudSettings.GoogleEdgeAvailabilityDomain
 			cloudSettings["mtu"] = resp.CloudSettings.Mtu
 
@@ -364,6 +392,7 @@ func resourceGoogeReqHostConnDelete(ctx context.Context, d *schema.ResourceData,
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {
 	hostedGoogleConn := packetfabric.GoogleReqHostedConn{}
+
 	if accountUUID, ok := d.GetOk("account_uuid"); ok {
 		hostedGoogleConn.AccountUUID = accountUUID.(string)
 	}
@@ -396,42 +425,60 @@ func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedCo
 	}
 	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
 		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
-		hostedGoogleConn.CloudSettings = &packetfabric.CloudSettings{}
-		hostedGoogleConn.CloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
-		hostedGoogleConn.CloudSettings.GoogleRegion = cs["google_region"].(string)
-		if googleProjectID, ok := cs["google_project_id"]; ok {
-			hostedGoogleConn.CloudSettings.GoogleProjectID = googleProjectID.(string)
-		}
-		hostedGoogleConn.CloudSettings.GoogleVlanAttachmentName = cs["google_vlan_attachment_name"].(string)
-		hostedGoogleConn.CloudSettings.GoogleCloudRouterName = cs["google_cloud_router_name"].(string)
-		if googleVPCName, ok := cs["google_vpc_name"]; ok {
-			hostedGoogleConn.CloudSettings.GoogleVPCName = googleVPCName.(string)
-		}
-		if googleEdgeAvailabilityDomain, ok := cs["google_edge_availability_domain"]; ok {
-			hostedGoogleConn.CloudSettings.GoogleEdgeAvailabilityDomain = googleEdgeAvailabilityDomain.(int)
-		}
-		if mtu, ok := cs["mtu"]; ok {
-			hostedGoogleConn.CloudSettings.Mtu = mtu.(int)
-		}
-		if bgpSettings, ok := cs["bgp_settings"]; ok {
-			bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
-			hostedGoogleConn.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
-			hostedGoogleConn.CloudSettings.BgpSettings.CustomerAsn = bgpSettingsMap["customer_asn"].(int)
-			hostedGoogleConn.CloudSettings.BgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
-			if md5, ok := bgpSettingsMap["md5"]; ok {
-				hostedGoogleConn.CloudSettings.BgpSettings.Md5 = md5.(string)
-			}
-			if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
-				hostedGoogleConn.CloudSettings.BgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
-			}
-			if googleAdvertisedIPRangesInterface, ok := bgpSettingsMap["google_advertised_ip_ranges"].([]interface{}); ok {
-				googleAdvertisedIPRanges := make([]string, len(googleAdvertisedIPRangesInterface))
-				for i, elem := range googleAdvertisedIPRangesInterface {
-					googleAdvertisedIPRanges[i] = elem.(string)
-				}
-				hostedGoogleConn.CloudSettings.BgpSettings.GoogleAdvertisedIPRanges = googleAdvertisedIPRanges
-			}
-		}
+		hostedGoogleConn.CloudSettings = extractCloudSettingsForGoogleReq(cs)
 	}
+
 	return hostedGoogleConn
+}
+
+func extractCloudSettingsForGoogleReq(cs map[string]interface{}) *packetfabric.CloudSettings {
+	cloudSettings := &packetfabric.CloudSettings{}
+
+	cloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
+	cloudSettings.GoogleRegion = cs["google_region"].(string)
+
+	if googleProjectID, ok := cs["google_project_id"]; ok {
+		cloudSettings.GoogleProjectID = googleProjectID.(string)
+	}
+	cloudSettings.GoogleVlanAttachmentName = cs["google_vlan_attachment_name"].(string)
+	cloudSettings.GoogleCloudRouterName = cs["google_cloud_router_name"].(string)
+
+	if googleVPCName, ok := cs["google_vpc_name"]; ok {
+		cloudSettings.GoogleVPCName = googleVPCName.(string)
+	}
+	if googleEdgeAvailabilityDomain, ok := cs["google_edge_availability_domain"]; ok {
+		cloudSettings.GoogleEdgeAvailabilityDomain = googleEdgeAvailabilityDomain.(int)
+	}
+	if mtu, ok := cs["mtu"]; ok {
+		cloudSettings.Mtu = mtu.(int)
+	}
+	if bgpSettings, ok := cs["bgp_settings"]; ok {
+		bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
+		cloudSettings.BgpSettings = extractBgpSettingsForGoogleReq(bgpSettingsMap)
+	}
+
+	return cloudSettings
+}
+
+func extractBgpSettingsForGoogleReq(bgpSettingsMap map[string]interface{}) *packetfabric.BgpSettings {
+	bgpSettings := &packetfabric.BgpSettings{}
+
+	bgpSettings.CustomerAsn = bgpSettingsMap["customer_asn"].(int)
+	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
+
+	if md5, ok := bgpSettingsMap["md5"]; ok {
+		bgpSettings.Md5 = md5.(string)
+	}
+	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
+		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
+	}
+	if googleAdvertisedIPRangesInterface, ok := bgpSettingsMap["google_advertised_ip_ranges"].([]interface{}); ok {
+		googleAdvertisedIPRanges := make([]string, len(googleAdvertisedIPRangesInterface))
+		for i, elem := range googleAdvertisedIPRangesInterface {
+			googleAdvertisedIPRanges[i] = elem.(string)
+		}
+		bgpSettings.GoogleAdvertisedIPRanges = googleAdvertisedIPRanges
+	}
+
+	return bgpSettings
 }
