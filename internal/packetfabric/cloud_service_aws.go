@@ -150,7 +150,6 @@ type CloudSettings struct {
 	GoogleCloudRouterName          string       `json:"google_cloud_router_name,omitempty"`
 	GoogleDataplaneVersion         int          `json:"google_dataplane_version,omitempty"`
 	GoogleEdgeAvailabilityDomain   int          `json:"google_edge_availability_domain,omitempty"`
-	GoogleKeepaliveInterval        int          `json:"google_keepalive_interval,omitempty"`
 	GoogleInterconnectState        string       `json:"google_interconnect_state,omitempty"`
 	GoogleInterfaceName            string       `json:"google_interface_name,omitempty"`
 	GoogleInterconnectAdminEnabled bool         `json:"google_interconnect_admin_enabled,omitempty"`
