@@ -404,6 +404,9 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 				if d.Id() == "" {
 					return nil
 				}
+				if _, ok := d.GetOk("cloud_settings"); !ok {
+					return nil
+				}
 
 				attributes := []string{
 					"cloud_settings.0.google_region",
@@ -552,7 +555,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		}
 		bgpSettings := make(map[string]interface{})
 		if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.google_keepalive_interval"); ok {
-			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.GoogleKeepaliveInterval
+			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
 		}
 		if bgp != nil {
 			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.remote_asn"); ok {
