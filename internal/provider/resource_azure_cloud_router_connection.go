@@ -120,13 +120,7 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
+		if err := checkCloudRouterConnectionStatus(c, cid.(string), resp.CloudCircuitID); err != nil {
 			return diag.FromErr(err)
 		}
 		if resp != nil {

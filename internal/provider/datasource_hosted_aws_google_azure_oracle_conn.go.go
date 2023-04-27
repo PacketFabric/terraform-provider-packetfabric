@@ -447,7 +447,7 @@ func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m 
 			return diag.FromErr(err)
 		}
 	}
-	d.SetId(connInfo.CloudCircuitID)
+	d.SetId(circuitID.(string) + "-data")
 
 	return diags
 }
