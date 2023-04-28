@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.3.0"
+      version = ">= 1.4.0"
     }
     google = {
       source  = "hashicorp/google"
@@ -91,7 +91,7 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   speed       = var.pf_cs_speed
   # set if cloud_settings not used
   # google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key
-  google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}-${lower(var.pf_cs_pop1)}-primary"
+  # google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}-${lower(var.pf_cs_pop1)}-primary"
   pop                         = var.pf_cs_pop1
   vlan                        = var.pf_cs_vlan1
   # for cloud side provisioning - optional

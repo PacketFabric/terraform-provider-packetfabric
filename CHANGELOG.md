@@ -1,3 +1,31 @@
+## 1.4.0  (April 19, 2023)
+
+BREAKING CHANGES:
+
+* data-source: [RENAMED] packetfabric_ports (was packetfabric_port) (#429)
+
+FEATURES:
+
+* resource: packetfabric_streaming_events (#212)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Update BGP session deletion warning (#431)
+
+BUG FIXES:
+
+* [ERROR] setting state: labels: '': source data must be an array or slice, got struct (#427)
+* Check if zone or autoneg are set in packetfabric_port resource (#433)
+* Check if po_number is set in the resource using po_number (#435)
+* Check if zone is set in packetfabric_cloud_router_connection_aws/oracle/ibm resources (#438)
+* Check if ibm_bgp_cer_cidr and ibm_bgp_ibm_cidr are set in packetfabric_cloud_router_connection_ibm resource (#438)
+* Check if phase2_authentication_algo is set in packetfabric_cloud_router_connection_ipsec resource (#438)
+* Check if vlan is set in packetfabric_cloud_router_connection_port resource (#438)
+
+ACCEPTANCE TESTING:
+
+* ACC Test for packetfabric_cloud_router (#368)
+
 ## 1.3.0  (April 5, 2023)
 
 FEATURES:

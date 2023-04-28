@@ -17,7 +17,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_port.crc_3.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.on_premise_bgp_peering_prefix # Customer On-premise Router Peer IP side

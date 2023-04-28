@@ -2,11 +2,11 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.3.0"
+      version = ">= 1.4.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = ">= 1.52.0"
+      version = ">= 1.53.0-beta0"
     }
   }
 }
