@@ -12,22 +12,6 @@ A connection from your cloud router to your AWS environment. For more informatio
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-To retrieve the VLAN ID for establishing AWS peering via [`aws_dx_transit_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_transit_virtual_interface) or [`aws_dx_private_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_private_virtual_interface), utilize the [`packetfabric_cloud_router_connections (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_cloud_router_connections) and loop through its output in a `locals` block. 
-
-The code to do this is provided below:
-
-```terraform
-locals {
-  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-  helper_map = { for val in local.cloud_connections :
-  val["description"] => val }
-  cc1 = local.helper_map["${var.pf_crc_description}"]
-}
-output "cc1_vlan_id_pf" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-```
-
 ## Example Usage
 
 ```terraform
@@ -126,7 +110,9 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
 
 ### Read-Only
 
+- `aws_connection_id` (String) AWS Direct Connect Connection ID.
 - `id` (String) The ID of this resource.
+- `vlan_id_pf` (Number) PacketFabric VLAN ID.
 
 <a id="nestedblock--cloud_settings"></a>
 ### Nested Schema for `cloud_settings`
