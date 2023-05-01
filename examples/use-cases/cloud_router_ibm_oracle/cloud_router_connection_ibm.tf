@@ -63,7 +63,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_ibm.crc_1.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.ibm_bgp_asn
   orlonger       = var.pf_crbs_orlonger
   remote_address = data.ibm_dl_gateway.after_approved.bgp_base_cidr # IBM side

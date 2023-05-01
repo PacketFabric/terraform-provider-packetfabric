@@ -24,7 +24,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   circuit_id     = packetfabric_cloud_router.cr.id
   connection_id  = packetfabric_cloud_router_connection_ipsec.crc_2.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.vpn_side_asn2
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.vpn_remote_address # On-Prem side

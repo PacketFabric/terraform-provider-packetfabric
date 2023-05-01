@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -226,6 +227,7 @@ func datasourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m i
 	if err := d.Set("point_to_points", flattenPointToPoints(&ptps)); err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId(uuid.New().String())
 	return diags
 }
 

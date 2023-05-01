@@ -185,12 +185,18 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("ibm_account_id", resp.CloudSettings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.CloudSettings.BgpAsn)
-		_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
-		_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
+			_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
+		}
+		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		}
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("zone", resp.Zone)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp.Zone)
+		}
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
 		}

@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.3.0"
+      version = ">= 1.4.0"
     }
   }
 }
@@ -362,7 +362,7 @@ resource "random_pet" "name" {}
 #   #   credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
 #   #   aws_region       = var.pf_cs_aws_region
 #   #   mtu              = var.pf_cs_mtu
-#   #   aws_vif_type     = var.pf_cs_aws_vif_type
+#   #   aws_vif_type     = "private"
 #   #   bgp_settings {
 #   #     customer_asn   = var.pf_cs_customer_asn
 #   #     address_family = var.pf_cs_address_family
@@ -377,7 +377,7 @@ resource "random_pet" "name" {}
 #   #     ]
 #   #   }
 #   #   aws_gateways {
-#   #     type   = var.pf_cs_aws_vif_type
+#   #     type   = "private"
 #   #     name   = "${var.resource_name}-${random_pet.name.id}"
 #   #     vpc_id = var.pf_cs_aws_vpc_id
 #   #   }
@@ -406,6 +406,54 @@ resource "random_pet" "name" {}
 #   content  = data.packetfabric_cs_hosted_connection_router_config.router_aws_cisco2900.router_config
 # }
 
+# # Create a Google Hosted Connection 
+# resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
+#   provider                    = packetfabric
+#   description                 = "${var.resource_name}-${random_pet.name.id}"
+#   port                        = packetfabric_port.port_1a.id
+#   speed                       = var.pf_cs_speed1
+#   # google_pairing_key          = var.google_pairing_key
+#   # google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
+#   pop                         = var.pf_cs_pop1
+#   vlan                        = var.pf_cs_vlan1
+#   labels                      = var.pf_labels
+#   po_number                   = var.pf_po_number
+#   # # for cloud side provisioning - optional
+#   # cloud_settings {
+#   #   credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
+#   #   google_region                   = var.pf_cs_google_region
+#   #   google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_vpc_name                 = var.pf_cs_google_vpc_name
+#   #   google_edge_availability_domain = 1
+#   #   bgp_settings {
+#   #     customer_asn = var.pf_cs_google_customer_asn
+#   #     md5          = var.pf_cs_google_bgp_md5
+#   #   }
+#   # }
+# }
+# output "packetfabric_cs_google_hosted_connection" {
+#   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
+#   sensitive = true
+# }
+
+# data "packetfabric_cs_google_hosted_connection" "current" {
+#   provider         = packetfabric
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
+# }
+# output "packetfabric_cs_google_hosted_connection_data" {
+#   value = data.packetfabric_cs_google_hosted_connection.current
+# }
+
+# data "packetfabric_cs_hosted_connection_router_config" "router_google_cisco2900" {
+#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
+#   router_type      = "CiscoSystemsInc-2900SeriesRouters-IOS124"
+# }
+# resource "local_file" "router_google_cisco2900_file" {
+#   filename = "router_config_google_cisco2900.txt"
+#   content  = data.packetfabric_cs_hosted_connection_router_config.router_google_cisco2900.router_config
+# }
+
 # # Create a Azure Hosted Connection 
 # resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 #   provider          = packetfabric
@@ -429,45 +477,6 @@ resource "random_pet" "name" {}
 # }
 # output "packetfabric_cs_azure_hosted_connection_data" {
 #   value = data.packetfabric_cs_azure_hosted_connection.current
-# }
-
-# # Create a GCP Hosted Connection 
-# resource "packetfabric_cs_google_hosted_connection" "cs_conn1_hosted_google" {
-#   provider                    = packetfabric
-#   description                 = "${var.resource_name}-${random_pet.name.id}"
-#   port                        = packetfabric_port.port_1a.id
-#   speed                       = var.pf_cs_speed1
-#   # google_pairing_key          = var.google_pairing_key
-#   # google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}"
-#   pop                         = var.pf_cs_pop1
-#   vlan                        = var.pf_cs_vlan1
-#   labels                      = var.pf_labels
-#   po_number                   = var.pf_po_number
-#   # for cloud side provisioning - optional
-#   cloud_settings {
-#     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
-#     google_region                   = var.pf_cs_google_region
-#     google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
-#     google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
-#     google_vpc_name                 = var.pf_cs_google_vpc_name
-#     google_edge_availability_domain = 1
-#     bgp_settings {
-#       customer_asn = var.pf_cs_google_customer_asn
-#       md5          = var.pf_cs_google_bgp_md5
-#     }
-#   }
-# }
-# output "packetfabric_cs_google_hosted_connection" {
-#   value     = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google
-#   sensitive = true
-# }
-
-# data "packetfabric_cs_google_hosted_connection" "current" {
-#   provider         = packetfabric
-#   cloud_circuit_id = packetfabric_cs_google_hosted_connection.cs_conn1_hosted_google.id
-# }
-# output "packetfabric_cs_google_hosted_connection_data" {
-#   value = data.packetfabric_cs_google_hosted_connection.current
 # }
 
 # # Create a Oracle Hosted Connection 
@@ -644,7 +653,7 @@ resource "random_pet" "name" {}
 #   value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure
 # }
 
-# # Create a GCP Hosted Marketplace Connection 
+# # Create a Google Hosted Marketplace Connection 
 # resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_marketplace_google" {
 #   provider                    = packetfabric
 #   description                 = "${var.resource_name}-${random_pet.name.id}"
@@ -774,7 +783,7 @@ resource "random_pet" "name" {}
 #   po_number         = var.pf_po_number
 # }
 
-# # GCP Dedicated Connection
+# # Google Dedicated Connection
 # resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
 #   provider          = packetfabric
 #   description       = "${var.resource_name}-${random_pet.name.id}"
@@ -838,6 +847,33 @@ resource "random_pet" "name" {}
 #   is_public   = var.pf_crc_is_public
 #   labels      = var.pf_labels
 #   po_number   = var.pf_po_number
+#   cloud_settings {
+#     credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+#     aws_region       = var.pf_cs_aws_region
+#     aws_vif_type     = "transit"
+#     aws_gateways {
+#       type = "directconnect"
+#       name = "${var.resource_name}-${random_pet.name.id}"
+#     }
+#     aws_gateways {
+#       type   = "transit"
+#       name   = "${var.resource_name}-${random_pet.name.id}"
+#       vpc_id = var.pf_cs_aws_vpc_id
+#     }
+#     bgp_settings {
+#       multihop_ttl   = var.pf_crbs_mhttl
+#       remote_asn     = var.pf_cs_directconnect_gw_asn
+#       orlonger       = var.pf_crbs_orlonger
+#       prefixes {
+#         prefix = "10.0.0.0/8"
+#         type   = "out" # Allowed Prefixes to Cloud
+#       }
+#       prefixes {
+#         prefix = "192.168.1.0/24"
+#         type   = "in" # Allowed Prefixes from Cloud
+#       }
+#     }
+#   }
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
@@ -897,14 +933,34 @@ resource "random_pet" "name" {}
 #   provider                    = packetfabric
 #   description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
 #   circuit_id                  = packetfabric_cloud_router.cr.id
-#   google_pairing_key          = var.pf_crc_google_pairing_key
-#   google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
+#   # google_pairing_key          = var.pf_crc_google_pairing_key
+#   # google_vlan_attachment_name = var.pf_crc_google_vlan_attachment_name
 #   pop                         = var.pf_crc_pop2
 #   speed                       = var.pf_crc_speed
 #   maybe_nat                   = var.pf_crc_maybe_nat
 #   maybe_dnat                  = var.pf_crc_maybe_dnat
 #   labels                      = var.pf_labels
 #   po_number                   = var.pf_po_number
+#   # # for cloud side provisioning - optional
+#   # cloud_settings {
+#   #   credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
+#   #   google_region                   = var.pf_cs_google_region
+#   #   google_vlan_attachment_name     = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_cloud_router_name        = "${var.resource_name}-${random_pet.name.id}"
+#   #   google_vpc_name                 = var.pf_cs_google_vpc_name
+#   #   google_edge_availability_domain = 1
+#   #   bgp_settings {
+#   #     md5          = var.pf_cs_google_bgp_md5
+#   #     prefixes {
+#   #       prefix = "0.0.0.0/0"
+#   #       type   = "out" # Allowed Prefixes to Cloud
+#   #     }
+#   #     prefixes {
+#   #       prefix = "0.0.0.0/0"
+#   #       type   = "in" # Allowed Prefixes from Cloud
+#   #     }
+#   #   }
+#   # }
 # }
 
 # resource "packetfabric_cloud_router_connection_ipsec" "crc_3" {

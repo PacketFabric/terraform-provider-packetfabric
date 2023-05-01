@@ -17,7 +17,6 @@ Terraform providers used: PacketFabric, AWS and Oracle. This example uses AWS Tr
 ## Terraform resources & data-sources used
 
 - "aws_dx_gateway"
-- "aws_dx_transit_virtual_interface"
 - "aws_dx_gateway_association"
 - "aws_ec2_transit_gateway"
 - "aws_ec2_transit_gateway_vpc_attachment"
@@ -113,53 +112,4 @@ terraform apply
 
 ```sh
 terraform destroy
-```
-
-## Troubleshooting
-
-1. In case you get the following error:
-
-```
-╷
-│ Error: error waiting for Direct Connection Connection (dxcon-fgohxwui) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
-│ 
-│   with aws_dx_connection_confirmation.confirmation,
-│   on cloud_router_connection_aws.tf line 46, in resource "aws_dx_connection_confirmation" "confirmation":
-│   46: resource "aws_dx_connection_confirmation" "confirmation" {
-│ 
-```
-
-You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
-
-As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the following resource:
-
-```
-# resource "aws_dx_connection_confirmation" "confirmation" {
-#   provider      = aws
-#   connection_id = data.aws_dx_connection.current.id
-
-#   lifecycle {
-#     ignore_changes = [
-#       connection_id
-#     ]
-#   }
-# }
-```
-
-Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation` in `packetfabric_cloud_router_connections` data source: 
-
-```
-data "packetfabric_cloud_router_connections" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  # depends_on = [
-  #   aws_dx_connection_confirmation.confirmation
-  # ]
-}
-```
-
-Then remove the `confirmation` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
-```
-terraform apply
 ```
