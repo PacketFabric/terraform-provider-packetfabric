@@ -36,13 +36,13 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 }
 
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
-  provider                    = packetfabric
-  description                 = "hello world"
-  port                        = packetfabric_port.port_1.id
-  speed                       = "10Gbps"
-  pop                         = "BOS1"
-  vlan                        = 102
-  zone                        = "A"
+  provider    = packetfabric
+  description = "hello world"
+  port        = packetfabric_port.port_1.id
+  speed       = "10Gbps"
+  pop         = "BOS1"
+  vlan        = 102
+  zone        = "A"
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"

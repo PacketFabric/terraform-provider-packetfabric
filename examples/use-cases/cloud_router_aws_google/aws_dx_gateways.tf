@@ -22,7 +22,7 @@ resource "aws_dx_gateway_association" "transit_gw_to_direct_connect_1" {
     ]
   }
   depends_on = [
-   aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
+    aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
   ]
   timeouts {
     create = "2h"
