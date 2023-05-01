@@ -115,6 +115,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_provider_credential_google":        resourceCloudProviderCredentialGoogle(),
 			"packetfabric_user":                                    resourceUser(),
 			"packetfabric_streaming_events":                        resourceStreamingEvents(),
+			"packetfabric_document":                                resourceDocuments(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -154,6 +155,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations_cloud":                    datasourceCloudLocations(),
 			"packetfabric_quick_connect_requests":             datasourceQuickConnectRequests(),
 			"packetfabric_cs_hosted_connection_router_config": datasourceHostedCloudRouterConfig(),
+			"packetfabric_document":                           datasourceDocuments(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
