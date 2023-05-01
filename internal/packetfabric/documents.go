@@ -30,7 +30,7 @@ type DocumentsPayload struct {
 	Document      string `json:"document"`
 	Type          string `json:"type"`
 	Description   string `json:"description"`
-	PortCircuitId string `json:"port_circuit_id"`
+	PortCircuitId string `json:"port_circuit_id,omitempty"`
 }
 
 func (c *PFClient) CreateDocument(documentsData DocumentsPayload) (*Document, error) {

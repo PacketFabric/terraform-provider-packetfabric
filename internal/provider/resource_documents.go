@@ -19,6 +19,7 @@ func resourceDocuments() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -27,25 +28,32 @@ func resourceDocuments() *schema.Resource {
 				Description: "ID for document",
 			},
 			"document": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Binary file contents",
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				Description:  "Binary file contents",
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				Description:  "Document type. One of [\"loa\", \"msa\"]",
 				ValidateFunc: validation.StringInSlice([]string{"loa", "msa"}, false),
 			},
 			"description": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Document description",
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				Description:  "Document description",
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"port_circuit_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Port circuit id. This field is required only for \"loa\" document type",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  "Port circuit id. This field is required only for \"loa\" document type",
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 		},
 	}
