@@ -298,7 +298,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
 #   description   = "${var.resource_name}-${random_pet.name.id}"
-#   document_uuid = var.pf_document_uuid1
+#   document_uuid = packetfabric_document.loa1.id
 #   port          = packetfabric_port.port_1a.id
 #   site          = local.pf_port_site1
 # }
