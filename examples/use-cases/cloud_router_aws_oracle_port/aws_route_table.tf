@@ -21,7 +21,7 @@ resource "aws_route" "route_table_1_to_transit_gateway" {
   route_table_id         = aws_route_table.route_table_1.id
   destination_cidr_block = var.gcp_subnet_cidr1
   # destination_cidr_block = "0.0.0.0/0"
-  transit_gateway_id     = aws_ec2_transit_gateway.transit_gw_1.id
+  transit_gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
 }
 
 # Assign the route table to the subnet
