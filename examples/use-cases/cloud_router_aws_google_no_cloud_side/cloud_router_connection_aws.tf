@@ -19,7 +19,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
 resource "aws_dx_connection_confirmation" "confirmation" {
   provider      = aws
   connection_id = packetfabric_cloud_router_connection_aws.crc_1.aws_connection_id
-  
+
   lifecycle {
     ignore_changes = [
       connection_id,
