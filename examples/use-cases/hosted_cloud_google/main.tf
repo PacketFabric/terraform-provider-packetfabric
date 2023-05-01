@@ -92,8 +92,8 @@ resource "packetfabric_cs_google_hosted_connection" "pf_cs_conn1" {
   # set if cloud_settings not used
   # google_pairing_key          = google_compute_interconnect_attachment.interconnect_1.pairing_key
   # google_vlan_attachment_name = "${var.resource_name}-${random_pet.name.id}-${lower(var.pf_cs_pop1)}-primary"
-  pop                         = var.pf_cs_pop1
-  vlan                        = var.pf_cs_vlan1
+  pop  = var.pf_cs_pop1
+  vlan = var.pf_cs_vlan1
   # for cloud side provisioning - optional
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
