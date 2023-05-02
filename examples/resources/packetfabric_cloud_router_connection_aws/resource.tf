@@ -19,6 +19,12 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   labels      = ["terraform", "dev"]
 }
 
+resource "aws_dx_connection_confirmation" "confirmation" {
+  provider      = aws
+  connection_id = packetfabric_cloud_router_connection_aws.crc1.cloud_provider_connection_id
+}
+
+
 # Example PacketFabric side + AWS side provisioning
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider       = packetfabric

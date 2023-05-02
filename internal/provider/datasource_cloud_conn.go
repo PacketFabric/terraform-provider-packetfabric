@@ -123,8 +123,9 @@ func dataSourceCloudConn() *schema.Resource {
 										Computed: true,
 									},
 									"aws_connection_id": {
-										Type:     schema.TypeString,
-										Computed: true,
+										Type:       schema.TypeString,
+										Computed:   true,
+										Deprecated: "This field is deprecated and will be removed in a future release.",
 									},
 									"aws_account_id": {
 										Type:     schema.TypeString,

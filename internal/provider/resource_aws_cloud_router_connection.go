@@ -122,6 +122,16 @@ func resourceRouterConnectionAws() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"cloud_provider_connection_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
+			},
+			"vlan_id_pf": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "PacketFabric VLAN ID.",
+			},
 			"cloud_settings": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -451,6 +461,28 @@ func resourceRouterConnectionAwsCreate(ctx context.Context, d *schema.ResourceDa
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			if _, ok := d.GetOk("cloud_settings"); !ok {
+				time.Sleep(90 * time.Second) // wait for the connection to show on AWS
+				resp, err := c.ReadCloudRouterConnection(cid.(string), resp.CloudCircuitID)
+				if err != nil {
+					diags = diag.FromErr(err)
+					return diags
+				}
+
+				if resp.CloudProviderConnectionID == "" || resp.CloudSettings.VlanIDPf == 0 {
+					diags = append(diags, diag.Diagnostic{
+						Severity: diag.Warning,
+						Summary:  "Incomplete Cloud Information",
+						Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+					})
+					return diags
+				} else {
+					_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+					_ = d.Set("vlan_id_pf", resp.CloudSettings.VlanIDPf)
+				}
+			}
+
 			if _, ok := d.GetOk("cloud_settings"); ok {
 				// Extract the BGP settings UUID
 				resp, err := c.ReadCloudRouterConnection(cid.(string), resp.CloudCircuitID)
@@ -531,7 +563,6 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 			cloudSettings["mtu"] = resp.CloudSettings.Mtu
 		}
 		cloudSettings["aws_vif_type"] = resp.CloudSettings.AwsVifType
-
 		bgpSettings := make(map[string]interface{})
 		if bgp != nil {
 			if _, ok := d.GetOk("cloud_settings.0.bgp_settings.0.remote_asn"); ok {
@@ -590,6 +621,18 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 		}
 		cloudSettings["aws_gateways"] = awsGateways
 		_ = d.Set("cloud_settings", cloudSettings)
+	} else {
+		if resp.CloudProviderConnectionID == "" || resp.CloudSettings.VlanIDPf == 0 {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+			_ = d.Set("vlan_id_pf", resp.CloudSettings.VlanIDPf)
+		}
 	}
 	// unsetFields: published_quote_line_uuid
 
