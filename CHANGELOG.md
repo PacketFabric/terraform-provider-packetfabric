@@ -8,12 +8,14 @@ FEATURES:
 
 * resource: [UPDATED] packetfabric_cloud_router_connection_aws - adding cloud side provisioning (#436)
 * resource: [UPDATED] packetfabric_cloud_router_connection_google - adding cloud side provisioning (#436)
+* data-source: packetfabric_cloud_router_connection (#486)
 
 IMPROVEMENTS/ENHANCEMENTS:
 
+* Provide AWS Direct Connect Connection ID in AWS Hosted Cloud and Cloud Router Connection resources (#484)
 * Make google_vlan_attachment_name optional when Cloud Settings are used for google hosted cloud (#415)
-* Error when user try to update port_circuit_id in Backbone VC resource (#479)
-* Error when user try to update cloud settings which cannot be updated-in-place in AWS and Google Hosted Cloud resources (#436)
+* Add check/error when user try to update port_circuit_id in Backbone VC resource (#479)
+* Add check/error when user try to update cloud settings which cannot be updated-in-place in AWS and Google Hosted Cloud resources (#436)
 * Use circuit ID + "-data" for the following data-sources's IDs instead of a random uuid (#436) 
     * packetfabric_cloud_router_bgp_session
     * packetfabric_cloud_router_connection_ipsec
