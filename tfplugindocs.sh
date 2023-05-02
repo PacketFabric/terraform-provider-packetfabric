@@ -10,7 +10,6 @@ fi
 os_name=$(uname)
 
 if [ "$os_name" == "Linux" ]; then
-    terraform fmt -recursive examples/
     tfplugindocs generate --provider-name packetfabric
     cd docs/resources
     for file in *; do mv $file packetfabric_${file%%}; done
@@ -21,7 +20,6 @@ if [ "$os_name" == "Linux" ]; then
     echo -e "\nDocs Updated"
 
 elif [ "$os_name" == "Darwin" ]; then
-    terraform fmt -recursive examples/
     tfplugindocs generate --provider-name packetfabric
     cd docs/resources
     for file in *; do mv $file packetfabric_${file%%}; done
