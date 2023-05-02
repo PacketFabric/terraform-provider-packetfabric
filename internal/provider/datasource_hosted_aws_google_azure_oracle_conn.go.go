@@ -67,6 +67,11 @@ func dataSourceCloudServicesConnInfo() *schema.Resource {
 				Optional:    true,
 				Description: "Region short name.\n\t\tExample: us-west-1",
 			},
+			"cloud_provider_connection_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
+			},
 			"settings": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -97,8 +102,9 @@ func dataSourceCloudServicesConnInfo() *schema.Resource {
 							Computed: true,
 						},
 						"aws_connection_id": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:       schema.TypeString,
+							Computed:   true,
+							Deprecated: "This field is deprecated and will be removed in a future release.",
 						},
 						"google_vlan_attachment_name": {
 							Type:     schema.TypeString,
@@ -205,8 +211,9 @@ func dataSourceCloudServicesConnInfo() *schema.Resource {
 							Computed: true,
 						},
 						"aws_connection_id": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:       schema.TypeString,
+							Computed:   true,
+							Deprecated: "This field is deprecated and will be removed in a future release.",
 						},
 						"credentials_uuid": {
 							Type:     schema.TypeString,
@@ -454,22 +461,23 @@ func dataSourceCloudServicesRead(ctx context.Context, d *schema.ResourceData, m 
 
 func flattenCloudConnInfo(connInfo *packetfabric.CloudConnInfo) map[string]interface{} {
 	connInfoMap := map[string]interface{}{
-		"cloud_circuit_id":      connInfo.CloudCircuitID,
-		"customer_uuid":         connInfo.CustomerUUID,
-		"user_uuid":             connInfo.UserUUID,
-		"state":                 connInfo.State,
-		"service_provider":      connInfo.ServiceProvider,
-		"service_class":         connInfo.ServiceClass,
-		"port_type":             connInfo.PortType,
-		"speed":                 connInfo.Speed,
-		"description":           connInfo.Description,
-		"cloud_provider_pop":    connInfo.CloudProvider.Pop,
-		"cloud_provider_region": connInfo.CloudProvider.Region,
-		"time_created":          connInfo.TimeCreated,
-		"time_updated":          connInfo.TimeUpdated,
-		"pop":                   connInfo.Pop,
-		"site":                  connInfo.Site,
-		"is_awaiting_onramp":    connInfo.IsAwaitingOnramp,
+		"cloud_circuit_id":             connInfo.CloudCircuitID,
+		"customer_uuid":                connInfo.CustomerUUID,
+		"user_uuid":                    connInfo.UserUUID,
+		"state":                        connInfo.State,
+		"service_provider":             connInfo.ServiceProvider,
+		"service_class":                connInfo.ServiceClass,
+		"port_type":                    connInfo.PortType,
+		"speed":                        connInfo.Speed,
+		"description":                  connInfo.Description,
+		"cloud_provider_pop":           connInfo.CloudProvider.Pop,
+		"cloud_provider_region":        connInfo.CloudProvider.Region,
+		"time_created":                 connInfo.TimeCreated,
+		"time_updated":                 connInfo.TimeUpdated,
+		"pop":                          connInfo.Pop,
+		"site":                         connInfo.Site,
+		"is_awaiting_onramp":           connInfo.IsAwaitingOnramp,
+		"cloud_provider_connection_id": connInfo.CloudProviderConnectionID,
 	}
 
 	settingsList := make([]interface{}, 0)
