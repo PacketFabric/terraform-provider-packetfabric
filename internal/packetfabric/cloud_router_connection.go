@@ -96,31 +96,30 @@ type CloudProvider struct {
 }
 
 type CloudRouterSettings struct {
-	AwsRegion                 string `json:"aws_region,omitempty"`
-	AwsHostedType             string `json:"aws_hosted_type,omitempty"`
-	AwsConnectionID           string `json:"aws_connection_id,omitempty"`
-	CloudProviderConnectionID string `json:"cloud_provider_connection_id,omitempty"`
-	AwsAccountID              string `json:"aws_account_id,omitempty"`
-	VlanIDPf                  int    `json:"vlan_id_pf,omitempty"`
-	VlanIDCust                int    `json:"vlan_id_cust,omitempty"`
-	SvlanIDCust               int    `json:"svlan_id_cust,omitempty"`
-	GooglePairingKey          string `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName  string `json:"google_vlan_attachment_name,omitempty"`
-	VlanPrivate               int    `json:"vlan_private,omitempty"`
-	VlanMicrosoft             int    `json:"vlan_microsoft,omitempty"`
-	AzureServiceKey           string `json:"azure_service_key,omitempty"`
-	AzureServiceTag           int    `json:"azure_service_tag,omitempty"`
-	OracleRegion              string `json:"oracle_region,omitempty"`
-	VcOcid                    string `json:"vc_ocid,omitempty"`
-	PortCrossConnectOcid      string `json:"port_cross_connect_ocid,omitempty"`
-	PortCompartmentOcid       string `json:"port_compartment_ocid,omitempty"`
-	AccountID                 string `json:"account_id,omitempty"`
-	GatewayID                 string `json:"gateway_id,omitempty"`
-	PortID                    string `json:"port_id,omitempty"`
-	Name                      string `json:"name,omitempty"`
-	BgpAsn                    int    `json:"bgp_asn,omitempty"`
-	BgpCerCidr                string `json:"bgp_cer_cidr,omitempty"`
-	BgpIbmCidr                string `json:"bgp_ibm_cidr,omitempty"`
+	AwsRegion                string `json:"aws_region,omitempty"`
+	AwsHostedType            string `json:"aws_hosted_type,omitempty"`
+	AwsConnectionID          string `json:"aws_connection_id,omitempty"`
+	AwsAccountID             string `json:"aws_account_id,omitempty"`
+	VlanIDPf                 int    `json:"vlan_id_pf,omitempty"`
+	VlanIDCust               int    `json:"vlan_id_cust,omitempty"`
+	SvlanIDCust              int    `json:"svlan_id_cust,omitempty"`
+	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
+	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
+	VlanPrivate              int    `json:"vlan_private,omitempty"`
+	VlanMicrosoft            int    `json:"vlan_microsoft,omitempty"`
+	AzureServiceKey          string `json:"azure_service_key,omitempty"`
+	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
+	OracleRegion             string `json:"oracle_region,omitempty"`
+	VcOcid                   string `json:"vc_ocid,omitempty"`
+	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`
+	PortCompartmentOcid      string `json:"port_compartment_ocid,omitempty"`
+	AccountID                string `json:"account_id,omitempty"`
+	GatewayID                string `json:"gateway_id,omitempty"`
+	PortID                   string `json:"port_id,omitempty"`
+	Name                     string `json:"name,omitempty"`
+	BgpAsn                   int    `json:"bgp_asn,omitempty"`
+	BgpCerCidr               string `json:"bgp_cer_cidr,omitempty"`
+	BgpIbmCidr               string `json:"bgp_ibm_cidr,omitempty"`
 }
 
 type AwsBilling struct {
