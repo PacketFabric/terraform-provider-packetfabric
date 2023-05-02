@@ -9,6 +9,10 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   zone        = "A"
   labels      = ["terraform", "dev"]
 }
+resource "aws_dx_connection_confirmation" "confirmation" {
+  provider      = aws
+  connection_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.cloud_provider_connection_id
+}
 
 # Example PacketFabric side + AWS side provisioning
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {

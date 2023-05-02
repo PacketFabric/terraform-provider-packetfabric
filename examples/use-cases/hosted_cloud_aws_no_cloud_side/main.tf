@@ -121,14 +121,7 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
 
 resource "aws_dx_connection_confirmation" "confirmation" {
   provider      = aws
-  connection_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.aws_connection_id
-
-  lifecycle {
-    ignore_changes = [
-      connection_id,
-      vlan
-    ]
-  }
+  connection_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.cloud_provider_connection_id
 }
 
 # From the AWS side: Create a gateway

@@ -26,6 +26,10 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws" {
   zone        = "A"
   labels      = ["terraform", "dev"]
 }
+resource "aws_dx_connection_confirmation" "confirmation" {
+  provider      = aws
+  connection_id = packetfabric_cs_aws_hosted_connection.cs_conn1_hosted_aws.cloud_provider_connection_id
+}
 
 # Example PacketFabric side + AWS side provisioning
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
@@ -102,7 +106,8 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 
 ### Read-Only
 
-- `aws_connection_id` (String) AWS Direct Connect Connection ID.
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `id` (String) The ID of this resource.
 - `vlan_id_pf` (Number) PacketFabric VLAN ID.
 

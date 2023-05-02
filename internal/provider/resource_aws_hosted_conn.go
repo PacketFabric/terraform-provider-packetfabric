@@ -109,10 +109,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"aws_connection_id": {
+			"cloud_provider_connection_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "AWS Direct Connect Connection ID.",
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
 			},
 			"vlan_id_pf": {
 				Type:        schema.TypeInt,
@@ -325,15 +325,15 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		if resp.Settings.AwsConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+		if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
-				Summary:  "CloudSettings is incomplete",
-				Detail:   "The CloudSettings struct contains missing data for aws_connection_id and/or vlan_id_pf.",
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
 			})
 			return diags
 		} else {
-			_ = d.Set("aws_connection_id", resp.Settings.AwsConnectionID)
+			_ = d.Set("aws_connection_id", resp.CloudProviderConnectionID)
 			_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
 		}
 	}
@@ -394,15 +394,15 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			cloudSettings["aws_gateways"] = awsGateways
 			_ = d.Set("cloud_settings", cloudSettings)
 		} else {
-			if resp.Settings.AwsConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+			if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Warning,
-					Summary:  "CloudSettings is incomplete",
-					Detail:   "The CloudSettings struct contains missing data for aws_connection_id and/or vlan_id_pf.",
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
 				})
 				return diags
 			} else {
-				_ = d.Set("aws_connection_id", resp.Settings.AwsConnectionID)
+				_ = d.Set("aws_connection_id", resp.CloudProviderConnectionID)
 				_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
 			}
 		}
