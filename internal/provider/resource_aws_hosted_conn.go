@@ -333,7 +333,7 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 			})
 			return diags
 		} else {
-			_ = d.Set("aws_connection_id", resp.CloudProviderConnectionID)
+			_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
 			_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
 		}
 	}
@@ -402,7 +402,7 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 				})
 				return diags
 			} else {
-				_ = d.Set("aws_connection_id", resp.CloudProviderConnectionID)
+				_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
 				_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
 			}
 		}

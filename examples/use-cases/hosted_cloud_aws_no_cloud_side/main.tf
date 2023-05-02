@@ -27,7 +27,7 @@ resource "aws_vpc" "vpc_1" {
   cidr_block           = var.aws_vpc_cidr1
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "subnet_1" {
   vpc_id     = aws_vpc.vpc_1.id
   cidr_block = var.aws_subnet_cidr1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "gw_1" {
   provider = aws
   vpc_id   = aws_vpc.vpc_1.id
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_1
@@ -78,7 +78,7 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -93,13 +93,14 @@ resource "aws_route_table_association" "route_association_1" {
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
+  labels            = var.pf_labels
 }
 # output "packetfabric_port_1" {
 #   value = packetfabric_port.port_1
@@ -108,7 +109,8 @@ resource "packetfabric_port" "port_1" {
 # From the PacketFabric side: Create a AWS Hosted Connection 
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
@@ -127,7 +129,7 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 # From the AWS side: Create a gateway
 resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
-  name            = "${var.tag_name}-${random_pet.name.id}"
+  name            = "${var.resource_name}-${random_pet.name.id}"
   amazon_side_asn = var.amazon_side_asn1
   depends_on = [
     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
@@ -137,9 +139,9 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
 # From the AWS side: Create and attach a VIF
 resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
   provider       = aws
-  connection_id  = data.aws_dx_connection.current.id
+  connection_id  = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.cloud_provider_connection_id
   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-  name           = "${var.tag_name}-${random_pet.name.id}"
+  name           = "${var.resource_name}-${random_pet.name.id}"
   vlan           = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.vlan_id_pf
   address_family = "ipv4"
   bgp_asn        = var.customer_side_asn1
