@@ -14,7 +14,7 @@ resource "aws_route_table" "route_table_1" {
   }
   # Need to wait for the private GW to be attached before adding it to the route table
   depends_on = [
-    aws_vpn_gateway_attachment.vpn_attachment_1
+    aws_vpn_gateway.vpn_gw_1
   ]
 }
 resource "aws_route_table" "route_table_2" {
@@ -31,7 +31,7 @@ resource "aws_route_table" "route_table_2" {
   }
   # Need to wait for the private GW to be attached before adding it to the route table
   depends_on = [
-    aws_vpn_gateway_attachment.vpn_attachment_2
+    aws_vpn_gateway.vpn_gw_2
   ]
 }
 

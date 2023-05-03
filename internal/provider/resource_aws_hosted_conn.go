@@ -109,6 +109,16 @@ func resourceAwsRequestHostConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"cloud_provider_connection_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
+			},
+			"vlan_id_pf": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "PacketFabric VLAN ID.",
+			},
 			"cloud_settings": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -309,6 +319,25 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 
+	if _, ok := d.GetOk("cloud_settings"); !ok {
+		time.Sleep(90 * time.Second) // wait for the connection to show on AWS
+		resp, err := c.GetCloudConnInfo(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+			_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+		}
+	}
+
 	if labels, ok := d.GetOk("labels"); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
@@ -364,6 +393,18 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			}
 			cloudSettings["aws_gateways"] = awsGateways
 			_ = d.Set("cloud_settings", cloudSettings)
+		} else {
+			if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+				})
+				return diags
+			} else {
+				_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+				_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+			}
 		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
