@@ -23,7 +23,6 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 - "aws_instance"
 - "aws_eip"
 - "aws_vpn_gateway"
-- "aws_vpn_gateway_attachment"
 - "aws_route_table"
 - "aws_vpc"
 - "aws_subnet"
@@ -55,7 +54,7 @@ Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 - [SSH Public Key](https://www.ssh.com/academy/ssh/keygen)
 

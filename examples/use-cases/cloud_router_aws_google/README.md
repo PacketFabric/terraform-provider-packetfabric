@@ -1,7 +1,11 @@
-# Use Case: PacketFabric Cloud Router with AWS and Google
+# Use Case: PacketFabric Cloud Router with AWS and Google with Cloud Side Provisioning
 
 This use case builds a PacketFabric Cloud Router between AWS and Google Cloud Platform.
 Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Transit VIF & Gateway.
+
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the AWS access key, please refer to our [AWS documentation](https://docs.packetfabric.com/cloud/aws/hosted/credentials/). For the Google access key, please refer to our [Google documentation](https://docs.packetfabric.com/cloud/google/hosted/key/).
+
+If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
@@ -64,7 +68,7 @@ Ensure you have the following items available:
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start

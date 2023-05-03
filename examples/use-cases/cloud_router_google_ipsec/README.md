@@ -45,7 +45,7 @@ Ensure you have the following items available:
 
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
 - [IPsec information for the Site-to-Site VPN](https://docs.packetfabric.com/cr/vpn/)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start

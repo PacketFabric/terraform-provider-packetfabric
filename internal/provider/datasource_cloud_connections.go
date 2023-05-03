@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudConn() *schema.Resource {
+func dataSourceCloudConnections() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCloudConnRead,
+		ReadContext: dataSourceCloudConnectionsRead,
 		Schema: map[string]*schema.Schema{
 			"circuit_id": {
 				Type:        schema.TypeString,
@@ -99,7 +99,7 @@ func dataSourceCloudConn() *schema.Resource {
 						},
 						"cloud_settings": {
 							Type:     schema.TypeSet,
-							Required: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"vlan_id_pf": {
@@ -123,8 +123,9 @@ func dataSourceCloudConn() *schema.Resource {
 										Computed: true,
 									},
 									"aws_connection_id": {
-										Type:     schema.TypeString,
-										Computed: true,
+										Type:       schema.TypeString,
+										Computed:   true,
+										Deprecated: "This field is deprecated and will be removed in a future release.",
 									},
 									"aws_account_id": {
 										Type:     schema.TypeString,
@@ -361,7 +362,7 @@ func dataSourceCloudConn() *schema.Resource {
 	}
 }
 
-func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCloudConnectionsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -373,7 +374,7 @@ func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("cloud_connections", flattenCloudConn(&awsConns))
+	err = d.Set("cloud_connections", flattenCloudConnnections(&awsConns))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -381,7 +382,7 @@ func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) []interface{} {
+func flattenCloudConnnections(conns *[]packetfabric.CloudRouterConnectionReadResponse) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {

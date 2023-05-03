@@ -7,7 +7,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.4.0"
+      version = ">= 1.5.0"
     }
   }
 }
@@ -889,6 +889,15 @@ resource "random_pet" "name" {}
 #       }
 #     }
 #   }
+# }
+
+# data "packetfabric_cloud_router_connection" "crc_1" {
+#   provider       = packetfabric
+#   circuit_id     = packetfabric_cloud_router.cr.id
+#   connection_id  = packetfabric_cloud_router_connection_aws.crc_1.id
+# }
+# output "packetfabric_cloud_router_connection_crc_1" {
+#   value = data.packetfabric_cloud_router_connection.crc_1
 # }
 
 # resource "packetfabric_cloud_router_bgp_session" "crbs_1" {

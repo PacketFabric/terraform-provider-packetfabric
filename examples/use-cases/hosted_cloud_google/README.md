@@ -3,6 +3,8 @@
 This use case shows an example on how to use the PacketFabric & Google Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and Google in a Cloud On-Ramps facility.
 
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the Google access key, please refer to our [documentation](https://docs.packetfabric.com/cloud/google/hosted/key/).
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
@@ -39,7 +41,7 @@ Ensure you have installed the following prerequisites:
 Ensure you have the following items available:
 
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start

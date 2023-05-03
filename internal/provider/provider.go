@@ -127,7 +127,8 @@ func Provider() *schema.Provider {
 		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
 			"packetfabric_cloud_router":                       dataSourceCloudRouter(),
-			"packetfabric_cloud_router_connections":           dataSourceCloudConn(),
+			"packetfabric_cloud_router_connection":            dataSourceCloudConnection(),
+			"packetfabric_cloud_router_connections":           dataSourceCloudConnections(),
 			"packetfabric_cloud_router_bgp_session":           dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":           dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_ibm_hosted_connection":           datasourceHostedIBMConn(),
