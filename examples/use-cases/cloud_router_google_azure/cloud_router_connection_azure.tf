@@ -66,18 +66,18 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_azure" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_azure
 # }
 
-# # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
-# resource "azurerm_public_ip" "public_ip_vng_1" {
-#   provider            = azurerm
-#   name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
-#   location            = azurerm_resource_group.resource_group_1.location
-#   resource_group_name = azurerm_resource_group.resource_group_1.name
-#   allocation_method   = "Dynamic"
-#   sku                 = "Standard"
-#   tags = {
-#     environment = "${var.resource_name}-${random_pet.name.id}"
-#   }
-# }
+# From the Microsoft side: Create a virtual network gateway for ExpressRoute.
+resource "azurerm_public_ip" "public_ip_vng_1" {
+  provider            = azurerm
+  name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
+  location            = azurerm_resource_group.resource_group_1.location
+  resource_group_name = azurerm_resource_group.resource_group_1.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags = {
+    environment = "${var.resource_name}-${random_pet.name.id}"
+  }
+}
 
 # # Please be aware that provisioning a Virtual Network Gateway takes a long time (between 30 minutes and 1 hour)
 # # Deletion can take up to 15 minutes

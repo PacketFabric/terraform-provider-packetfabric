@@ -3,7 +3,7 @@
 variable "azure_region1" {
   type        = string
   description = "Azure region"
-  default     = "East US"
+  default     = "East US" # East US, East US 2, West US 2, West US 3
 }
 variable "azure_vnet_cidr1" {
   type        = string

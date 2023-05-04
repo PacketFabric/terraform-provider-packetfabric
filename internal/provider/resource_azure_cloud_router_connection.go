@@ -159,25 +159,16 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 			} else {
 				_ = d.Set("azure_connection_type", resp.CloudSettings.AzureConnectionType)
 			}
-			if resp.CloudSettings.VlanPrivate == 0 {
+			if resp.CloudSettings.VlanPrivate == 0 && resp.CloudSettings.VlanMicrosoft == 0 {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Warning,
 					Summary:  "Incomplete Cloud Information",
-					Detail:   "The vlan_id_private is currently unavailable.",
+					Detail:   "The vlan_id_private/vlan_id_microsoft are currently unavailable.",
 				})
 				return diags
 			} else {
-				_ = d.Set("vlan_id_private", resp.CloudSettings.VlanIDPf)
-			}
-			if resp.CloudSettings.VlanMicrosoft == 0 {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Warning,
-					Summary:  "Incomplete Cloud Information",
-					Detail:   "The vlan_id_microsoft are currently unavailable.",
-				})
-				return diags
-			} else {
-				_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanIDPf)
+				_ = d.Set("vlan_id_private", resp.CloudSettings.VlanPrivate)
+				_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanMicrosoft)
 			}
 
 			if labels, ok := d.GetOk("labels"); ok {
@@ -237,25 +228,16 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	} else {
 		_ = d.Set("azure_connection_type", resp.CloudSettings.AzureConnectionType)
 	}
-	if resp.CloudSettings.VlanPrivate == 0 {
+	if resp.CloudSettings.VlanPrivate == 0 && resp.CloudSettings.VlanMicrosoft == 0 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  "Incomplete Cloud Information",
-			Detail:   "The vlan_id_private is currently unavailable.",
+			Detail:   "The vlan_id_private/vlan_id_microsoft are currently unavailable.",
 		})
 		return diags
 	} else {
-		_ = d.Set("vlan_id_private", resp.CloudSettings.VlanIDPf)
-	}
-	if resp.CloudSettings.VlanMicrosoft == 0 {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Incomplete Cloud Information",
-			Detail:   "The vlan_id_microsoft are currently unavailable.",
-		})
-		return diags
-	} else {
-		_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanIDPf)
+		_ = d.Set("vlan_id_private", resp.CloudSettings.VlanPrivate)
+		_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanMicrosoft)
 	}
 	// unsetFields: published_quote_line_uuid
 

@@ -321,11 +321,22 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
-	_ = d.Set("l3_address", bgp.L3Address)
-	_ = d.Set("remote_address", bgp.RemoteAddress)
-	_ = d.Set("md5", bgp.Md5)
-	_ = d.Set("primary_subnet", bgp.PrimarySubnet)
-	_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
+
+	if _, ok := d.GetOk("l3_address"); ok {
+		_ = d.Set("l3_address", bgp.L3Address)
+	}
+	if _, ok := d.GetOk("remote_address"); ok {
+		_ = d.Set("remote_address", bgp.RemoteAddress)
+	}
+	if _, ok := d.GetOk("primary_subnet"); ok {
+		_ = d.Set("primary_subnet", bgp.Subnet)
+	}
+	if _, ok := d.GetOk("secondary_subnet"); ok {
+		_ = d.Set("secondary_subnet", bgp.Subnet)
+	}
+	if _, ok := d.GetOk("md5"); ok {
+		_ = d.Set("md5", bgp.Md5)
+	}
 	_ = d.Set("med", bgp.Med)
 	_ = d.Set("as_prepend", bgp.AsPrepend)
 	_ = d.Set("local_preference", bgp.LocalPreference)
