@@ -27,7 +27,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect_1" {
 # }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_google" "crc_2" {
+resource "packetfabric_cloud_router_connection_google" "crc_google" {
   provider                    = packetfabric
   description                 = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   labels                      = var.pf_labels
@@ -88,7 +88,7 @@ module "gcloud_bgp_addresses" {
   destroy_cmd_body       = "skip"
 
   module_depends_on = [
-    packetfabric_cloud_router_connection_google.crc_2
+    packetfabric_cloud_router_connection_google.crc_google
   ]
 
   # When "gcloud_bin_abs_path" changes, it should not trigger a replacement
@@ -108,10 +108,10 @@ data "local_file" "customer_router_ip_address" {
 }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_google" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_google.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_google.crc_google.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.gcp_side_asn1
@@ -140,8 +140,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
   #   ]
   # }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_2" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# output "packetfabric_cloud_router_bgp_session_crbs_google" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_google
 # }
 
 # Because the BGP session is created automatically, the only way to update it is to use gcloud
@@ -169,7 +169,7 @@ module "gcloud_bgp_peer_update" {
   destroy_cmd_body       = "skip"
 
   module_depends_on = [
-    packetfabric_cloud_router_connection_google.crc_2
+    packetfabric_cloud_router_connection_google.crc_google
   ]
 
   # When "gcloud_bin_abs_path" changes, it should not trigger a replacement

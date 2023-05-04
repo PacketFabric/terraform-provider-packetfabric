@@ -1,5 +1,5 @@
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_ibm" "crc_1" {
+resource "packetfabric_cloud_router_connection_ibm" "crbs_ibm" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels
@@ -58,10 +58,10 @@ data "ibm_dl_gateway" "after_approved" {
 # }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_ibm" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_ibm.crc_1.id
+  connection_id  = packetfabric_cloud_router_connection_ibm.crbs_ibm.id
   address_family = var.pf_crbs_af
   remote_asn     = var.ibm_bgp_asn
   orlonger       = var.pf_crbs_orlonger
@@ -76,8 +76,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_1" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_1
+# output "packetfabric_cloud_router_bgp_session_crbs_ibm" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_ibm
 # }
 
 # From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
