@@ -18,13 +18,13 @@ data "ibm_dl_gateway" "current" {
   depends_on = [time_sleep.wait_ibm_connection]
 }
 data "ibm_resource_group" "existing_rg" {
-  provider   = ibm
-  name       = "My Resource Group"
+  provider = ibm
+  name     = "My Resource Group"
 }
 
 resource "ibm_dl_gateway_action" "confirmation" {
-  provider = ibm
-  gateway  = data.ibm_dl_gateway.current.id
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current.id
   resource_group = data.ibm_resource_group.existing_rg.id
   action         = "create_gateway_approve"
   global         = true

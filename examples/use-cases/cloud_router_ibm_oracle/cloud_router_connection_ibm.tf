@@ -9,7 +9,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc_ibm" {
   zone        = var.pf_crc_zone1
   maybe_nat   = var.pf_crc_maybe_nat
   speed       = var.pf_crc_speed
-  
+
   depends_on = [
     ibm_resource_group.resource_group_1
   ]
@@ -59,18 +59,6 @@ resource "ibm_dl_gateway_action" "confirmation" {
 #   value = data.ibm_dl_gateway.after_approved
 # }
 
-# From the IBM side: Set up VRF
-# TBD
-
-# From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
-resource "ibm_dl_virtual_connection" "dl_gateway_vc" {
-  provider   = ibm
-  gateway    = data.ibm_dl_gateway.direct_link_gw.id
-  name       = "${var.resource_name}-${random_pet.name.id}"
-  type       = "vpc"
-  network_id = ibm_is_vpc.vpc_1.id
-}
-
 # From the PacketFabric side: Configure BGP
 resource "packetfabric_cloud_router_bgp_session" "crbs_ibm" {
   provider       = packetfabric
@@ -94,12 +82,22 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_ibm" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_ibm
 # }
 
-# Create a Direct Link Gateway Virtual Connection
-resource "ibm_dl_virtual_connection" "connect_gw_vpc"{
-        gateway = data.ibm_dl_gateway.current.id
-        name = "${var.resource_name}-${random_pet.name.id}"
-        type = "vpc"
-        network_id = ibm_is_vpc.vpc_1.resource_crn   
+
+# From the IBM side: Add a virtual connection to your IBM virtual private cloud (VPC)
+resource "ibm_dl_virtual_connection" "dl_gateway_vc" {
+  provider   = ibm
+  gateway    = data.ibm_dl_gateway.current.id
+  name       = "${var.resource_name}-${random_pet.name.id}"
+  type       = "vpc"
+  network_id = ibm_is_vpc.vpc_1.id
 }
 
-# Missing part: routing
+resource "ibm_is_vpc_routing_table_route" "route_to_oracle" {
+  provider      = ibm
+  destination   = var.oracle_subnet_cidr1
+  next_hop      = ibm_dl_virtual_connection.dl_gateway_vc.id
+  routing_table = ibm_is_vpc_routing_table.routing_table_1.id
+  depends_on = [
+    ibm_dl_virtual_connection.dl_gateway_vc
+  ]
+}
