@@ -215,8 +215,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	checkBackboneComplete(c, resp.VcCircuitID)
 	if resp != nil {
+		checkBackboneComplete(c, resp.VcCircuitID)
 		d.SetId(resp.VcCircuitID)
 
 		if labels, ok := d.GetOk("labels"); ok {
