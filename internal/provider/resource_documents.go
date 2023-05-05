@@ -89,6 +89,13 @@ func resourceDocumentsRead(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceDocumentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*packetfabric.PFClient)
+	c.Ctx = ctx
+	var diags diag.Diagnostics
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Document cannot be deleted.",
+	})
 	d.SetId("")
-	return diag.Diagnostics{}
+	return diags
 }
