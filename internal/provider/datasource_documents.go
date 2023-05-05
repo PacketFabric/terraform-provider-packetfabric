@@ -138,7 +138,7 @@ func dataSourceDocumentsRead(ctx context.Context, d *schema.ResourceData, m inte
 		})
 	}
 
-	d.Set("documents", documentsList)
+	_ = d.Set("documents", documentsList)
 	d.SetId(uuid.NewString())
 
 	return diags
