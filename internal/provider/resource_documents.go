@@ -31,7 +31,7 @@ func resourceDocuments() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				Description:  "Binary file contents",
+				Description:  "Document file name",
 				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"type": {

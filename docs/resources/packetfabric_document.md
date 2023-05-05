@@ -19,7 +19,7 @@ For more information, see the [PacketFabric Cross Connect documentation](https:/
 ```terraform
 resource "packetfabric_document" "loa1" {
   provider        = packetfabric
-  document        = filebase64("letter-of-authorization-PF-AP-LAB8-3339359.pdf")
+  document        = "letter-of-authorization-PF-AP-LAB8-3339359.pdf"
   type            = "loa"
   description     = "My LOA"
   port_circuit_id = "PF-AP-LAB8-3339359"
@@ -32,7 +32,7 @@ resource "packetfabric_document" "loa1" {
 ### Required
 
 - `description` (String) Document description
-- `document` (String) Binary file contents
+- `document` (String) Document file name
 - `type` (String) Document type. One of ["loa", "msa"]
 
 ### Optional

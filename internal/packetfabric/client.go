@@ -1,11 +1,16 @@
 package packetfabric
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -71,7 +76,7 @@ func _createBasicClient(host *string) PFClient {
 	return c
 }
 
-func (c *PFClient) _doRequest(req *http.Request, authToken *string) (*http.Response, []byte, error) {
+func (c *PFClient) _doRequest(req *http.Request, authToken *string, customHeaders ...map[string]string) (*http.Response, []byte, error) {
 	token := c.Token
 	if authToken != nil {
 		token = *authToken
@@ -79,6 +84,14 @@ func (c *PFClient) _doRequest(req *http.Request, authToken *string) (*http.Respo
 	req.Header.Add("Authorization", token)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("pf-request-source", "terraform")
+
+	if len(customHeaders) > 0 {
+		headers := customHeaders[0]
+		for key, value := range headers {
+			req.Header.Set(key, value)
+		}
+	}
+
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return res, nil, err
@@ -122,6 +135,55 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 		}
 	}
 	res, body, err := c._doRequest(req, &c.Token)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		err = json.Unmarshal(body, &resp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	c._logDebug(formatedURL, method, payload, resp)
+	return res, nil
+}
+
+func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string, payload map[string]string, resp interface{}) (interface{}, error) {
+	var req *http.Request
+	var err error
+	c.Ctx = context.Background()
+	formatedURL := fmt.Sprintf("%s%s", c.HostURL, uri)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	buffer := &bytes.Buffer{}
+	writer := multipart.NewWriter(buffer)
+	part, err := writer.CreateFormFile(fileField, filepath.Base(filePath))
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, val := range payload {
+		_ = writer.WriteField(key, val)
+	}
+
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, buffer)
+
+	res, body, err := c._doRequest(req, &c.Token, map[string]string{"Content-Type": "multipart/form-data"})
 	if err != nil {
 		return nil, err
 	}

@@ -22,10 +22,6 @@ type Document struct {
 	Links       *DocumentLinks `json:"_links"`
 }
 
-type Documents struct {
-	Documents []Document `json:"documents"`
-}
-
 type DocumentsPayload struct {
 	Document      string `json:"document"`
 	Type          string `json:"type"`
@@ -35,15 +31,22 @@ type DocumentsPayload struct {
 
 func (c *PFClient) CreateDocument(documentsData DocumentsPayload) (*Document, error) {
 	resp := &Document{}
-	_, err := c.sendRequest(documentsURI, postMethod, documentsData, &resp)
+	payload := map[string]string{
+		"type":            documentsData.Type,
+		"description":     documentsData.Description,
+		"port_circuit_id": documentsData.PortCircuitId,
+	}
+	fileField := "document"
+	filePath := documentsData.Document
+	_, err := c.sendMultipartRequest(documentsURI, postMethod, fileField, filePath, payload, &resp)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *PFClient) GetDocuments() (*Documents, error) {
-	resp := &Documents{}
+func (c *PFClient) GetDocuments() ([]*Document, error) {
+	resp := []*Document{}
 	_, err := c.sendRequest(documentsURI, getMethod, nil, &resp)
 	if err != nil {
 		return nil, err
