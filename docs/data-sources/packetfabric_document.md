@@ -26,9 +26,16 @@ output "my-documents" {
 
 ### Read-Only
 
-- `_links` (Set of Object) (see [below for nested schema](#nestedatt--_links))
-- `description` (String) Document description
+- `documents` (Block List) Documents list (see [below for nested schema](#nestedblock--documents))
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--documents"></a>
+### Nested Schema for `documents`
+
+Read-Only:
+
+- `_links` (Set of Object) (see [below for nested schema](#nestedatt--documents--_links))
+- `description` (String) Document description
 - `mime_type` (String) Mime type of the document
 - `name` (String) Document name
 - `size` (Number) Document size
@@ -37,8 +44,8 @@ output "my-documents" {
 - `type` (String) Document type. One of ["loa", "msa"]
 - `uuid` (String) ID of the document
 
-<a id="nestedatt--_links"></a>
-### Nested Schema for `_links`
+<a id="nestedatt--documents--_links"></a>
+### Nested Schema for `documents._links`
 
 Read-Only:
 
@@ -47,5 +54,6 @@ Read-Only:
 - `cloud_router_connection` (String)
 - `port` (String)
 - `service` (String)
+
 
 
