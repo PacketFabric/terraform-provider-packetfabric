@@ -6,7 +6,7 @@ terraform {
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = ">= 1.53.0-beta0"
+      version = ">= 1.53.0"
     }
   }
 }
@@ -88,53 +88,52 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
   zone        = var.pf_cs_zone1
-}
-# output "packetfabric_cs_ibm_hosted_connection" {
-#   value = packetfabric_cs_ibm_hosted_connection.pf_cs_conn1
-# }
-
-# From the IBM side: Accept the connection
-# Wait for the connection to show up in IBM
-resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "1m"
+  
   depends_on = [
-    packetfabric_cs_ibm_hosted_connection.pf_cs_conn1
+    ibm_resource_group.resource_group_1
   ]
 }
 
+# From the IBM side: Accept the connection
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "1m"
+}
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {
   provider   = ibm
   name       = "${var.resource_name}-${random_pet.name.id}"
   depends_on = [time_sleep.wait_ibm_connection]
 }
-# output "ibm_dl_gateway" {
-#   value = data.ibm_dl_gateway.current
-# }
 
-# data "ibm_resource_group" "group" {
-#   provider = ibm
-#   name     = var.ibm_resource_group
+# Used in case you are using an existing resource group and you don't create a new one
+# data "ibm_resource_group" "existing_rg" {
+#   provider   = ibm
+#   name       = "Packet Fabric"
 # }
 
 resource "ibm_dl_gateway_action" "confirmation" {
   provider = ibm
   gateway  = data.ibm_dl_gateway.current.id
-  # resource_group = data.ibm_resource_group.group.id
-  resource_group = ibm_resource_group.resource_group_1.id
+  # resource_group = data.ibm_resource_group.existing_rg.id # used for existing resource group
+  resource_group = ibm_resource_group.resource_group_1.id # used for new resource group
   action         = "create_gateway_approve"
   global         = true
   metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }
 # output "ibm_dl_gateway_action" {
 #   value = data.ibm_dl_gateway.current
 # }
 
-data "ibm_dl_gateway" "after_approved" {
-  provider   = ibm
-  name       = "${var.resource_name}-${random_pet.name.id}"
-  depends_on = [ibm_dl_gateway_action.confirmation]
-}
+# data "ibm_dl_gateway" "after_approved" {
+#   provider   = ibm
+#   name       = "${var.resource_name}-${random_pet.name.id}"
+#   depends_on = [ibm_dl_gateway_action.confirmation]
+# }
 # output "ibm_dl_gateway_after" {
 #   value = data.ibm_dl_gateway.after_approved
 # }

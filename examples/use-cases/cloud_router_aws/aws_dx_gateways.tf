@@ -3,17 +3,11 @@ resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
   name            = "${var.resource_name}-${random_pet.name.id}-1"
   amazon_side_asn = var.amazon_side_asn1
-  depends_on = [
-    aws_vpn_gateway.vpn_gw_1
-  ]
 }
 resource "aws_dx_gateway" "direct_connect_gw_2" {
   provider        = aws.region2
   name            = "${var.resource_name}-${random_pet.name.id}-2"
   amazon_side_asn = var.amazon_side_asn2
-  depends_on = [
-    aws_vpn_gateway.vpn_gw_2
-  ]
 }
 
 # From the AWS side: Associate Virtual Private GW to Direct Connect GW
@@ -26,6 +20,7 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
     create = "2h"
     delete = "2h"
   }
+  depends_on = [time_sleep.delay1]
 }
 resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
   provider              = aws.region2
@@ -36,4 +31,5 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_2" {
     create = "2h"
     delete = "2h"
   }
+  depends_on = [time_sleep.delay2]
 }
