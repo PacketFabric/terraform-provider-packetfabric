@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"os"
 	"path/filepath"
 	"strings"
@@ -162,7 +164,16 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 
 	buffer := &bytes.Buffer{}
 	writer := multipart.NewWriter(buffer)
-	part, err := writer.CreateFormFile(fileField, filepath.Base(filePath))
+	// Get the MIME type of the file based on the file extension
+	mimeType := mime.TypeByExtension(filepath.Ext(filePath))
+
+	// Create a custom part header with the correct MIME type
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fileField, filepath.Base(filePath)))
+	h.Set("Content-Type", mimeType)
+
+	// Create the form file with the custom part header
+	part, err := writer.CreatePart(h)
 	if err != nil {
 		return nil, err
 	}
@@ -182,8 +193,9 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 	}
 
 	req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, buffer)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
 
-	res, body, err := c._doRequest(req, &c.Token, map[string]string{"Content-Type": "multipart/form-data"})
+	res, body, err := c._doRequest(req, &c.Token, map[string]string{})
 	if err != nil {
 		return nil, err
 	}

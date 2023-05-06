@@ -2,6 +2,9 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -31,8 +34,8 @@ func resourceDocuments() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				Description:  "Document file name",
-				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "Document file name. Enum: \".png\", \".jpg\", \".jpeg\", \".pdf\", \".doc\", \".docx\", \".tiff\"",
+				ValidateFunc: validateFileExtension([]string{".png", ".jpg", ".jpeg", ".pdf", ".doc", ".docx", ".tiff"}),
 			},
 			"type": {
 				Type:         schema.TypeString,
@@ -98,4 +101,24 @@ func resourceDocumentsDelete(ctx context.Context, d *schema.ResourceData, m inte
 	})
 	d.SetId("")
 	return diags
+}
+
+func validateFileExtension(validExtensions []string) schema.SchemaValidateFunc {
+	return func(i interface{}, k string) (warnings []string, errors []error) {
+		v, ok := i.(string)
+		if !ok {
+			errors = append(errors, fmt.Errorf("expected type of %s to be string", k))
+			return
+		}
+
+		ext := strings.ToLower(filepath.Ext(v))
+		for _, validExt := range validExtensions {
+			if ext == validExt {
+				return
+			}
+		}
+
+		errors = append(errors, fmt.Errorf("invalid file extension for %s: %s (valid extensions: %s)", k, ext, strings.Join(validExtensions, ", ")))
+		return
+	}
 }

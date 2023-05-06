@@ -32,7 +32,7 @@ resource "packetfabric_document" "loa1" {
 ### Required
 
 - `description` (String) Document description
-- `document` (String) Document file name
+- `document` (String) Document file name. Enum: ".png", ".jpg", ".jpeg", ".pdf", ".doc", ".docx", ".tiff"
 - `type` (String) Document type. One of ["loa", "msa"]
 
 ### Optional
