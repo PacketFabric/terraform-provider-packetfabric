@@ -10,6 +10,13 @@ description: |-
 
 Adding Google Cloud Provider credentials to your PacketFabric environment allows you to perform certain tasks from within the PacketFabric portal.
 
+If you have the `GOOGLE_CREDENTIALS` environment variable set up to store a Google service account JSON key, 
+and you have a pretty-printed JSON file named `google_credentials.json`, you can convert it to a single line JSON string using the following command:
+
+```bash
+cat google_credentials.json | jq -c
+```
+
 ## Example Usage
 
 ```terraform

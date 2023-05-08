@@ -35,6 +35,33 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   speed       = "1Gbps"
   labels      = ["terraform", "dev"]
 }
+
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "1m"
+}
+data "ibm_dl_gateway" "current" {
+  provider   = ibm
+  name       = "hello world" # same as the PacketFabric IBM Cloud Router Connection description
+  depends_on = [time_sleep.wait_ibm_connection]
+}
+data "ibm_resource_group" "existing_rg" {
+  provider = ibm
+  name     = "My Resource Group"
+}
+
+resource "ibm_dl_gateway_action" "confirmation" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current.id
+  resource_group = data.ibm_resource_group.existing_rg.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
+}
 ```
 
 
@@ -67,6 +94,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
 
 ### Read-Only
 
+- `gateway_id` (String) The IBM Gateway ID.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

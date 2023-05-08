@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -105,6 +108,16 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"cloud_provider_connection_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
+			},
+			"vlan_id_pf": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "PacketFabric VLAN ID.",
 			},
 			"cloud_settings": {
 				Type:        schema.TypeList,
@@ -238,6 +251,26 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+				attributes := []string{
+					"cloud_settings.0.aws_region",
+					"cloud_settings.0.aws_vif_type",
+					"cloud_settings.0.aws_gateways",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -248,7 +281,7 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	reqConn := extractReqConn(d)
+	reqConn := extractAwsReqConn(d)
 	expectedResp, err := c.CreateAwsHostedConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
@@ -285,6 +318,25 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 	d.SetId(expectedResp.CloudCircuitID)
+
+	if _, ok := d.GetOk("cloud_settings"); !ok {
+		time.Sleep(90 * time.Second) // wait for the connection to show on AWS
+		resp, err := c.GetCloudConnInfo(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+			_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+		}
+	}
 
 	if labels, ok := d.GetOk("labels"); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
@@ -341,6 +393,18 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			}
 			cloudSettings["aws_gateways"] = awsGateways
 			_ = d.Set("cloud_settings", cloudSettings)
+		} else {
+			if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+				})
+				return diags
+			} else {
+				_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+				_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+			}
 		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
@@ -367,7 +431,7 @@ func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
-func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
+func extractAwsReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	hostedAwsConn := packetfabric.HostedAwsConnection{}
 	if awsAccountID, ok := d.GetOk("aws_account_id"); ok {
 		hostedAwsConn.AwsAccountID = awsAccountID.(string)

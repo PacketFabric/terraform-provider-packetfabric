@@ -36,14 +36,13 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 }
 
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
-  provider                    = packetfabric
-  description                 = "hello world"
-  port                        = packetfabric_port.port_1.id
-  speed                       = "10Gbps"
-  google_vlan_attachment_name = "my-google-vlan-attachment-primary"
-  pop                         = "BOS1"
-  vlan                        = 102
-  zone                        = "A"
+  provider    = packetfabric
+  description = "hello world"
+  port        = packetfabric_port.port_1.id
+  speed       = "10Gbps"
+  pop         = "BOS1"
+  vlan        = 102
+  zone        = "A"
   cloud_settings {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
@@ -68,7 +67,6 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
-- `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Google. This starts with "PF-AP-".
 - `speed` (String) The speed of the new connection.
@@ -80,6 +78,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 
 - `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
+- `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google. Required if not using cloud_settings.
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
