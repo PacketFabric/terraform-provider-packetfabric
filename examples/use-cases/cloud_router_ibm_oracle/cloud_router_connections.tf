@@ -5,7 +5,7 @@
 
 #   depends_on = [
 #     packetfabric_cloud_router_bgp_session.crbs_ibm,
-#     packetfabric_cloud_router_bgp_session.crbs_2
+#     packetfabric_cloud_router_bgp_session.crbs_oracle
 #   ]
 # }
 # output "packetfabric_cloud_router_connections" {

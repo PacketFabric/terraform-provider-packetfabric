@@ -170,7 +170,7 @@ type CloudSettings struct {
 	SvlanIDCust                    int          `json:"svlan_id_cust,omitempty"`
 	VcOcid                         string       `json:"vc_ocid,omitempty"`
 	VlanIDCust                     int          `json:"vlan_id_cust,omitempty"`
-	VlanIDMicrosoft                int          `json:"vlan_id_microsoft,omitempty"`
+	VlanMicrosoft                  int          `json:"vlan_id_microsoft,omitempty"`
 	VlanIDPf                       int          `json:"vlan_id_pf,omitempty"`
 	VlanPrivate                    int          `json:"vlan_id_private,omitempty"`
 }
@@ -262,8 +262,8 @@ type Settings struct {
 	VlanIDPf                 int         `json:"vlan_id_pf,omitempty"`
 	VlanIDCust               int         `json:"vlan_id_cust,omitempty"`
 	SvlanIDCust              interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIDPrivate            int         `json:"vlan_id_private,omitempty"`
-	VlanIDMicrosoft          int         `json:"vlan_id_microsoft,omitempty"`
+	VlanPrivate              int         `json:"vlan_id_private,omitempty"`
+	VlanMicrosoft            int         `json:"vlan_id_microsoft,omitempty"`
 	VcIDPrivate              int         `json:"vc_id_private,omitempty"`
 	SvlanIDCustomer          interface{} `json:"svlan_id_customer,omitempty"`
 	AzureServiceKey          string      `json:"azure_service_key,omitempty"`
