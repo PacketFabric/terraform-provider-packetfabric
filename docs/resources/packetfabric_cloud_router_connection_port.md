@@ -62,6 +62,7 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 
