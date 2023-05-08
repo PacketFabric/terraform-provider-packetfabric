@@ -11,7 +11,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -155,7 +154,7 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 	var req *http.Request
 	var err error
 	c.Ctx = context.Background()
-	formatedURL, _ := url.JoinPath(c.HostURL, uri)
+	formatedURL := fmt.Sprintf("%s%s", c.HostURL, uri)
 
 	file, err := os.Open(filePath)
 	if err != nil {
