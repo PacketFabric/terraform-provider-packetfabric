@@ -21,7 +21,7 @@ resource "azurerm_express_route_circuit" "azure_express_route_1" {
 }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_azure" "crc_2" {
+resource "packetfabric_cloud_router_connection_azure" "crc_azure" {
   provider = packetfabric
   # using Azure Peering location for the name but removing the spaces with a regex
   description       = "${var.resource_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"
@@ -30,29 +30,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc_2" {
   azure_service_key = azurerm_express_route_circuit.azure_express_route_1.service_key
   speed             = var.pf_crc_speed
 }
-
-# Get the VLAN ID from PacketFabric
-data "packetfabric_cloud_router_connections" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  depends_on = [
-    packetfabric_cloud_router_connection_azure.crc_2
-  ]
-}
-locals {
-  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-  helper_map = { for val in local.cloud_connections :
-  val["description"] => val }
-  # find the cloud router connection by its name
-  cc1 = local.helper_map["${var.resource_name}-${random_pet.name.id}-${replace(var.azure_peering_location_1, "/\\s+/", "")}-primary"]
-}
-# output "cc1_vlan_private" {
-#   value = one(local.cc1.cloud_settings[*].vlan_id_private)
-# }
-# output "packetfabric_cloud_router_connection_azure" {
-#   value = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-# }
 
 # From both sides: Configure BGP.
 resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
@@ -63,16 +40,14 @@ resource "azurerm_express_route_circuit_peering" "private_circuit_1" {
   peer_asn                      = var.pf_cr_asn
   primary_peer_address_prefix   = var.azure_primary_peer_address_prefix
   secondary_peer_address_prefix = var.azure_secondary_peer_address_prefix
-  # The VLAN is automatically assigned by PacketFabric and available in the packetfabric_cloud_router_connection data source. 
-  # We use local in order to parse the data source output and get the VLAN ID assigned by PacketFabric so we can use it to setup the ExpressRoute Peering
-  vlan_id    = one(local.cc1.cloud_settings[*].vlan_id_private)
-  shared_key = var.azure_bgp_shared_key
+  vlan_id                       = packetfabric_cloud_router_connection_azure.crc_azure.vlan_id_private
+  shared_key                    = var.azure_bgp_shared_key
 }
 
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_azure" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_azure.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_azure.crc_azure.id
   address_family = var.pf_crbs_af
   remote_asn     = var.azure_side_asn1
   orlonger       = var.pf_crbs_orlonger
@@ -87,8 +62,8 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_2" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# output "packetfabric_cloud_router_bgp_session_crbs_azure" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_azure
 # }
 
 # From the Microsoft side: Create a virtual network gateway for ExpressRoute.
@@ -97,7 +72,7 @@ resource "azurerm_public_ip" "public_ip_vng_1" {
   name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
   location            = azurerm_resource_group.resource_group_1.location
   resource_group_name = azurerm_resource_group.resource_group_1.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku                 = "Standard"
   tags = {
     environment = "${var.resource_name}-${random_pet.name.id}"

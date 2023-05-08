@@ -1,5 +1,7 @@
 # List of PacketFabric Use Cases
 
+<p align="center"><a href="https://www.youtube.com/watch?v=1HTegktHuoM" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/1HTegktHuoM/2.jpg"></a></p>
+
 Use Cases | Description
 --- | --- 
 [backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit

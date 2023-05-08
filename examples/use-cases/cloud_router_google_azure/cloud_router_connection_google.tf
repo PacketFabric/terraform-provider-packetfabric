@@ -5,7 +5,7 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
 }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_google" "crc_1" {
+resource "packetfabric_cloud_router_connection_google" "crc_google" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels

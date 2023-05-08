@@ -6,7 +6,7 @@ terraform {
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = ">= 1.53.0-beta0"
+      version = ">= 1.53.0"
     }
     oci = {
       source  = "oracle/oci"
