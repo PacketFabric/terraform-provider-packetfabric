@@ -108,6 +108,8 @@ export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-sett
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```
 
+**Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
+
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh

@@ -131,6 +131,11 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"gateway_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The IBM Gateway ID.",
+			},
 			"etl": {
 				Type:        schema.TypeFloat,
 				Computed:    true,
@@ -204,6 +209,16 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		}
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
+		}
+		if resp.CloudSettings.GatewayID == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The gateway_id is currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("gateway_id", resp.CloudSettings.GatewayID)
 		}
 		// unsetFields: published_quote_line_uuid
 	}

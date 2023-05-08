@@ -279,11 +279,26 @@ resource "random_pet" "name" {}
 #   value = packetfabric_port_loa.inbound_crossconnect_1
 # }
 
+# resource "packetfabric_document" "loa1" {
+#   provider        = packetfabric
+#   document        = "letter-of-authorization-PF-AP-LAB8-3339359.pdf"
+#   type            = "loa"
+#   description     = "My LOA"
+#   port_circuit_id = "PF-AP-LAB8-3339359"
+# }
+
+# data "packetfabric_document" "current" {
+#   provider = packetfabric
+# }
+# output "my-documents" {
+#   value = data.packetfabric_document.current
+# }
+
 # # Create Cross Connect
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
 #   description   = "${var.resource_name}-${random_pet.name.id}"
-#   document_uuid = var.pf_document_uuid1
+#   document_uuid = packetfabric_document.loa1.id
 #   port          = packetfabric_port.port_1a.id
 #   site          = local.pf_port_site1
 # }

@@ -1,5 +1,5 @@
 # From the PacketFabric side: Create a cloud router connection to AWS
-resource "packetfabric_cloud_router_connection_aws" "crc_1" {
+resource "packetfabric_cloud_router_connection_aws" "crc_aws" {
   provider = packetfabric
   # it is recommended to make sure the connection description is unique as this name will be used to search in AWS later with aws_dx_connection data source
   # vote for this issue https://github.com/hashicorp/terraform-provider-aws/issues/26919 if you want to get the filter added to the aws_dx_connection data source
@@ -12,20 +12,20 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   maybe_nat   = var.pf_crc_maybe_nat
   is_public   = var.pf_crc_is_public
 }
-# output "packetfabric_cloud_router_connection_aws_crc_1" {
-#   value = packetfabric_cloud_router_connection_aws.crc_1
+# output "packetfabric_cloud_router_connection_aws_crc_aws" {
+#   value = packetfabric_cloud_router_connection_aws.crc_aws
 # }
 
 resource "aws_dx_connection_confirmation" "confirmation" {
   provider      = aws
-  connection_id = packetfabric_cloud_router_connection_aws.crc_1.cloud_provider_connection_id
+  connection_id = packetfabric_cloud_router_connection_aws.crc_aws.cloud_provider_connection_id
 }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_aws" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_aws.crc_1.id
+  connection_id  = packetfabric_cloud_router_connection_aws.crc_aws.id
   address_family = var.pf_crbs_af
   multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.amazon_side_asn1
@@ -42,6 +42,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_1" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_1" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_1
+# output "packetfabric_cloud_router_bgp_session_crbs_aws" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_aws
 # }

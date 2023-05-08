@@ -113,8 +113,8 @@ type BgpSessionBySettingsUUID struct {
 	Disabled        bool        `json:"disabled"`
 	BgpState        string      `json:"bgp_state"`
 	Prefixes        []BgpPrefix `json:"prefixes"`
-	Subnet          interface{} `json:"subnet"`
-	PublicIP        string      `json:"public_ip"`
+	Subnet          string      `json:"subnet,omitempty"`
+	PublicIP        string      `json:"public_ip,omitempty"`
 	Nat             *BgpNat     `json:"nat,omitempty"`
 }
 

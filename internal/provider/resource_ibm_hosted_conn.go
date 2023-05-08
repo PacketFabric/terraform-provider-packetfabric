@@ -134,6 +134,11 @@ func resourceHostedIbmConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"gateway_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The IBM Gateway ID.",
+			},
 			"etl": {
 				Type:        schema.TypeFloat,
 				Computed:    true,
@@ -192,6 +197,22 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 
+	time.Sleep(90 * time.Second) // wait for the connection to show in IBM
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp.Settings.GatewayID == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Incomplete Cloud Information",
+			Detail:   "The gateway_id is currently unavailable.",
+		})
+		return diags
+	} else {
+		_ = d.Set("gateway_id", resp.Settings.GatewayID)
+	}
+
 	if labels, ok := d.GetOk("labels"); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
@@ -218,10 +239,24 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
-		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
-		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
+			_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
+		}
+		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		}
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
+		}
+		if resp.Settings.GatewayID == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The gateway_id is currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("gateway_id", resp.Settings.GatewayID)
 		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
