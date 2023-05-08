@@ -19,6 +19,7 @@ terraform.tfstate.backup
 # Test binary, built with `go test -c`
 *.test
 .DS_Store
+*.pdf
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

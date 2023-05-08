@@ -54,7 +54,7 @@ Ensure you have the following items available:
 
 - [IBM Credentials](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs#environment-variables)
 - [Oracle Credentials](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start
