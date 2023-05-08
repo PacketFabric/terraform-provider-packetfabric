@@ -66,6 +66,8 @@ export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gc
 export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-setting-1234", "private_key_id": "1234", "private_key": "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----\n", "client_email": "demoapi@demo-setting-1234.iam.gserviceaccount.com", "client_id": "102640829015169383380", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demoapi%40demo-setting-1234.iam.gserviceaccount.com" }'
 ```
 
+**Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
+
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
