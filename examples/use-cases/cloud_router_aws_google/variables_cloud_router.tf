@@ -31,7 +31,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "C"
+  default = "C" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 
 # PacketFabric Cloud Router Connection - Google
