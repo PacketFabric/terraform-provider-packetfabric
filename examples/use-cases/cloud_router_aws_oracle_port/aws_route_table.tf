@@ -2,19 +2,6 @@
 resource "aws_route_table" "route_table_1" {
   provider = aws
   vpc_id   = aws_vpc.vpc_1.id
-  # internet gw
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gw_1.id
-  }
-  route {
-    cidr_block = var.oracle_subnet_cidr1
-    gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
-  }
-  route {
-    cidr_block = var.on_premise_cidr1
-    gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
-  }
   tags = {
     Name = "${var.resource_name}-${random_pet.name.id}"
   }
@@ -22,12 +9,19 @@ resource "aws_route_table" "route_table_1" {
   depends_on = [
     aws_ec2_transit_gateway_vpc_attachment.transit_attachment_1
   ]
-  # # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/1426
-  # lifecycle {
-  #   ignore_changes = [
-  #     route
-  #   ]
-  # }
+}
+
+resource "aws_route" "route_table_1_to_internet_gateway" {
+  route_table_id         = aws_route_table.route_table_1.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.gw_1.id
+}
+
+resource "aws_route" "route_table_1_to_transit_gateway" {
+  route_table_id         = aws_route_table.route_table_1.id
+  destination_cidr_block = var.gcp_subnet_cidr1
+  # destination_cidr_block = "0.0.0.0/0"
+  transit_gateway_id = aws_ec2_transit_gateway.transit_gw_1.id
 }
 
 # Assign the route table to the subnet
