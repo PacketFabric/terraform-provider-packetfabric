@@ -19,6 +19,3 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "transit_attachment_1" {
     aws_subnet.subnet_1.id
   ]
 }
-
-# The transit gateway to VPC attachment will propogate the route from the TGW to 
-# the DX gateway all the way to the VPC and the subnets

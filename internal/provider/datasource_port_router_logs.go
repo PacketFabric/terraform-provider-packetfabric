@@ -93,6 +93,7 @@ func datasourcePortRouterLogsRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId(portCID.(string) + "-data")
 	return diags
 }
 
