@@ -108,7 +108,7 @@ func validateFileExtension(validExtensions []string) schema.SchemaValidateDiagFu
 	return func(i interface{}, p cty.Path) diag.Diagnostics {
 		v, ok := i.(string)
 		if !ok {
-			return diag.FromErr(fmt.Errorf("expected type of %s to be string", k))
+			return diag.FromErr(fmt.Errorf("expected type of %s to be string", v))
 		}
 
 		ext := strings.ToLower(filepath.Ext(v))
@@ -118,6 +118,6 @@ func validateFileExtension(validExtensions []string) schema.SchemaValidateDiagFu
 			}
 		}
 
-		return diag.FromErr(fmt.Errorf("invalid file extension for %s: %s (valid extensions: %s)", k, ext, strings.Join(validExtensions, ", ")))
+		return diag.FromErr(fmt.Errorf("invalid file extension for %s: %s (valid extensions: %s)", v, ext, strings.Join(validExtensions, ", ")))
 	}
 }
