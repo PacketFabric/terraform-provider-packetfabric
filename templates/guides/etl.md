@@ -34,5 +34,6 @@ It's important to monitor ETL fees and factor them into your infrastructure plan
 
 When deleting a PacketFabric resource in Terraform, it's crucial to consider the ETL fees associated with the resource. Be sure to review your contract terms and ETL fees before proceeding with the deletion.
 
-You can check the ETL fee for a resource by looking at its `etl` field. If the ETL fee is greater than 0, it indicates that there are remaining contract days, and terminating the service will incur the ETL fee. Ensure that you are aware of these fees and account for them in your budget before proceeding with the deletion.
+!> **Warning:** You will have an hourly trial period for the first 24 hours after provisioning a service. This means that any order can be canceled in that 24-hour window, and you will only be charged for the hours in which the service was active. Any NRC (None-Recurrent Cost) charges are also dropped. The exception to this rule is cross connects and Colt ports, which will always trigger a full ETL fee. 
 
+You can check the ETL fee for a resource by looking at its `etl` field. If the ETL fee is greater than 0, it indicates that there are remaining contract days, and terminating the service will incur the ETL fee. Ensure that you are aware of these fees and account for them in your budget before proceeding with the deletion.
