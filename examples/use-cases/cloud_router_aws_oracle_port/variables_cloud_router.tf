@@ -24,7 +24,7 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "C" # login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+  default = "C" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "pf_crc_speed1" {
   type        = string
@@ -40,7 +40,7 @@ variable "pf_crc_pop2" {
 }
 variable "pf_crc_zone2" {
   type    = string
-  default = "F" # login to the portal https://portal.packetfabric.com and start a workflow to create a port (but don't create it, just note the pop/zone info to use in Terraform)
+  default = "F" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "oracle_bandwidth_shape_name" {
   type    = string
