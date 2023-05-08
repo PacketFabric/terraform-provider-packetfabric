@@ -14,31 +14,34 @@ on:
   push:
     tags:
       - 'v*'
+
+permissions:
+  contents: write
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Unshallow
+
+      - name: Unshallow
         run: git fetch --prune --unshallow
-      -
-        name: Set up Go
+
+      - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
-      -
-        name: Import GPG key
+
+      - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v5.1.0
         with:
           # These secrets will need to be configured for the repository:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-      -
-        name: Run GoReleaser
+
+      - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3.1.0
         with:
           version: latest
@@ -47,3 +50,26 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           # GitHub sets this automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: yashanand1910/standard-release-notes@v1.2.1
+        with:
+          version: ${{ github.ref }}
+
+      - name: Extract tag name
+        id: extract_tag
+        run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
+
+      # Must have CHANGELOG.md following
+      # https://developer.hashicorp.com/terraform/plugin/best-practices/versioning
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract_tag.outputs.tag_name }}
+          name: ${{ steps.extract_tag.outputs.tag_name }}
+          body: ${{ steps.extract-release-notes.outputs.release_notes }}
+          draft: false
+          prerelease: false

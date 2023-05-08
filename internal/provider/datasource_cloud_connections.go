@@ -4,14 +4,13 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudConn() *schema.Resource {
+func dataSourceCloudConnections() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCloudConnRead,
+		ReadContext: dataSourceCloudConnectionsRead,
 		Schema: map[string]*schema.Schema{
 			"circuit_id": {
 				Type:        schema.TypeString,
@@ -100,7 +99,7 @@ func dataSourceCloudConn() *schema.Resource {
 						},
 						"cloud_settings": {
 							Type:     schema.TypeSet,
-							Required: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"vlan_id_pf": {
@@ -124,74 +123,11 @@ func dataSourceCloudConn() *schema.Resource {
 										Computed: true,
 									},
 									"aws_connection_id": {
-										Type:     schema.TypeString,
-										Computed: true,
+										Type:       schema.TypeString,
+										Computed:   true,
+										Deprecated: "This field is deprecated and will be removed in a future release.",
 									},
 									"aws_account_id": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"credentials_uuid": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"mtu": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-									"aws_dx_location": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_dx_bandwidth": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_dx_jumbo_frame_capable": {
-										Type:     schema.TypeBool,
-										Computed: true,
-									},
-									"aws_dx_aws_device": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_dx_aws_logical_device_id": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_dx_has_logical_redundancy": {
-										Type:     schema.TypeBool,
-										Computed: true,
-									},
-									"aws_dx_mac_sec_capable": {
-										Type:     schema.TypeBool,
-										Computed: true,
-									},
-									"aws_dx_encryption_mode": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_vif_type": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_vif_id": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_vif_bgp_peer_id": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"aws_vif_direct_connect_gw_id": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"google_region": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"google_project_id": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
@@ -199,23 +135,7 @@ func dataSourceCloudConn() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"google_edge_availability_domain": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-									"google_dataplane_version": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-									"google_interface_name": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
 									"google_pairing_key": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"google_cloud_router_name": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
@@ -246,29 +166,6 @@ func dataSourceCloudConn() *schema.Resource {
 												},
 												"bgp_state": {
 													Type:     schema.TypeString,
-													Computed: true,
-												},
-											},
-										},
-									},
-									"bgp_settings": {
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"advertised_prefixes": {
-													Type:     schema.TypeList,
-													Computed: true,
-													Elem: &schema.Schema{
-														Type: schema.TypeString,
-													},
-												},
-												"google_advertise_mode": {
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"google_keepalive_interval": {
-													Type:     schema.TypeInt,
 													Computed: true,
 												},
 											},
@@ -465,7 +362,7 @@ func dataSourceCloudConn() *schema.Resource {
 	}
 }
 
-func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCloudConnectionsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
@@ -477,15 +374,15 @@ func dataSourceCloudConnRead(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("cloud_connections", flattenCloudConn(&awsConns))
+	err = d.Set("cloud_connections", flattenCloudConnnections(&awsConns))
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	d.SetId(cID.(string) + "-data")
 	return diags
 }
 
-func flattenCloudConn(conns *[]packetfabric.CloudRouterConnectionReadResponse) []interface{} {
+func flattenCloudConnnections(conns *[]packetfabric.CloudRouterConnectionReadResponse) []interface{} {
 	if conns != nil {
 		flattens := make([]interface{}, len(*conns), len(*conns))
 		for i, conn := range *conns {
@@ -561,46 +458,17 @@ func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 		flatten["account_id"] = setts.AccountID
 		flatten["aws_account_id"] = setts.AwsAccountID
 		flatten["aws_connection_id"] = setts.AwsConnectionID
-		flatten["aws_dx_aws_device"] = setts.AwsDxAWSDevice
-		flatten["aws_dx_aws_logical_device_id"] = setts.AwsDxAWSLogicalDeviceID
-		flatten["aws_dx_bandwidth"] = setts.AwsDxBandwidth
-		flatten["aws_dx_encryption_mode"] = setts.AwsDxEncryptionMode
-		flatten["aws_dx_has_logical_redundancy"] = setts.AwsDxHasLogicalRedundancy
-		flatten["aws_dx_jumbo_frame_capable"] = setts.AwsDxJumboFrameCapable
-		flatten["aws_dx_location"] = setts.AwsDxLocation
-		flatten["aws_dx_mac_sec_capable"] = setts.AwsDxMacSecCapable
-		if setts.AwsGateways != nil {
-			flatten["aws_gateways"] = flattenAwsGateways(setts.AwsGateways)
-		}
 		flatten["aws_hosted_type"] = setts.AwsHostedType
 		flatten["aws_region"] = setts.AwsRegion
-		flatten["aws_vif_bgp_peer_id"] = setts.AwsVifBGPPeerID
-		flatten["aws_vif_direct_connect_gw_id"] = setts.AwsVifDirectConnectGwID
-		flatten["aws_vif_id"] = setts.AwsVifID
-		flatten["aws_vif_type"] = setts.AwsVifType
 		flatten["azure_connection_type"] = setts.AzureConnectionType
 		flatten["azure_service_key"] = setts.AzureServiceKey
 		flatten["azure_service_tag"] = setts.AzureServiceTag
 		flatten["bgp_asn"] = setts.BgpAsn
 		flatten["bgp_cer_cidr"] = setts.BgpCerCidr
 		flatten["bgp_ibm_cidr"] = setts.BgpIbmCidr
-		if setts.BgpSettings != nil {
-			flatten["bgp_settings"] = flattenBgpSettings(setts.BgpSettings)
-		}
-		if setts.CloudState != nil {
-			flatten["cloud_state"] = flattenCloudState(setts.CloudState)
-		}
-		flatten["credentials_uuid"] = setts.CredentialsUUID
 		flatten["gateway_id"] = setts.GatewayID
-		flatten["google_cloud_router_name"] = setts.GoogleCloudRouterName
-		flatten["google_dataplane_version"] = setts.GoogleDataplaneVersion
-		flatten["google_edge_availability_domain"] = setts.GoogleEdgeAvailabilityDomain
-		flatten["google_interface_name"] = setts.GoogleInterfaceName
 		flatten["google_pairing_key"] = setts.GooglePairingKey
-		flatten["google_project_id"] = setts.GoogleProjectID
-		flatten["google_region"] = setts.GoogleRegion
 		flatten["google_vlan_attachment_name"] = setts.GoogleVlanAttachmentName
-		flatten["mtu"] = setts.Mtu
 		flatten["name"] = setts.Name
 		flatten["nat_public_ip"] = setts.NatPublicIP
 		flatten["oracle_region"] = setts.OracleRegion
@@ -611,49 +479,10 @@ func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 		flatten["svlan_id_cust"] = setts.SvlanIDCust
 		flatten["vc_ocid"] = setts.VcOcid
 		flatten["vlan_id_cust"] = setts.VlanIDCust
-		flatten["vlan_id_microsoft"] = setts.VlanIDMicrosoft
+		flatten["vlan_id_microsoft"] = setts.VlanMicrosoft
 		flatten["vlan_id_pf"] = setts.VlanIDPf
 		flatten["vlan_id_private"] = setts.VlanPrivate
 		flattens = append(flattens, flatten)
 	}
 	return flattens
-}
-
-func flattenCloudState(state *packetfabric.CloudState) map[string]interface{} {
-	flatten := make(map[string]interface{})
-	if state != nil {
-		flatten["aws_dx_connection_state"] = state.AwsDxConnectionState
-		flatten["aws_dx_port_encryption_status"] = state.AwsDxPortEncryptionStatus
-		flatten["aws_vif_state"] = state.AwsVifState
-		flatten["bgp_state"] = state.BgpState
-		flatten["google_interconnect_state"] = state.GoogleInterconnectState
-		flatten["google_interconnect_admin_enabled"] = state.GoogleInterconnectAdminEnabled
-	}
-	return flatten
-}
-
-func flattenBgpSettings(settings *packetfabric.BgpSettings) map[string]interface{} {
-	flatten := make(map[string]interface{})
-	if settings != nil {
-		flatten["advertised_prefixes"] = settings.AdvertisedPrefixes
-		flatten["google_advertise_mode"] = settings.GoogleAdvertiseMode
-		flatten["google_keepalive_interval"] = settings.GoogleKeepaliveInterval
-	}
-	return flatten
-}
-
-func flattenAwsGateways(gateways []packetfabric.AwsGateway) []interface{} {
-	flattenedGateways := make([]interface{}, 0)
-	for _, gateway := range gateways {
-		flattened := make(map[string]interface{})
-		flattened["type"] = gateway.Type
-		flattened["name"] = gateway.Name
-		flattened["id"] = gateway.ID
-		flattened["asn"] = gateway.Asn
-		flattened["vpc_id"] = gateway.VpcID
-		flattened["subnet_ids"] = gateway.SubnetIDs
-		flattened["allowed_prefixes"] = gateway.AllowedPrefixes
-		flattenedGateways = append(flattenedGateways, flattened)
-	}
-	return flattenedGateways
 }

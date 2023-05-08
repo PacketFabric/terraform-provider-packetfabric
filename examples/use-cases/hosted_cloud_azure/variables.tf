@@ -60,7 +60,7 @@ variable "pf_cs_vlan_microsoft" {
 variable "azure_region1" {
   type        = string
   description = "Azure region"
-  default     = "East US"
+  default     = "East US" # East US, East US 2, West US 2, West US 3
 }
 
 # https://docs.microsoft.com/en-us/azure/expressroute/expressroute-locations-providers
