@@ -18,7 +18,7 @@ variable "pf_cs_pop1" {
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A"
+  default = "A" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "pf_cs_speed" {
   type    = string

@@ -3,6 +3,8 @@
 This use case shows an example on how to use the PacketFabric & Google Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and Google in a Cloud On-Ramps facility.
 
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the Google access key, please refer to our [documentation](https://docs.packetfabric.com/cloud/google/hosted/key/).
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
@@ -39,7 +41,7 @@ Ensure you have installed the following prerequisites:
 Ensure you have the following items available:
 
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start
@@ -63,6 +65,8 @@ Set additional environment variables for Google:
 export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gcloud module
 export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-setting-1234", "private_key_id": "1234", "private_key": "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----\n", "client_email": "demoapi@demo-setting-1234.iam.gserviceaccount.com", "client_id": "102640829015169383380", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demoapi%40demo-setting-1234.iam.gserviceaccount.com" }'
 ```
+
+**Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
 
 2. Initialize Terraform, create an execution plan and execute the plan.
 
