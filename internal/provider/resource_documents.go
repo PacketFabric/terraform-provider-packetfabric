@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -31,11 +32,11 @@ func resourceDocuments() *schema.Resource {
 				Description: "ID for document",
 			},
 			"document": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				Description:  "Document file name. Enum: \".png\", \".jpg\", \".jpeg\", \".pdf\", \".doc\", \".docx\", \".tiff\"",
-				ValidateFunc: validateFileExtension([]string{".png", ".jpg", ".jpeg", ".pdf", ".doc", ".docx", ".tiff"}),
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				Description:      "Document file name. Enum: \".png\", \".jpg\", \".jpeg\", \".pdf\", \".doc\", \".docx\", \".tiff\"",
+				ValidateDiagFunc: validateFileExtension([]string{".png", ".jpg", ".jpeg", ".pdf", ".doc", ".docx", ".tiff"}),
 			},
 			"type": {
 				Type:         schema.TypeString,
@@ -103,22 +104,20 @@ func resourceDocumentsDelete(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func validateFileExtension(validExtensions []string) schema.SchemaValidateFunc {
-	return func(i interface{}, k string) (warnings []string, errors []error) {
+func validateFileExtension(validExtensions []string) schema.SchemaValidateDiagFunc {
+	return func(i interface{}, p cty.Path) diag.Diagnostics {
 		v, ok := i.(string)
 		if !ok {
-			errors = append(errors, fmt.Errorf("expected type of %s to be string", k))
-			return
+			return diag.FromErr(fmt.Errorf("expected type of %s to be string", k))
 		}
 
 		ext := strings.ToLower(filepath.Ext(v))
 		for _, validExt := range validExtensions {
 			if ext == validExt {
-				return
+				return diag.Diagnostics{}
 			}
 		}
 
-		errors = append(errors, fmt.Errorf("invalid file extension for %s: %s (valid extensions: %s)", k, ext, strings.Join(validExtensions, ", ")))
-		return
+		return diag.FromErr(fmt.Errorf("invalid file extension for %s: %s (valid extensions: %s)", k, ext, strings.Join(validExtensions, ", ")))
 	}
 }
