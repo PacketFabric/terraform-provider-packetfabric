@@ -40,6 +40,8 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 
+	// We need to shuffle the list of locations. Otherwise, we may try to run
+	// all tests on the same port.
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
 
