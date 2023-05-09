@@ -65,6 +65,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ForceNew:     true,
+				Default:      0,
 				ValidateFunc: validation.IntBetween(4, 4094),
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
@@ -165,9 +166,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("port_circuit_id", resp.PortCircuitID)
 		_ = d.Set("description", resp.Description)
-		if _, ok := d.GetOk("vlan"); ok {
-			_ = d.Set("vlan", resp.Vlan)
-		}
+		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)

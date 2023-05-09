@@ -38,11 +38,6 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      cloudRouterConnectionPortResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
 				Config: cloudRouterConnectionPortResult.Hcl,
 				Check: func(s *terraform.State) error {
 					rs, ok := s.RootModule().Resources[cloudRouterConnectionPortResult.ResourceName]

@@ -29,7 +29,7 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+var listPortsLab = []string{"LAB04", "LAB05", "LAB6", "LAB8"}
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
