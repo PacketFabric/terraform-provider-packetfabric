@@ -220,7 +220,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	if err != nil {
 		log.Panic(err)
 	}
-	portDetails := PortDetails{
+	popDetails := PortDetails{
 		PFClient:              c,
 		DesiredSpeed:          CloudRouterConnAwsSpeed,
 		DesiredProvider:       "aws",
@@ -228,7 +228,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := portDetails._findAvailableCloudPopZone()
+	pop, _ := popDetails._findAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfCloudRouterConnAws)
