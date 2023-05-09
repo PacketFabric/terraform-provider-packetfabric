@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -19,7 +20,8 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 				testutil.PF_ACCOUNT_ID_KEY,
 			})
 		},
-		Providers: testAccProviders,
+		ExternalProviders: testAccExternalProviders,
+		Providers:         testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: cloudRouterConnectionPortResult.Hcl,
@@ -32,6 +34,27 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 				ResourceName:      cloudRouterConnectionPortResult.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				Config: cloudRouterConnectionPortResult.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[cloudRouterConnectionPortResult.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", cloudRouterConnectionPortResult.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
+					return nil
+				},
+			},
+			{
+				ResourceName:      cloudRouterConnectionPortResult.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
+					return id, nil
+				},
 			},
 		},
 	})
