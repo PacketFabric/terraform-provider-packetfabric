@@ -52,6 +52,7 @@ const CloudRouterBgpSessionType2 = "out"
 
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
+const CloudRouterConnPortVlan = 101
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -130,6 +131,7 @@ type RHclCloudRouterConnectionPortResult struct {
 	CloudRouterResult RHclCloudRouterResult
 	PortResult        RHclPortResult
 	Speed             string
+	Vlan              int
 }
 
 // Patterns:
@@ -366,6 +368,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		cloudRouterResult.ResourceName,
 		portTestResult.ResourceReference,
 		CloudRouterConnPortSpeed,
+		CloudRouterConnPortVlan,
 	)
 
 	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
@@ -380,6 +383,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		PortResult:        portTestResult,
 		Desc:              uniqueDesc,
 		Speed:             CloudRouterConnPortSpeed,
+		Vlan:              CloudRouterConnPortVlan,
 	}
 }
 

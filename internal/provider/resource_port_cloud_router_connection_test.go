@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -31,6 +32,7 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "description", cloudRouterConnectionPortResult.Desc),
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "speed", cloudRouterConnectionPortResult.Speed),
+					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "vlan", strconv.Itoa(cloudRouterConnectionPortResult.Vlan)),
 				),
 			},
 			{
