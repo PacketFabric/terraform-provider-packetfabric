@@ -1,7 +1,11 @@
-# Use Case: PacketFabric Cloud Router with AWS and Google
+# Use Case: PacketFabric Cloud Router with AWS and Google with Cloud Side Provisioning
 
 This use case builds a PacketFabric Cloud Router between AWS and Google Cloud Platform.
 Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Transit VIF & Gateway.
+
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the AWS access key, please refer to our [AWS documentation](https://docs.packetfabric.com/cloud/aws/hosted/credentials/). For the Google access key, please refer to our [Google documentation](https://docs.packetfabric.com/cloud/google/hosted/key/).
+
+If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
 ![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
@@ -12,7 +16,6 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - [PacketFabric Terraform Provider](https://registry.terraform.io/providers/PacketFabric/packetfabric)
 - [HashiCorp AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws)
 - [HashiCorp Google Terraform Provider](https://registry.terraform.io/providers/hashicorp/google)
-- [Google Cloud CLI Terraform Module](https://registry.terraform.io/modules/terraform-google-modules/gcloud/google/latest)
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Demo video
@@ -22,7 +25,6 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 ## Terraform resources & data-sources used
 
 - "aws_dx_gateway"
-- "aws_dx_transit_virtual_interface"
 - "aws_dx_gateway_association"
 - "aws_security_group"
 - "aws_network_interface"
@@ -37,12 +39,8 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - "aws_route_table_association"
 - "packetfabric_cloud_router"
 - "packetfabric_cloud_router_connection_aws"
-- "time_sleep"
-- "aws_dx_connection_confirmation"
 - "google_compute_router"
-- "google_compute_interconnect_attachment"
 - "packetfabric_cloud_router_connection_google"
-- "packetfabric_cloud_router_bgp_session"
 - "google_compute_firewall"
 - "google_compute_instance"
 - "google_compute_network"
@@ -50,8 +48,6 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 - "random_pet"
 
 **Estimated time:** ~10 min for Google, AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Transit Gateway
-
-**Note**: Because the BGP session is created automatically, we use gcloud terraform module to retreive the BGP addresses and set the PacketFabric Cloud Router ASN in the BGP settings in the Google Cloud Router. Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/11458), [vote](https://github.com/hashicorp/terraform-provider-google/issues/12624) and [vote](https://github.com/hashicorp/terraform-provider-google/issues/12630) for these issues on GitHub.
 
 ## Before you begin
 
@@ -66,15 +62,13 @@ Ensure you have installed the following prerequisites:
 
 - [Git](https://git-scm.com/downloads)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
-- [gcloud](https://cloud.google.com/sdk/docs/install)
-- [jq](https://stedolan.github.io/jq/download/)
 
 Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start
@@ -107,6 +101,8 @@ export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-sett
 export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
 ```
 
+**Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
+
 2. Initialize Terraform, create an execution plan and execute the plan.
 
 ```sh
@@ -132,7 +128,7 @@ terraform destroy
 
 ## Troubleshooting
 
-1. In case you get the following error:
+In case you get the following error:
 
 ```
 ╷
@@ -143,57 +139,3 @@ terraform destroy
 
 This seems to be a problem with Google Terraform Provider, run again the terraform destroy command and the destroy will complete correctly the 2nd try.
 Please [vote](https://github.com/hashicorp/terraform-provider-google/issues/12631) for this issue on GitHub.
-
-2. In case the ``gcloud_bgp_address`` module fails, check the error, fix it and manually remove the state before re-running the terraform config.
-
-```sh
-terraform state rm module.gcloud_bgp_addresses
-terraform state rm module.gcloud_bgp_peer_update
-```
-
-3. In case you get the following error:
-
-```
-╷
-│ Error: error waiting for Direct Connection Connection (dxcon-fgohxwui) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
-│ 
-│   with aws_dx_connection_confirmation.confirmation,
-│   on cloud_router_connection_aws.tf line 46, in resource "aws_dx_connection_confirmation" "confirmation":
-│   46: resource "aws_dx_connection_confirmation" "confirmation" {
-│ 
-```
-
-You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
-
-As a workaround, edit the `cloud_router_connection_aws.tf` and comment out the following resource:
-
-```
-# resource "aws_dx_connection_confirmation" "confirmation" {
-#   provider      = aws
-#   connection_id = data.aws_dx_connection.current.id
-
-#   lifecycle {
-#     ignore_changes = [
-#       connection_id
-#     ]
-#   }
-# }
-```
-
-Edit the `aws_dx_transit_vif.tf` and comment out the dependency with `confirmation` in `packetfabric_cloud_router_connections` data source: 
-
-```
-data "packetfabric_cloud_router_connections" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  # depends_on = [
-  #   aws_dx_connection_confirmation.confirmation
-  # ]
-}
-```
-
-Then remove the `confirmation` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
-```
-terraform apply
-```

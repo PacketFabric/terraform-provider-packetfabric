@@ -230,7 +230,7 @@ func dataSourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m 
 		_ = d.Set("bgp_asn", ibmConn.Settings.BgpAsn)
 		_ = d.Set("bgp_cer_cidr", ibmConn.Settings.BgpCerCidr)
 		_ = d.Set("bgp_ibm_cidr", ibmConn.Settings.BgpIbmCidr)
-		d.SetId(cCID.(string))
+		d.SetId(cCID.(string) + "-data")
 	}
 	return diags
 }

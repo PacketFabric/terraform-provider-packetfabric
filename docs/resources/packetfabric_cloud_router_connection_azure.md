@@ -77,7 +77,11 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Read-Only
 
+- `azure_connection_type` (String) The Azure connection type.
+		Example: primary or seconday
 - `id` (String) The ID of this resource.
+- `vlan_id_microsoft` (Number) The microsoft peering vlan.
+- `vlan_id_private` (Number) The private peering vlan.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
