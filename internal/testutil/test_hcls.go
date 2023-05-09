@@ -115,28 +115,28 @@ type RHclCloudRouterConnectionAwsResult struct {
 	Speed        string
 }
 
-// packetfabric_cloud_router_bgp_session
-type RHclBgpSessionResult struct {
-	HclResultBase
-	CloudRouter        RHclCloudRouterResult
-	CloudRouterConnAws RHclCloudRouterConnectionAwsResult
-	RemoteAddress      string
-	L3Address          string
-	Asn                int
-	Prefix1            string
-	Type1              string
-	Prefix2            string
-	Type2              string
-}
-
 // packetfabric_cloud_router_connection_port
 type RHclCloudRouterConnectionPortResult struct {
 	HclResultBase
-	Desc              string
-	CloudRouterResult RHclCloudRouterResult
-	PortResult        RHclPortResult
-	Speed             string
-	Vlan              int
+	Desc        string
+	CloudRouter RHclCloudRouterResult
+	PortResult  RHclPortResult
+	Speed       string
+	Vlan        int
+}
+
+// packetfabric_cloud_router_bgp_session
+type RHclBgpSessionResult struct {
+	HclResultBase
+	CloudRouter     RHclCloudRouterResult
+	CloudRouterConn RHclCloudRouterConnectionAwsResult
+	RemoteAddress   string
+	L3Address       string
+	Asn             int
+	Prefix1         string
+	Type1           string
+	Prefix2         string
+	Type2           string
 }
 
 // Patterns:
@@ -278,6 +278,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 func RHclBgpSession() RHclBgpSessionResult {
 
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
+	// hclCloudConnRes := RHclCloudRouterConnectionPort() // can be port too, update RHclBgpSessionResult struct
 
 	resourceName, hclName := _generateResourceName(pfCloudRouterBgpSession)
 	bgpSessionHcl := fmt.Sprintf(
@@ -300,15 +301,15 @@ func RHclBgpSession() RHclBgpSessionResult {
 			Resource:     pfCloudRouterBgpSession,
 			ResourceName: resourceName,
 		},
-		CloudRouter:        hclCloudConnRes.CloudRouter,
-		CloudRouterConnAws: hclCloudConnRes,
-		RemoteAddress:      CloudRouterBgpSessionRemoteAddress,
-		L3Address:          CloudRouterBgpSessionL3Address,
-		Asn:                CloudRouterBgpSessionASN,
-		Prefix1:            CloudRouterBgpSessionPrefix1,
-		Type1:              CloudRouterBgpSessionType1,
-		Prefix2:            CloudRouterBgpSessionPrefix2,
-		Type2:              CloudRouterBgpSessionType2,
+		CloudRouter:     hclCloudConnRes.CloudRouter,
+		CloudRouterConn: hclCloudConnRes,
+		RemoteAddress:   CloudRouterBgpSessionRemoteAddress,
+		L3Address:       CloudRouterBgpSessionL3Address,
+		Asn:             CloudRouterBgpSessionASN,
+		Prefix1:         CloudRouterBgpSessionPrefix1,
+		Type1:           CloudRouterBgpSessionType1,
+		Prefix2:         CloudRouterBgpSessionPrefix2,
+		Type2:           CloudRouterBgpSessionType2,
 	}
 }
 
@@ -389,11 +390,11 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		CloudRouterResult: cloudRouterResult,
-		PortResult:        portTestResult,
-		Desc:              uniqueDesc,
-		Speed:             CloudRouterConnPortSpeed,
-		Vlan:              CloudRouterConnPortVlan,
+		CloudRouter: cloudRouterResult,
+		PortResult:  portTestResult,
+		Desc:        uniqueDesc,
+		Speed:       CloudRouterConnPortSpeed,
+		Vlan:        CloudRouterConnPortVlan,
 	}
 }
 

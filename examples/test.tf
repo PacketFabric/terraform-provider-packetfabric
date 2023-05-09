@@ -936,8 +936,6 @@ resource "random_pet" "name" {}
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
-#   labels    = var.pf_labels
-#   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_1" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_1
@@ -1026,8 +1024,6 @@ resource "random_pet" "name" {}
 #     prefix = "0.0.0.0/0"
 #     type   = "in" # Allowed Prefixes from Cloud
 #   }
-#   labels    = var.pf_labels
-#   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_bgp_session_crbs_3" {
 #   value = packetfabric_cloud_router_bgp_session.crbs_3
