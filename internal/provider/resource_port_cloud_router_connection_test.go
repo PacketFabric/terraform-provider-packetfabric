@@ -6,6 +6,7 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
@@ -13,6 +14,8 @@ func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	cloudRouterConnectionPortResult := testutil.RHclCloudRouterConnectionPort()
+
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
