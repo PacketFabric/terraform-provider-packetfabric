@@ -38,6 +38,9 @@ func TestAccPBgpSessionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.0.type", bgpSessionResult.Type1),
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.prefix", bgpSessionResult.Prefix2),
 					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.type", bgpSessionResult.Type2),
+					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "connection_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "id"),
 				),
 			},
 			{
