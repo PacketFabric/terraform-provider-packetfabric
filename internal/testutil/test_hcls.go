@@ -29,7 +29,7 @@ const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
 // packetfabric_cloud_router
-const CloudRouterCapacity = "1Gbps"
+const CloudRouterCapacity = "10Gbps"
 const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
