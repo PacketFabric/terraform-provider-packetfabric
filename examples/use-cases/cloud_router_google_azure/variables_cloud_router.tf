@@ -22,11 +22,6 @@ variable "pf_crc_speed" {
   description = "The speed of the new connection"
   default     = "50Mbps" # must match bandwidth_in_mbps for Azure Express
 }
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
-}
 
 # PacketFabric Cloud Router Connection - Google
 variable "pf_crc_pop1" {

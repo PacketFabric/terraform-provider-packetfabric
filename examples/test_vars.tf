@@ -180,7 +180,7 @@ variable "pf_cs_vlan1" {
   type    = number
   default = 106
 }
-# Google Cloud Side Provisioning
+# Google Cloud Side Provisioning  (also used for AWS Cloud Router Connection)
 variable "pf_cs_google_region" {
   type    = string
   default = "us-west1"
@@ -215,7 +215,7 @@ variable "pf_cs_vlan2" {
   type    = number
   default = 107
 }
-# AWS Cloud Side Provisioning
+# AWS Cloud Side Provisioning (also used for AWS Cloud Router Connection)
 variable "pf_cs_aws_region" {
   description = "The AWS region that should be used."
   type        = string
@@ -225,11 +225,6 @@ variable "pf_cs_mtu" {
   description = "Maximum Transmission Unit this port supports (size of the largest supported PDU)"
   type        = number
   default     = 1500
-}
-variable "pf_cs_aws_vif_type" {
-  description = "The type of VIF to use for this connection."
-  type        = string
-  default     = "private"
 }
 variable "pf_cs_customer_asn" {
   description = "The customer ASN of this connection."
