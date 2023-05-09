@@ -99,6 +99,7 @@ type RHclCloudRouterResult struct {
 // packetfabric_cloud_router_connection_aws
 type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
+	CloudRouter  RHclCloudRouterResult
 	AwsAccountID string
 	AccountUuid  string
 	Desc         string
@@ -117,17 +118,6 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
-}
-
-// packetfabric_cloud_router_connection_aws
-type RHclCloudRouterConnectionAWSResult struct {
-	HclResultBase
-	CloudRouter  RHclCloudRouterResult
-	AwsAccountID string
-	AccountUuid  string
-	Desc         string
-	Pop          string
-	Speed        string
 }
 
 // Patterns:
