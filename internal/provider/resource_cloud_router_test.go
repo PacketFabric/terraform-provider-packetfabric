@@ -19,8 +19,8 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 				testutil.PF_ACCOUNT_ID_KEY,
 			})
 		},
-		ExternalProviders: testAccExternalProviders,
 		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: cloudRouterResult.Hcl,
