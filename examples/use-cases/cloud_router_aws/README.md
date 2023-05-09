@@ -16,7 +16,6 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 ## Terraform resources & data-sources used
 
 - "aws_dx_gateway"
-- "aws_dx_private_virtual_interface"
 - "aws_dx_gateway_association"
 - "aws_security_group"
 - "aws_network_interface"
@@ -24,7 +23,6 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 - "aws_instance"
 - "aws_eip"
 - "aws_vpn_gateway"
-- "aws_vpn_gateway_attachment"
 - "aws_route_table"
 - "aws_vpc"
 - "aws_subnet"
@@ -32,9 +30,6 @@ Terraform providers used: PacketFabric and AWS. This example uses AWS Private VI
 - "aws_route_table_association"
 - "packetfabric_cloud_router"
 - "packetfabric_cloud_router_connection_aws"
-- "time_sleep"
-- "aws_dx_connection_confirmation"
-- "packetfabric_cloud_router_bgp_session"
 - "random_pet"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
@@ -59,7 +54,7 @@ Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 - [SSH Public Key](https://www.ssh.com/academy/ssh/keygen)
 
@@ -123,50 +118,6 @@ terraform destroy
 ```
 
 **Note:** Default login/password for Locust is ``demo:packetfabric`` edit ``user-data-ubuntu.sh`` script to change it.
-
-## Troubleshooting
-
-In case you get the following error:
-
-```
-╷
-│ Error: error waiting for Direct Connection Connection (dxcon-fgq3o1ff) confirm: timeout while waiting for state to become 'available' (last state: 'pending', timeout: 10m0s)
-│ 
-│   with aws_dx_connection_confirmation.confirmation_2,
-│   on cloud_router_connections.tf line 80, in resource "aws_dx_connection_confirmation" "confirmation_2":
-│  80: resource "aws_dx_connection_confirmation" "confirmation_2" {
-│ 
-```
-
-You are hitting a timeout issue in AWS [aws_dx_connection_confirmation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_connection_confirmation) resource. Please [vote](https://github.com/hashicorp/terraform-provider-aws/issues/26335) for this issue on GitHub.
-
-As a workaround, edit the `cloud_router_connections.tf` and comment out the following resource:
-
-```
-# resource "aws_dx_connection_confirmation" "confirmation_2" {
-#   provider      = aws.region2
-#   connection_id = data.aws_dx_connection.current_2.id
-# }
-```
-
-Edit the `aws_dx_private_vif.tf` and comment out the dependency with `confirmation_2` in `packetfabric_cloud_router_connections` data source: 
-
-```
-data "packetfabric_cloud_router_connections" "current" {
-  provider   = packetfabric
-  circuit_id = packetfabric_cloud_router.cr.id
-
-  depends_on = [
-    aws_dx_connection_confirmation.confirmation_1,
-    # aws_dx_connection_confirmation.confirmation_2,
-  ]
-}
-```
-
-Then remove the `confirmation_2` state, check the Direct Connect connection is **available** and re-apply the terraform plan:
-```
-terraform apply
-```
 
 ## Screenshots
 

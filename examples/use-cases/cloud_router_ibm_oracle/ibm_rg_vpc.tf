@@ -16,6 +16,12 @@ resource "ibm_is_vpc_address_prefix" "vpc_prefix_1" {
   cidr     = var.ibm_vpc_cidr1
 }
 
+resource "ibm_is_vpc_routing_table" "routing_table_1" {
+  provider = ibm
+  name     = "${var.resource_name}-${random_pet.name.id}"
+  vpc      = ibm_is_vpc.vpc_1.id
+}
+
 resource "ibm_is_subnet" "subnet_1" {
   provider        = ibm
   name            = "${var.resource_name}-${random_pet.name.id}"
@@ -23,7 +29,7 @@ resource "ibm_is_subnet" "subnet_1" {
   vpc             = ibm_is_vpc.vpc_1.id
   zone            = var.ibm_region1_zone1
   ipv4_cidr_block = var.ibm_subnet_cidr1
-  #routing_table   = ibm_is_vpc_routing_table.example.routing_table
+  routing_table   = ibm_is_vpc_routing_table.routing_table_1.id
   depends_on = [
     ibm_is_vpc_address_prefix.vpc_prefix_1
   ]
