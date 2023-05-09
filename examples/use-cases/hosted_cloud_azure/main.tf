@@ -149,7 +149,7 @@ data "azurerm_express_route_circuit" "azure_express_route_1" {
 #   name                = "${var.resource_name}-${random_pet.name.id}-public-ip-vng1"
 #   location            = azurerm_resource_group.resource_group_1.location
 #   resource_group_name = azurerm_resource_group.resource_group_1.name
-#   allocation_method   = "Dynamic"
+#   allocation_method   = "Static"
 #   tags = {
 #     environment = "${var.resource_name}-${random_pet.name.id}"
 #   }

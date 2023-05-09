@@ -5,7 +5,7 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
 }
 
 # From the PacketFabric side: Create a cloud router connection to AWS
-resource "packetfabric_cloud_router_connection_aws" "crc_1" {
+resource "packetfabric_cloud_router_connection_aws" "crc_aws1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop1}"
   labels      = var.pf_labels
@@ -45,7 +45,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc_1" {
   ]
 }
 
-resource "packetfabric_cloud_router_connection_aws" "crc_2" {
+resource "packetfabric_cloud_router_connection_aws" "crc_aws2" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   labels      = var.pf_labels

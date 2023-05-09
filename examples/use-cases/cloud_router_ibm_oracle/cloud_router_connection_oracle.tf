@@ -52,7 +52,7 @@ resource "oci_core_virtual_circuit" "fast_connect_1" {
 # }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
+resource "packetfabric_cloud_router_connection_oracle" "crbs_oracle" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
   labels      = var.pf_labels
@@ -65,10 +65,10 @@ resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
 }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_oracle" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_oracle.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_oracle.crbs_oracle.id
   address_family = var.pf_crbs_af
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
@@ -84,7 +84,7 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_2" {
-#   value     = packetfabric_cloud_router_bgp_session.crbs_2
+# output "packetfabric_cloud_router_bgp_session_crbs_oracle" {
+#   value     = packetfabric_cloud_router_bgp_session.crbs_oracle
 #   sensitive = true
 # }

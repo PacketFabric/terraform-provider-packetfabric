@@ -479,7 +479,7 @@ func flattenCloudSettings(setts *packetfabric.CloudSettings) []interface{} {
 		flatten["svlan_id_cust"] = setts.SvlanIDCust
 		flatten["vc_ocid"] = setts.VcOcid
 		flatten["vlan_id_cust"] = setts.VlanIDCust
-		flatten["vlan_id_microsoft"] = setts.VlanIDMicrosoft
+		flatten["vlan_id_microsoft"] = setts.VlanMicrosoft
 		flatten["vlan_id_pf"] = setts.VlanIDPf
 		flatten["vlan_id_private"] = setts.VlanPrivate
 		flattens = append(flattens, flatten)
