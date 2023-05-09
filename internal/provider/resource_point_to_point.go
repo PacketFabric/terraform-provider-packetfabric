@@ -144,13 +144,13 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	ptpService := extractPtpService(d)
 	resp, err := c.CreatePointToPointService(ptpService)
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			if c.IsPointToPointComplete(resp.PtpUUID) {
@@ -193,7 +193,9 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 
 		if len(resp.Interfaces) == 2 {
 			interfaceA := make(map[string]interface{})
@@ -212,11 +214,13 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 	// unsetFields: loa, autoneg, published_quote_line_uuid
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -279,7 +283,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 		} else {
 			deleteOk := make(chan bool)
 			defer close(deleteOk)
-			ticker := time.NewTicker(10 * time.Second)
+			ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 			go func() {
 				for range ticker.C {
 					if c.IsPointToPointDeleteComplete(ptpUUID) {

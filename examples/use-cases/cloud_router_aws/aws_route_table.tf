@@ -10,18 +10,12 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
-  # Need to wait for the transit GW to be attached before adding it to the route table
+  # Need to wait for the private GW to be attached before adding it to the route table
   depends_on = [
-    aws_vpn_gateway_attachment.vpn_attachment_1
+    aws_vpn_gateway.vpn_gw_1
   ]
-  # # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/1426
-  # lifecycle {
-  #   ignore_changes = [
-  #     route
-  #   ]
-  # }
 }
 resource "aws_route_table" "route_table_2" {
   provider = aws.region2
@@ -33,18 +27,12 @@ resource "aws_route_table" "route_table_2" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_2.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
-  # Need to wait for the transit GW to be attached before adding it to the route table
+  # Need to wait for the private GW to be attached before adding it to the route table
   depends_on = [
-    aws_vpn_gateway_attachment.vpn_attachment_1
+    aws_vpn_gateway.vpn_gw_2
   ]
-  # # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/1426
-  # lifecycle {
-  #   ignore_changes = [
-  #     route
-  #   ]
-  # }
 }
 
 # Assign the route table to the subnet

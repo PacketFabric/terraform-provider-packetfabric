@@ -68,7 +68,13 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }`
+  }
+  
+  resource "time_sleep" "wait_10_seconds" {
+    depends_on = [%s]
+    destroy_duration = "10s"
+  }
+  `
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
@@ -388,7 +394,14 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   speed             = "%s"
   subscription_term = %v
   enabled          = %t
-}`
+}
+
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [%s]
+
+  destroy_duration = "60s"
+}
+`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {

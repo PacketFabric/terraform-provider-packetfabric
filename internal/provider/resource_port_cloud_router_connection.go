@@ -62,10 +62,11 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				Description:  "A brief description of this connection.",
 			},
 			"vlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"untagged": {
 				Type:        schema.TypeBool,
@@ -164,9 +165,13 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("port_circuit_id", resp.PortCircuitID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("vlan", resp.Vlan)
+		if _, ok := d.GetOk("vlan"); ok {
+			_ = d.Set("vlan", resp.Vlan)
+		}
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
 		} else {
@@ -180,11 +185,13 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		// unsetFields: published_quote_line_uuid
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 

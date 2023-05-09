@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -27,7 +27,7 @@ resource "aws_vpc" "vpc_1" {
   cidr_block           = var.aws_vpc_cidr1
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "subnet_1" {
   vpc_id     = aws_vpc.vpc_1.id
   cidr_block = var.aws_subnet_cidr1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "gw_1" {
   provider = aws
   vpc_id   = aws_vpc.vpc_1.id
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_1
@@ -78,7 +78,7 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -89,121 +89,92 @@ resource "aws_route_table_association" "route_association_1" {
   route_table_id = aws_route_table.route_table_1.id
 }
 
+# Create Direct Connect Gateway
+resource "aws_dx_gateway" "direct_connect_gw_1" {
+  provider        = aws
+  name            = "${var.resource_name}-${random_pet.name.id}"
+  amazon_side_asn = var.amazon_side_asn1
+}
+
+# Associate Virtual Private GW to Direct Connect GW
+resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
+  provider              = aws
+  dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
+  associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
+  # allowed_prefixes managed via BGP prefixes in configured in packetfabric_cs_aws_hosted_connection
+  depends_on = [
+    aws_vpn_gateway_attachment.vpn_attachment_1
+  ]
+  timeouts {
+    create = "2h"
+    delete = "2h"
+  }
+}
+
 # Create a PacketFabric port
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = var.pf_port_autoneg
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
   media             = var.pf_port_media
   nni               = var.pf_port_nni
   pop               = var.pf_port_pop1
   speed             = var.pf_port_speed
   subscription_term = var.pf_port_subterm
   zone              = var.pf_port_avzone1
+  labels            = var.pf_labels
 }
 # output "packetfabric_port_1" {
 #   value = packetfabric_port.port_1
 # }
 
-# From the PacketFabric side: Create a AWS Hosted Connection 
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider    = packetfabric
+  description = "${var.resource_name}-${random_pet.name.id}-aws"
+  # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+}
+
+# Create a AWS Hosted Connection + AWS VIF
 resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}"
+  description = "${var.resource_name}-${random_pet.name.id}"
+  labels      = var.pf_labels
   port        = packetfabric_port.port_1.id
   speed       = var.pf_cs_speed
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
   zone        = var.pf_cs_zone1
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = var.aws_region1
+    mtu              = var.pf_cs_mtu
+    aws_vif_type     = "private"
+    bgp_settings {
+      customer_asn = var.customer_side_asn1
+    }
+    aws_gateways {
+      type = "directconnect"
+      id   = aws_dx_gateway.direct_connect_gw_1.id
+    }
+    aws_gateways {
+      type   = "private"
+      id     = aws_vpn_gateway.vpn_gw_1.id
+      vpc_id = aws_vpc.vpc_1.id
+    }
+  }
+  depends_on = [
+    aws_dx_gateway_association.virtual_private_gw_to_direct_connect_1
+  ]
 }
 # output "packetfabric_cs_aws_hosted_connection" {
 #   value = packetfabric_cs_aws_hosted_connection.pf_cs_conn1
 # }
 
-# From the AWS side: Accept the connection
-# Wait for the connection to show up in AWS
-resource "time_sleep" "wait_aws_connection" {
-  create_duration = "2m"
-  depends_on = [
-    packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-  ]
+data "packetfabric_cs_hosted_connection_router_config" "router_aws_cisco2900" {
+  cloud_circuit_id = packetfabric_cs_aws_hosted_connection.pf_cs_conn1.id
+  router_type      = "CiscoSystemsInc-2900SeriesRouters-IOS124"
 }
-
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current" {
-  provider   = aws
-  name       = "${var.tag_name}-${random_pet.name.id}"
-  depends_on = [time_sleep.wait_aws_connection]
+resource "local_file" "router_aws_cisco2900_file" {
+  filename = "router_config_aws_cisco2900.txt"
+  content  = data.packetfabric_cs_hosted_connection_router_config.router_aws_cisco2900.router_config
 }
-# output "aws_dx_connection_1" {
-#   value = data.aws_dx_connection.current
-# }
-
-# Sometimes, it takes more than 10min for the connection to become available
-# Vote for below issue to get a timeout attribute added to the aws_dx_connection_confirmation resource
-# https://github.com/hashicorp/terraform-provider-aws/issues/26335
-
-resource "aws_dx_connection_confirmation" "confirmation" {
-  provider      = aws
-  connection_id = data.aws_dx_connection.current.id
-
-  lifecycle {
-    ignore_changes = [
-      connection_id,
-      vlan
-    ]
-  }
-}
-
-# # From the AWS side: Create a gateway
-# resource "aws_dx_gateway" "direct_connect_gw_1" {
-#   provider        = aws
-#   name            = "${var.tag_name}-${random_pet.name.id}"
-#   amazon_side_asn = var.amazon_side_asn1
-#   depends_on = [
-#     packetfabric_cs_aws_hosted_connection.pf_cs_conn1
-#   ]
-# }
-
-# From the AWS side: Create and attach a VIF
-# Vote for 29165 [Bug]: aws_dx_connection data-source reports vlan_id null
-# https://github.com/hashicorp/terraform-provider-aws/issues/29165
-# resource "aws_dx_private_virtual_interface" "direct_connect_vip_1" {
-#   provider       = aws
-#   connection_id  = data.aws_dx_connection.current.id
-#   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-#   name           = "${var.tag_name}-${random_pet.name.id}"
-#   vlan           = data.aws_dx_connection.current.vlan_id # bug #29165
-#   address_family = "ipv4"
-#   bgp_asn        = var.customer_side_asn1
-#   depends_on = [
-#     aws_dx_connection_confirmation.confirmation
-#   ]
-# }
-
-# # provider version >= 4.37.0
-# data "aws_dx_router_configuration" "router_config" {
-#   provider               = aws
-#   virtual_interface_id   = aws_dx_private_virtual_interface.direct_connect_vip_1.id
-#   router_type_identifier = "CiscoSystemsInc-2900SeriesRouters-IOS124"
-# }
-
-##########################################################################################
-#### Here you would need to setup BGP in your Router
-##########################################################################################
-
-# # From the AWS side: Associate Virtual Private GW to Direct Connect GW
-# resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
-#   provider              = aws
-#   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
-#   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
-#   allowed_prefixes = [
-#     var.aws_vpc_cidr1
-#   ]
-#   depends_on = [
-#     aws_dx_private_virtual_interface.direct_connect_vip_1
-#   ]
-#   timeouts {
-#     create = "2h"
-#     delete = "2h"
-#   }
-# }

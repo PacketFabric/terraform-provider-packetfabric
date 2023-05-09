@@ -30,6 +30,8 @@ output "packetfabric_cs_azure_hosted_connection_data" {
 
 ### Optional
 
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
 - `cloud_provider_region` (String) Region short name.
@@ -58,5 +60,109 @@ output "packetfabric_cs_azure_hosted_connection_data" {
 
 ### Read-Only
 
+- `cloud_settings` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings))
 - `id` (String) The ID of this resource.
+- `settings` (List of Object) (see [below for nested schema](#nestedatt--settings))
+
+<a id="nestedatt--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Read-Only:
+
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_dx_aws_device` (String)
+- `aws_dx_aws_logical_device_id` (String)
+- `aws_dx_bandwidth` (String)
+- `aws_dx_encryption_mode` (String)
+- `aws_dx_has_logical_redundancy` (Boolean)
+- `aws_dx_jumbo_frame_capable` (Boolean)
+- `aws_dx_location` (String)
+- `aws_dx_mac_sec_capable` (Boolean)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `aws_vif_bgp_peer_id` (String)
+- `aws_vif_direct_connect_gw_id` (String)
+- `aws_vif_id` (String)
+- `aws_vif_type` (String)
+- `bgp_settings` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--bgp_settings))
+- `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--cloud_state))
+- `credentials_uuid` (String)
+- `google_cloud_router_name` (String)
+- `google_dataplane_version` (Number)
+- `google_edge_availability_domain` (Number)
+- `google_interface_name` (String)
+- `google_pairing_key` (String)
+- `google_project_id` (String)
+- `google_region` (String)
+- `google_vlan_attachment_name` (String)
+- `mtu` (Number)
+- `svlan_id_cust` (Number)
+- `vlan_id_cust` (Number)
+- `vlan_id_pf` (Number)
+
+<a id="nestedobjatt--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Read-Only:
+
+- `address_family` (String)
+- `advertised_prefixes` (List of String)
+- `customer_asn` (Number)
+- `customer_router_ip` (String)
+- `google_advertise_mode` (String)
+- `google_advertised_ip_ranges` (List of String)
+- `google_keepalive_interval` (Number)
+- `l3_address` (String)
+- `md5` (String)
+- `remote_address` (String)
+- `remote_asn` (Number)
+- `remote_router_ip` (String)
+
+
+<a id="nestedobjatt--cloud_settings--cloud_state"></a>
+### Nested Schema for `cloud_settings.cloud_state`
+
+Read-Only:
+
+- `aws_dx_connection_state` (String)
+- `aws_dx_port_encryption_status` (String)
+- `aws_vif_state` (String)
+- `bgp_state` (String)
+- `google_interconnect_admin_enabled` (Boolean)
+- `google_interconnect_state` (String)
+
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `account_id` (String)
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `azure_connection_type` (String)
+- `azure_service_key` (String)
+- `azure_service_tag` (Number)
+- `bgp_asn` (Number)
+- `bgp_cer_cidr` (String)
+- `bgp_ibm_cidr` (String)
+- `gateway_id` (String)
+- `google_pairing_key` (String)
+- `google_vlan_attachment_name` (String)
+- `name` (String)
+- `oracle_region` (String)
+- `port_compartment_ocid` (String)
+- `port_cross_connect_ocid` (String)
+- `port_id` (String)
+- `svlan_id_cust` (Number)
+- `vc_ocid` (String)
+- `vlan_id_cust` (Number)
+- `vlan_id_microsoft` (Number)
+- `vlan_id_pf` (Number)
+- `vlan_id_private` (Number)
+
 

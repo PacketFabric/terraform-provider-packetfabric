@@ -16,7 +16,7 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric Cloud Router Connection - Google and IPsec
+# PacketFabric Cloud Router Connection - Common
 variable "pf_crc_speed" {
   type        = string
   description = "The speed of the new connection"
@@ -28,11 +28,6 @@ variable "pf_crc_pop1" {
   type        = string
   description = "The POP in which you want to provision the connection"
   default     = "SFO1"
-}
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
 }
 
 # PacketFabric Cloud Router Connections - IPsec

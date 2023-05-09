@@ -111,10 +111,11 @@ func resourceThirdPartyVirtualCircuit() *schema.Resource {
 							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
 						},
 						"vlan": {
-							Type:        schema.TypeInt,
-							Required:    true,
-							ForceNew:    true,
-							Description: "Valid VLAN range is from 4-4094, inclusive.",
+							Type:         schema.TypeInt,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.IntBetween(4, 4094),
+							Description:  "Valid VLAN range is from 4-4094, inclusive.",
 						},
 						"untagged": {
 							Type:        schema.TypeBool,
@@ -150,7 +151,7 @@ func resourceThirdPartyVirtualCircuitCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 	thidPartyVC := extractThirdPartyVC(d)
 	resp, err := c.CreateThirdPartyVC(thidPartyVC)
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
