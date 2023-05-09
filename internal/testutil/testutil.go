@@ -3,6 +3,7 @@ package testutil
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"strings"
@@ -27,23 +28,24 @@ func GetAccountUUID() string {
 }
 
 func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media string, availabilityErr error) {
-
 	c, err := _createPFClient()
 	if err != nil {
+		log.Println("Error creating PF client: ", err)
 		return "", "", "", err
 	}
 
 	locations, err := c.ListLocations()
 	if err != nil {
+		log.Println("Error getting locations list: ", err)
 		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 
 	// We need to shuffle the list of locations. Otherwise, we may try to run
 	// all tests on the same port.
 	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(locations), func(i, j int) {
-		locations[i], locations[j] = locations[j], locations[i]
-	})
+	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
+
+	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev")
 
 	for _, l := range locations {
 		if l.Vendor == "Colt" {
@@ -52,25 +54,21 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
+			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
 			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
+
 		for _, p := range portAvailability {
-			if p.Count > 0 && p.Speed == desiredSpeed {
+			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
 				pop = l.Pop
 				zone = p.Zone
 				media = p.Media
-				return
-			}
-		}
-		if pop == "" || zone == "" {
-			if len(portAvailability) > 0 {
-				pop = l.Pop
-				zone = portAvailability[0].Zone
-				media = portAvailability[0].Media
+				log.Println("Found available port at ", pop, zone, media)
 				return
 			}
 		}
 	}
+	log.Println("No pops with available ports found.")
 	return "", "", "", errors.New("no pops with available ports")
 }
 
