@@ -29,7 +29,6 @@ const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
 // packetfabric_cloud_router
-const CrbsAddressFmly = "ivp4"
 const CloudRouterCapacity = "1Gbps"
 const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
@@ -46,6 +45,8 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
+const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
+const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -99,6 +100,7 @@ type RHclCloudRouterResult struct {
 // packetfabric_cloud_router_connection_aws
 type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
+	CloudRouter  RHclCloudRouterResult
 	AwsAccountID string
 	AccountUuid  string
 	Desc         string
@@ -111,23 +113,13 @@ type RHclBgpSessionResult struct {
 	HclResultBase
 	CloudRouter        RHclCloudRouterResult
 	CloudRouterConnAws RHclCloudRouterConnectionAwsResult
-	AddressFamily      string
+	RemoteAddress      string
+	L3Address          string
 	Asn                int
 	Prefix1            string
 	Type1              string
 	Prefix2            string
 	Type2              string
-}
-
-// packetfabric_cloud_router_connection_aws
-type RHclCloudRouterConnectionAWSResult struct {
-	HclResultBase
-	CloudRouter  RHclCloudRouterResult
-	AwsAccountID string
-	AccountUuid  string
-	Desc         string
-	Pop          string
-	Speed        string
 }
 
 // Patterns:
@@ -255,37 +247,40 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		AccountUuid:  os.Getenv(PF_ACCOUNT_ID_KEY),
 		Speed:        CloudRouterConnAwsSpeed,
 		Pop:          pop,
+		CloudRouter:  hclCloudRouterRes,
 	}
 }
 
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
 
-	hclCloudRouterRes := RHclCloudRouter()
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
 	resourceName, hclName := _generateResourceName(pfCloudRouterBgpSession)
 	bgpSessionHcl := fmt.Sprintf(
 		RResourceCloudRouterBgpSession,
 		hclName,
-		hclCloudRouterRes.ResourceName,
+		hclCloudConnRes.CloudRouter.ResourceName,
 		hclCloudConnRes.HclResultBase.ResourceName,
-		CrbsAddressFmly,
+		CloudRouterBgpSessionRemoteAddress,
+		CloudRouterBgpSessionL3Address,
 		CloudRouterBgpSessionASN,
 		CloudRouterBgpSessionPrefix1,
 		CloudRouterBgpSessionType1,
 		CloudRouterBgpSessionPrefix2,
 		CloudRouterBgpSessionType2)
-	hcl := fmt.Sprintf("%s\n%s\n%s", hclCloudRouterRes.Hcl, hclCloudConnRes.Hcl, bgpSessionHcl)
+	hcl := fmt.Sprintf("%s\n%s", hclCloudConnRes.Hcl, bgpSessionHcl)
+
 	return RHclBgpSessionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCloudRouterBgpSession,
 			ResourceName: resourceName,
 		},
-		CloudRouter:        hclCloudRouterRes,
+		CloudRouter:        hclCloudConnRes.CloudRouter,
 		CloudRouterConnAws: hclCloudConnRes,
-		AddressFamily:      CrbsAddressFmly,
+		RemoteAddress:      CloudRouterBgpSessionRemoteAddress,
+		L3Address:          CloudRouterBgpSessionL3Address,
 		Asn:                CloudRouterBgpSessionASN,
 		Prefix1:            CloudRouterBgpSessionPrefix1,
 		Type1:              CloudRouterBgpSessionType1,
