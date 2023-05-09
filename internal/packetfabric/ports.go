@@ -213,8 +213,7 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	if err != nil {
 		return nil, err
 	}
-	done := checkPortStatus(c, expectedResp.PortCircuitID)
-	checked := <-*done
+	checked := checkPortStatus(c, expectedResp.PortCircuitID)
 	if checked {
 		return expectedResp, nil
 	} else {
@@ -252,8 +251,7 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	if err != nil {
 		return nil, err
 	}
-	done := checkPortStatus(c, portCID)
-	statusChangeOk := <-*done
+	statusChangeOk := checkPortStatus(c, portCID)
 	if statusChangeOk {
 		return expectedResp, nil
 	} else {
@@ -282,8 +280,7 @@ func (c *PFClient) changePortStateAutoneg(portCID string, enable bool) (*Interfa
 	if err != nil {
 		return nil, err
 	}
-	done := checkPortStatus(c, portCID)
-	updateAutonegChangeOk := <-*done
+	updateAutonegChangeOk := checkPortStatus(c, portCID)
 	if updateAutonegChangeOk {
 		return expectedResp, nil
 	} else {
@@ -358,8 +355,7 @@ func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*Inter
 	if err != nil {
 		return nil, err
 	}
-	done := checkPortStatus(c, expectedResp.PortCircuitID)
-	updated := <-*done
+	updated := checkPortStatus(c, expectedResp.PortCircuitID)
 	if updated {
 		return expectedResp, nil
 	} else {
@@ -374,8 +370,7 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	done := checkPortStatus(c, portCID)
-	deleted := <-*done
+	deleted := checkPortStatus(c, portCID)
 	if deleted {
 		return expectedResp, nil
 	} else {
@@ -383,12 +378,12 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	}
 }
 
-func checkPortStatus(c *PFClient, portId string) *chan bool {
+func checkPortStatus(c *PFClient, portId string) bool {
 	done := make(chan bool)
 	defer close(done)
 	fn := func() (*ServiceState, error) {
 		return c.GetPortStatus(portId)
 	}
 	go c.CheckServiceStatus(done, fn)
-	return &done
+	return <-done
 }
