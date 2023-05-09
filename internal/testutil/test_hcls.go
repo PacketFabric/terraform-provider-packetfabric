@@ -121,7 +121,7 @@ type RHclBgpSessionResult struct {
 }
 
 // packetfabric_backbone_virtual_circuit
-type RHclBackboneVirtulalCircuitResult struct {
+type RHclBackboneVirtualCircuitResult struct {
 	HclResultBase
 	Desc               string
 	Epl                bool
@@ -359,7 +359,7 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-func RHclBackboneVirtulalCircuit() RHclBackboneVirtulalCircuitResult {
+func RHclBackboneVirtualCircuit() RHclBackboneVirtualCircuitResult {
 
 	var hcl, speed, longhaulType string
 	var vlan1, vlan2, subscriptionTerm int
@@ -368,7 +368,7 @@ func RHclBackboneVirtulalCircuit() RHclBackboneVirtulalCircuitResult {
 	resourceName, _ := _generateResourceName(pfBackboneVirtualCircuit)
 	uniqueDesc := _generateUniqueNameOrDesc(pfBackboneVirtualCircuit)
 
-	return RHclBackboneVirtulalCircuitResult{
+	return RHclBackboneVirtualCircuitResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfBackboneVirtualCircuit,
