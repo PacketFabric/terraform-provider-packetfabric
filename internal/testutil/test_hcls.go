@@ -100,8 +100,10 @@ type RHclCloudRouterResult struct {
 type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
 	AwsAccountID string
+	AccountUuid  string
 	Desc         string
 	Pop          string
+	Speed        string
 }
 
 // packetfabric_cloud_router_bgp_session
@@ -115,6 +117,17 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+// packetfabric_cloud_router_connection_aws
+type RHclCloudRouterConnectionAWSResult struct {
+	HclResultBase
+	CloudRouter  RHclCloudRouterResult
+	AwsAccountID string
+	AccountUuid  string
+	Desc         string
+	Pop          string
+	Speed        string
 }
 
 // Patterns:
@@ -217,7 +230,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := portDetails._findAvailableCloudPopZoneAndMedia()
+	pop, _ := portDetails._findAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter()
 	resourceName, hclName := _generateResourceName(pfCloudRouterConnAws)
@@ -239,6 +252,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 			ResourceName: resourceName,
 		},
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
+		AccountUuid:  os.Getenv(PF_ACCOUNT_ID_KEY),
+		Speed:        CloudRouterConnAwsSpeed,
 		Pop:          pop,
 	}
 }
@@ -351,6 +366,38 @@ func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, medi
 	return
 }
 
+func (details PortDetails) _findAvailableCloudPopZone() (pop, zone string) {
+	popsWithZones, _ := details.FetchCloudPopsAndZones()
+	popsToSkip := make([]string, 0)
+
+	log.Println("Starting to search for available Cloud PoP and zone...")
+	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
+
+	for popAvailable, zones := range popsWithZones {
+		log.Printf("Checking PoP: %s\n", popAvailable)
+
+		if len(popsToSkip) == len(popsWithZones) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, popAvailable) {
+			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
+			continue
+		} else {
+			if len(zones) > 0 {
+				pop = popAvailable
+				zone = zones[0]
+				log.Printf("Found available PoP: %s, Zone: %s\n", pop, zone)
+				return
+			} else {
+				popsToSkip = append(popsToSkip, popAvailable)
+			}
+		}
+	}
+
+	log.Println("No available Cloud PoP and zone found.")
+	return
+}
+
 func _generateResourceName(resource string) (resourceName, hclName string) {
 	hclName = GenerateUniqueResourceName()
 	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
@@ -391,6 +438,36 @@ func (details PortDetails) FetchCloudPops() (popsAvailable []string, err error) 
 	return
 }
 
+func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]string, err error) {
+	if details.DesiredProvider == "" {
+		err = errors.New("please provide a valid cloud provider to fetch pop")
+	}
+	if details.PFClient == nil {
+		err = errors.New("please create PFClient to fetch cloud pop")
+		return
+	}
+	popsWithZones = make(map[string][]string)
+	if cloudLocations, locErr := details.PFClient.GetCloudLocations(
+		details.DesiredProvider,
+		details.DesiredConnectionType,
+		details.IsNatCapable,
+		details.HasCloudRouter,
+		details.AnyType,
+		details.DesiredPop,
+		details.DesiredCity,
+		details.DesiredState,
+		details.DesiredMarket,
+		details.DesiredRegion); locErr != nil {
+		err = locErr
+		return
+	} else {
+		for _, loc := range cloudLocations {
+			popsWithZones[loc.Pop] = loc.Zones
+		}
+	}
+	return
+}
+
 func _contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -423,4 +500,15 @@ func (details PortDetails) GetAvailableCloudPort(desiredPop string) (zone, media
 	}
 	err = errors.New("there's no port available for the requested speed")
 	return
+}
+
+func CreateBasePortDetails() PortDetails {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	return PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
 }
