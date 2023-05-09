@@ -5,6 +5,8 @@ subcategory: "Guides"
 
 Early Termination Liability (ETL) fees are applied when a service is terminated before the end of its contract term. ETL is calculated based on the remaining days of the contract and is prorated accordingly. This guide will help you understand how ETL fees are managed in Terraform when working with PacketFabric resources.
 
+For more information, see the [Canceling Services](https://docs.packetfabric.com/billing/services/cancel/).
+
 ## Understanding ETL in Terraform
 
 In Terraform, you can create, modify, and delete resources using various providers. When working with PacketFabric resources, you may encounter situations where you need to delete a service that is still under contract. In such cases, ETL fees apply.
