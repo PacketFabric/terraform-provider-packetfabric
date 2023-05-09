@@ -34,12 +34,15 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	if d.HasChange("cloud_settings") {
 		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
 			cs := cloudSettings.(map[string]interface{})
-			updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{}
+			updateServiceConnData.CloudSettings = &packetfabric.CloudSettings{}
 			if credentialsUUID, ok := cs["credentials_uuid"].(string); ok {
 				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
 			}
 			if awsRegion, ok := cs["aws_region"].(string); ok {
 				updateServiceConnData.CloudSettings.AwsRegion = awsRegion
+			}
+			if googleRegion, ok := cs["google_region"].(string); ok {
+				updateServiceConnData.CloudSettings.GoogleRegion = googleRegion
 			}
 			if mtu, ok := cs["mtu"].(int); ok {
 				updateServiceConnData.CloudSettings.Mtu = mtu
@@ -48,11 +51,31 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 				bgp := bgpSettings[0].(map[string]interface{})
 				updateServiceConnData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
 				if advertisedPrefixes, ok := bgp["advertised_prefixes"].([]interface{}); ok {
-					ap := make([]string, len(advertisedPrefixes))
+					ap_aws := make([]string, len(advertisedPrefixes))
 					for i, elem := range advertisedPrefixes {
-						ap[i] = elem.(string)
+						ap_aws[i] = elem.(string)
 					}
-					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap
+					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap_aws
+				}
+				if customerAsn, ok := bgp["customer_asn"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.CustomerAsn = customerAsn
+				}
+				if remoteAsn, ok := bgp["remote_asn"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.RemoteAsn = remoteAsn
+				}
+				if md5, ok := bgp["md5"].(string); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.Md5 = md5
+				}
+				if googleKeepaliveInterval, ok := bgp["google_keepalive_interval"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval
+				}
+
+				if advertisedPrefixes, ok := bgp["google_advertised_ip_ranges"].([]interface{}); ok {
+					ap_google := make([]string, len(advertisedPrefixes))
+					for i, elem := range advertisedPrefixes {
+						ap_google[i] = elem.(string)
+					}
+					updateServiceConnData.CloudSettings.BgpSettings.GoogleAdvertisedIPRanges = ap_google
 				}
 			}
 			changed = true

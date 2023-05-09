@@ -2,10 +2,12 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -170,6 +172,34 @@ func resourceBackbone() *schema.Resource {
 				},
 			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				interfaces := []string{"interface_a", "interface_z"}
+
+				for _, iface := range interfaces {
+					oldRaw, newRaw := d.GetChange(iface)
+					oldSet := oldRaw.(*schema.Set)
+					newSet := newRaw.(*schema.Set)
+
+					for _, oldElem := range oldSet.List() {
+						for _, newElem := range newSet.List() {
+							oldResource := oldElem.(map[string]interface{})
+							newResource := newElem.(map[string]interface{})
+
+							if oldResource["port_circuit_id"] != newResource["port_circuit_id"] {
+								return fmt.Errorf("updating %s port_circuit_id in-place is not supported, delete and recreate the resource with the updated values", iface)
+							}
+						}
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -293,14 +323,18 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		} else {
 			_ = d.Set("flex_bandwidth_id", nil)
 		}
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 

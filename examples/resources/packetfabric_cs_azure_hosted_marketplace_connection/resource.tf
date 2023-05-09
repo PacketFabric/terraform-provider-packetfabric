@@ -6,8 +6,3 @@ resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketp
   market            = "HOU"
   speed             = "10Gbps" # will be deprecated
 }
-
-output "packetfabric_cs_azure_hosted_marketplace_connection" {
-  sensitive = true
-  value     = packetfabric_cs_azure_hosted_marketplace_connection.cs_conn1_marketplace_azure
-}

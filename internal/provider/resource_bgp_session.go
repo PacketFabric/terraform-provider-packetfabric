@@ -92,25 +92,16 @@ func resourceBgpSession() *schema.Resource {
 				Description:  "The TTL of this session. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).\n\n\tAvailable range is 1 through 4. ",
 			},
 			"local_preference": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
-				Description:  "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
-			},
-			"med": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
-				Description:  "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
-			},
-			"community": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     0,
-				Description: "The BGP community for this instance. ",
-				Deprecated:  "This field is deprecated and will be removed in a future release. ",
+				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+			},
+			"med": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     0,
+				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
 			},
 			"as_prepend": {
 				Type:         schema.TypeInt,
@@ -241,31 +232,22 @@ func resourceBgpSession() *schema.Resource {
 							Description:  "The BGP prepend value of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
 						},
 						"med": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(1, 4294967295),
-							Description:  "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Default:     0,
+							Description: "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 						"local_preference": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(1, 4294967295),
-							Description:  "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Default:     0,
+							Description: "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
 							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
-						},
-						"order": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     0,
-							Description: "The order of this prefix against the others. ",
-							Deprecated:  "This field is deprecated and will be removed in a future release. ",
 						},
 					},
 				},
@@ -299,14 +281,7 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
-	// check Cloud Router Connection status
-	createOkCh := make(chan bool)
-	defer close(createOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
-	}
-	go c.CheckServiceStatus(createOkCh, fn)
-	if !<-createOkCh {
+	if err := checkCloudRouterConnectionStatus(c, cID.(string), connCID.(string)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.BgpSettingsUUID)
@@ -346,15 +321,25 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("orlonger", bgp.Orlonger)
 	_ = d.Set("address_family", bgp.AddressFamily)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
-	_ = d.Set("l3_address", bgp.L3Address)
-	_ = d.Set("remote_address", bgp.RemoteAddress)
-	_ = d.Set("md5", bgp.Md5)
-	_ = d.Set("primary_subnet", bgp.PrimarySubnet)
-	_ = d.Set("secondary_subnet", bgp.SecondarySubnet)
+
+	if _, ok := d.GetOk("l3_address"); ok {
+		_ = d.Set("l3_address", bgp.L3Address)
+	}
+	if _, ok := d.GetOk("remote_address"); ok {
+		_ = d.Set("remote_address", bgp.RemoteAddress)
+	}
+	if _, ok := d.GetOk("primary_subnet"); ok {
+		_ = d.Set("primary_subnet", bgp.Subnet)
+	}
+	if _, ok := d.GetOk("secondary_subnet"); ok {
+		_ = d.Set("secondary_subnet", bgp.Subnet)
+	}
+	if _, ok := d.GetOk("md5"); ok {
+		_ = d.Set("md5", bgp.Md5)
+	}
 	_ = d.Set("med", bgp.Med)
 	_ = d.Set("as_prepend", bgp.AsPrepend)
 	_ = d.Set("local_preference", bgp.LocalPreference)
-	_ = d.Set("community", bgp.Community)
 	_ = d.Set("bfd_interval", bgp.BfdInterval)
 	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
 
@@ -397,14 +382,7 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	// check Cloud Router Connection status
-	updateOkCh := make(chan bool)
-	defer close(updateOkCh)
-	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetCloudConnectionStatus(cID.(string), connCID.(string))
-	}
-	go c.CheckServiceStatus(updateOkCh, fn)
-	if !<-updateOkCh {
+	if err := checkCloudRouterConnectionStatus(c, cID.(string), connCID.(string)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(resp.BgpSettingsUUID)
@@ -417,8 +395,7 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	var diags diag.Diagnostics
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "BGP session cannot be deleted.",
-		Detail:   "It will be deleted together with the Cloud Router Connection.",
+		Summary:  "BGP session will be deleted together with the Cloud Router Connection.",
 	})
 	d.SetId("")
 	return diags
@@ -452,9 +429,6 @@ func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	}
 	if med, ok := d.GetOk("med"); ok {
 		bgpSession.Med = med.(int)
-	}
-	if community, ok := d.GetOk("community"); ok {
-		bgpSession.Community = community.(int)
 	}
 	if asPrepend, ok := d.GetOk("as_prepend"); ok {
 		bgpSession.AsPrepend = asPrepend.(int)
@@ -518,9 +492,6 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 	if med, ok := d.GetOk("med"); ok {
 		bgpSession.Med = med.(int)
 	}
-	if community, ok := d.GetOk("community"); ok {
-		bgpSession.Community = community.(int)
-	}
 	if asPrepend, ok := d.GetOk("as_prepend"); ok {
 		bgpSession.AsPrepend = asPrepend.(int)
 	}
@@ -558,7 +529,6 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 				Med:             pref.(map[string]interface{})["med"].(int),
 				LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
 				Type:            pref.(map[string]interface{})["type"].(string),
-				Order:           pref.(map[string]interface{})["order"].(int),
 			})
 		}
 		return sessionPrefixes
@@ -654,7 +624,6 @@ func flattenPrefixConfiguration(prefixes []packetfabric.BgpPrefix) []interface{}
 		data["med"] = prefix.Med
 		data["local_preference"] = prefix.LocalPreference
 		data["type"] = prefix.Type
-		data["order"] = prefix.Order
 		result[i] = data
 	}
 	return result

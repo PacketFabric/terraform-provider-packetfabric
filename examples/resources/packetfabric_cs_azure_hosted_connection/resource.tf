@@ -8,8 +8,3 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
   vlan_microsoft    = 103
   labels            = ["terraform", "dev"]
 }
-
-output "packetfabric_cs_azure_hosted_connection" {
-  sensitive = true
-  value     = packetfabric_cs_azure_hosted_connection.cs_conn1_hosted_azure
-}

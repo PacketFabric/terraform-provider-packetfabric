@@ -36,7 +36,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -49,10 +49,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
   maybe_nat         = false
   is_public         = false
   labels            = ["terraform", "dev"]
-}
-
-output "packetfabric_cloud_router_connection_azure" {
-  value = packetfabric_cloud_router_connection_azure.crc4
 }
 ```
 
@@ -81,7 +77,11 @@ output "packetfabric_cloud_router_connection_azure" {
 
 ### Read-Only
 
+- `azure_connection_type` (String) The Azure connection type.
+		Example: primary or seconday
 - `id` (String) The ID of this resource.
+- `vlan_id_microsoft` (Number) The microsoft peering vlan.
+- `vlan_id_private` (Number) The private peering vlan.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
