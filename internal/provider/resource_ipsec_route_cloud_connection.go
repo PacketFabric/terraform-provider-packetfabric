@@ -245,12 +245,13 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		}
 		// unsetFields: published_quote_line_uuid
 	}
-
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 

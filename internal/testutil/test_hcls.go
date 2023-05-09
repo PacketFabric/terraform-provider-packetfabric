@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 )
 
 // ########################################
@@ -37,10 +37,12 @@ const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
 
-// packetfabric_cs_aws_hosted_connection
 // packetfabric_cloud_router_connection_aws
 const CloudRouterConnAwsSpeed = "50Mbps"
-const CloudRouterConnAwsVlan = 100
+
+// packetfabric_cs_aws_hosted_connection
+const HostedCloudSpeed = "100Mbps"
+const HostedCloudVlan = 100
 
 // packetfabric_cloud_router_bg_session
 const CloudRouterBgpSessionASN = 64534
@@ -98,16 +100,6 @@ type RHclCloudRouterResult struct {
 	Regions  []string
 }
 
-// packetfabric_cloud_router_connection_aws
-type RHclCloudRouterConnectionAwsResult struct {
-	HclResultBase
-	AwsAccountID string
-	AccountUuid  string
-	Desc         string
-	Pop          string
-	Speed        string
-}
-
 // packetfabric_cloud_router_bgp_session
 type RHclBgpSessionResult struct {
 	HclResultBase
@@ -122,7 +114,7 @@ type RHclBgpSessionResult struct {
 }
 
 // packetfabric_cloud_router_connection_aws
-type RHclCloudRouterConnectionAWSResult struct {
+type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
 	CloudRouter  RHclCloudRouterResult
 	AwsAccountID string
@@ -130,6 +122,18 @@ type RHclCloudRouterConnectionAWSResult struct {
 	Desc         string
 	Pop          string
 	Speed        string
+}
+
+// packetfabric_cs_aws_hosted_connection
+type RHclHostedCloudAwsResult struct {
+	HclResultBase
+	PortResult   RHclPortResult
+	AwsAccountID string
+	AccountUuid  string
+	Desc         string
+	Pop          string
+	Speed        string
+	Vlan         int
 }
 
 // Patterns:
@@ -303,75 +307,51 @@ func RHclBgpSession() RHclBgpSessionResult {
 }
 
 // packetfabric_cs_aws_hosted_connection
-func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
+func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
 	}
-	portDetails := PortDetails{
+	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          portSpeed,
+		DesiredSpeed:          HostedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
 	}
+	pop, _ := popDetails._findAvailableCloudPopZone()
 
-	pop, zone, media := portDetails._findAvailableCloudPopZoneAndMedia()
-	if pop == "" {
-		log.Fatalf("Resource: %s: %s", pfCsAwsHostedConn, "pop cannot be empty")
-	}
-	portDetails.DesiredPop = pop
-	portDetails.DesiredZone = zone
-	portDetails.DesiredMedia = media
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort()
 
 	resourceName, hclName := _generateResourceName(pfCsAwsHostedConn)
-	hclPortResult := portDetails.RHclPort()
-	uniqueDesc := _generateUniqueNameOrDesc(pfCsAwsHostedConn)
+
 	awsHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSAwsHostedConnection,
 		hclName,
-		uniqueDesc,
+		portTestResult.ResourceReference,
 		os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		hclPortResult.ResourceReference,
-		CloudRouterConnAwsSpeed,
+		os.Getenv(PF_ACCOUNT_ID_KEY),
+		_generateUniqueNameOrDesc(pfCsAwsHostedConn),
 		pop,
-		CloudRouterConnAwsVlan)
-	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, awsHostedConnectionHcl)
+		HostedCloudSpeed,
+		HostedCloudVlan)
 
-	return RHclCloudRouterConnectionAwsResult{
+	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, awsHostedConnectionHcl)
+
+	return RHclHostedCloudAwsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCsAwsHostedConn,
 			ResourceName: resourceName,
 		},
+		PortResult:   portTestResult,
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
-		Desc:         uniqueDesc,
+		AccountUuid:  os.Getenv(PF_ACCOUNT_ID_KEY),
+		Speed:        HostedCloudSpeed,
 		Pop:          pop,
+		Vlan:         HostedCloudVlan,
 	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
-	}
-	return
 }
 
 func (details PortDetails) _findAvailableCloudPopZone() (pop, zone string) {
@@ -413,7 +393,9 @@ func _generateResourceName(resource string) (resourceName, hclName string) {
 }
 
 func _generateUniqueNameOrDesc(targetResource string) (unique string) {
-	unique = fmt.Sprintf("pf_testacc_%s_%s", targetResource, strings.ReplaceAll(uuid.NewString(), "-", "_"))
+	t := time.Now()
+	formattedTime := fmt.Sprintf("%d%s%02d_%02d%02d%02d", t.Year(), t.Month().String()[:3], t.Day(), t.Hour(), t.Minute(), t.Second())
+	unique = fmt.Sprintf("terraform_testacc_%s", strings.ReplaceAll(formattedTime, "-", "_"))
 	return
 }
 

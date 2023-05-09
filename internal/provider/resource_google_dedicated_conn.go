@@ -171,7 +171,6 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
@@ -195,11 +194,13 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	}
 	// unsetFields: loa, published_quote_line_uuid
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 

@@ -15,7 +15,9 @@ func TestAccPort(t *testing.T) {
 	portTestResult := portDetails.RHclPort()
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testutil.PreCheck(t, []string{})
+			testutil.PreCheck(t, []string{
+				testutil.PF_ACCOUNT_ID_KEY,
+			})
 		},
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

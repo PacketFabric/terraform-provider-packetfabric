@@ -52,14 +52,6 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
   speed         = "%s"
 }`
 
-// Resource: packetfabric_billing_modify_order
-const RResourceBillingModifyOrder = `resource "packetfabric_billing_modify_order" "%s" {
-  provider             = packetfabric
-  circuit_id           = %s.id
-  subscription_term    = %v
-  speed                = "%s"
-}`
-
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
 	provider      = packetfabric
@@ -190,12 +182,13 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
 // Resource: packetfabric_cs_aws_hosted_connection
 const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_connection" "%s" {
   provider       = packetfabric
-  description    = "%s"
-  aws_account_id = "%s"
-  port           = %s.id
-  speed          = "%s"
-  pop            = "%s"
-  vlan           = %v
+  port            = %s.id
+  aws_account_id  = "%s"
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_hosted_marketplace_connection
