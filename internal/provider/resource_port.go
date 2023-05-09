@@ -39,7 +39,7 @@ func resourceInterfaces() *schema.Resource {
 			"autoneg": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps. ",
+				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -78,7 +78,7 @@ func resourceInterfaces() *schema.Resource {
 			"subscription_term": {
 				Type:         schema.TypeInt,
 				Required:     true,
-				ValidateFunc: validation.IntAtLeast(1),
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
 				Description:  "Duration of the subscription in months\n\n\tEnum [\"1\" \"12\" \"24\" \"36\"]",
 			},
 			"zone": {
@@ -125,7 +125,7 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -166,14 +166,20 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 	if resp != nil {
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
-		_ = d.Set("autoneg", resp.Autoneg)
+		if _, ok := d.GetOk("autoneg"); ok {
+			_ = d.Set("autoneg", resp.Autoneg)
+		}
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("nni", resp.IsNni)
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		_ = d.Set("zone", resp.Zone)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp.Zone)
+		}
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
 		} else {
@@ -181,11 +187,13 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 
@@ -216,7 +224,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	_, err := c.DeletePort(d.Id())
-	time.Sleep(30 * time.Second)
+	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}

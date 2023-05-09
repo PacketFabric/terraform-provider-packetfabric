@@ -1,8 +1,13 @@
 ## General VARs
-variable "tag_name" {
+variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
   default     = "demo-pf-azure"
+}
+variable "pf_labels" {
+  type        = list(string)
+  description = "A list of labels to be applied to PacketFabric resources. These labels will be visible in the PacketFabric Portal and can be searched for easier resource identification."
+  default     = ["terraform"] # Example: ["terraform", "dev"]
 }
 
 ## PacketFabic VARs
@@ -25,7 +30,7 @@ variable "pf_port_subterm" {
 }
 variable "pf_port_autoneg" {
   type    = bool
-  default = false
+  default = true # only for 1Gbps
 }
 variable "pf_port_speed" {
   type    = string
@@ -55,7 +60,7 @@ variable "pf_cs_vlan_microsoft" {
 variable "azure_region1" {
   type        = string
   description = "Azure region"
-  default     = "East US"
+  default     = "East US" # East US, East US 2, West US 2, West US 3
 }
 
 # https://docs.microsoft.com/en-us/azure/expressroute/expressroute-locations-providers

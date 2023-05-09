@@ -41,7 +41,7 @@ func dataSourceLocationsZonesRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("please provide a valid pop")
 	}
 	var diags diag.Diagnostics
-	if zones, err := c.GetLocarionsZones(pop.(string)); err != nil {
+	if zones, err := c.GetLocationsZones(pop.(string)); err != nil {
 		return diag.FromErr(err)
 	} else {
 		_ = d.Set("locations_zones", zones)

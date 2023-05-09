@@ -1,8 +1,13 @@
 ## General VARs
-variable "tag_name" {
+variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
   default     = "demo-pf-aws"
+}
+variable "pf_labels" {
+  type        = list(string)
+  description = "A list of labels to be applied to PacketFabric resources. These labels will be visible in the PacketFabric Portal and can be searched for easier resource identification."
+  default     = ["terraform"] # Example: ["terraform", "dev"]
 }
 
 ## PacketFabic VARs
@@ -25,7 +30,7 @@ variable "pf_port_subterm" {
 }
 variable "pf_port_autoneg" {
   type    = bool
-  default = false
+  default = true # only for 1Gbps
 }
 variable "pf_port_speed" {
   type    = string
@@ -43,7 +48,7 @@ variable "pf_cs_pop1" {
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "A"
+  default = "A" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "pf_cs_speed" {
   type    = string
@@ -52,6 +57,12 @@ variable "pf_cs_speed" {
 variable "pf_cs_vlan1" {
   type    = number
   default = 110
+}
+# AWS Cloud Side Provisioning
+variable "pf_cs_mtu" {
+  description = "Maximum Transmission Unit this port supports (size of the largest supported PDU)"
+  type        = number
+  default     = 1500
 }
 
 # AWS VARs

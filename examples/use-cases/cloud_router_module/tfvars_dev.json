@@ -5,13 +5,21 @@
             "capacity": "500Mbps",
             "regions": [
                 "US"
+            ],
+            "labels": [
+                "terraform",
+                "dev"
             ]
         }
     },
     "aws_connections": {
         "dev-environment": {
             "speed": "50Mbps",
-            "pop": "PDX2"
+            "pop": "PDX2",
+            "labels": [
+                "terraform",
+                "dev"
+            ]
         }
     },
     "gcp_connections": {
@@ -19,7 +27,11 @@
             "pairing_key": "redacted",
             "vlan_attachment_name": "dev-env-interconnect",
             "speed": "50Mbps",
-            "pop": "WDC1"
+            "pop": "WDC1",
+            "labels": [
+                "terraform",
+                "dev"
+            ]
         }
     },
     "aws_bgp_sessions": {

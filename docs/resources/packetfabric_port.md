@@ -16,28 +16,15 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   enabled           = true
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
   labels            = ["terraform", "dev"]
-}
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
-data "packetfabric_port" "ports_all" {
-  provider   = packetfabric
-  depends_on = [packetfabric_port.port_1]
-}
-locals {
-  port_1_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_1.id])
-}
-output "packetfabric_port_1_details" {
-  value = local.port_1_details
 }
 ```
 
@@ -61,7 +48,7 @@ output "packetfabric_port_1_details" {
 
 ### Optional
 
-- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with 10Gbps.
+- `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true
 - `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Defaults: true
 - `labels` (List of String) Label value linked to an object.
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.

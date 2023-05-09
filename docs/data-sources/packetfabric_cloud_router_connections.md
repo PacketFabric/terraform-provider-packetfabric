@@ -40,7 +40,6 @@ output "packetfabric_cloud_router_connections" {
 Read-Only:
 
 - `account_uuid` (String)
-- `bgp_state` (String)
 - `bgp_state_list` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--bgp_state_list))
 - `cloud_circuit_id` (String)
 - `cloud_provider` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_provider))
@@ -107,6 +106,7 @@ Read-Only:
 - `bgp_asn` (Number)
 - `bgp_cer_cidr` (String)
 - `bgp_ibm_cidr` (String)
+- `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_connections--cloud_settings--cloud_state))
 - `gateway_id` (String)
 - `google_pairing_key` (String)
 - `google_vlan_attachment_name` (String)
@@ -123,6 +123,19 @@ Read-Only:
 - `vlan_id_microsoft` (Number)
 - `vlan_id_pf` (Number)
 - `vlan_id_private` (Number)
+
+<a id="nestedobjatt--cloud_connections--cloud_settings--cloud_state"></a>
+### Nested Schema for `cloud_connections.cloud_settings.cloud_state`
+
+Read-Only:
+
+- `aws_dx_connection_state` (String)
+- `aws_dx_port_encryption_status` (String)
+- `aws_vif_state` (String)
+- `bgp_state` (String)
+- `google_interconnect_admin_enabled` (Boolean)
+- `google_interconnect_state` (String)
+
 
 
 

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -66,12 +65,6 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "The preference for this instance. Deprecated.",
 						},
-						"community": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: "The BGP community for this instance. Deprecated.",
-						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Computed:    true,
@@ -84,7 +77,6 @@ func dataSourceBgpSession() *schema.Resource {
 							Optional:    true,
 							Description: "The Multi-Exit Discriminator of this instance. Deprecated.",
 						},
-
 						"l3_address": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -178,6 +170,12 @@ func dataSourceBgpSession() *schema.Resource {
 									},
 								},
 							},
+						},
+						"bgp_state": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
@@ -277,7 +275,7 @@ func dataSourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	d.SetId(connCID.(string) + "-data")
 	return diags
 }
 
@@ -293,7 +291,6 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["remote_asn"] = session.RemoteAsn
 			flatten["multihop_ttl"] = session.MultihopTTL
 			flatten["local_preference"] = session.LocalPreference
-			flatten["community"] = session.Community
 			flatten["as_prepend"] = session.AsPrepend
 			flatten["l3_address"] = session.L3Address
 			flatten["med"] = session.Med
@@ -301,6 +298,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["bfd_interval"] = session.BfdInterval
 			flatten["bfd_multiplier"] = session.BfdMultiplier
 			flatten["disabled"] = session.Disabled
+			flatten["bgp_state"] = session.BgpState
 			flatten["time_created"] = session.TimeCreated
 			flatten["time_updated"] = session.TimeUpdated
 			flatten["prefixes"] = flattenBgpSessionsPrefixes(&session.Prefixes)
@@ -324,7 +322,6 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["med"] = prefix.Med
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
-			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens
