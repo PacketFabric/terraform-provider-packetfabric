@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -27,6 +28,8 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 
 const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
+
+var listPortsLab = []string{"LAB04", "LAB05", "LAB6", "LAB8"}
 
 // packetfabric_cloud_router
 const CloudRouterCapacity = "10Gbps"
@@ -47,6 +50,10 @@ const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
 const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
+
+// packetfabric_cloud_router_connection_port
+const CloudRouterConnPortSpeed = "1Gbps"
+const CloudRouterConnPortVlan = 101
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -122,6 +129,16 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
+// packetfabric_cloud_router_connection_port
+type RHclCloudRouterConnectionPortResult struct {
+	HclResultBase
+	Desc              string
+	CloudRouterResult RHclCloudRouterResult
+	PortResult        RHclPortResult
+	Speed             string
+	Vlan              int
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -139,22 +156,26 @@ func (details PortDetails) RHclPort() RHclPortResult {
 	var err error
 	var portEnabled bool
 	if !details.IsCloudConnection {
+		log.Println("This is not a cloud connection. Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
 		pop, _, media, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed)
 		if err != nil {
+			log.Println("Error getting pop and zone with available port: ", err)
 			log.Panic(err)
 		}
 		speed = details.DesiredSpeed
+		log.Println("Pop, media, and speed set to: ", pop, media, speed)
 	} else {
+		log.Println("This is a cloud connection. Using provided pop, media, and speed.")
 		pop = details.DesiredPop
 		media = details.DesiredMedia
 		speed = details.DesiredSpeed
+		log.Println("Pop, media, and speed set to: ", pop, media, speed)
 	}
 
-	// Port must be disabled if test is pointing to PF's dev env.
-	if !strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev") {
-		portEnabled = details.PortEnabled
-	}
+	log.Println("Generating unique name or description")
 	uniqueDesc := _generateUniqueNameOrDesc(pfPort)
+
+	log.Println("Generating HCL")
 	hcl := fmt.Sprintf(
 		RResourcePort,
 		resourceName,
@@ -163,8 +184,10 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		pop,
 		speed,
 		portSubscriptionTerm,
-		portEnabled)
+		portEnabled,
+		resourceReferece)
 
+	log.Println("Returning HCL result")
 	return RHclPortResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
@@ -335,6 +358,42 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_port
+func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
+
+	portDetails := CreateBasePortDetails()
+	cloudRouterResult := RHclCloudRouter()
+	portTestResult := portDetails.RHclPort()
+
+	resourceName, hclName := _generateResourceName(pfCloudRouterConnPort)
+	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnPort)
+
+	crConnPortHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionPort,
+		hclName,
+		uniqueDesc,
+		cloudRouterResult.ResourceName,
+		portTestResult.ResourceReference,
+		CloudRouterConnPortSpeed,
+		CloudRouterConnPortVlan,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
+
+	return RHclCloudRouterConnectionPortResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnPort,
+			ResourceName: resourceName,
+		},
+		CloudRouterResult: cloudRouterResult,
+		PortResult:        portTestResult,
+		Desc:              uniqueDesc,
+		Speed:             CloudRouterConnPortSpeed,
+		Vlan:              CloudRouterConnPortVlan,
 	}
 }
 

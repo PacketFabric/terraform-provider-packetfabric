@@ -164,8 +164,9 @@ const RResourceCloudRouterConnectionPort = `resource "packetfabric_cloud_router_
   provider        = packetfabric
   description     = "%s"
   circuit_id      = %s.id
-  port_circuit_id = "%s"
+  port_circuit_id = %s.id
   speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_dedicated_connection
@@ -387,7 +388,14 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   speed             = "%s"
   subscription_term = %v
   enabled          = %t
-}`
+}
+
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [%s]
+
+  destroy_duration = "60s"
+}
+`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
