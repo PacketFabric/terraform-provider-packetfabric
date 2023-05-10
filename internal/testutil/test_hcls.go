@@ -58,9 +58,9 @@ const CloudRouterASN = 4556
 // packetfabric_cloud_router_connection_aws
 const CloudRouterConnAwsSpeed = "50Mbps"
 
-// packetfabric_cs_aws_hosted_connection
-const HostedCloudSpeed = "100Mbps"
-const HostedCloudVlan = 100
+// packetfabric_cloud_router_connection_port
+const CloudRouterConnPortSpeed = "1Gbps"
+const CloudRouterConnPortVlan = 101
 
 // packetfabric_cloud_router_bg_session
 const CloudRouterBgpSessionASN = 64534
@@ -71,9 +71,9 @@ const CloudRouterBgpSessionType2 = "out"
 const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 
-// packetfabric_cloud_router_connection_port
-const CloudRouterConnPortSpeed = "1Gbps"
-const CloudRouterConnPortVlan = 101
+// packetfabric_cs_aws_hosted_connection
+const HostedCloudSpeed = "100Mbps"
+const HostedCloudVlan = 100
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -639,29 +639,6 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 			ResourceName: resourceName,
 		},
 	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
-	}
-	return
 }
 
 func (details PortDetails) _findAvailableCloudPopZone() (pop, zone string) {
