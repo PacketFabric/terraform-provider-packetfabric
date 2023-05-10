@@ -3,7 +3,7 @@ package packetfabric
 import "fmt"
 
 const pointToPointURI = "/v2/services/point-to-point"
-const pointToPointByUUIDURI = "/v2/services/point-to-point/%s"
+const pointToPointByCIDURI = "/v2/services/point-to-point/%s"
 const pointToPointStatus = "/v2.1/services/point-to-point/%s/status"
 
 type PointToPoint struct {
@@ -22,6 +22,7 @@ type Endpoints struct {
 	CustomerSiteCode string `json:"customer_site_code,omitempty"`
 	Autoneg          bool   `json:"autoneg,omitempty"`
 	Loa              string `json:"loa,omitempty"`
+	PortCircuitID    string `json:"port_circuit_id,omitempty"`
 }
 
 type PointToPointResp struct {
@@ -54,33 +55,13 @@ func (c *PFClient) CreatePointToPointService(ptp PointToPoint) (*PointToPointRes
 	return expectedResp, nil
 }
 
-func (c *PFClient) GetPointToPointInfo(ptpUUID string) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUUID)
+func (c *PFClient) GetPointToPointInfo(ptpcID string) (*PointToPointResp, error) {
+	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpcID)
 	expectedResp := &PointToPointResp{}
 	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
 		return nil, err
 	}
 	return expectedResp, nil
-}
-
-func (c *PFClient) IsPointToPointComplete(ptpUUID string) (result bool) {
-	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
-	if err != nil {
-		result = false
-		return
-	}
-	result = ptpInfo.State == "active"
-	return
-}
-
-func (c *PFClient) IsPointToPointDeleteComplete(ptpUUID string) (result bool) {
-	ptpInfo, err := c.GetPointToPointInfo(ptpUUID)
-	if err != nil {
-		// The PTP info gets deleted sometime after COMPLETE
-		return true
-	}
-	result = ptpInfo.Deleted
-	return
 }
 
 func (c *PFClient) GetPointToPointInfos() ([]PointToPointResp, error) {
@@ -102,7 +83,7 @@ func (c *PFClient) GetPointToPointStatus(ptpCircuitID string) (*ServiceState, er
 }
 
 func (c *PFClient) ReadPointToPoint(ptpCircuitID string) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpCircuitID)
+	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpCircuitID)
 	expectedResp := &PointToPointResp{}
 	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
 		return nil, err
@@ -110,8 +91,8 @@ func (c *PFClient) ReadPointToPoint(ptpCircuitID string) (*PointToPointResp, err
 	return expectedResp, nil
 }
 
-func (c *PFClient) UpdatePointToPoint(ptpUUID string, updatePointToPointData UpdatePointToPointData) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUUID)
+func (c *PFClient) UpdatePointToPoint(ptpcID string, updatePointToPointData UpdatePointToPointData) (*PointToPointResp, error) {
+	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpcID)
 	expectedResp := &PointToPointResp{}
 	if _, err := c.sendRequest(formatedURI, patchMethod, updatePointToPointData, expectedResp); err != nil {
 		return nil, err
@@ -119,8 +100,8 @@ func (c *PFClient) UpdatePointToPoint(ptpUUID string, updatePointToPointData Upd
 	return expectedResp, nil
 }
 
-func (c *PFClient) DeletePointToPointService(ptpUUID string) error {
-	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUUID)
+func (c *PFClient) DeletePointToPointService(ptpcID string) error {
+	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpcID)
 	if _, err := c.sendRequest(formatedURI, deleteMethod, nil, nil); err != nil {
 		return err
 	}
