@@ -122,7 +122,6 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
-
 // data packetfabric_locations_regions
 type DHclLocationsRegionsResult struct {
 	HclResultBase
