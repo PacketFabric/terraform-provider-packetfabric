@@ -9,18 +9,16 @@ package testutil
 // Begin of resources templates for required fields only
 
 // Resource: packetfabric_backbone_virtual_circuit
-const RResourceBackboneVirtulalCircuit = `resource "packetfabric_backbone_virtual_circuit" "%s" {
+const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_virtual_circuit" "%s" {
   provider    = packetfabric
   description = "%s"
   epl         = %t
   interface_a {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   interface_z {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   bandwidth {
@@ -52,14 +50,6 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
   speed         = "%s"
 }`
 
-// Resource: packetfabric_billing_modify_order
-const RResourceBillingModifyOrder = `resource "packetfabric_billing_modify_order" "%s" {
-  provider             = packetfabric
-  circuit_id           = %s.id
-  subscription_term    = %v
-  speed                = "%s"
-}`
-
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
 	provider      = packetfabric
@@ -68,13 +58,7 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }
-  
-  resource "time_sleep" "wait_10_seconds" {
-    depends_on = [%s]
-    destroy_duration = "10s"
-  }
-  `
+  }`
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
@@ -393,15 +377,8 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   pop               = "%s"
   speed             = "%s"
   subscription_term = %v
-  enabled          = %t
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [%s]
-
-  destroy_duration = "60s"
-}
-`
+  enabled           = %t
+}`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
