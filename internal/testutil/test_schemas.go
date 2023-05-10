@@ -413,6 +413,10 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 
 // End of resources templates for required fields only
 
+const DDatasourceLocations = `data "packetfabric_locations" "%s" {
+  provider  = packetfabric
+}`
+
 const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
   provider = packetfabric
   pop      = "%s"
