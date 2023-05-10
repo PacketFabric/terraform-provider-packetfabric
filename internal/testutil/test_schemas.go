@@ -417,3 +417,15 @@ const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%
   provider = packetfabric
   pop      = "%s"
 }`
+
+const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
+  provider = packetfabric
+}`
+
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
+  provider = packetfabric
+}`
