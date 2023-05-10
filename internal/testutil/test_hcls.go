@@ -34,6 +34,7 @@ const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 
 // common
 const subscriptionTerm = 1
+const updatedSubscriptionTerm = 12
 
 // packetfabric_port
 // packetfabric_point_to_point
@@ -193,6 +194,7 @@ type RHclPointToPointResult struct {
 	Pop2             string
 	Zone2            string
 	Autoneg2         bool
+	UpdatedDesc      int
 }
 
 type InterfaceBackbone struct {
@@ -582,7 +584,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 	hcl := fmt.Sprintf(RResourcePointToPoint,
 		hclName,
 		uniqueDesc,
-		portSpeed,
+		speed,
 		media,
 		subscriptionTerm,
 		pop1,
@@ -599,7 +601,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
-		Speed:            portSpeed,
+		Speed:            speed,
 		Media:            media,
 		SubscriptionTerm: subscriptionTerm,
 		Pop1:             pop1,

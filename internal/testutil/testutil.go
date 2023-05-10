@@ -43,6 +43,20 @@ var birdNames = []string{
 	"zebra finch",
 }
 
+func GenerateUniqueName() string {
+	rand.Seed(time.Now().UnixNano())
+	birdName := birdNames[rand.Intn(len(birdNames))]
+	return fmt.Sprintf("terraform_testacc_%s", birdName)
+}
+func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
+	uuid := uuid.NewString()
+	shortUuid := uuid[0:8]
+	shortUuid2 := uuid[9:13]
+	hclName = fmt.Sprintf("terraform_testacc_%s_%s", shortUuid, shortUuid2)
+	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
+	return
+}
+
 func _createPFClient() (*packetfabric.PFClient, error) {
 	host := os.Getenv("PF_HOST")
 	token := os.Getenv("PF_TOKEN")
@@ -78,20 +92,6 @@ func PreCheck(t *testing.T, additionalEnvVars []string) {
 	if missing {
 		t.Fatalf("Some environment variables missing.")
 	}
-}
-
-func GenerateUniqueName() string {
-	rand.Seed(time.Now().UnixNano())
-	birdName := birdNames[rand.Intn(len(birdNames))]
-	return fmt.Sprintf("tf_testacc_%s", birdName)
-}
-func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
-	uuid := uuid.NewString()
-	shortUuid := uuid[0:8]
-	shortUuid2 := uuid[9:13]
-	hclName = fmt.Sprintf("tf_testacc_%s_%s", shortUuid, shortUuid2)
-	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
-	return
 }
 
 func _contains(s []string, str string) bool {
