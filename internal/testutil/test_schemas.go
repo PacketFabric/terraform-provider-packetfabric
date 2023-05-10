@@ -387,14 +387,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   speed             = "%s"
   subscription_term = %v
   enabled          = %t
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [%s]
-
-  destroy_duration = "60s"
-}
-`
+}`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
