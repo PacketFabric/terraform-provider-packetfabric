@@ -26,10 +26,14 @@ const pfPoinToPoint = "packetfabric_point_to_point"
 // ###### HARDCODED VALUES
 // ########################################
 
-const portSubscriptionTerm = 1
+// common
+const subscriptionTerm = 1
+
+// packetfabric_port
+// packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
@@ -49,9 +53,6 @@ const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
 const CloudRouterBgpSessionPrefix2 = "192.168.0.0/24"
 const CloudRouterBgpSessionType2 = "out"
-
-const PoinToPointSpeed = "50Mbps"
-const PointToPointSubscriptionTerm = 1
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -181,7 +182,7 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		media,
 		pop,
 		speed,
-		portSubscriptionTerm,
+		subscriptionTerm,
 		portEnabled,
 		resourceReferece)
 
@@ -197,7 +198,7 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		Media:             media,
 		Pop:               pop,
 		Speed:             speed,
-		SubscriptionTerm:  portSubscriptionTerm,
+		SubscriptionTerm:  subscriptionTerm,
 		Enabled:           portEnabled,
 	}
 }
@@ -366,9 +367,9 @@ func RHclPointToPoint() RHclPointToPointResult {
 	hcl := fmt.Sprintf(RResourcePointToPoint,
 		hclName,
 		uniqueDesc,
-		PoinToPointSpeed,
+		portSpeed,
 		media,
-		PointToPointSubscriptionTerm,
+		subscriptionTerm,
 		pop1,
 		zone1,
 		false,
@@ -383,9 +384,9 @@ func RHclPointToPoint() RHclPointToPointResult {
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
-		Speed:            PoinToPointSpeed,
+		Speed:            portSpeed,
 		Media:            media,
-		SubscriptionTerm: PointToPointSubscriptionTerm,
+		SubscriptionTerm: subscriptionTerm,
 		Pop1:             pop1,
 		Zone1:            zone1,
 		Autoneg1:         false,

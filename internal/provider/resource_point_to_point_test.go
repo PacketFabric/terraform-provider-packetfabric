@@ -18,7 +18,8 @@ func TestAccPointToPointRequiredFields(t *testing.T) {
 				testutil.PF_ACCOUNT_ID_KEY,
 			})
 		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: pointToPointResult.Hcl,
