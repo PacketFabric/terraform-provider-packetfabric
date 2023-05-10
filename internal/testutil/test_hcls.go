@@ -32,14 +32,14 @@ const subscriptionTerm = 1
 // packetfabric_port
 const portSpeed = "1Gbps"
 
-// must be in same market
-var listPortsLabMetro = []string{"LAB1", "LAB2"}
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfbaric_backbone_virtual_circuit
 const backboneVCspeed = "50Mbps"
 const backboneVCepl = false
 const backboneVCvlan1Value = 103
 const backboneVCvlan2Value = 104
+const backboneVClonghaulType = "dedicated"
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
@@ -77,6 +77,7 @@ type PortDetails struct {
 	AnyType               bool
 	IsCloudConnection     bool
 	PortEnabled           bool
+	skipDesiredMarket     *string
 }
 
 // ########################################
@@ -99,6 +100,7 @@ type RHclPortResult struct {
 	Speed             string
 	SubscriptionTerm  int
 	Enabled           bool
+	Market            string
 }
 
 // packetfabric_cloud_router
@@ -161,30 +163,25 @@ type BandwidthBackbone struct {
 // ########################################
 // ###### HCLs FOR REQUIRED FIELDS
 // ########################################
-
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	resourceReference, resourceName := _generateResourceName(pfPort)
-	var pop, media, speed string
+	var pop, media, speed, market string
 	var err error
-	if !details.IsCloudConnection {
-		log.Println("This is not a cloud connection. Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
-		pop, _, media, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed)
-		if err != nil {
-			log.Println("Error getting pop and zone with available port: ", err)
-			log.Panic(err)
-		}
-		speed = details.DesiredSpeed
-		log.Println("Pop, media, and speed set to: ", pop, media, speed)
-	} else {
-		log.Println("This is a cloud connection. Using provided pop, media, and speed.")
-		pop = details.DesiredPop
-		media = details.DesiredMedia
-		speed = details.DesiredSpeed
-		log.Println("Pop, media, and speed set to: ", pop, media, speed)
-	}
 
-	log.Println("Generating unique name or description")
+	log.Println("Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
+	var skipDesiredMarket *string
+	if details.skipDesiredMarket != nil {
+		skipDesiredMarket = details.skipDesiredMarket
+	}
+	pop, _, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, skipDesiredMarket)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
+	speed = details.DesiredSpeed
+	log.Println("Pop, media, market, and speed set to: ", pop, media, market, speed)
+
 	uniqueDesc := _generateUniqueNameOrDesc(pfPort)
 
 	log.Println("Generating HCL")
@@ -212,6 +209,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 		Speed:             speed,
 		SubscriptionTerm:  subscriptionTerm,
 		Enabled:           portEnabled,
+		Market:            market,
 	}
 }
 
@@ -374,11 +372,16 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 	resourceName, hclName := _generateResourceName(pfBackboneVirtualCircuit)
 
 	portDetailsA := CreateBasePortDetails()
-	portDetailsZ := CreateBasePortDetails()
 	portTestResultA := portDetailsA.RHclPort(true)
+	// Get the market from the first port
+	marketA := portTestResultA.Market
+	log.Println("Market from first port: ", marketA)
+
+	portDetailsZ := CreateBasePortDetails()
+	portDetailsZ.skipDesiredMarket = &marketA // Send the market for the second port so it selects a different one to avoid to build a metro VC
+	log.Println("Sending the market to the second port: ", *portDetailsZ.skipDesiredMarket)
 	portTestResultZ := portDetailsZ.RHclPort(true)
 
-	log.Println("Generating unique name or description")
 	uniqueDesc := _generateUniqueNameOrDesc(pfPort)
 
 	backboneVirtualCircuitHcl := fmt.Sprintf(
@@ -390,6 +393,7 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 		backboneVCvlan1Value,
 		portTestResultZ.ResourceReference,
 		backboneVCvlan2Value,
+		backboneVClonghaulType,
 		backboneVCspeed,
 		subscriptionTerm,
 	)
@@ -413,6 +417,7 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			PortCircuitID: portTestResultZ.ResourceReference,
 		},
 		BandwidthBackbone: BandwidthBackbone{
+			LonghaulType:     backboneVClonghaulType,
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
@@ -524,7 +529,8 @@ func CreateBasePortDetails() PortDetails {
 		log.Panic(err)
 	}
 	return PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		skipDesiredMarket: nil,
 	}
 }

@@ -22,6 +22,7 @@ const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_vir
     vlan            = %v
   }
   bandwidth {
+    longhaul_type     = "%s"
     speed             = "%s"
     subscription_term = %v
   }
@@ -390,7 +391,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   pop               = "%s"
   speed             = "%s"
   subscription_term = %v
-  enabled          = %t
+  enabled           = %t
 }`
 
 // Resource: packetfabric_port_loa
