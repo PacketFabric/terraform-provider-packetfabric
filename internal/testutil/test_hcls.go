@@ -259,18 +259,16 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 
 // packetfabric_cloud_router
 func RHclCloudRouter() RHclCloudRouterResult {
-	resourceReference, resourceName := _generateResourceName(pfCloudRouter)
+	resourceName, hclName := _generateResourceName(pfCloudRouter)
 	hcl := fmt.Sprintf(
 		RResourcePacketfabricCloudRouter,
-		resourceName,
+		hclName,
 		_generateUniqueNameOrDesc(pfCloudRouter),
 		os.Getenv(PF_ACCOUNT_ID_KEY),
 		CloudRouterASN,
 		CloudRouterCapacity,
 		CloudRouterRegionUS,
-		CloudRouterRegionUK,
-		resourceName,
-		resourceReference)
+		CloudRouterRegionUK)
 
 	return RHclCloudRouterResult{
 		HclResultBase: HclResultBase{

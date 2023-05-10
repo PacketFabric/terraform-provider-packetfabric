@@ -50,14 +50,6 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
   speed         = "%s"
 }`
 
-// Resource: packetfabric_billing_modify_order
-const RResourceBillingModifyOrder = `resource "packetfabric_billing_modify_order" "%s" {
-  provider             = packetfabric
-  circuit_id           = %s.id
-  subscription_term    = %v
-  speed                = "%s"
-}`
-
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
 	provider      = packetfabric
@@ -66,13 +58,7 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }
-  
-  resource "time_sleep" "wait_10_seconds_%s" {
-    depends_on = [%s]
-    destroy_duration = "10s"
-  }
-  `
+  }`
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
