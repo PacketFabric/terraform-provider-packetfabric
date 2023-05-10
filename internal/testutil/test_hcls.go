@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDataZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
@@ -122,13 +123,18 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
+// data packetfabric_locations_pop_zones
+type DHclLocationsZonesResult struct {
+	HclResultBase
+}
+
 // data packetfabric_locations_regions
 type DHclLocationsRegionsResult struct {
 	HclResultBase
 }
 
 // data packetfabric_activitylog
-type DHclDatasourceActivityLogResult struct {
+type DHclActivityLogResult struct {
 	HclResultBase
 }
 
@@ -354,6 +360,22 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
+func DHclDataSourceZones() DHclLocationsZonesResult {
+
+	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+
+	resourceName, hclName := _generateResourceName(pfDataZones)
+	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
+
+	return DHclLocationsZonesResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataZones,
+			ResourceName: resourceName,
+		},
+	}
+}
+
 func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 
 	resourceName, hclName := _generateResourceName(pfDataLocationsRegions)
@@ -368,12 +390,12 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 	}
 }
 
-func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
+func DHclDataSourceActivityLog() DHclActivityLogResult {
 
 	resourceName, hclName := _generateResourceName(pfDataActivityLog)
 	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
 
-	return DHclDatasourceActivityLogResult{
+	return DHclActivityLogResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataActivityLog,
