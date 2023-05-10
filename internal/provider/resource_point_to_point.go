@@ -278,7 +278,7 @@ func resourcePointToPointUpdate(ctx context.Context, d *schema.ResourceData, m i
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
-		diagnostics, updated := updateLabels(c, d.Get("ptp_circuit_id").(string), labels)
+		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {
 			return diagnostics
 		}
@@ -291,7 +291,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if ptpUUID := d.Id(); ptpUUID != "" {
-		etlDiags, err2 := addETLWarning(c, d.Get("ptp_circuit_id").(string))
+		etlDiags, err2 := addETLWarning(c, d.Id())
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
