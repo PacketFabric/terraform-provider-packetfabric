@@ -47,6 +47,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
 
 	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api.dev")
+
 	for _, l := range locations {
 		// Skip Colt locations
 		if l.Vendor == "Colt" {
