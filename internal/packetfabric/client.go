@@ -146,14 +146,6 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 			return nil, err
 		}
 	}
-	// Uncomment below to see the response body in JSON format
-	// fmt.Printf("[DEBUG] Response body: %s", string(body))
-	// if resp != nil {
-	// 	err = json.Unmarshal(body, &resp)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// }
 	c._logDebug(formatedURL, method, payload, resp)
 	return res, nil
 }
