@@ -371,10 +371,7 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
 
 	resourceName, hclName := _generateResourceName(pfDataActivityLog)
-	hcl := fmt.Sprintf(
-		DDatasourceActivityLog,
-		hclName,
-	)
+	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
 
 	return DHclDatasourceActivityLogResult{
 		HclResultBase: HclResultBase{
