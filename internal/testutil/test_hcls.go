@@ -272,7 +272,6 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	}
 }
 
-
 // packetfabric_cloud_router
 func RHclCloudRouter() RHclCloudRouterResult {
 	resourceName, hclName := _generateResourceName(pfCloudRouter)
@@ -458,7 +457,6 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		Desc:              uniqueDesc,
 		Speed:             CloudRouterConnPortSpeed,
 		Vlan:              CloudRouterConnPortVlan,
-		},
 	}
 }
 
