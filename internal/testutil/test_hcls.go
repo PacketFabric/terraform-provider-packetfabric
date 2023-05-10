@@ -28,7 +28,7 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
