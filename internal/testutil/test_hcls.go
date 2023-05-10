@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
 const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
 const pfDataLocations = "data.packetfabric_locations"
 const pfDataZones = "data.packetfabric_locations_pop_zones"
@@ -123,6 +124,10 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type DHclDatasourceLocationsCloudResult struct {
+	HclResultBase
 }
 
 // data packetfabric_locations_port_availability
@@ -369,6 +374,20 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
+
+	resourceName, hclName := _generateResourceName(pfDataSourceLocationsCloud)
+	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
+
+	return DHclDatasourceLocationsCloudResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourceLocationsCloud,
+			ResourceName: resourceName,
+		},
 	}
 }
 
