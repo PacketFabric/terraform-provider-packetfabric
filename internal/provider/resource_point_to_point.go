@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -193,8 +194,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	ptpUuid := d.Get("ptp_uuid").(string) // must use the UUID to delete the PTP
-	resp, err := c.ReadPointToPoint(ptpUuid)
+	resp, err := c.ReadPointToPoint(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -209,20 +209,43 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 			_ = d.Set("po_number", resp.PONumber)
 		}
 
+		fmt.Printf("[ROMAIN1] %v", resp.Interfaces)
 		if len(resp.Interfaces) == 2 {
-			interfaceA := make(map[string]interface{})
-			interfaceA["pop"] = resp.Interfaces[0].Pop
-			interfaceA["zone"] = resp.Interfaces[0].Zone
-			interfaceA["customer_site_code"] = resp.Interfaces[0].CustomerSiteCode
-			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
+			// Define a map to easily find interfaces by Pop
+			interfacesByPop := make(map[string]*packetfabric.Interfaces)
+			for _, iface := range resp.Interfaces {
+				if iface.Pop != "" {
+					interfacesByPop[iface.Pop] = &iface
+				}
+			}
+			fmt.Printf("[ROMAIN2] %v", interfacesByPop)
+			// Retrieve the expected Pops from the Terraform configuration
+			expectedPops := []string{
+				d.Get("endpoints.0.pop").(string),
+				d.Get("endpoints.1.pop").(string),
+			}
 
-			interfaceZ := make(map[string]interface{})
-			interfaceZ["pop"] = resp.Interfaces[1].Pop
-			interfaceZ["zone"] = resp.Interfaces[1].Zone
-			interfaceZ["customer_site_code"] = resp.Interfaces[1].CustomerSiteCode
-			interfaceZ["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
+			// Reverse the order of the expected pops
+			sort.Slice(expectedPops, func(i, j int) bool {
+				return expectedPops[i] > expectedPops[j]
+			})
+			fmt.Printf("[ROMAIN3] %v", expectedPops)
+			// Create the endpoints in the expected order
+			endpoints := make([]interface{}, len(expectedPops))
+			for i, pop := range expectedPops {
+				iface, ok := interfacesByPop[pop]
+				if !ok {
+					return diag.Errorf("interface with pop %s not found", pop)
+				}
 
-			endpoints := []interface{}{interfaceA, interfaceZ}
+				endpoint := make(map[string]interface{})
+				endpoint["pop"] = iface.Pop
+				endpoint["zone"] = iface.Zone
+				endpoint["customer_site_code"] = iface.CustomerSiteCode
+				endpoint["port_circuit_id"] = iface.PortCircuitID
+
+				endpoints[i] = endpoint
+			}
 			_ = d.Set("endpoints", endpoints)
 		}
 	}
@@ -235,10 +258,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		_ = d.Set("labels", labels)
 	}
 
-	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
-	}
+	etl := c.GetEarlyTerminationLiability(d.Id())
 	if etl > 0 {
 		_ = d.Set("etl", etl)
 	}
@@ -311,17 +331,14 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 			if toggleErr := _togglePortStatus(c, false, portCircuitID); toggleErr != nil {
 				return diag.FromErr(toggleErr)
 			}
-			time.Sleep(time.Duration(90) * time.Second)
+			time.Sleep(time.Duration(180) * time.Second)
 		}
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  "In the dev environment, ports are disabled prior to deletion.",
 		})
 	}
-	etlDiags, err2 := addETLWarning(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
-	}
+	etlDiags := addETLWarning(c, d.Id())
 	diags = append(diags, etlDiags...)
 	ptpUuid := d.Get("ptp_uuid").(string) // must use the UUID to delete the PTP
 	if err := c.DeletePointToPointService(ptpUuid); err != nil {

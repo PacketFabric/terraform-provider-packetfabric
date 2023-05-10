@@ -3,7 +3,7 @@ package packetfabric
 import "fmt"
 
 const pointToPointURI = "/v2/services/point-to-point"
-const pointToPointByCIDURI = "/v2/services/point-to-point/%s"
+const pointToPointByUUIDURI = "/v2/services/point-to-point/%s"
 const pointToPointStatus = "/v2.1/services/point-to-point/%s/status"
 
 type PointToPoint struct {
@@ -73,8 +73,8 @@ func (c *PFClient) GetPointToPointStatus(ptpCircuitID string) (*ServiceState, er
 	return expectedResp, nil
 }
 
-func (c *PFClient) ReadPointToPoint(ptpUuid string) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpUuid)
+func (c *PFClient) ReadPointToPoint(ptpCircuitID string) (*PointToPointResp, error) {
+	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpCircuitID)
 	expectedResp := &PointToPointResp{}
 	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (c *PFClient) ReadPointToPoint(ptpUuid string) (*PointToPointResp, error) {
 }
 
 func (c *PFClient) UpdatePointToPoint(ptpUuid string, updatePointToPointData UpdatePointToPointData) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpUuid)
+	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUuid)
 	expectedResp := &PointToPointResp{}
 	if _, err := c.sendRequest(formatedURI, patchMethod, updatePointToPointData, expectedResp); err != nil {
 		return nil, err
@@ -92,7 +92,7 @@ func (c *PFClient) UpdatePointToPoint(ptpUuid string, updatePointToPointData Upd
 }
 
 func (c *PFClient) DeletePointToPointService(ptpUuid string) error {
-	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpUuid)
+	formatedURI := fmt.Sprintf(pointToPointByUUIDURI, ptpUuid)
 	if _, err := c.sendRequest(formatedURI, deleteMethod, nil, nil); err != nil {
 		return err
 	}
