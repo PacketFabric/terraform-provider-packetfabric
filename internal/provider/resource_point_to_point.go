@@ -173,7 +173,7 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 		d.SetId(resp.PtpUUID)
 
 		if labels, ok := d.GetOk("labels"); ok {
-			diagnostics, created := createLabels(c, d.Get("ptp_circuit_id").(string), labels)
+			diagnostics, created := createLabels(c, d.Id(), labels)
 			if !created {
 				return diagnostics
 			}
@@ -220,14 +220,14 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 	// unsetFields: loa, autoneg, published_quote_line_uuid
 
 	if _, ok := d.GetOk("labels"); ok {
-		labels, err2 := getLabels(c, d.Get("ptp_circuit_id").(string))
+		labels, err2 := getLabels(c, d.Id())
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
 	}
 
-	etl, err3 := c.GetEarlyTerminationLiability(d.Get("ptp_circuit_id").(string))
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
 	if err3 != nil {
 		return diag.FromErr(err3)
 	}
