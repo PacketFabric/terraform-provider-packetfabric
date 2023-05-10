@@ -412,7 +412,29 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+
 const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
   provider  = packetfabric
   pop       = "%s"
+}`
+
+const DDatasourceLocations = `data "packetfabric_locations" "%s" {
+  provider  = packetfabric
+}`
+
+const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
+  provider = packetfabric
+  pop      = "%s"
+}`
+
+const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
+  provider = packetfabric
+}`
+
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
+  provider = packetfabric
 }`
