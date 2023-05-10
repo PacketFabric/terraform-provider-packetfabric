@@ -21,6 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfDataActivityLog = "data.packetfabric_activitylog"
+const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -120,8 +121,12 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
+
 // data packetfabric_activitylog
 type DHclDatasourceActivityLogResult struct {
+
+// data packetfabric_locations_markets
+type DHclLocationsMarketsResult struct {
 	HclResultBase
 }
 
@@ -354,6 +359,19 @@ func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataActivityLog,
+		},
+	}
+}
+
+func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
+
+	resourceName, hclName := _generateResourceName(pfDataLocationsMarkets)
+	hcl := fmt.Sprintf(DDataSourceLocationsMarkets, hclName)
+
+	return DHclLocationsMarketsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsMarkets,
 			ResourceName: resourceName,
 		},
 	}
