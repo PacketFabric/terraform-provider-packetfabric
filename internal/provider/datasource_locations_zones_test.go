@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceZonesComputedRequiredFields(t *testing.T) {
+func TestAccDatasourceLocationsZonesComputedRequiredFields(t *testing.T) {
 
 	testutil.SkipIfEnvNotSet(t)
 
