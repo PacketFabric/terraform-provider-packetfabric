@@ -29,6 +29,8 @@ const pfPoinToPoint = "packetfabric_point_to_point"
 const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
+var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
 const CloudRouterCapacity = "1Gbps"
@@ -152,22 +154,26 @@ func (details PortDetails) RHclPort() RHclPortResult {
 	var err error
 	var portEnabled bool
 	if !details.IsCloudConnection {
+		log.Println("This is not a cloud connection. Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
 		pop, _, media, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed)
 		if err != nil {
+			log.Println("Error getting pop and zone with available port: ", err)
 			log.Panic(err)
 		}
 		speed = details.DesiredSpeed
+		log.Println("Pop, media, and speed set to: ", pop, media, speed)
 	} else {
+		log.Println("This is a cloud connection. Using provided pop, media, and speed.")
 		pop = details.DesiredPop
 		media = details.DesiredMedia
 		speed = details.DesiredSpeed
+		log.Println("Pop, media, and speed set to: ", pop, media, speed)
 	}
 
-	// Port must be disabled if test is pointing to PF's dev env.
-	if !strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev") {
-		portEnabled = details.PortEnabled
-	}
+	log.Println("Generating unique name or description")
 	uniqueDesc := _generateUniqueNameOrDesc(pfPort)
+
+	log.Println("Generating HCL")
 	hcl := fmt.Sprintf(
 		RResourcePort,
 		resourceName,
@@ -176,8 +182,10 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		pop,
 		speed,
 		portSubscriptionTerm,
-		portEnabled)
+		portEnabled,
+		resourceReferece)
 
+	log.Println("Returning HCL result")
 	return RHclPortResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
@@ -482,4 +490,15 @@ func (details PortDetails) GetAvailableCloudPort(desiredPop string) (zone, media
 	}
 	err = errors.New("there's no port available for the requested speed")
 	return
+}
+
+func CreateBasePortDetails() PortDetails {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	return PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
 }

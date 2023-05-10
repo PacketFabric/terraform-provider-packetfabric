@@ -1,8 +1,10 @@
-# Use Case: PacketFabric Hosted cloud connection to AWS
+# Use Case: PacketFabric Hosted cloud connection to AWS with Cloud Side Provisioning
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
 This example uses AWS Private VIF & Gateway.
+
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the AWS access key, please refer to our [documentation](https://docs.packetfabric.com/cloud/aws/hosted/credentials/). If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
 ## Useful links
 
@@ -47,7 +49,7 @@ Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start

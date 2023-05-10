@@ -26,7 +26,7 @@ For more information, see [Streaming Events in the PacketFabric documentation](h
 
 ```terraform
 resource "packetfabric_streaming_events" "example" {
-  provider    = packetfabric
+  provider = packetfabric
   streams {
     type   = "customer"
     events = ["auth", "physical_interface"]
