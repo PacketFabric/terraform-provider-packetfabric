@@ -429,24 +429,22 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 }
 
 // packetfabric_point_to_point
-
-// packetfabric_point_to_point
 func RHclPointToPoint() RHclPointToPointResult {
 
 	var speed = portSpeed
-	pop1, zone1, media, _, err := GetPopAndZoneWithAvailablePort(speed, nil)
+	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
-	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, speed)
+	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
 
-	pop2, zone2, _, _, err2 := GetPopAndZoneWithAvailablePort(speed, nil)
+	pop2, zone2, media, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1)
 	if err2 != nil {
 		log.Println("Error getting pop and zone with available port: ", err2)
 		log.Panic(err)
 	}
-	log.Println("Pop2, media, and speed set to: ", pop2, zone2, speed)
+	log.Println("Pop2, media, and speed set to: ", pop2, zone2, media, market2, speed)
 
 	uniqueDesc := _generateUniqueNameOrDesc(pfPoinToPoint)
 	resourceName, hclName := _generateResourceName(pfPoinToPoint)
@@ -463,7 +461,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 		pop2,
 		zone2,
 		false)
-
+	fmt.Printf("[DEBUG] %v", hcl)
 	return RHclPointToPointResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,

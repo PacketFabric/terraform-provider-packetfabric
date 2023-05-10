@@ -34,7 +34,7 @@
         * Run `./tfplugindocs.sh`
         * Verify each `*.md` under `docs/`
     * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
-    * To see the debug logs, comment out `c.Ctx = context.Background()` in `internal/packetfabric/client.go`
+    * To see the debug logs, set `TF_LOG=DEBUG` and comment out `c.Ctx = context.Background()` in `internal/packetfabric/client.go` before you build the provider.
 
 * Create your own branch with your updates including code changes, test, examples and documentation. 
 

@@ -163,7 +163,6 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	if err2 := checkPtpStatus(c, resp.PtpCircuitID); err2 != nil {
 		return diag.FromErr(err2)
 	}
-	fmt.Printf("[DEBUG] %v", resp)
 	if resp != nil {
 		_ = d.Set("ptp_uuid", resp.PtpUUID)
 		d.SetId(resp.PtpCircuitID)
@@ -182,7 +181,8 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	resp, err := c.ReadPointToPoint(d.Id())
+	ptpUuid := d.Get("ptp_uuid").(string) // must use the UUID to delete the PTP
+	resp, err := c.ReadPointToPoint(ptpUuid)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -371,17 +371,17 @@ func pointToPointMediaOptions() []string {
 		"CWDM4", "LR4", "ER4 Lite"}
 }
 
-func checkPtpStatus(c *packetfabric.PFClient, id string) error {
+func checkPtpStatus(c *packetfabric.PFClient, cid string) error {
 	statusOk := make(chan bool)
 	defer close(statusOk)
 
 	fn := func() (*packetfabric.ServiceState, error) {
-		return c.GetPointToPointStatus(id)
+		return c.GetPointToPointStatus(cid)
 	}
 	go c.CheckServiceStatus(statusOk, fn)
 	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if !<-statusOk {
-		return fmt.Errorf("failed to retrieve the status for %s", id)
+		return fmt.Errorf("failed to retrieve the status for %s", cid)
 	}
 	return nil
 }
