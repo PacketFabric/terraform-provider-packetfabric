@@ -363,7 +363,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	portDetails := CreateBasePortDetails()
 	cloudRouterResult := RHclCloudRouter()
-	portTestResult := portDetails.RHclPort()
+	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := _generateResourceName(pfCloudRouterConnPort)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnPort)
