@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 )
 
 // ########################################
@@ -28,7 +28,7 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const portSubscriptionTerm = 1
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
@@ -403,7 +403,9 @@ func _generateResourceName(resource string) (resourceName, hclName string) {
 }
 
 func _generateUniqueNameOrDesc(targetResource string) (unique string) {
-	unique = fmt.Sprintf("pf_testacc_%s_%s", targetResource, strings.ReplaceAll(uuid.NewString(), "-", "_"))
+	t := time.Now()
+	formattedTime := fmt.Sprintf("%d%s%02d_%02d%02d%02d", t.Year(), t.Month().String()[:3], t.Day(), t.Hour(), t.Minute(), t.Second())
+	unique = fmt.Sprintf("terraform_testacc_%s", strings.ReplaceAll(formattedTime, "-", "_"))
 	return
 }
 
