@@ -20,6 +20,13 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
+const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
+const pfDataLocations = "data.packetfabric_locations"
+const pfDataZones = "data.packetfabric_locations_pop_zones"
+const pfDataLocationsRegions = "data.packetfabric_locations_regions"
+const pfDataActivityLog = "data.packetfabric_activitylog"
+const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -120,6 +127,40 @@ type RHclBgpSessionResult struct {
 	Type1              string
 	Prefix2            string
 	Type2              string
+}
+
+type DHclDatasourceLocationsCloudResult struct {
+	HclResultBase
+}
+
+// data packetfabric_locations_port_availability
+type DHclLocationsPortAvailabilityResult struct {
+	HclResultBase
+}
+
+// data packetfabric_locations
+type DHclDatasourceLocationsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_locations_pop_zones
+type DHclLocationsZonesResult struct {
+	HclResultBase
+}
+
+// data packetfabric_locations_regions
+type DHclLocationsRegionsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_activitylog
+type DHclActivityLogResult struct {
+	HclResultBase
+}
+
+// data packetfabric_locations_markets
+type DHclLocationsMarketsResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -338,6 +379,111 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 		AwsAccountID: os.Getenv(PF_CRC_AWS_ACCOUNT_ID_KEY),
 		Desc:         uniqueDesc,
 		Pop:          pop,
+	}
+}
+
+func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
+
+	resourceName, hclName := _generateResourceName(pfDataSourceLocationsCloud)
+	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
+
+	return DHclDatasourceLocationsCloudResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourceLocationsCloud,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
+
+	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+
+	resourceName, hclName := _generateResourceName(pfDataLocationsPortAvailability)
+	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability,
+		hclName,
+		pop,
+	)
+
+	return DHclLocationsPortAvailabilityResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsPortAvailability,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceLocations() DHclDatasourceLocationsResult {
+
+	resourceName, hclName := _generateResourceName(pfDataLocations)
+	hcl := fmt.Sprintf(DDatasourceLocations, hclName)
+
+	return DHclDatasourceLocationsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocations,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceZones() DHclLocationsZonesResult {
+
+	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+
+	resourceName, hclName := _generateResourceName(pfDataZones)
+	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
+
+	return DHclLocationsZonesResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataZones,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
+
+	resourceName, hclName := _generateResourceName(pfDataLocationsRegions)
+	hcl := fmt.Sprintf(DDataSourceLocationsRegions, hclName)
+
+	return DHclLocationsRegionsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsRegions,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceActivityLog() DHclActivityLogResult {
+
+	resourceName, hclName := _generateResourceName(pfDataActivityLog)
+	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
+
+	return DHclActivityLogResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataActivityLog,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
+
+	resourceName, hclName := _generateResourceName(pfDataLocationsMarkets)
+	hcl := fmt.Sprintf(DDataSourceLocationsMarkets, hclName)
+
+	return DHclLocationsMarketsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsMarkets,
+			ResourceName: resourceName,
+		},
 	}
 }
 
