@@ -123,9 +123,8 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
-
 // data packetfabric_locations_pop_zones
-type DHclDatasourceZonesResult struct {
+type DHclLocationsZonesResult struct {
 	HclResultBase
 }
 
@@ -135,7 +134,7 @@ type DHclLocationsRegionsResult struct {
 }
 
 // data packetfabric_activitylog
-type DHclDatasourceActivityLogResult struct {
+type DHclActivityLogResult struct {
 	HclResultBase
 }
 
@@ -361,14 +360,14 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-func DHclDataSourceZones() DHclDatasourceZonesResult {
+func DHclDataSourceZones() DHclLocationsZonesResult {
 
 	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
 
 	resourceName, hclName := _generateResourceName(pfDataZones)
 	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
 
-	return DHclDatasourceZonesResult{
+	return DHclLocationsZonesResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataZones,
@@ -391,12 +390,12 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 	}
 }
 
-func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
+func DHclDataSourceActivityLog() DHclActivityLogResult {
 
 	resourceName, hclName := _generateResourceName(pfDataActivityLog)
 	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
 
-	return DHclDatasourceActivityLogResult{
+	return DHclActivityLogResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataActivityLog,
