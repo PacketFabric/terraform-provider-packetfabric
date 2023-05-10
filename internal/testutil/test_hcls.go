@@ -26,7 +26,10 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 // ###### HARDCODED VALUES
 // ########################################
 
-const portSubscriptionTerm = 1
+// common
+const subscriptionTerm = 1
+
+// packetfabric_port
 const portSpeed = "1Gbps"
 
 var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
@@ -145,11 +148,10 @@ type RHclCloudRouterConnectionPortResult struct {
 // ########################################
 
 // packetfabric_port
-func (details PortDetails) RHclPort() RHclPortResult {
-	resourceReferece, resourceName := _generateResourceName(pfPort)
+func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
+	resourceReference, resourceName := _generateResourceName(pfPort)
 	var pop, media, speed string
 	var err error
-	var portEnabled bool
 	if !details.IsCloudConnection {
 		log.Println("This is not a cloud connection. Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
 		pop, _, media, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed)
@@ -178,9 +180,8 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		media,
 		pop,
 		speed,
-		portSubscriptionTerm,
-		portEnabled,
-		resourceReferece)
+		subscriptionTerm,
+		portEnabled)
 
 	log.Println("Returning HCL result")
 	return RHclPortResult{
@@ -189,12 +190,12 @@ func (details PortDetails) RHclPort() RHclPortResult {
 			Resource:     pfPort,
 			ResourceName: resourceName,
 		},
-		ResourceReference: resourceReferece,
+		ResourceReference: resourceReference,
 		Description:       uniqueDesc,
 		Media:             media,
 		Pop:               pop,
 		Speed:             speed,
-		SubscriptionTerm:  portSubscriptionTerm,
+		SubscriptionTerm:  subscriptionTerm,
 		Enabled:           portEnabled,
 	}
 }
@@ -326,7 +327,7 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	portDetails.DesiredMedia = media
 
 	resourceName, hclName := _generateResourceName(pfCsAwsHostedConn)
-	hclPortResult := portDetails.RHclPort()
+	hclPortResult := portDetails.RHclPort(false)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCsAwsHostedConn)
 	awsHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSAwsHostedConnection,
@@ -356,7 +357,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	portDetails := CreateBasePortDetails()
 	cloudRouterResult := RHclCloudRouter()
-	portTestResult := portDetails.RHclPort()
+	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := _generateResourceName(pfCloudRouterConnPort)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCloudRouterConnPort)
