@@ -328,7 +328,6 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
@@ -373,17 +372,23 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		}
 	}
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 
 	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
 	if err4 != nil {
@@ -392,6 +397,7 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 	if etl > 0 {
 		_ = d.Set("etl", etl)
 	}
+
 	return diags
 }
 
