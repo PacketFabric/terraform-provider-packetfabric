@@ -35,16 +35,6 @@
         * Verify each `*.md` under `docs/`
     * Find more details on the [Readme](https://github.com/PacketFabric/terraform-provider-packetfabric)
     * To see the debug logs, comment out `c.Ctx = context.Background()` in `internal/packetfabric/client.go`
-    * You can also add the following lines in `sendRequest()` in `internal/packetfabric/client.go`
-    ```
-    fmt.Printf("[DEBUG] Response body: %s", string(body))
-	if resp != nil {
-		err = json.Unmarshal(body, &resp)
-		if err != nil {
-			return nil, err
-		}
-	}
-    ```
 
 * Create your own branch with your updates including code changes, test, examples and documentation. 
 
