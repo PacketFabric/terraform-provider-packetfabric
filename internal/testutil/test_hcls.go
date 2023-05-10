@@ -412,7 +412,6 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-
 // packetfabric_backbone_virtual_circuit
 func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
@@ -487,13 +486,10 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
-	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
 
 	resourceName, hclName := _generateResourceName(pfDataLocationsPortAvailability)
-	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability,
-		hclName,
-		pop,
-	)
+	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
 
 	return DHclLocationsPortAvailabilityResult{
 		HclResultBase: HclResultBase{
@@ -520,7 +516,7 @@ func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 
 func DHclDataSourceZones() DHclLocationsZonesResult {
 
-	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
+	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
 
 	resourceName, hclName := _generateResourceName(pfDataZones)
 	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
