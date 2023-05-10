@@ -121,9 +121,10 @@ type RHclBgpSessionResult struct {
 	Type2              string
 }
 
-
 // data packetfabric_activitylog
 type DHclDatasourceActivityLogResult struct {
+	HclResultBase
+}
 
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
@@ -359,6 +360,7 @@ func DHclDataSourceActivityLog() DHclDatasourceActivityLogResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataActivityLog,
+			ResourceName: resourceName,
 		},
 	}
 }
