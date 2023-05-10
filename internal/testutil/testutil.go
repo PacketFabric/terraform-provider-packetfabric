@@ -27,17 +27,18 @@ func GetAccountUUID() string {
 	return os.Getenv("PF_ACCOUNT_ID")
 }
 
-func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media string, availabilityErr error) {
+func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *string) (pop, zone, media, market string, availabilityErr error) {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Println("Error creating PF client: ", err)
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	locations, err := c.ListLocations()
 	if err != nil {
 		log.Println("Error getting locations list: ", err)
-		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
+		return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
 	}
 
 	// We need to shuffle the list of locations. Otherwise, we may try to run
@@ -45,17 +46,23 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
 
-	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev")
+	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api.dev")
 
 	for _, l := range locations {
+		// Skip Colt locations
 		if l.Vendor == "Colt" {
+			continue
+		}
+
+		// Do not select a port in the same market as the one set in skipDesiredMarket
+		if skipDesiredMarket != nil && l.Market == *skipDesiredMarket {
 			continue
 		}
 
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
 			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
-			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
+			return "", "", "", "", fmt.Errorf("error getting location port availability: %w", err)
 		}
 
 		for _, p := range portAvailability {
@@ -63,13 +70,20 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 				pop = l.Pop
 				zone = p.Zone
 				media = p.Media
-				log.Println("Found available port at ", pop, zone, media)
+				market = l.Market
+				log.Println("Found available port at ", pop, zone, media, market)
+				if skipDesiredMarket == nil {
+					log.Println("Not specified Market to avoid.")
+				} else {
+					log.Println("Specified Market to avoid: ", *skipDesiredMarket)
+				}
+
 				return
 			}
 		}
 	}
 	log.Println("No pops with available ports found.")
-	return "", "", "", errors.New("no pops with available ports")
+	return "", "", "", "", errors.New("no pops with available ports")
 }
 
 func PreCheck(t *testing.T, additionalEnvVars []string) {

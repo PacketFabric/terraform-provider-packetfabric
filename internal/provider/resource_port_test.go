@@ -12,7 +12,7 @@ func TestAccPort(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
 	portDetails := testutil.CreateBasePortDetails()
-	portTestResult := portDetails.RHclPort()
+	portTestResult := portDetails.RHclPort(false)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			testutil.PreCheck(t, []string{

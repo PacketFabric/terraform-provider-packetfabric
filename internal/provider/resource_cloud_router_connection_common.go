@@ -234,6 +234,11 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
+		etlDiags, err2 := addETLWarning(c, cloudConnCID.(string))
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		diags = append(diags, etlDiags...)
 		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
 			diags = diag.FromErr(err)
 		} else {

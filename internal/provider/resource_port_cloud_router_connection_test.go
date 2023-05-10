@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccPortCloudRouterConnectionRequiredFields(t *testing.T) {
+func TestAccCloudRouterConnectionPortRequiredFields(t *testing.T) {
 
 	testutil.SkipIfEnvNotSet(t)
 

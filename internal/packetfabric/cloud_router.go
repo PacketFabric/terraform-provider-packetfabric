@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 const cloudRouterURI = "/v2/services/cloud-routers"
@@ -61,6 +62,8 @@ func (c *PFClient) CreateCloudRouter(router CloudRouter) (*CloudRouterResponse, 
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
 	return resp, nil
 }
 
