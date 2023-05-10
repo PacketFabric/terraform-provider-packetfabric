@@ -160,6 +160,18 @@ func resourcePointToPointCreate(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		time.Sleep(time.Duration(30) * time.Second)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "In the dev environment, need to add a delay before checking the status.",
+		})
+	}
+
 	if err2 := checkPtpStatus(c, resp.PtpCircuitID); err2 != nil {
 		return diag.FromErr(err2)
 	}
@@ -299,7 +311,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 			if toggleErr := _togglePortStatus(c, false, portCircuitID); toggleErr != nil {
 				return diag.FromErr(toggleErr)
 			}
-			time.Sleep(time.Duration(90+c.GetRandomSeconds()) * time.Second)
+			time.Sleep(time.Duration(90) * time.Second)
 		}
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,

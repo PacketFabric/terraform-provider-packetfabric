@@ -15,16 +15,92 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func GenerateUniqueName(prefix string) string {
-	return fmt.Sprintf("%s-%s", prefix, uuid.NewString())
+var birdNames = []string{
+	"albatross",
+	"blackbird",
+	"canary",
+	"dove",
+	"eagle",
+	"falcon",
+	"goldfinch",
+	"hawk",
+	"ibis",
+	"jay",
+	"kite",
+	"lark",
+	"magpie",
+	"nightingale",
+	"owl",
+	"parrot",
+	"quail",
+	"raven",
+	"sparrow",
+	"toucan",
+	"vulture",
+	"woodpecker",
+	"xantus",
+	"yellowhammer",
+	"zebra finch",
 }
 
-func GenerateUniqueResourceName() string {
-	return fmt.Sprintf("pf_%s", strings.ReplaceAll(uuid.NewString(), "-", "_"))
+func _createPFClient() (*packetfabric.PFClient, error) {
+	host := os.Getenv("PF_HOST")
+	token := os.Getenv("PF_TOKEN")
+	c, err := packetfabric.NewPFClient(&host, &token)
+	if err != nil {
+		return nil, fmt.Errorf("error creating PFClient: %w", err)
+	}
+	return c, nil
 }
 
-func GetAccountUUID() string {
-	return os.Getenv("PF_ACCOUNT_ID")
+func SkipIfEnvNotSet(t *testing.T) {
+	if os.Getenv(resource.EnvTfAcc) == "" {
+		t.Skip()
+	}
+}
+
+func PreCheck(t *testing.T, additionalEnvVars []string) {
+	requiredEnvVars := []string{
+		"PF_HOST",
+		"PF_TOKEN",
+		"PF_ACCOUNT_ID",
+	}
+	if additionalEnvVars != nil {
+		requiredEnvVars = append(requiredEnvVars, additionalEnvVars...)
+	}
+	missing := false
+	for _, variable := range requiredEnvVars {
+		if _, ok := os.LookupEnv(variable); !ok {
+			missing = true
+			t.Errorf("`%s` must be set for this acceptance test!", variable)
+		}
+	}
+	if missing {
+		t.Fatalf("Some environment variables missing.")
+	}
+}
+
+func GenerateUniqueName() string {
+	rand.Seed(time.Now().UnixNano())
+	birdName := birdNames[rand.Intn(len(birdNames))]
+	return fmt.Sprintf("tf_testacc_%s", birdName)
+}
+func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
+	uuid := uuid.NewString()
+	shortUuid := uuid[0:8]
+	shortUuid2 := uuid[9:13]
+	hclName = fmt.Sprintf("tf_testacc_%s_%s", shortUuid, shortUuid2)
+	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
+	return
+}
+
+func _contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
 }
 
 func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *string) (pop, zone, media, market string, availabilityErr error) {
@@ -86,39 +162,76 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	return "", "", "", "", errors.New("no pops with available ports")
 }
 
-func PreCheck(t *testing.T, additionalEnvVars []string) {
-	requiredEnvVars := []string{
-		"PF_HOST",
-		"PF_TOKEN",
-		"PF_ACCOUNT_ID",
-	}
-	if additionalEnvVars != nil {
-		requiredEnvVars = append(requiredEnvVars, additionalEnvVars...)
-	}
-	missing := false
-	for _, variable := range requiredEnvVars {
-		if _, ok := os.LookupEnv(variable); !ok {
-			missing = true
-			t.Errorf("`%s` must be set for this acceptance test!", variable)
+func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
+	popsWithZones, _ := details.FetchCloudPopsAndZones()
+	popsToSkip := make([]string, 0)
+
+	log.Println("Starting to search for available Cloud PoP and zone...")
+	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
+
+	for popAvailable, zones := range popsWithZones {
+		log.Printf("Checking PoP: %s\n", popAvailable)
+
+		if len(popsToSkip) == len(popsWithZones) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, popAvailable) {
+			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
+			continue
+		} else {
+			if len(zones) > 0 {
+				pop = popAvailable
+				zone = zones[0]
+				log.Printf("Found available PoP: %s, Zone: %s\n", pop, zone)
+				return
+			} else {
+				popsToSkip = append(popsToSkip, popAvailable)
+			}
 		}
 	}
-	if missing {
-		t.Fatalf("Some environment variables missing.")
-	}
+
+	log.Println("No available Cloud PoP and zone found.")
+	return
 }
 
-func SkipIfEnvNotSet(t *testing.T) {
-	if os.Getenv(resource.EnvTfAcc) == "" {
-		t.Skip()
+func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]string, err error) {
+	if details.DesiredProvider == "" {
+		err = errors.New("please provide a valid cloud provider to fetch pop")
 	}
+	if details.PFClient == nil {
+		err = errors.New("please create PFClient to fetch cloud pop")
+		return
+	}
+	popsWithZones = make(map[string][]string)
+	if cloudLocations, locErr := details.PFClient.GetCloudLocations(
+		details.DesiredProvider,
+		details.DesiredConnectionType,
+		details.IsNatCapable,
+		details.HasCloudRouter,
+		details.AnyType,
+		details.DesiredPop,
+		details.DesiredCity,
+		details.DesiredState,
+		details.DesiredMarket,
+		details.DesiredRegion); locErr != nil {
+		err = locErr
+		return
+	} else {
+		for _, loc := range cloudLocations {
+			popsWithZones[loc.Pop] = loc.Zones
+		}
+	}
+	return
 }
 
-func _createPFClient() (*packetfabric.PFClient, error) {
-	host := os.Getenv("PF_HOST")
-	token := os.Getenv("PF_TOKEN")
-	c, err := packetfabric.NewPFClient(&host, &token)
+func CreateBasePortDetails() PortDetails {
+	c, err := _createPFClient()
 	if err != nil {
-		return nil, fmt.Errorf("error creating PFClient: %w", err)
+		log.Panic(err)
 	}
-	return c, nil
+	return PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		skipDesiredMarket: nil,
+	}
 }

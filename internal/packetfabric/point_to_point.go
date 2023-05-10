@@ -55,15 +55,6 @@ func (c *PFClient) CreatePointToPointService(ptp PointToPoint) (*PointToPointRes
 	return expectedResp, nil
 }
 
-func (c *PFClient) GetPointToPointInfo(ptpUuid string) (*PointToPointResp, error) {
-	formatedURI := fmt.Sprintf(pointToPointByCIDURI, ptpUuid)
-	expectedResp := &PointToPointResp{}
-	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
-		return nil, err
-	}
-	return expectedResp, nil
-}
-
 func (c *PFClient) GetPointToPointInfos() ([]PointToPointResp, error) {
 	expectedResp := make([]PointToPointResp, 0)
 	if _, err := c.sendRequest(pointToPointURI, getMethod, nil, expectedResp); err != nil {
