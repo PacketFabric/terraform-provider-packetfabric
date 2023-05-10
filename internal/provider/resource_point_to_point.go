@@ -139,6 +139,11 @@ func resourcePointToPoint() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -217,6 +222,14 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		}
 		_ = d.Set("labels", labels)
 	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 
@@ -293,6 +306,11 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 			Summary:  "In the dev environment, ports are disabled prior to deletion.",
 		})
 	}
+	etlDiags, err2 := addETLWarning(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	diags = append(diags, etlDiags...)
 	ptpUuid := d.Get("ptp_uuid").(string) // must use the UUID to delete the PTP
 	if err := c.DeletePointToPointService(ptpUuid); err != nil {
 		return diag.FromErr(err)
