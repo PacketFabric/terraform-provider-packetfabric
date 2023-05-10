@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -223,6 +225,25 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		enabled := d.Get("enabled")
+		if enabled.(bool) {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "In the dev environment, ports are disabled prior to deletion.",
+			})
+
+			if toggleErr := _togglePortStatus(c, false, d.Id()); toggleErr != nil {
+				return diag.FromErr(toggleErr)
+			}
+			time.Sleep(time.Duration(90+c.GetRandomSeconds()) * time.Second)
+		}
+	}
+
 	_, err := c.DeletePort(d.Id())
 	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {

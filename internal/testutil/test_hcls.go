@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 )
 
 // ########################################
@@ -26,10 +26,20 @@ const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 // ###### HARDCODED VALUES
 // ########################################
 
-const portSubscriptionTerm = 1
+// common
+const subscriptionTerm = 1
+
+// packetfabric_port
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB05", "LAB6", "LAB7", "LAB8"}
+// must be in same market
+var listPortsLabMetro = []string{"LAB1", "LAB2"}
+
+// packetfbaric_backbone_virtual_circuit
+const backboneVCspeed = "50Mbps"
+const backboneVCepl = false
+const backboneVCvlan1Value = 103
+const backboneVCvlan2Value = 104
 
 // packetfabric_cloud_router
 const CrbsAddressFmly = "ivp4"
@@ -131,9 +141,9 @@ type RHclBackboneVirtualCircuitResult struct {
 }
 
 type InterfaceBackbone struct {
-	PortCircuit RHclPortResult
-	Untagged    bool
-	Vlan        int
+	PortCircuitID string
+	Untagged      bool
+	Vlan          int
 }
 
 type BandwidthBackbone struct {
@@ -153,11 +163,10 @@ type BandwidthBackbone struct {
 // ########################################
 
 // packetfabric_port
-func (details PortDetails) RHclPort() RHclPortResult {
-	resourceReferece, resourceName := _generateResourceName(pfPort)
+func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
+	resourceReference, resourceName := _generateResourceName(pfPort)
 	var pop, media, speed string
 	var err error
-	var portEnabled bool
 	if !details.IsCloudConnection {
 		log.Println("This is not a cloud connection. Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
 		pop, _, media, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed)
@@ -186,9 +195,8 @@ func (details PortDetails) RHclPort() RHclPortResult {
 		media,
 		pop,
 		speed,
-		portSubscriptionTerm,
-		portEnabled,
-		resourceReferece)
+		subscriptionTerm,
+		portEnabled)
 
 	log.Println("Returning HCL result")
 	return RHclPortResult{
@@ -197,29 +205,30 @@ func (details PortDetails) RHclPort() RHclPortResult {
 			Resource:     pfPort,
 			ResourceName: resourceName,
 		},
-		ResourceReference: resourceReferece,
+		ResourceReference: resourceReference,
 		Description:       uniqueDesc,
 		Media:             media,
 		Pop:               pop,
 		Speed:             speed,
-		SubscriptionTerm:  portSubscriptionTerm,
+		SubscriptionTerm:  subscriptionTerm,
 		Enabled:           portEnabled,
 	}
 }
 
 // packetfabric_cloud_router
 func RHclCloudRouter() RHclCloudRouterResult {
-	resourceName, hclName := _generateResourceName(pfCloudRouter)
+	resourceReference, resourceName := _generateResourceName(pfCloudRouter)
 	hcl := fmt.Sprintf(
 		RResourcePacketfabricCloudRouter,
-		hclName,
+		resourceName,
 		_generateUniqueNameOrDesc(pfCloudRouter),
 		os.Getenv(PF_ACCOUNT_ID_KEY),
 		CloudRouterASN,
 		CloudRouterCapacity,
 		CloudRouterRegionUS,
 		CloudRouterRegionUK,
-		resourceName)
+		resourceName,
+		resourceReference)
 
 	return RHclCloudRouterResult{
 		HclResultBase: HclResultBase{
@@ -334,7 +343,7 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	portDetails.DesiredMedia = media
 
 	resourceName, hclName := _generateResourceName(pfCsAwsHostedConn)
-	hclPortResult := portDetails.RHclPort()
+	hclPortResult := portDetails.RHclPort(false)
 	uniqueDesc := _generateUniqueNameOrDesc(pfCsAwsHostedConn)
 	awsHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSAwsHostedConnection,
@@ -359,14 +368,33 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-func RHclBackboneVirtualCircuit() RHclBackboneVirtualCircuitResult {
+// packetfabric_backbone_virtual_circuit
+func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
-	var hcl, speed, longhaulType string
-	var vlan1, vlan2, subscriptionTerm int
-	var epl, untagged1, untagged2 bool
+	resourceName, hclName := _generateResourceName(pfBackboneVirtualCircuit)
 
-	resourceName, _ := _generateResourceName(pfBackboneVirtualCircuit)
-	uniqueDesc := _generateUniqueNameOrDesc(pfBackboneVirtualCircuit)
+	portDetailsA := CreateBasePortDetails()
+	portDetailsZ := CreateBasePortDetails()
+	portTestResultA := portDetailsA.RHclPort(true)
+	portTestResultZ := portDetailsZ.RHclPort(true)
+
+	log.Println("Generating unique name or description")
+	uniqueDesc := _generateUniqueNameOrDesc(pfPort)
+
+	backboneVirtualCircuitHcl := fmt.Sprintf(
+		RResourceBackboneVirtualCircuitVlan,
+		hclName,
+		uniqueDesc,
+		backboneVCepl,
+		portTestResultA.ResourceReference,
+		backboneVCvlan1Value,
+		portTestResultZ.ResourceReference,
+		backboneVCvlan2Value,
+		backboneVCspeed,
+		subscriptionTerm,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResultA.Hcl, portTestResultZ.Hcl, backboneVirtualCircuitHcl)
 
 	return RHclBackboneVirtualCircuitResult{
 		HclResultBase: HclResultBase{
@@ -375,18 +403,17 @@ func RHclBackboneVirtualCircuit() RHclBackboneVirtualCircuitResult {
 			ResourceName: resourceName,
 		},
 		Desc: uniqueDesc,
-		Epl:  epl,
+		Epl:  backboneVCepl,
 		InterfaceBackboneA: InterfaceBackbone{
-			Untagged: untagged1,
-			Vlan:     vlan1,
+			Vlan:          backboneVCvlan1Value,
+			PortCircuitID: portTestResultA.ResourceReference,
 		},
 		InterfaceBackboneZ: InterfaceBackbone{
-			Untagged: untagged2,
-			Vlan:     vlan2,
+			Vlan:          backboneVCvlan2Value,
+			PortCircuitID: portTestResultZ.ResourceReference,
 		},
 		BandwidthBackbone: BandwidthBackbone{
-			LonghaulType:     longhaulType,
-			Speed:            speed,
+			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
 	}
@@ -422,7 +449,9 @@ func _generateResourceName(resource string) (resourceName, hclName string) {
 }
 
 func _generateUniqueNameOrDesc(targetResource string) (unique string) {
-	unique = fmt.Sprintf("pf_testacc_%s_%s", targetResource, strings.ReplaceAll(uuid.NewString(), "-", "_"))
+	t := time.Now()
+	formattedTime := fmt.Sprintf("%d%s%02d_%02d%02d%02d", t.Year(), t.Month().String()[:3], t.Day(), t.Hour(), t.Minute(), t.Second())
+	unique = fmt.Sprintf("terraform_testacc_%s", strings.ReplaceAll(formattedTime, "-", "_"))
 	return
 }
 

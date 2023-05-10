@@ -45,7 +45,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
 
-	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev")
+	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api.dev")
 
 	for _, l := range locations {
 		if l.Vendor == "Colt" {
@@ -59,7 +59,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media strin
 		}
 
 		for _, p := range portAvailability {
-			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
+			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLabMetro, l.Pop)) {
 				pop = l.Pop
 				zone = p.Zone
 				media = p.Media

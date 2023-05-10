@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccHclVcBackboneRequiredFields(t *testing.T) {
+func TestAccHclVcBackboneVlanRequiredFields(t *testing.T) {
 
 	testutil.SkipIfEnvNotSet(t)
 
-	backboneVirtualCircuitResult := testutil.RHclBackboneVirtualCircuit()
+	backboneVirtualCircuitResult := testutil.RHclBackboneVirtualCircuitVlan()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -26,9 +26,7 @@ func TestAccHclVcBackboneRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "description", backboneVirtualCircuitResult.Desc),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "epl", strconv.FormatBool(backboneVirtualCircuitResult.Epl)),
-					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "interface_a.0.untagged", strconv.FormatBool(backboneVirtualCircuitResult.InterfaceBackboneA.Untagged)),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "interface_a.0.vlan", strconv.Itoa(backboneVirtualCircuitResult.InterfaceBackboneA.Vlan)),
-					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "interface_z.0.untagged", strconv.FormatBool(backboneVirtualCircuitResult.InterfaceBackboneZ.Untagged)),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "interface_z.0.vlan", strconv.Itoa(backboneVirtualCircuitResult.InterfaceBackboneZ.Vlan)),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "bandwidth.0.longhaul_type", backboneVirtualCircuitResult.LonghaulType),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitResult.ResourceName, "bandwidth.0.speed", backboneVirtualCircuitResult.Speed),

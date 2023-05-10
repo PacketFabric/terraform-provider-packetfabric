@@ -9,22 +9,19 @@ package testutil
 // Begin of resources templates for required fields only
 
 // Resource: packetfabric_backbone_virtual_circuit
-const RResourceBackboneVirtulalCircuit = `resource "packetfabric_backbone_virtual_circuit" "%s" {
+const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_virtual_circuit" "%s" {
   provider    = packetfabric
   description = "%s"
   epl         = %t
   interface_a {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   interface_z {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   bandwidth {
-    longhaul_type     = "%s"
     speed             = "%s"
     subscription_term = %v
   }
@@ -70,7 +67,7 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   regions       = ["%s", "%s"]
   }
   
-  resource "time_sleep" "wait_10_seconds" {
+  resource "time_sleep" "wait_10_seconds_%s" {
     depends_on = [%s]
     destroy_duration = "10s"
   }
@@ -394,14 +391,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   speed             = "%s"
   subscription_term = %v
   enabled          = %t
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [%s]
-
-  destroy_duration = "60s"
-}
-`
+}`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
