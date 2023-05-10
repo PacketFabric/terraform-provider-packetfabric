@@ -136,6 +136,11 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Computed:    true,
 				Description: "The IBM Gateway ID.",
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -224,6 +229,14 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }

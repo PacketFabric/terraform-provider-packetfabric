@@ -250,6 +250,11 @@ func resourceAwsRequestHostConn() *schema.Resource {
 					},
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		CustomizeDiff: customdiff.Sequence(
 			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
@@ -429,6 +434,15 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		}
 		_ = d.Set("labels", labels)
 	}
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 

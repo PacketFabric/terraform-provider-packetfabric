@@ -9,18 +9,16 @@ package testutil
 // Begin of resources templates for required fields only
 
 // Resource: packetfabric_backbone_virtual_circuit
-const RResourceBackboneVirtulalCircuit = `resource "packetfabric_backbone_virtual_circuit" "%s" {
+const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_virtual_circuit" "%s" {
   provider    = packetfabric
   description = "%s"
   epl         = %t
   interface_a {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   interface_z {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   bandwidth {
@@ -60,13 +58,7 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }
-  
-  resource "time_sleep" "wait_10_seconds" {
-    depends_on = [%s]
-    destroy_duration = "10s"
-  }
-  `
+  }`
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
@@ -386,7 +378,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   pop               = "%s"
   speed             = "%s"
   subscription_term = %v
-  enabled          = %t
+  enabled           = %t
 }`
 
 // Resource: packetfabric_port_loa
@@ -398,3 +390,35 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+
+const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
+  provider              = packetfabric
+  cloud_provider        = "%s"
+  cloud_connection_type = "%s"
+}`
+
+const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
+  provider  = packetfabric
+  pop       = "%s"
+}`
+
+const DDatasourceLocations = `data "packetfabric_locations" "%s" {
+  provider  = packetfabric
+}`
+
+const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
+  provider = packetfabric
+  pop      = "%s"
+}`
+
+const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
+  provider = packetfabric
+}`
+
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
+  provider = packetfabric
+}`

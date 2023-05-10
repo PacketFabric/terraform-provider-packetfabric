@@ -171,6 +171,11 @@ func resourceBackbone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		CustomizeDiff: customdiff.Sequence(
 			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
@@ -215,19 +220,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	createOk := make(chan bool)
-	defer close(createOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
-				ticker.Stop()
-				createOk <- true
-			}
-		}
-	}()
-	<-createOk
 	if resp != nil {
+		checkBackboneComplete(c, resp.VcCircuitID)
 		d.SetId(resp.VcCircuitID)
 
 		if labels, ok := d.GetOk("labels"); ok {
@@ -335,6 +329,14 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		}
 		_ = d.Set("labels", labels)
 	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 
@@ -355,35 +357,13 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 			return diag.FromErr(err)
 		}
-		updateOk := make(chan bool)
-		defer close(updateOk)
-		ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-		go func() {
-			for range ticker.C {
-				if ok := c.IsBackboneComplete(d.Id()); ok {
-					ticker.Stop()
-					updateOk <- true
-				}
-			}
-		}()
-		<-updateOk
+		checkBackboneComplete(c, d.Id())
 	}
 
 	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(d.Id()); ok {
-				ticker.Stop()
-				updateOk <- true
-			}
-		}
-	}()
-	<-updateOk
+	checkBackboneComplete(c, d.Id())
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -395,11 +375,31 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
+func checkBackboneComplete(c *packetfabric.PFClient, id string) {
+	done := make(chan bool)
+	defer close(done)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(id); ok {
+				ticker.Stop()
+				done <- true
+			}
+		}
+	}()
+	<-done
+}
+
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if vcCircuitID, ok := d.GetOk("id"); ok {
+		etlDiags, err2 := addETLWarning(c, vcCircuitID.(string))
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		diags = append(diags, etlDiags...)
 		_, err := c.DeleteBackbone(vcCircuitID.(string))
 		if err != nil {
 			return diag.FromErr(err)

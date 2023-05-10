@@ -112,6 +112,11 @@ func resourceOracleHostedConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -205,6 +210,15 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		}
 		_ = d.Set("labels", labels)
 	}
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 
