@@ -372,7 +372,6 @@ func RHclAwsHostedConnection() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
-
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
 	pop, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed)
