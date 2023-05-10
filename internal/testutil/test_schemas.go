@@ -155,8 +155,9 @@ const RResourceCloudRouterConnectionPort = `resource "packetfabric_cloud_router_
   provider        = packetfabric
   description     = "%s"
   circuit_id      = %s.id
-  port_circuit_id = "%s"
+  port_circuit_id = %s.id
   speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_dedicated_connection
@@ -174,12 +175,13 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
 // Resource: packetfabric_cs_aws_hosted_connection
 const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_connection" "%s" {
   provider       = packetfabric
-  description    = "%s"
-  aws_account_id = "%s"
-  port           = %s.id
-  speed          = "%s"
-  pop            = "%s"
-  vlan           = %v
+  port            = %s.id
+  aws_account_id  = "%s"
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_hosted_marketplace_connection

@@ -173,7 +173,6 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
