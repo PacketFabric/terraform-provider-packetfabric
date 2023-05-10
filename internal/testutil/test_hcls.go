@@ -157,6 +157,7 @@ type RHclPointToPointResult struct {
 	Pop2             string
 	Zone2            string
 	Autoneg2         bool
+}
 
 // packetfabric_backbone_virtual_circuit
 type RHclBackboneVirtualCircuitResult struct {
