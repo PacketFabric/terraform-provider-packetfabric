@@ -54,13 +54,13 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   remote_address = "169.254.247.41/30"  # AWS side
   l3_address     = "169.254.247.42/30" # PF side
   nat {
-    direction       = "input" # or output
+    direction       = "input" # input=ingress output=egress
     nat_type        = "overload"
-    pre_nat_sources = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-    pool_prefixes   = ["192.168.1.50/32", "192.168.1.51/32"]
+    pre_nat_sources = ["10.0.0.0/24"]
+    pool_prefixes   = ["185.161.1.42/32"]
   }
   prefixes {
-    prefix = "172.16.1.0/24"
+    prefix = "185.161.1.42/32"
     type   = "out" # Allowed Prefixes to Cloud
   }
   prefixes {
@@ -80,17 +80,14 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   nat {
     nat_type = "inline_dnat"
     dnat_mappings {
-      private_prefix = "10.1.1.0/24"
-      public_prefix  = "1.2.3.4/32"
-    }
-    dnat_mappings {
-      private_prefix     = "172.16.0.0/16"
-      public_prefix      = "1.2.3.5/32"
-      conditional_prefix = "172.16.1.0/24" # must be a subnet of private_prefix
+      public_prefix      = "185.161.1.42/32" # Pre-translation IP prefix
+      private_prefix     = "10.1.1.123/32" # Post-translation IP prefix
+      # Note that the post-translation prefix must be equal to or included within the conditional IP prefix
+      conditional_prefix = "10.1.1.0/24" # Conditional IP prefix
     }
   }
   prefixes {
-    prefix = "172.16.1.0/24"
+    prefix = "185.161.1.42/32"
     type   = "out" # Allowed Prefixes to Cloud
   }
   prefixes {

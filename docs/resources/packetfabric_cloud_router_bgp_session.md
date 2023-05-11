@@ -10,7 +10,7 @@ description: |-
 
 The BGP session information for a cloud router connection. 
 
-For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/).
+For information specific to each cloud provider, see [the PacketFabric cloud router BGP documentation](https://docs.packetfabric.com/cr/bgp/) and [Cloud Router NAT](https://docs.packetfabric.com/cr/nat/).
 
 ->**Note:** When creating a BGP session, ensure you are also adding the associated prefixes. For Azure, only specify either the `primary_subnet` or the `secondary_subnet`.
 
@@ -73,13 +73,13 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   remote_address = "169.254.247.41/30"  # AWS side
   l3_address     = "169.254.247.42/30" # PF side
   nat {
-    direction       = "input" # or output
+    direction       = "input" # input=ingress output=egress
     nat_type        = "overload"
-    pre_nat_sources = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-    pool_prefixes   = ["192.168.1.50/32", "192.168.1.51/32"]
+    pre_nat_sources = ["10.0.0.0/24"]
+    pool_prefixes   = ["185.161.1.42/32"]
   }
   prefixes {
-    prefix = "172.16.1.0/24"
+    prefix = "185.161.1.42/32"
     type   = "out" # Allowed Prefixes to Cloud
   }
   prefixes {
@@ -99,17 +99,14 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   nat {
     nat_type = "inline_dnat"
     dnat_mappings {
-      private_prefix = "10.1.1.0/24"
-      public_prefix  = "1.2.3.4/32"
-    }
-    dnat_mappings {
-      private_prefix     = "172.16.0.0/16"
-      public_prefix      = "1.2.3.5/32"
-      conditional_prefix = "172.16.1.0/24" # must be a subnet of private_prefix
+      public_prefix      = "185.161.1.42/32" # Pre-translation IP prefix
+      private_prefix     = "10.1.1.123/32" # Post-translation IP prefix
+      # Note that the post-translation prefix must be equal to or included within the conditional IP prefix
+      conditional_prefix = "10.1.1.0/24" # Conditional IP prefix
     }
   }
   prefixes {
-    prefix = "172.16.1.0/24"
+    prefix = "185.161.1.42/32"
     type   = "out" # Allowed Prefixes to Cloud
   }
   prefixes {
@@ -196,7 +193,7 @@ Optional:
 
 Optional:
 
-- `direction` (String) If using NAT overload, the direction of the NAT connection. 
+- `direction` (String) If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). 
 		Enum: output, input. Defaults: output
 - `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--nat--dnat_mappings))
 - `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
@@ -213,12 +210,12 @@ Optional:
 
 Required:
 
-- `private_prefix` (String) The private prefix of this DNAT mapping.
-- `public_prefix` (String) The public prefix of this DNAT mapping.
+- `private_prefix` (String) Post-translation IP prefix.
+- `public_prefix` (String) Pre-translation IP prefix.
 
 Optional:
 
-- `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
+- `conditional_prefix` (String) Post-translation prefix must be equal to or included within the conditional IP prefix.
 
 
 
