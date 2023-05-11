@@ -1,3 +1,5 @@
+//go:build resource || cloud_router || all || smoke
+
 package provider
 
 import (
@@ -11,20 +13,10 @@ import (
 )
 
 func TestAccCloudRouterBgpSessionRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
 	bgpSessionResult := testutil.RHclBgpSession()
-
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId, bgpSessionUuid string
-
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_CRC_AWS_ACCOUNT_ID_KEY,
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{

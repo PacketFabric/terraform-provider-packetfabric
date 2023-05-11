@@ -443,7 +443,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 		CloudRouterBgpSessionPrefix2,
 		CloudRouterBgpSessionType2)
 	hcl := fmt.Sprintf("%s\n%s", hclCloudConnRes.Hcl, bgpSessionHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return RHclBgpSessionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
