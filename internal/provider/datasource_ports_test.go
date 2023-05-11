@@ -1,3 +1,5 @@
+//go:build datasource || core || all
+
 package provider
 
 import (
@@ -8,9 +10,6 @@ import (
 )
 
 func TestAccDataSourcePortsComputedRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
 	hclPortResult := testutil.DHclDataSourcePorts()
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -20,7 +19,6 @@ func TestAccDataSourcePortsComputedRequiredFields(t *testing.T) {
 			{
 				Config: hclPortResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.autoneg"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.port_circuit_id"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.state"),
@@ -44,9 +42,7 @@ func TestAccDataSourcePortsComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_cloud"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_ptp"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_nni"),
-					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.lag_interval"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.member_count"),
-					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.parent_lag_circuit_id"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.account_uuid"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.subscription_term"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.disabled"),

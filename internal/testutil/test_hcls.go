@@ -30,11 +30,8 @@ const pfDataZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
-<<<<<<< HEAD
 const pfPortLoa = "packetfabric_port_loa"
-=======
-const pfDataPort = "data.packetfabric_port."
->>>>>>> f2ed3cc (Generating HCL for datasources packectfabric_port)
+const pfDataPort = "data.packetfabric_ports"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -262,6 +259,9 @@ type DHclActivityLogResult struct {
 
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_port
 type DHclPortResult struct {
 	HclResultBase
@@ -635,7 +635,6 @@ func RHclPortLoa() RHclPortLoaResult {
 }
 
 func DHclDataSourcePorts() DHclPortResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -645,10 +644,10 @@ func DHclDataSourcePorts() DHclPortResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	resourceName, hclName := _generateResourceName(pfDataPort)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
 	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
 
-	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort().Hcl, dataPortHcl)
+	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
 
 	return DHclPortResult{
 		HclResultBase: HclResultBase{
@@ -656,28 +655,6 @@ func DHclDataSourcePorts() DHclPortResult {
 			Resource:     pfDataPort,
 			ResourceName: resourceName,
 		},
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
 	}
 }
 
