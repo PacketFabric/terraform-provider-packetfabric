@@ -12,7 +12,6 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 var birdNames = []string{
@@ -67,12 +66,6 @@ func _createPFClient() (*packetfabric.PFClient, error) {
 	return c, nil
 }
 
-func SkipIfEnvNotSet(t *testing.T) {
-	if os.Getenv(resource.EnvTfAcc) == "" {
-		t.Skip()
-	}
-}
-
 func PreCheck(t *testing.T, additionalEnvVars []string) {
 	requiredEnvVars := []string{
 		"PF_HOST",
@@ -122,7 +115,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
 
-	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api.dev")
+	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
 	for _, l := range locations {
 		// Skip Colt locations

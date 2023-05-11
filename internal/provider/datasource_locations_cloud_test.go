@@ -1,3 +1,5 @@
+//go:build datasource || all || smoke
+
 package provider
 
 import (
@@ -9,9 +11,8 @@ import (
 )
 
 func TestAccDataSourceLocationsCloudComputedRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, nil)
 	t.Parallel()
-
 	testCases := []struct {
 		cloudProvider       string
 		cloudConnectionType string
@@ -26,7 +27,6 @@ func TestAccDataSourceLocationsCloudComputedRequiredFields(t *testing.T) {
 		dataSourceLocationsCloudResult := testutil.DHclDataSourceLocationsCloud(testCase.cloudProvider, testCase.cloudConnectionType)
 
 		resource.Test(t, resource.TestCase{
-			PreCheck:  func() { testutil.PreCheck(t, nil) },
 			Providers: testAccProviders,
 			Steps: []resource.TestStep{
 				{

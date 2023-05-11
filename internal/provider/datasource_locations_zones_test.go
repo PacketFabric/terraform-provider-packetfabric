@@ -1,3 +1,5 @@
+//go:build datasource || all
+
 package provider
 
 import (
@@ -8,15 +10,9 @@ import (
 )
 
 func TestAccDatasourceLocationsZonesComputedRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, nil)
 	datasourceZonesResult := testutil.DHclDataSourceZones()
-
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, nil)
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
