@@ -11,7 +11,14 @@ import (
 func TestAccCloudRouterRequiredFields(t *testing.T) {
 	testutil.SkipIfEnvNotSet(t)
 
-	cloudRouterResult := testutil.RHclCloudRouter()
+	defaultInput := testutil.DefaultRHclCloudRouterInput()
+	cloudRouterResult1 := testutil.RHclCloudRouter(defaultInput)
+	cloudRouterResult2 := testutil.RHclCloudRouter(testutil.RHclCloudRouterInput{
+		ResourceName: defaultInput.ResourceName,
+		HclName:      defaultInput.HclName,
+		Capacity:     "2Gbps",
+	})
+	cloudRouterResult2.ResourceName = cloudRouterResult1.ResourceName
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -23,16 +30,22 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: cloudRouterResult.Hcl,
+				Config: cloudRouterResult1.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "asn", strconv.Itoa(cloudRouterResult.Asn)),
-					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "capacity", cloudRouterResult.Capacity),
-					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "regions.0", cloudRouterResult.Regions[0]),
-					resource.TestCheckResourceAttr(cloudRouterResult.ResourceName, "regions.1", cloudRouterResult.Regions[1]),
+					resource.TestCheckResourceAttr(cloudRouterResult1.ResourceName, "asn", strconv.Itoa(cloudRouterResult1.Asn)),
+					resource.TestCheckResourceAttr(cloudRouterResult1.ResourceName, "capacity", cloudRouterResult1.Capacity),
+					resource.TestCheckResourceAttr(cloudRouterResult1.ResourceName, "regions.0", cloudRouterResult1.Regions[0]),
+					resource.TestCheckResourceAttr(cloudRouterResult1.ResourceName, "regions.1", cloudRouterResult1.Regions[1]),
 				),
 			},
 			{
-				ResourceName:      cloudRouterResult.ResourceName,
+				Config: cloudRouterResult2.Hcl,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(cloudRouterResult2.ResourceName, "capacity", "2Gbps"),
+				),
+			},
+			{
+				ResourceName:      cloudRouterResult2.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

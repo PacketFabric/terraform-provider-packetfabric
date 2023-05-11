@@ -304,19 +304,33 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	}
 }
 
-// packetfabric_cloud_router
-func RHclCloudRouter() RHclCloudRouterResult {
+type RHclCloudRouterInput struct {
+	ResourceName string
+	HclName      string
+	Capacity     string
+}
+
+func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouter)
+	return RHclCloudRouterInput{
+		ResourceName: resourceName,
+		HclName:      hclName,
+		Capacity:     CloudRouterCapacity,
+	}
+}
+
+// packetfabric_cloud_router
+func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource name: %s, description: %s\n", input.HclName, uniqueDesc)
 
 	hcl := fmt.Sprintf(
 		RResourcePacketfabricCloudRouter,
-		hclName,
+		input.HclName,
 		uniqueDesc,
 		os.Getenv(PF_ACCOUNT_ID_KEY),
 		CloudRouterASN,
-		CloudRouterCapacity,
+		input.Capacity,
 		CloudRouterRegionUS,
 		CloudRouterRegionUK)
 
@@ -324,10 +338,10 @@ func RHclCloudRouter() RHclCloudRouterResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCloudRouter,
-			ResourceName: resourceName,
+			ResourceName: input.ResourceName,
 		},
 		Asn:      CloudRouterASN,
-		Capacity: CloudRouterCapacity,
+		Capacity: input.Capacity,
 		Regions:  []string{CloudRouterRegionUS, CloudRouterRegionUK},
 	}
 }
@@ -349,7 +363,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 
 	pop, _ := popDetails.FindAvailableCloudPopZone()
 
-	hclCloudRouterRes := RHclCloudRouter()
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
@@ -378,9 +392,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 }
 
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
-
 	portDetails := CreateBasePortDetails()
-	cloudRouterResult := RHclCloudRouter()
+	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
@@ -416,7 +429,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
 
-	hclCloudRouterRes := RHclCloudRouter()
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
