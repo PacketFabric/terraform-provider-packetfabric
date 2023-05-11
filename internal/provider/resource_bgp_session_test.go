@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccPBgpSessionRequiredFields(t *testing.T) {
+func TestAccCloudRouterBgpSessionRequiredFields(t *testing.T) {
 
 	testutil.SkipIfEnvNotSet(t)
 
