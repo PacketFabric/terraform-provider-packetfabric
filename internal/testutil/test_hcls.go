@@ -49,8 +49,8 @@ const backboneVCvlan2Value = 104
 const backboneVClonghaulType = "dedicated"
 
 // packetfabric_cloud_router
-const CloudRouterCapacity1 = "1Gbps"
-const CloudRouterCapacity2 = "2Gbps"
+const DefaultCloudRouterCapacity = "1Gbps"
+const CloudRouterCapacityChange = "2Gbps"
 const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
@@ -315,7 +315,7 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 	return RHclCloudRouterInput{
 		ResourceName: resourceName,
 		HclName:      hclName,
-		Capacity:     CloudRouterCapacity1,
+		Capacity:     DefaultCloudRouterCapacity,
 	}
 }
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
