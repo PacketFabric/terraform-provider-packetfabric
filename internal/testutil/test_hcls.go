@@ -52,7 +52,8 @@ const backboneVCvlan2Value = 104
 const backboneVClonghaulType = "dedicated"
 
 // packetfabric_cloud_router
-const CloudRouterCapacity = "10Gbps"
+const DefaultCloudRouterCapacity = "1Gbps"
+const CloudRouterCapacityChange = "2Gbps"
 const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
@@ -65,6 +66,7 @@ const CloudRouterConnPortSpeed = "1Gbps"
 const CloudRouterConnPortVlan = 101
 
 // packetfabric_cloud_router_bg_session
+const CrbsAddressFmly = "v4"
 const CloudRouterBgpSessionASN = 64534
 const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
 const CloudRouterBgpSessionType1 = "in"
@@ -129,6 +131,11 @@ type RHclCloudRouterResult struct {
 	Asn      int
 	Capacity string
 	Regions  []string
+}
+type RHclCloudRouterInput struct {
+	ResourceName string
+	HclName      string
+	Capacity     string
 }
 
 // packetfabric_cloud_router_connection_aws
@@ -313,18 +320,25 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 }
 
 // packetfabric_cloud_router
-func RHclCloudRouter() RHclCloudRouterResult {
+func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouter)
+	return RHclCloudRouterInput{
+		ResourceName: resourceName,
+		HclName:      hclName,
+		Capacity:     DefaultCloudRouterCapacity,
+	}
+}
+func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource name: %s, description: %s\n", input.HclName, uniqueDesc)
 
 	hcl := fmt.Sprintf(
 		RResourcePacketfabricCloudRouter,
-		hclName,
+		input.HclName,
 		uniqueDesc,
 		os.Getenv("PF_ACCOUNT_ID"),
 		CloudRouterASN,
-		CloudRouterCapacity,
+		input.Capacity,
 		CloudRouterRegionUS,
 		CloudRouterRegionUK)
 
@@ -332,10 +346,10 @@ func RHclCloudRouter() RHclCloudRouterResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCloudRouter,
-			ResourceName: resourceName,
+			ResourceName: input.ResourceName,
 		},
 		Asn:      CloudRouterASN,
-		Capacity: CloudRouterCapacity,
+		Capacity: input.Capacity,
 		Regions:  []string{CloudRouterRegionUS, CloudRouterRegionUK},
 	}
 }
@@ -357,7 +371,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 
 	pop, _ := popDetails.FindAvailableCloudPopZone()
 
-	hclCloudRouterRes := RHclCloudRouter()
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
@@ -387,9 +401,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 }
 
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
-
-	cloudRouterResult := RHclCloudRouter()
 	portDetails := CreateBasePortDetails()
+	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
