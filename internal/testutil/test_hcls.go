@@ -250,6 +250,8 @@ type DHclActivityLogResult struct {
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
 	HclResultBase
+}
+
 type RHclPortLoaResult struct {
 	HclResultBase
 	Port             RHclPortResult
@@ -592,9 +594,8 @@ func RHclPortLoa() RHclPortLoaResult {
 		IsCloudConnection: true,
 	}
 
-	hclPortResult := portDetails.RHclPort()
-
-	resourceName, hclName := _generateResourceName(pfPortLoa)
+	hclPortResult := portDetails.RHclPort(false)
+	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
 
 	hcl := fmt.Sprintf(RResourcePortLoa,
 		hclName,
@@ -611,28 +612,6 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: PortLoaDestinationEmail,
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
 	}
 }
 

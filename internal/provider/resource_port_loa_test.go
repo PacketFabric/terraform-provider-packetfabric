@@ -8,8 +8,6 @@ import (
 )
 
 func TestAccPortLOARequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
-
 	portLoaResult := testutil.RHclPortLoa()
 
 	resource.ParallelTest(t, resource.TestCase{
