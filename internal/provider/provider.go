@@ -145,7 +145,7 @@ func Provider() *schema.Provider {
 			"packetfabric_activitylog":                        datasourceActivityLog(),
 			"packetfabric_marketplace_service_port_requests":  dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":                   datasourceBackboneServices(),
-			"packetfabric_point_to_point":                     datasourcePointToPoint(),
+			"packetfabric_point_to_points":                    datasourcePointToPoints(),
 			"packetfabric_port_vlans":                         dataSourcePortVlanSummary(),
 			"packetfabric_locations_markets":                  dataSourceLocationsMarkets(),
 			"packetfabric_locations_port_availability":        dataSourcePortAvailability(),

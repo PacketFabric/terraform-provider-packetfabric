@@ -259,7 +259,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 			if toggleErr := _togglePortStatus(c, false, d.Id()); toggleErr != nil {
 				return diag.FromErr(toggleErr)
 			}
-			time.Sleep(time.Duration(90+c.GetRandomSeconds()) * time.Second)
+			time.Sleep(time.Duration(90) * time.Second)
 		}
 	}
 

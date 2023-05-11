@@ -67,7 +67,7 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				ForceNew:     true,
 				Default:      0,
 				ValidateFunc: validation.IntBetween(4, 4094),
-				Description:  "Valid VLAN range is from 4-4094, inclusive.",
+				Description:  "Valid VLAN range is from 4-4094, inclusive. ",
 			},
 			"untagged": {
 				Type:        schema.TypeBool,
