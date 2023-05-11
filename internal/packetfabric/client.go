@@ -114,13 +114,7 @@ func (c *PFClient) _doRequest(req *http.Request, authToken *string, customHeader
 func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp interface{}) (interface{}, error) {
 	var req *http.Request
 	var err error
-	// If TF_LOG is not set to "DEBUG", set c.Ctx to context.Background().
-	// This will create a new context that is not canceled, has no values, and has no deadline.
-	if os.Getenv("TF_LOG") != "DEBUG" {
-		c.Ctx = context.Background()
-	} else {
-		c.Ctx = context.TODO()
-	}
+	c.Ctx = context.Background()
 	formatedURL := fmt.Sprintf("%s%s", c.HostURL, uri)
 	switch method {
 	case getMethod:
@@ -159,11 +153,7 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string, payload map[string]string, resp interface{}) (interface{}, error) {
 	var req *http.Request
 	var err error
-	if os.Getenv("TF_LOG") != "DEBUG" {
-		c.Ctx = context.Background()
-	} else {
-		c.Ctx = context.TODO()
-	}
+	c.Ctx = context.Background()
 	formatedURL := fmt.Sprintf("%s%s", c.HostURL, uri)
 
 	file, err := os.Open(filePath)
