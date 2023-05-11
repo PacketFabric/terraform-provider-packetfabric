@@ -16,7 +16,7 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 	cloudRouterResult2 := testutil.RHclCloudRouter(testutil.RHclCloudRouterInput{
 		ResourceName: defaultInput.ResourceName,
 		HclName:      defaultInput.HclName,
-		Capacity:     "2Gbps",
+		Capacity:     testutil.CloudRouterCapacity2,
 	})
 	cloudRouterResult2.ResourceName = cloudRouterResult1.ResourceName
 
@@ -41,7 +41,7 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 			{
 				Config: cloudRouterResult2.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterResult2.ResourceName, "capacity", "2Gbps"),
+					resource.TestCheckResourceAttr(cloudRouterResult2.ResourceName, "capacity", testutil.CloudRouterCapacity2),
 				),
 			},
 			{
