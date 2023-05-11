@@ -213,14 +213,15 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 			interface1["pop"] = resp.Interfaces[0].Pop
 			interface1["zone"] = resp.Interfaces[0].Zone
 			interface1["customer_site_code"] = resp.Interfaces[0].CustomerSiteCode
+			interface1["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
 
 			interface2 := make(map[string]interface{})
 			interface2["pop"] = resp.Interfaces[1].Pop
 			interface2["zone"] = resp.Interfaces[1].Zone
 			interface2["customer_site_code"] = resp.Interfaces[1].CustomerSiteCode
+			interface2["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
 
 			endpoints := []interface{}{interface1, interface2}
-			fmt.Printf("[DEBUG endpoints] %v", endpoints)
 			_ = d.Set("endpoints", endpoints)
 		}
 	}
@@ -301,15 +302,13 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	testingInLab := strings.Contains(host, "api.dev")
 
 	if testingInLab {
-		portCircuitID1 := d.Get("endpoints.0.port_circuit_id")
-		portCircuitID2 := d.Get("endpoints.1.port_circuit_id")
-		fmt.Printf("[DEBUG portCircuitID1] %v", portCircuitID1.(string))
-		fmt.Printf("[DEBUG portCircuitID2] %v", portCircuitID2.(string))
-		if toggleErr := _togglePortStatus(c, false, portCircuitID1.(string)); toggleErr != nil {
-			return diag.FromErr(toggleErr)
-		}
-		if toggleErr := _togglePortStatus(c, false, portCircuitID2.(string)); toggleErr != nil {
-			return diag.FromErr(toggleErr)
+		endpoints := d.Get("endpoints").(*schema.Set).List()
+		for _, v := range endpoints {
+			endpoint := v.(map[string]interface{})
+			portCircuitID := endpoint["port_circuit_id"].(string)
+			if toggleErr := _togglePortStatus(c, false, portCircuitID); toggleErr != nil {
+				return diag.FromErr(toggleErr)
+			}
 		}
 		time.Sleep(time.Duration(180) * time.Second)
 		diags = append(diags, diag.Diagnostic{
