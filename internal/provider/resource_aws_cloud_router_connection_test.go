@@ -1,3 +1,5 @@
+//go:build resource || cloud_router || all
+
 package provider
 
 import (
@@ -11,26 +13,17 @@ import (
 )
 
 func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
 	crConnAwsResult := testutil.RHclCloudRouterConnectionAws()
-
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
-
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_CRC_AWS_ACCOUNT_ID_KEY,
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		ExternalProviders: testAccExternalProviders,
 		Providers:         testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: crConnAwsResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "aws_account_id", os.Getenv(testutil.PF_CRC_AWS_ACCOUNT_ID_KEY)),
+					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "aws_account_id", os.Getenv("PF_AWS_ACCOUNT_ID")),
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "account_uuid", crConnAwsResult.AccountUuid),
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "speed", crConnAwsResult.Speed),
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "pop", crConnAwsResult.Pop),

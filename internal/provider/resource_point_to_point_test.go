@@ -1,3 +1,5 @@
+//go:build resource || core || all
+
 package provider
 
 import (
@@ -9,15 +11,9 @@ import (
 )
 
 func TestAccPointToPointRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, nil)
 	pointToPointResult := testutil.RHclPointToPoint()
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
