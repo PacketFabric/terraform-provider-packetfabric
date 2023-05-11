@@ -113,33 +113,50 @@ environmental variables:
 ```shell
 export PF_HOST="https://api.packetfabric.com"
 export PF_TOKEN="api-secret"
-export PF_ACCOUNT_ID="1234"
-export PF_AWS_ACCOUNT_ID="123456789"
-export PF_IBM_ACCOUNT_ID="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-export PF_ACC_TEST_ROUTING_ID="PD-WUY-9VB0"
-export PF_ACC_TEST_MARKET="BOS"
-export PF_ACC_TEST_IX_ROUTING_ID="PD-WUY-9VB0"
-export PF_ACC_TEST_IX_MARKET="HOU"
+export PF_ACCOUNT_ID="123456789"
 ```
+
+Some tests require specific environment variables to be set. You can find examples of these variables in the [source_env_var.sh.sample](./examples/source_env_var.sh.sample) file.
 
 > **Warning**: Running below command will order various PacketFabric products, then delete them.
 
-Then you can run the following command:
+You can test the provider using different methods. Here are some common scenarios:
 
-```shell
-make testacc
+### Running All Tests
+
+To run all tests, you can use the all tag. Navigate to the internal/provider directory and run the following command:
+
+```sh
+$ cd internal/provider;  TF_ACC=1 go test -v -tags=all
 ```
+
+### Running Tests with Specific Tags
+
+If you want to run a subset of tests, you can do so by specifying the relevant tag. For example, to run tests that have been tagged with smoke, use the following command:
+
+```sh
+$ cd internal/provider;  TF_ACC=1 go test -v -tags=smoke
+```
+
+### Running Individual Tests
+
+You can also run individual tests by specifying the test's function name with the -run flag. For example, to run the TestAccPort test, use the following command:
+
+```sh
+$ cd internal/provider; TF_ACC=1 go test -v -tags=all -run=TestAccPort
+```
+
+**Note:** Setting the `TF_ACC` environment variable to 1 enables acceptance tests, which hit real APIs and can take a long time to run.
 
 If you want to know the current list of acceptance tests available without executing them, run the following command:
 
-```
-cd ./internal/provider
-go test -cover -v | grep -v testutil.go | grep -v github.com
+```sh
+cd internal/provider; go test -tags=all -cover -v | grep -v testutil.go | grep -v github.com
 ```
 
 ## Releasing the Provider
 
-This provider is published using GitHub Actions triggered by tagging a branch using semantic versioning with the pattern `v*`(Example: `v0.1.3`)
+This provider is published using GitHub Actions triggered by tagging a branch using semantic versioning with the pattern `v*`(Example: `v1.5.3`)
 
 Once the branch is tagged the release is built and publish via the Terraform Registry.
 
