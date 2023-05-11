@@ -24,10 +24,21 @@
 
 * Adding or Updating existing Terraform resources/data-sources consists of:
 
-    * Add/Update Terraform Go Code located under the internal folder 
+    * Add/Update Terraform Go Code located under the `internal` folder 
     * Add/Update Tests 
-        * using mock data `<file>_test.go` under `internal/packetfabric`
+        * using mock data `<file>_test.go` under `internal/packetfabric` and update `test_*` under `internal/testutil`
         * using real data `<resource_name>_test.go` under `internal/provider` (see [ACC](https://github.com/PacketFabric/terraform-provider-packetfabric#acceptance-tests))
+        * add one of the following build tag in the `<file>_test.go`
+            - all
+            - smoke
+            - resource
+            - datasource
+            - cloud_router
+            - hosted_cloud
+            - dedicated_cloud
+            - core (includes port, vc, ptp)
+            - marketplace
+            - other (user, event streaming, documents)
     * Add/Update examples under `examples/resources` and/or `examples/data-sources` (used for the documentation)
     * Add/Update the templates used to generate the docs  under `templates`
     * Generate the docs using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs), from the root execute:

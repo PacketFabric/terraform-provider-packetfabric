@@ -1,3 +1,5 @@
+//go:build resource || cloud_router || all
+
 package provider
 
 import (
@@ -9,8 +11,7 @@ import (
 )
 
 func TestAccCloudRouterRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, nil)
 	defaultInput := testutil.DefaultRHclCloudRouterInput()
 	cloudRouterResult1 := testutil.RHclCloudRouter(defaultInput)
 	cloudRouterResult2 := testutil.RHclCloudRouter(testutil.RHclCloudRouterInput{
@@ -19,13 +20,7 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 		Capacity:     testutil.CloudRouterCapacity2,
 	})
 	cloudRouterResult2.ResourceName = cloudRouterResult1.ResourceName
-
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
