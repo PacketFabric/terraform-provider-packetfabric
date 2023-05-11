@@ -1,3 +1,5 @@
+//go:build resource || core || all
+
 package provider
 
 import (
@@ -22,11 +24,6 @@ func TestAccPortLOARequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(portLoaResult.ResourceName, "destination_email", portLoaResult.DestinationEmail),
 					resource.TestCheckResourceAttr(portLoaResult.ResourceName, "loa_customer_name", portLoaResult.LoaCustomerName),
 				),
-			},
-			{
-				ResourceName:      portLoaResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

@@ -606,7 +606,7 @@ func RHclPortLoa() RHclPortLoaResult {
 
 	return RHclPortLoaResult{
 		HclResultBase: HclResultBase{
-			Hcl:          hcl,
+			Hcl:          fmt.Sprintf("%s\n%s", hclPortResult.Hcl, hcl),
 			Resource:     pfPortLoa,
 			ResourceName: resourceName,
 		},
