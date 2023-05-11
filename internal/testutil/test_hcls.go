@@ -592,7 +592,9 @@ func RHclPointToPoint() RHclPointToPointResult {
 		false,
 		pop2,
 		zone2,
-		false)
+		false,
+		hclName,
+		resourceName)
 
 	return RHclPointToPointResult{
 		HclResultBase: HclResultBase{
