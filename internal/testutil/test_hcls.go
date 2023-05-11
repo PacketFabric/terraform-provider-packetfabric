@@ -42,7 +42,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
+var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfbaric_backbone_virtual_circuit
 const backboneVCspeed = "50Mbps"
