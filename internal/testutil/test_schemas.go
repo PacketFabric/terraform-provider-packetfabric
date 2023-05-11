@@ -370,6 +370,10 @@ const RResourcePointToPoint = `resource "packetfabric_point_to_point" "%s" {
     zone    = "%s"
     autoneg = %t
   }
+}
+resource "time_sleep" "wait_30_seconds_%s" {
+  depends_on = [%s]
+  destroy_duration = "30s"
 }`
 
 // Resource: packetfabric_port

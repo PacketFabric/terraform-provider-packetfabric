@@ -292,16 +292,16 @@ func BgpImportStatePassthroughContext(ctx context.Context, d *schema.ResourceDat
 }
 
 func checkCloudRouterConnectionStatus(c *packetfabric.PFClient, cid string, id string) error {
-	updateOk := make(chan bool)
-	defer close(updateOk)
+	statusOk := make(chan bool)
+	defer close(statusOk)
 
 	fn := func() (*packetfabric.ServiceState, error) {
 		return c.GetCloudConnectionStatus(cid, id)
 	}
-	go c.CheckServiceStatus(updateOk, fn)
+	go c.CheckServiceStatus(statusOk, fn)
 
-	if !<-updateOk {
-		return fmt.Errorf("Failed to update connection status")
+	if !<-statusOk {
+		return fmt.Errorf("failed to retrieve the status for %s", id)
 	}
 	return nil
 }
