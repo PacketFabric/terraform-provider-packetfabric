@@ -726,10 +726,6 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	}
 	pop, _, region := popDetails.FindAvailableCloudPopZone()
 
-	if err != nil {
-		log.Panic(err)
-	}
-
 	hcl := fmt.Sprintf(
 		RResourceCSAwsDedicatedConnection,
 		hclName,

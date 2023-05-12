@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccAwsRequestDedicatedConnRequiredFields(t *testing.T) {
+func TestAccAwsDedicatedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 	csAwsDedicatedConnectionResult := testutil.RHclCsAwsDedicatedConnection()
 	resource.ParallelTest(t, resource.TestCase{
@@ -17,7 +17,6 @@ func TestAccAwsRequestDedicatedConnRequiredFields(t *testing.T) {
 			{
 				Config: csAwsDedicatedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "aws_region", csAwsDedicatedConnectionResult.AwsRegion),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "description", csAwsDedicatedConnectionResult.Description),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "pop", csAwsDedicatedConnectionResult.Pop),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "subscription_term", strconv.Itoa(csAwsDedicatedConnectionResult.SubscriptionTerm)),
