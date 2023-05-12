@@ -52,7 +52,7 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `description` (String) A brief description of this connection.
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Azure. This starts with "PF-AP-".
-- `speed` (String) The peed of the new connection.
+- `speed` (String, Deprecated) The peed of the new connection.
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps"]
 
@@ -77,6 +77,7 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

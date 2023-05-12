@@ -174,6 +174,11 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 		})
 		return diags
 	}
+	etlDiags, err2 := addETLWarning(c, cloudCID.(string))
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	diags = append(diags, etlDiags...)
 	err := c.DeleteCloudService(cloudCID.(string))
 	if err != nil {
 		return diag.FromErr(err)

@@ -146,7 +146,7 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 			return nil, err
 		}
 	}
-	c._logDebug(formatedURL, method, payload, resp)
+	c._logDebug(formatedURL, method, payload, resp, body)
 	return res, nil
 }
 
@@ -205,12 +205,12 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 			return nil, err
 		}
 	}
-	c._logDebug(formatedURL, method, payload, resp)
+	c._logDebug(formatedURL, method, payload, resp, body)
 	return res, nil
 }
 
 // For debug use only.
-func (c *PFClient) _logDebug(url, method string, payload, resp interface{}) {
+func (c *PFClient) _logDebug(url, method string, payload, resp interface{}, body []byte) {
 	debug := make(map[string]interface{})
 	debug["url"] = url
 	if payload != nil {
@@ -219,5 +219,8 @@ func (c *PFClient) _logDebug(url, method string, payload, resp interface{}) {
 	if resp != nil {
 		debug["resp"] = resp
 	}
-	tflog.Debug(c.Ctx, fmt.Sprintf("\n##[CLIENT | SEND_REQEST]## SENDING %s REQUEST", method), debug)
+	if body != nil {
+		debug["body"] = string(body)
+	}
+	tflog.Debug(c.Ctx, fmt.Sprintf("\n##[CLIENT | SEND_REQUEST]## SENDING %s REQUEST", method), debug)
 }

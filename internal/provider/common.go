@@ -1,9 +1,13 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )
+
+// Labels
 
 func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
 	var labelsData []string
@@ -37,4 +41,21 @@ func getLabels(c *packetfabric.PFClient, circuitId string) ([]string, error) {
 		return nil, err
 	}
 	return resp.Labels, nil
+}
+
+// ETA (Early Termination Liability)
+func addETLWarning(c *packetfabric.PFClient, cID string) ([]diag.Diagnostic, error) {
+	var diags []diag.Diagnostic
+	etlCost, err := c.GetEarlyTerminationLiability(cID)
+	if err != nil {
+		return nil, err
+	}
+	if etlCost > 0 {
+		etlWarning := fmt.Sprintf("Resource ID: %s - Early Termination Liability (ETL) cost: $%.2f", cID, etlCost)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  etlWarning,
+		})
+	}
+	return diags, nil
 }

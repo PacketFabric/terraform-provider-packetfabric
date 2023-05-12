@@ -12,64 +12,58 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func GenerateUniqueName(prefix string) string {
-	return fmt.Sprintf("%s-%s", prefix, uuid.NewString())
+var birdNames = []string{
+	"albatross",
+	"blackbird",
+	"canary",
+	"dove",
+	"eagle",
+	"falcon",
+	"goldfinch",
+	"hawk",
+	"ibis",
+	"jay",
+	"kite",
+	"lark",
+	"magpie",
+	"nightingale",
+	"owl",
+	"parrot",
+	"quail",
+	"raven",
+	"sparrow",
+	"toucan",
+	"vulture",
+	"woodpecker",
+	"xantus",
+	"yellowhammer",
+	"zebra finch",
 }
 
-func GenerateUniqueResourceName() string {
-	return fmt.Sprintf("pf_%s", strings.ReplaceAll(uuid.NewString(), "-", "_"))
-}
-
-func GetAccountUUID() string {
-	return os.Getenv("PF_ACCOUNT_ID")
-}
-
-func GetPopAndZoneWithAvailablePort(desiredSpeed string) (pop, zone, media string, availabilityErr error) {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Println("Error creating PF client: ", err)
-		return "", "", "", err
-	}
-
-	locations, err := c.ListLocations()
-	if err != nil {
-		log.Println("Error getting locations list: ", err)
-		return "", "", "", fmt.Errorf("error getting locations list: %w", err)
-	}
-
-	// We need to shuffle the list of locations. Otherwise, we may try to run
-	// all tests on the same port.
+func GenerateUniqueName() string {
 	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
+	birdName := birdNames[rand.Intn(len(birdNames))]
+	return fmt.Sprintf("terraform_testacc_%s", birdName)
+}
+func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
+	uuid := uuid.NewString()
+	shortUuid := uuid[0:8]
+	shortUuid2 := uuid[9:13]
+	hclName = fmt.Sprintf("terraform_testacc_%s_%s", shortUuid, shortUuid2)
+	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
+	return
+}
 
-	testingInLab := strings.Contains(os.Getenv(PF_HOST_KEY), "api-beta.dev")
-
-	for _, l := range locations {
-		if l.Vendor == "Colt" {
-			continue
-		}
-
-		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
-		if err != nil {
-			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
-			return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
-		}
-
-		for _, p := range portAvailability {
-			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
-				pop = l.Pop
-				zone = p.Zone
-				media = p.Media
-				log.Println("Found available port at ", pop, zone, media)
-				return
-			}
-		}
+func _createPFClient() (*packetfabric.PFClient, error) {
+	host := os.Getenv("PF_HOST")
+	token := os.Getenv("PF_TOKEN")
+	c, err := packetfabric.NewPFClient(&host, &token)
+	if err != nil {
+		return nil, fmt.Errorf("error creating PFClient: %w", err)
 	}
-	log.Println("No pops with available ports found.")
-	return "", "", "", errors.New("no pops with available ports")
+	return c, nil
 }
 
 func PreCheck(t *testing.T, additionalEnvVars []string) {
@@ -93,18 +87,144 @@ func PreCheck(t *testing.T, additionalEnvVars []string) {
 	}
 }
 
-func SkipIfEnvNotSet(t *testing.T) {
-	if os.Getenv(resource.EnvTfAcc) == "" {
-		t.Skip()
+func _contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
 	}
+	return false
 }
 
-func _createPFClient() (*packetfabric.PFClient, error) {
-	host := os.Getenv("PF_HOST")
-	token := os.Getenv("PF_TOKEN")
-	c, err := packetfabric.NewPFClient(&host, &token)
+func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *string) (pop, zone, media, market string, availabilityErr error) {
+
+	c, err := _createPFClient()
 	if err != nil {
-		return nil, fmt.Errorf("error creating PFClient: %w", err)
+		log.Println("Error creating PF client: ", err)
+		return "", "", "", "", err
 	}
-	return c, nil
+
+	locations, err := c.ListLocations()
+	if err != nil {
+		log.Println("Error getting locations list: ", err)
+		return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
+	}
+
+	// We need to shuffle the list of locations. Otherwise, we may try to run
+	// all tests on the same port.
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(locations), func(i, j int) { locations[i], locations[j] = locations[j], locations[i] })
+
+	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
+
+	for _, l := range locations {
+		// Skip Colt locations
+		if l.Vendor == "Colt" {
+			continue
+		}
+
+		// Do not select a port in the same market as the one set in skipDesiredMarket
+		if skipDesiredMarket != nil && l.Market == *skipDesiredMarket {
+			continue
+		}
+
+		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
+		if err != nil {
+			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
+			return "", "", "", "", fmt.Errorf("error getting location port availability: %w", err)
+		}
+
+		for _, p := range portAvailability {
+			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
+				pop = l.Pop
+				zone = p.Zone
+				media = p.Media
+				market = l.Market
+				log.Println("Found available port at ", pop, zone, media, market)
+				if skipDesiredMarket == nil {
+					log.Println("Not specified Market to avoid.")
+				} else {
+					log.Println("Specified Market to avoid: ", *skipDesiredMarket)
+				}
+
+				return
+			}
+		}
+	}
+	log.Println("No pops with available ports found.")
+	return "", "", "", "", errors.New("no pops with available ports")
+}
+
+func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
+	popsWithZones, _ := details.FetchCloudPopsAndZones()
+	popsToSkip := make([]string, 0)
+
+	log.Println("Starting to search for available Cloud PoP and zone...")
+	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
+
+	for popAvailable, zones := range popsWithZones {
+		log.Printf("Checking PoP: %s\n", popAvailable)
+
+		if len(popsToSkip) == len(popsWithZones) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, popAvailable) {
+			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
+			continue
+		} else {
+			if len(zones) > 0 {
+				pop = popAvailable
+				zone = zones[0]
+				log.Printf("Found available PoP: %s, Zone: %s\n", pop, zone)
+				return
+			} else {
+				popsToSkip = append(popsToSkip, popAvailable)
+			}
+		}
+	}
+
+	log.Println("No available Cloud PoP and zone found.")
+	return
+}
+
+func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]string, err error) {
+	if details.DesiredProvider == "" {
+		err = errors.New("please provide a valid cloud provider to fetch pop")
+	}
+	if details.PFClient == nil {
+		err = errors.New("please create PFClient to fetch cloud pop")
+		return
+	}
+	popsWithZones = make(map[string][]string)
+	if cloudLocations, locErr := details.PFClient.GetCloudLocations(
+		details.DesiredProvider,
+		details.DesiredConnectionType,
+		details.IsNatCapable,
+		details.HasCloudRouter,
+		details.AnyType,
+		details.DesiredPop,
+		details.DesiredCity,
+		details.DesiredState,
+		details.DesiredMarket,
+		details.DesiredRegion); locErr != nil {
+		err = locErr
+		return
+	} else {
+		for _, loc := range cloudLocations {
+			popsWithZones[loc.Pop] = loc.Zones
+		}
+	}
+	return
+}
+
+func CreateBasePortDetails() PortDetails {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	return PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		skipDesiredMarket: nil,
+	}
 }

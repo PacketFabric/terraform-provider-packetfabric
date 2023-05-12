@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func datasourcePointToPoint() *schema.Resource {
+func datasourcePointToPoints() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourcePointToPointRead,
 		Schema: map[string]*schema.Schema{

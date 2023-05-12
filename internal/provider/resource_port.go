@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -108,6 +110,11 @@ func resourceInterfaces() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -194,6 +201,14 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		}
 		_ = d.Set("labels", labels)
 	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 
@@ -223,6 +238,31 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+
+	etlDiags, err2 := addETLWarning(c, d.Id())
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	diags = append(diags, etlDiags...)
+
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		enabled := d.Get("enabled")
+		if enabled.(bool) {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "In the dev environment, ports are disabled prior to deletion.",
+			})
+
+			if toggleErr := _togglePortStatus(c, false, d.Id()); toggleErr != nil {
+				return diag.FromErr(toggleErr)
+			}
+			time.Sleep(time.Duration(90) * time.Second)
+		}
+	}
+
 	_, err := c.DeletePort(d.Id())
 	time.Sleep(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	if err != nil {

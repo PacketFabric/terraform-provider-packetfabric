@@ -9,18 +9,16 @@ package testutil
 // Begin of resources templates for required fields only
 
 // Resource: packetfabric_backbone_virtual_circuit
-const RResourceBackboneVirtulalCircuit = `resource "packetfabric_backbone_virtual_circuit" "%s" {
+const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_virtual_circuit" "%s" {
   provider    = packetfabric
   description = "%s"
   epl         = %t
   interface_a {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   interface_z {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   bandwidth {
@@ -52,14 +50,6 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
   speed         = "%s"
 }`
 
-// Resource: packetfabric_billing_modify_order
-const RResourceBillingModifyOrder = `resource "packetfabric_billing_modify_order" "%s" {
-  provider             = packetfabric
-  circuit_id           = %s.id
-  subscription_term    = %v
-  speed                = "%s"
-}`
-
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
 	provider      = packetfabric
@@ -68,30 +58,7 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }
-  
-  resource "time_sleep" "wait_10_seconds" {
-    depends_on = [%s]
-    destroy_duration = "10s"
-  }
-  `
-
-// Resource: packetfabric_cloud_router_bgp_session
-const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
-	provider       = packetfabric
-	circuit_id     = %s.id
-	connection_id  = %s.id
-	address_family = "%s"
-	remote_asn     = %v
-	prefixes {
-		prefix = "%s"
-		type   = "%s"
-	}
-	prefixes {
-		prefix = "%s"
-		type   = "%s"
-	}
-}`
+  }`
 
 // Resource: packetfabric_cloud_router_connection_aws
 const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
@@ -102,6 +69,24 @@ const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_c
   description     = "%s"
   pop             = "%s"
   speed           = "%s"
+}`
+
+// Resource: packetfabric_cloud_router_bgp_session
+const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
+	provider       = packetfabric
+	circuit_id     = %s.id
+	connection_id  = %s.id
+  remote_address = "%s"
+  l3_address     = "%s"
+	remote_asn     = %v
+	prefixes {
+		prefix = "%s"
+		type   = "%s"
+	}
+	prefixes {
+		prefix = "%s"
+		type   = "%s"
+	}
 }`
 
 // Resource: packetfabric_cloud_router_connection_azure
@@ -171,8 +156,9 @@ const RResourceCloudRouterConnectionPort = `resource "packetfabric_cloud_router_
   provider        = packetfabric
   description     = "%s"
   circuit_id      = %s.id
-  port_circuit_id = "%s"
+  port_circuit_id = %s.id
   speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_dedicated_connection
@@ -190,12 +176,13 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
 // Resource: packetfabric_cs_aws_hosted_connection
 const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_connection" "%s" {
   provider       = packetfabric
-  description    = "%s"
-  aws_account_id = "%s"
-  port           = %s.id
-  speed          = "%s"
-  pop            = "%s"
-  vlan           = %v
+  port            = %s.id
+  aws_account_id  = "%s"
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_hosted_marketplace_connection
@@ -383,6 +370,10 @@ const RResourcePointToPoint = `resource "packetfabric_point_to_point" "%s" {
     zone    = "%s"
     autoneg = %t
   }
+}
+resource "time_sleep" "wait_30_seconds_%s" {
+  depends_on = [%s]
+  destroy_duration = "30s"
 }`
 
 // Resource: packetfabric_port
@@ -393,15 +384,8 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   pop               = "%s"
   speed             = "%s"
   subscription_term = %v
-  enabled          = %t
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [%s]
-
-  destroy_duration = "60s"
-}
-`
+  enabled           = %t
+}`
 
 // Resource: packetfabric_port_loa
 const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
@@ -412,3 +396,35 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
+
+const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
+  provider              = packetfabric
+  cloud_provider        = "%s"
+  cloud_connection_type = "%s"
+}`
+
+const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
+  provider  = packetfabric
+  pop       = "%s"
+}`
+
+const DDatasourceLocations = `data "packetfabric_locations" "%s" {
+  provider  = packetfabric
+}`
+
+const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
+  provider = packetfabric
+  pop      = "%s"
+}`
+
+const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
+  provider = packetfabric
+}`
+
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
+  provider = packetfabric
+}`

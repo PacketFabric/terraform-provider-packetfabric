@@ -234,6 +234,11 @@ func resourceCloudRouterConnDelete(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 	if cid, ok := d.GetOk("circuit_id"); ok {
 		cloudConnCID := d.Get("id")
+		etlDiags, err2 := addETLWarning(c, cloudConnCID.(string))
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		diags = append(diags, etlDiags...)
 		if _, err := c.DeleteCloudRouterConnection(cid.(string), cloudConnCID.(string)); err != nil {
 			diags = diag.FromErr(err)
 		} else {
@@ -287,16 +292,16 @@ func BgpImportStatePassthroughContext(ctx context.Context, d *schema.ResourceDat
 }
 
 func checkCloudRouterConnectionStatus(c *packetfabric.PFClient, cid string, id string) error {
-	updateOk := make(chan bool)
-	defer close(updateOk)
+	statusOk := make(chan bool)
+	defer close(statusOk)
 
 	fn := func() (*packetfabric.ServiceState, error) {
 		return c.GetCloudConnectionStatus(cid, id)
 	}
-	go c.CheckServiceStatus(updateOk, fn)
+	go c.CheckServiceStatus(statusOk, fn)
 
-	if !<-updateOk {
-		return fmt.Errorf("Failed to update connection status")
+	if !<-statusOk {
+		return fmt.Errorf("failed to retrieve the status for %s", id)
 	}
 	return nil
 }

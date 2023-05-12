@@ -308,7 +308,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 													Optional:     true,
 													Default:      "output",
 													ValidateFunc: validation.StringInSlice([]string{"output", "input"}, true),
-													Description:  "If using NAT overload, the direction of the NAT connection. \n\t\tEnum: output, input. ",
+													Description:  "If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). \n\t\tEnum: output, input. ",
 												},
 												"nat_type": {
 													Type:         schema.TypeString,
@@ -327,19 +327,19 @@ func resourceRouterConnectionAws() *schema.Resource {
 																Type:         schema.TypeString,
 																Required:     true,
 																ValidateFunc: validateIPAddressWithPrefix,
-																Description:  "The private prefix of this DNAT mapping.",
+																Description:  "Post-translation IP prefix.",
 															},
 															"public_prefix": {
 																Type:         schema.TypeString,
 																Required:     true,
 																ValidateFunc: validateIPAddressWithPrefix,
-																Description:  "The public prefix of this DNAT mapping.",
+																Description:  "Pre-translation IP prefix.",
 															},
 															"conditional_prefix": {
 																Type:         schema.TypeString,
 																Optional:     true,
 																ValidateFunc: validateIPAddressWithPrefix,
-																Description:  "The conditional prefix prefix of this DNAT mapping.",
+																Description:  "Post-translation prefix must be equal to or included within the conditional IP prefix.",
 															},
 														},
 													},
@@ -399,6 +399,11 @@ func resourceRouterConnectionAws() *schema.Resource {
 						},
 					},
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		CustomizeDiff: customdiff.Sequence(
@@ -642,6 +647,14 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err := c.GetEarlyTerminationLiability(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }

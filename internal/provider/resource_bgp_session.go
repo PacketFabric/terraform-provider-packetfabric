@@ -166,7 +166,7 @@ func resourceBgpSession() *schema.Resource {
 							Optional:     true,
 							Default:      "output",
 							ValidateFunc: validation.StringInSlice([]string{"output", "input"}, true),
-							Description:  "If using NAT overload, the direction of the NAT connection. \n\t\tEnum: output, input. ",
+							Description:  "If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). \n\t\tEnum: output, input. ",
 						},
 						"nat_type": {
 							Type:         schema.TypeString,
@@ -185,19 +185,19 @@ func resourceBgpSession() *schema.Resource {
 										Type:         schema.TypeString,
 										Required:     true,
 										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "The private prefix of this DNAT mapping.",
+										Description:  "Post-translation IP prefix.",
 									},
 									"public_prefix": {
 										Type:         schema.TypeString,
 										Required:     true,
 										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "The public prefix of this DNAT mapping.",
+										Description:  "Pre-translation IP prefix.",
 									},
 									"conditional_prefix": {
 										Type:         schema.TypeString,
 										Optional:     true,
 										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "The conditional prefix prefix of this DNAT mapping.",
+										Description:  "Post-translation prefix must be equal to or included within the conditional IP prefix.",
 									},
 								},
 							},
@@ -322,18 +322,21 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("address_family", bgp.AddressFamily)
 	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
 
-	if _, ok := d.GetOk("l3_address"); ok {
+	// If not Azure (Subnet empty)
+	if bgp.Subnet == "" {
 		_ = d.Set("l3_address", bgp.L3Address)
-	}
-	if _, ok := d.GetOk("remote_address"); ok {
 		_ = d.Set("remote_address", bgp.RemoteAddress)
+	} else {
+		// If Azure will unset l3_address remote_address as those aren't in the BGP resource definition for Azure
+		_ = d.Set("l3_address", nil)
+		_ = d.Set("remote_address", nil)
+		// There is no way to know which Subnet is the primary or the secondary one
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  fmt.Sprintf("Manually set primary_subnet or secondary_subnet in Terraform state file using %s", bgp.Subnet),
+		})
 	}
-	if _, ok := d.GetOk("primary_subnet"); ok {
-		_ = d.Set("primary_subnet", bgp.Subnet)
-	}
-	if _, ok := d.GetOk("secondary_subnet"); ok {
-		_ = d.Set("secondary_subnet", bgp.Subnet)
-	}
+
 	if _, ok := d.GetOk("md5"); ok {
 		_ = d.Set("md5", bgp.Md5)
 	}
@@ -462,7 +465,8 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 		bgpSession.L3Address = l3Address.(string)
 	}
 	// https://docs.packetfabric.com/api/v2/swagger/#/Cloud%20Router%20BGP%20Session%20Settings/cloud_routers_bgp_update
-	// Azure BGP session Update: set l3Address based on the values of primarySubnet and secondarySubnet when modified
+	// Azure BGP session Update: l3_address = Azure Subnet (primary or secondary)
+	// set l3Address based on the values of primarySubnet and secondarySubnet when modified
 	// This is a temporary solution until the BGP API is refactored.
 	if d.HasChange("primary_subnet") {
 		if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
@@ -477,6 +481,7 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 	if addressFamily, ok := d.GetOk("address_family"); ok {
 		bgpSession.AddressFamily = addressFamily.(string)
 	}
+	//remote_address not used for Azure
 	if remoteAddress, ok := d.GetOk("remote_address"); ok {
 		bgpSession.RemoteAddress = remoteAddress.(string)
 	}
