@@ -10,10 +10,11 @@ import (
 )
 
 func TestAccDataSourcePortsComputedRequiredFields(t *testing.T) {
+	testutil.PreCheck(t, nil)
+
 	hclPortResult := testutil.DHclDataSourcePorts()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testutil.PreCheck(t, nil) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
