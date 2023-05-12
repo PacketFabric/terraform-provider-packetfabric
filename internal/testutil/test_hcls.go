@@ -56,6 +56,9 @@ const portSpeed = "1Gbps"
 
 var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
+// packetfabric_port_loa
+const PortLoaCustomerName = "loa"
+
 // packetfbaric_backbone_virtual_circuit
 const backboneVCspeed = "50Mbps"
 const backboneVCepl = false
@@ -92,9 +95,6 @@ const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 // packetfabric_cs_aws_hosted_connection
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
-
-// packetfabric_port_loa
-const PortLoaCustomerName = "loa"
 
 // packetfabric_cs_aws_dedicated_connection
 const DedicatedCloudSpeed = "1Gbps"
@@ -151,6 +151,44 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
+}
+
+// packetfabric_backbone_virtual_circuit
+type RHclBackboneVirtualCircuitResult struct {
+	HclResultBase
+	Desc               string
+	Epl                bool
+	InterfaceBackboneA InterfaceBackbone
+	InterfaceBackboneZ InterfaceBackbone
+	BandwidthBackbone
+}
+
+// packetfabric_point_to_point
+type RHclPointToPointResult struct {
+	HclResultBase
+	Desc             string
+	Speed            string
+	Media            string
+	SubscriptionTerm int
+	Pop1             string
+	Zone1            string
+	Autoneg1         bool
+	Pop2             string
+	Zone2            string
+	Autoneg2         bool
+	UpdatedDesc      int
+}
+
+type InterfaceBackbone struct {
+	PortCircuitID string
+	Untagged      bool
+	Vlan          int
+}
+
+type BandwidthBackbone struct {
+	LonghaulType     string
+	Speed            string
+	SubscriptionTerm int
 }
 
 // packetfabric_cloud_router
@@ -226,44 +264,6 @@ type RHclCsAwsDedicatedConnectionResult struct {
 	Speed            string
 }
 
-// packetfabric_backbone_virtual_circuit
-type RHclBackboneVirtualCircuitResult struct {
-	HclResultBase
-	Desc               string
-	Epl                bool
-	InterfaceBackboneA InterfaceBackbone
-	InterfaceBackboneZ InterfaceBackbone
-	BandwidthBackbone
-}
-
-// packetfabric_point_to_point
-type RHclPointToPointResult struct {
-	HclResultBase
-	Desc             string
-	Speed            string
-	Media            string
-	SubscriptionTerm int
-	Pop1             string
-	Zone1            string
-	Autoneg1         bool
-	Pop2             string
-	Zone2            string
-	Autoneg2         bool
-	UpdatedDesc      int
-}
-
-type InterfaceBackbone struct {
-	PortCircuitID string
-	Untagged      bool
-	Vlan          int
-}
-
-type BandwidthBackbone struct {
-	LonghaulType     string
-	Speed            string
-	SubscriptionTerm int
-}
-
 // data packetfabric_locations_cloud
 type DHclDatasourceLocationsCloudResult struct {
 	HclResultBase
@@ -308,6 +308,7 @@ type DHclLocationsMarketsResult struct {
 // ########################################
 // ###### HCLs FOR REQUIRED FIELDS
 // ########################################
+
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	var pop, media, speed, market string
@@ -395,6 +396,120 @@ func RHclPortLoa() RHclPortLoaResult {
 	}
 }
 
+// packetfabric_backbone_virtual_circuit
+func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
+
+	portDetailsA := CreateBasePortDetails()
+	portTestResultA := portDetailsA.RHclPort(true)
+	// Get the market from the first port
+	marketA := portTestResultA.Market
+	log.Println("Market from first port: ", marketA)
+
+	portDetailsZ := CreateBasePortDetails()
+	portDetailsZ.skipDesiredMarket = &marketA // Send the market for the second port so it selects a different one to avoid to build a metro VC
+	log.Println("Sending the market to the second port: ", *portDetailsZ.skipDesiredMarket)
+	portTestResultZ := portDetailsZ.RHclPort(true)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfBackboneVirtualCircuit)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	backboneVirtualCircuitHcl := fmt.Sprintf(
+		RResourceBackboneVirtualCircuitVlan,
+		hclName,
+		uniqueDesc,
+		backboneVCepl,
+		portTestResultA.ResourceReference,
+		backboneVCvlan1Value,
+		portTestResultZ.ResourceReference,
+		backboneVCvlan2Value,
+		backboneVClonghaulType,
+		backboneVCspeed,
+		subscriptionTerm,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResultA.Hcl, portTestResultZ.Hcl, backboneVirtualCircuitHcl)
+
+	return RHclBackboneVirtualCircuitResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfBackboneVirtualCircuit,
+			ResourceName: resourceName,
+		},
+		Desc: uniqueDesc,
+		Epl:  backboneVCepl,
+		InterfaceBackboneA: InterfaceBackbone{
+			Vlan:          backboneVCvlan1Value,
+			PortCircuitID: portTestResultA.ResourceReference,
+		},
+		InterfaceBackboneZ: InterfaceBackbone{
+			Vlan:          backboneVCvlan2Value,
+			PortCircuitID: portTestResultZ.ResourceReference,
+		},
+		BandwidthBackbone: BandwidthBackbone{
+			LonghaulType:     backboneVClonghaulType,
+			Speed:            backboneVCspeed,
+			SubscriptionTerm: subscriptionTerm,
+		},
+	}
+}
+
+// packetfabric_point_to_point
+func RHclPointToPoint() RHclPointToPointResult {
+
+	var speed = portSpeed
+	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
+	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
+
+	pop2, zone2, media, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1)
+	if err2 != nil {
+		log.Println("Error getting pop and zone with available port: ", err2)
+		log.Panic(err)
+	}
+	log.Println("Pop2, media, and speed set to: ", pop2, zone2, media, market2, speed)
+
+	uniqueDesc := GenerateUniqueName()
+	resourceName, hclName := GenerateUniqueResourceName(pfPoinToPoint)
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	hcl := fmt.Sprintf(RResourcePointToPoint,
+		hclName,
+		uniqueDesc,
+		speed,
+		media,
+		subscriptionTerm,
+		pop1,
+		zone1,
+		false,
+		pop2,
+		zone2,
+		false,
+		hclName,
+		resourceName)
+
+	return RHclPointToPointResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfPoinToPoint,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Speed:            speed,
+		Media:            media,
+		SubscriptionTerm: subscriptionTerm,
+		Pop1:             pop1,
+		Zone1:            zone1,
+		Autoneg1:         false,
+		Pop2:             pop2,
+		Zone2:            zone2,
+		Autoneg2:         false,
+	}
+}
+
 // packetfabric_cloud_router
 func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouter)
@@ -445,7 +560,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
@@ -564,7 +679,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -601,7 +716,6 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 	}
 }
 
-
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
@@ -614,15 +728,13 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
-	// cloudLocations, err := c.GetCloudLocations("aws", "dedicated", false, true, false, "", "", "", "", "")
-
 	popDetails := PortDetails{
 		PFClient:              c,
 		DesiredSpeed:          DedicatedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, region := popDetails.FindAvailableCloudPopZone()
 
 	if err != nil {
 		log.Panic(err)
@@ -631,7 +743,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	hcl := fmt.Sprintf(
 		RResourceCSAwsDedicatedConnection,
 		hclName,
-		// location.CloudConnectionDetails.Region,
+		region,
 		uniqueDesc,
 		pop,
 		subscriptionTerm,
@@ -646,127 +758,13 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 			Resource:     pfCSAwsDedicatedConnection,
 			ResourceName: resourceName,
 		},
-		// AwsRegion:        location.Region,
+		AwsRegion:        region,
 		Description:      uniqueDesc,
 		Pop:              pop,
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
 		Speed:            DedicatedCloudSpeed,
-	}
-}
-
-// packetfabric_backbone_virtual_circuit
-func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
-
-	portDetailsA := CreateBasePortDetails()
-	portTestResultA := portDetailsA.RHclPort(true)
-	// Get the market from the first port
-	marketA := portTestResultA.Market
-	log.Println("Market from first port: ", marketA)
-
-	portDetailsZ := CreateBasePortDetails()
-	portDetailsZ.skipDesiredMarket = &marketA // Send the market for the second port so it selects a different one to avoid to build a metro VC
-	log.Println("Sending the market to the second port: ", *portDetailsZ.skipDesiredMarket)
-	portTestResultZ := portDetailsZ.RHclPort(true)
-
-	resourceName, hclName := GenerateUniqueResourceName(pfBackboneVirtualCircuit)
-	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
-
-	backboneVirtualCircuitHcl := fmt.Sprintf(
-		RResourceBackboneVirtualCircuitVlan,
-		hclName,
-		uniqueDesc,
-		backboneVCepl,
-		portTestResultA.ResourceReference,
-		backboneVCvlan1Value,
-		portTestResultZ.ResourceReference,
-		backboneVCvlan2Value,
-		backboneVClonghaulType,
-		backboneVCspeed,
-		subscriptionTerm,
-	)
-
-	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResultA.Hcl, portTestResultZ.Hcl, backboneVirtualCircuitHcl)
-
-	return RHclBackboneVirtualCircuitResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfBackboneVirtualCircuit,
-			ResourceName: resourceName,
-		},
-		Desc: uniqueDesc,
-		Epl:  backboneVCepl,
-		InterfaceBackboneA: InterfaceBackbone{
-			Vlan:          backboneVCvlan1Value,
-			PortCircuitID: portTestResultA.ResourceReference,
-		},
-		InterfaceBackboneZ: InterfaceBackbone{
-			Vlan:          backboneVCvlan2Value,
-			PortCircuitID: portTestResultZ.ResourceReference,
-		},
-		BandwidthBackbone: BandwidthBackbone{
-			LonghaulType:     backboneVClonghaulType,
-			Speed:            backboneVCspeed,
-			SubscriptionTerm: subscriptionTerm,
-		},
-	}
-}
-
-// packetfabric_point_to_point
-func RHclPointToPoint() RHclPointToPointResult {
-
-	var speed = portSpeed
-	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil)
-	if err != nil {
-		log.Println("Error getting pop and zone with available port: ", err)
-		log.Panic(err)
-	}
-	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
-
-	pop2, zone2, media, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1)
-	if err2 != nil {
-		log.Println("Error getting pop and zone with available port: ", err2)
-		log.Panic(err)
-	}
-	log.Println("Pop2, media, and speed set to: ", pop2, zone2, media, market2, speed)
-
-	uniqueDesc := GenerateUniqueName()
-	resourceName, hclName := GenerateUniqueResourceName(pfPoinToPoint)
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
-
-	hcl := fmt.Sprintf(RResourcePointToPoint,
-		hclName,
-		uniqueDesc,
-		speed,
-		media,
-		subscriptionTerm,
-		pop1,
-		zone1,
-		false,
-		pop2,
-		zone2,
-		false,
-		hclName,
-		resourceName)
-
-	return RHclPointToPointResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfPoinToPoint,
-			ResourceName: resourceName,
-		},
-		Desc:             uniqueDesc,
-		Speed:            speed,
-		Media:            media,
-		SubscriptionTerm: subscriptionTerm,
-		Pop1:             pop1,
-		Zone1:            zone1,
-		Autoneg1:         false,
-		Pop2:             pop2,
-		Zone2:            zone2,
-		Autoneg2:         false,
 	}
 }
 
