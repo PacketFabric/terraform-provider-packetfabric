@@ -10,12 +10,11 @@ import (
 )
 
 func TestAccPortLOARequiredFields(t *testing.T) {
+	testutil.PreCheck(t, []string{"PF_USER_EMAIL"})
+
 	portLoaResult := testutil.RHclPortLoa()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, nil)
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

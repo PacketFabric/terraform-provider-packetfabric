@@ -75,7 +75,6 @@ const CloudRouterBgpSessionType2 = "out"
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
 const PortLoaCustomerName = "loa"
-const PortLoaDestinationEmail = "romain.jouhannet@packetfabric.com"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -596,12 +595,13 @@ func RHclPortLoa() RHclPortLoaResult {
 
 	hclPortResult := portDetails.RHclPort(false)
 	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
+	email := os.Getenv("PF_USER_EMAIL")
 
 	hcl := fmt.Sprintf(RResourcePortLoa,
 		hclName,
 		hclPortResult.ResourceReference,
 		PortLoaCustomerName,
-		PortLoaDestinationEmail,
+		email,
 	)
 
 	return RHclPortLoaResult{
@@ -611,7 +611,7 @@ func RHclPortLoa() RHclPortLoaResult {
 			ResourceName: resourceName,
 		},
 		LoaCustomerName:  PortLoaCustomerName,
-		DestinationEmail: PortLoaDestinationEmail,
+		DestinationEmail: email,
 	}
 }
 
