@@ -33,16 +33,6 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfPortLoa = "packetfabric_port_loa"
 
-// data-sources
-const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
-const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
-const pfDataLocations = "data.packetfabric_locations"
-const pfDataZones = "data.packetfabric_locations_pop_zones"
-const pfDataLocationsRegions = "data.packetfabric_locations_regions"
-const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
-const pfPortLoa = "packetfabric_port_loa"
-
 // ########################################
 // ###### HARDCODED VALUES
 // ########################################
