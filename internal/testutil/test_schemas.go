@@ -60,23 +60,6 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   regions       = ["%s", "%s"]
   }`
 
-// Resource: packetfabric_cloud_router_bgp_session
-const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
-	provider       = packetfabric
-	circuit_id     = %s.id
-	connection_id  = %s.id
-	address_family = "%s"
-	remote_asn     = %v
-	prefixes {
-		prefix = "%s"
-		type   = "%s"
-	}
-	prefixes {
-		prefix = "%s"
-		type   = "%s"
-	}
-}`
-
 // Resource: packetfabric_cloud_router_connection_aws
 const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
   provider        = packetfabric
@@ -86,6 +69,24 @@ const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_c
   description     = "%s"
   pop             = "%s"
   speed           = "%s"
+}`
+
+// Resource: packetfabric_cloud_router_bgp_session
+const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
+	provider       = packetfabric
+	circuit_id     = %s.id
+	connection_id  = %s.id
+  remote_address = "%s"
+  l3_address     = "%s"
+	remote_asn     = %v
+	prefixes {
+		prefix = "%s"
+		type   = "%s"
+	}
+	prefixes {
+		prefix = "%s"
+		type   = "%s"
+	}
 }`
 
 // Resource: packetfabric_cloud_router_connection_azure

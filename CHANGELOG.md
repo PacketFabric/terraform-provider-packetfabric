@@ -57,7 +57,7 @@ BUG FIXES:
 
 ACCEPTANCE TESTING:
 
-* ACC Test for packetfabric_cloud_router (#368)
+* ACC Test for packetfabric_cloud_router resource (#368)
 
 ## 1.3.0  (April 5, 2023)
 

@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cloud_router_connection_google (Resource)
 
-A connection from your cloud router to your Google Cloud Platform environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/).
+A connection from your cloud router to your Google Cloud Platform environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/) and [Cloud Router NAT](https://docs.packetfabric.com/cr/nat/).
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
@@ -192,7 +192,7 @@ Optional:
 
 Optional:
 
-- `direction` (String) If using NAT overload, the direction of the NAT connection. 
+- `direction` (String) If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). 
 		Enum: output, input. Defaults: output
 - `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--nat--dnat_mappings))
 - `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
@@ -209,12 +209,12 @@ Optional:
 
 Required:
 
-- `private_prefix` (String) The private prefix of this DNAT mapping.
-- `public_prefix` (String) The public prefix of this DNAT mapping.
+- `private_prefix` (String) Post-translation IP prefix.
+- `public_prefix` (String) Pre-translation IP prefix.
 
 Optional:
 
-- `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
+- `conditional_prefix` (String) Post-translation prefix must be equal to or included within the conditional IP prefix.
 
 
 
