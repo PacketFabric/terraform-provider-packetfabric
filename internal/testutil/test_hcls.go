@@ -30,6 +30,7 @@ const pfDataZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
+const pfPortLoa = "packetfabric_port_loa"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -80,6 +81,7 @@ const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 // packetfabric_cs_aws_hosted_connection
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
+const PortLoaCustomerName = "loa"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -257,6 +259,13 @@ type DHclActivityLogResult struct {
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
 	HclResultBase
+}
+
+type RHclPortLoaResult struct {
+	HclResultBase
+	Port             RHclPortResult
+	LoaCustomerName  string
+	DestinationEmail string
 }
 
 // Patterns:
@@ -580,6 +589,42 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
+	}
+}
+
+// packetfabric_port_loa
+func RHclPortLoa() RHclPortLoaResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:          c,
+		DesiredSpeed:      portSpeed,
+		IsCloudConnection: true,
+	}
+
+	hclPortResult := portDetails.RHclPort(false)
+	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
+	email := os.Getenv("PF_USER_EMAIL")
+
+	hcl := fmt.Sprintf(RResourcePortLoa,
+		hclName,
+		hclPortResult.ResourceReference,
+		PortLoaCustomerName,
+		email,
+	)
+
+	return RHclPortLoaResult{
+		HclResultBase: HclResultBase{
+			Hcl:          fmt.Sprintf("%s\n%s", hclPortResult.Hcl, hcl),
+			Resource:     pfPortLoa,
+			ResourceName: resourceName,
+		},
+		LoaCustomerName:  PortLoaCustomerName,
+		DestinationEmail: email,
 	}
 }
 
