@@ -1,3 +1,5 @@
+//go:build resource || dedicated_cloud || all || smoke
+
 package provider
 
 import (
