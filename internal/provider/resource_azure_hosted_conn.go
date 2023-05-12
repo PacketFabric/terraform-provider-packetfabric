@@ -82,6 +82,7 @@ func resourceAzureReqExpressHostedConn() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(speedOptions(), true),
 				Description:  "The peed of the new connection.\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
+				Deprecated:   "This field is deprecated and will be removed in a future release.",
 			},
 			"po_number": {
 				Type:         schema.TypeString,
