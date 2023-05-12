@@ -9,14 +9,9 @@ import (
 )
 
 func TestAccAwsRequestDedicatedConnRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, nil)
 	csAwsDedicatedConnectionResult := testutil.RHclCsAwsDedicatedConnection()
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
