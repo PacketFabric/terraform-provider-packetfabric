@@ -71,6 +71,12 @@ func resourceLinkAggregationGroups() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"enabled": {
+				Type:        schema.TypeBool,
+				Default:     true,
+				Optional:    true,
+				Description: "Change LAG Admin Status. Set it to true when LAG is enabled, false when LAG is disabled. ",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -104,6 +110,14 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 			if err != nil {
 				diags = append(diags, diag.FromErr(err)...)
 			}
+    }
+  }
+
+	enabled := d.Get("enabled").(bool)
+	if !enabled {
+		_, err := c.DisableLinkAggregationGroup(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
@@ -137,6 +151,22 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
+
+	if d.HasChange("enabled") {
+		enabled := d.Get("enabled").(bool)
+		if !enabled {
+			_, err := c.DisableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		} else {
+			_, err := c.EnableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	}
+
 	return diags
 }
 
@@ -206,11 +236,6 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 	time.Sleep(45 * time.Second)
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Link Aggregation Group delete workflow",
-		Detail:   resp.WorkflowName,
-	})
 	return diags
 }
 

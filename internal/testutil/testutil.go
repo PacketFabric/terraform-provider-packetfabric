@@ -50,8 +50,8 @@ func GenerateUniqueName() string {
 func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
 	uuid := uuid.NewString()
 	shortUuid := uuid[0:8]
-	shortUuid2 := uuid[9:13]
-	hclName = fmt.Sprintf("terraform_testacc_%s_%s", shortUuid, shortUuid2)
+	randomNumber := rand.Intn(9000) + 1000
+	hclName = fmt.Sprintf("terraform_testacc_%s_%d", shortUuid, randomNumber)
 	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
 	return
 }
@@ -155,7 +155,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	return "", "", "", "", errors.New("no pops with available ports")
 }
 
-func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
+func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string) {
 	popsWithZones, _ := details.FetchCloudPopsAndZones()
 	popsToSkip := make([]string, 0)
 
@@ -172,10 +172,11 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
 			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
 			continue
 		} else {
-			if len(zones) > 0 {
+			if len(zones) > 1 {
 				pop = popAvailable
 				zone = zones[0]
-				log.Printf("Found available PoP: %s, Zone: %s\n", pop, zone)
+				region = zones[len(zones)-1]
+				log.Printf("Found available PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
 				return
 			} else {
 				popsToSkip = append(popsToSkip, popAvailable)
@@ -183,7 +184,7 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
 		}
 	}
 
-	log.Println("No available Cloud PoP and zone found.")
+	log.Println("No available Cloud PoP, zone, and region found.")
 	return
 }
 
@@ -211,7 +212,8 @@ func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]
 		return
 	} else {
 		for _, loc := range cloudLocations {
-			popsWithZones[loc.Pop] = loc.Zones
+			popsWithZones[loc.Pop] = append(loc.Zones, loc.CloudConnectionDetails.Region)
+
 		}
 	}
 	return
