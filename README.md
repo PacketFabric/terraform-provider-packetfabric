@@ -127,7 +127,7 @@ You can test the provider using different methods. Here are some common scenario
 To run all tests, you can use the all tag. Navigate to the internal/provider directory and run the following command:
 
 ```sh
-$ cd internal/provider;  TF_ACC=1 go test -v -tags=all
+$ cd internal/provider;  TF_ACC=1 go test -v -timeout 120m -tags=all
 ```
 
 ### Running Tests with Specific Tags
@@ -135,7 +135,7 @@ $ cd internal/provider;  TF_ACC=1 go test -v -tags=all
 If you want to run a subset of tests, you can do so by specifying the relevant tag. For example, to run tests that have been tagged with smoke, use the following command:
 
 ```sh
-$ cd internal/provider;  TF_ACC=1 go test -v -tags=smoke
+$ cd internal/provider;  TF_ACC=1 go test -v -timeout 120m -tags=smoke
 ```
 
 ### Running Individual Tests
