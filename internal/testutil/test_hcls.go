@@ -32,6 +32,7 @@ const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfPortLoa = "packetfabric_port_loa"
+const pfDataPort = "data.packetfabric_ports"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -154,6 +155,18 @@ type RHclBackboneVirtualCircuitResult struct {
 	BandwidthBackbone
 }
 
+type InterfaceBackbone struct {
+	PortCircuitID string
+	Untagged      bool
+	Vlan          int
+}
+
+type BandwidthBackbone struct {
+	LonghaulType     string
+	Speed            string
+	SubscriptionTerm int
+}
+
 // packetfabric_point_to_point
 type RHclPointToPointResult struct {
 	HclResultBase
@@ -168,18 +181,6 @@ type RHclPointToPointResult struct {
 	Zone2            string
 	Autoneg2         bool
 	UpdatedDesc      int
-}
-
-type InterfaceBackbone struct {
-	PortCircuitID string
-	Untagged      bool
-	Vlan          int
-}
-
-type BandwidthBackbone struct {
-	LonghaulType     string
-	Speed            string
-	SubscriptionTerm int
 }
 
 // packetfabric_cloud_router
@@ -289,6 +290,11 @@ type DHclActivityLogResult struct {
 
 // data packetfabric_locations_markets
 type DHclLocationsMarketsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_port
+type DHclPortResult struct {
 	HclResultBase
 }
 
@@ -584,6 +590,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_port
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 	portDetails := CreateBasePortDetails()
 	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
@@ -709,6 +716,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 	}
 }
 
+
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
@@ -761,6 +769,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	}
 }
 
+// data.packetfabric_locations_cloud
 func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataSourceLocationsCloud)
@@ -776,6 +785,7 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 	}
 }
 
+// data.packetfabric_locations_port_availability
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
 	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
@@ -794,6 +804,7 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 	}
 }
 
+// data.packetfabric_locations
 func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
@@ -810,6 +821,7 @@ func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 	}
 }
 
+// data.packetfabric_locations_pop_zones
 func DHclDataSourceZones() DHclLocationsZonesResult {
 
 	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
@@ -828,6 +840,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 	}
 }
 
+// data.packetfabric_locations_regions
 func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsRegions)
@@ -844,6 +857,7 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 	}
 }
 
+// data.packetfabric_activitylog
 func DHclDataSourceActivityLog() DHclActivityLogResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
@@ -860,6 +874,7 @@ func DHclDataSourceActivityLog() DHclActivityLogResult {
 	}
 }
 
+// data.packetfabric_locations_markets
 func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsMarkets)
@@ -871,6 +886,31 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocationsMarkets,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_ports
+func DHclDataSourcePorts() DHclPortResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
+	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
+
+	return DHclPortResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataPort,
 			ResourceName: resourceName,
 		},
 	}

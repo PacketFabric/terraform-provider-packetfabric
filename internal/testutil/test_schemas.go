@@ -399,34 +399,46 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 
 // End of resources templates for required fields only
 
+// Datasource: packetfabric_locations_cloud
 const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
   provider              = packetfabric
   cloud_provider        = "%s"
   cloud_connection_type = "%s"
 }`
 
+// Datasource: packetfabric_locations_port_availability
 const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
   provider  = packetfabric
   pop       = "%s"
 }`
 
+// Datasource: packetfabric_locations
 const DDatasourceLocations = `data "packetfabric_locations" "%s" {
   provider  = packetfabric
 }`
 
+// Datasource: packetfabric_locations_pop_zones
 const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
   provider = packetfabric
   pop      = "%s"
 }`
 
+// Datasource: packetfabric_locations_regions
 const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
   provider = packetfabric
 }`
 
+// Datasource: packetfabric_activitylog
 const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
   provider = packetfabric
 }`
 
+// Datasource: packetfabric_locations_markets
 const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
   provider = packetfabric
+}`
+
+// Datasource: packetfabric_ports
+const DDataSourcePorts = `data "packetfabric_ports" "%s" {
+  provider          = packetfabric
 }`
