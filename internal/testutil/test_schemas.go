@@ -442,3 +442,8 @@ const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" 
 const DDataSourcePorts = `data "packetfabric_ports" "%s" {
   provider          = packetfabric
 }`
+
+// Datasource: packetfabric_billing
+const DDatasourceBilling = `data "packetfabric_billing" "%s" {
+  circuit_id        = %s.id
+}`

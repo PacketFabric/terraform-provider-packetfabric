@@ -50,8 +50,8 @@ func GenerateUniqueName() string {
 func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
 	uuid := uuid.NewString()
 	shortUuid := uuid[0:8]
-	shortUuid2 := uuid[9:13]
-	hclName = fmt.Sprintf("terraform_testacc_%s_%s", shortUuid, shortUuid2)
+	randomNumber := rand.Intn(9000) + 1000
+	hclName = fmt.Sprintf("terraform_testacc_%s_%d", shortUuid, randomNumber)
 	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
 	return
 }

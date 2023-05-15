@@ -33,6 +33,7 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
+const pfDatasourceBilling = "data.packetfabric_billing"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -58,8 +59,8 @@ const backboneVCvlan2Value = 104
 const backboneVClonghaulType = "dedicated"
 
 // packetfabric_cloud_router
-const DefaultCloudRouterCapacity = "1Gbps"
-const CloudRouterCapacityChange = "2Gbps"
+const DefaultCloudRouterCapacity = "5Gbps"
+const CloudRouterCapacityChange = "10Gbps"
 const CloudRouterRegionUS = "US"
 const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
@@ -127,14 +128,14 @@ type HclResultBase struct {
 // packetfabric_port
 type RHclPortResult struct {
 	HclResultBase
-	ResourceReference string
-	Description       string
-	Media             string
-	Pop               string
-	Speed             string
-	SubscriptionTerm  int
-	Enabled           bool
-	Market            string
+	ResourceName     string
+	Description      string
+	Media            string
+	Pop              string
+	Speed            string
+	SubscriptionTerm int
+	Enabled          bool
+	Market           string
 }
 
 // packetfabric_port_loa
@@ -210,11 +211,11 @@ type RHclCloudRouterConnectionAwsResult struct {
 // packetfabric_cloud_router_connection_port
 type RHclCloudRouterConnectionPortResult struct {
 	HclResultBase
-	Desc              string
-	CloudRouterResult RHclCloudRouterResult
-	PortResult        RHclPortResult
-	Speed             string
-	Vlan              int
+	Desc        string
+	CloudRouter RHclCloudRouterResult
+	PortResult  RHclPortResult
+	Speed       string
+	Vlan        int
 }
 
 // packetfabric_cloud_router_bgp_session
@@ -298,6 +299,11 @@ type DHclPortResult struct {
 	HclResultBase
 }
 
+// data packetfabric_billing
+type DHclDatasourceBillingResult struct {
+	HclResultBase
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -326,7 +332,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	speed = details.DesiredSpeed
 	log.Println("Pop, media, market, and speed set to: ", pop, media, market, speed)
 
-	resourceReference, hclName := GenerateUniqueResourceName(pfPort)
+	resourceName, hclName := GenerateUniqueResourceName(pfPort)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
@@ -348,14 +354,14 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 			Resource:     pfPort,
 			ResourceName: hclName,
 		},
-		ResourceReference: resourceReference,
-		Description:       uniqueDesc,
-		Media:             media,
-		Pop:               pop,
-		Speed:             speed,
-		SubscriptionTerm:  subscriptionTerm,
-		Enabled:           portEnabled,
-		Market:            market,
+		ResourceName:     resourceName,
+		Description:      uniqueDesc,
+		Media:            media,
+		Pop:              pop,
+		Speed:            speed,
+		SubscriptionTerm: subscriptionTerm,
+		Enabled:          portEnabled,
+		Market:           market,
 	}
 }
 
@@ -368,9 +374,8 @@ func RHclPortLoa() RHclPortLoaResult {
 	}
 
 	portDetails := PortDetails{
-		PFClient:          c,
-		DesiredSpeed:      portSpeed,
-		IsCloudConnection: true,
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
 	}
 
 	hclPortResult := portDetails.RHclPort(false)
@@ -379,7 +384,7 @@ func RHclPortLoa() RHclPortLoaResult {
 
 	hcl := fmt.Sprintf(RResourcePortLoa,
 		hclName,
-		hclPortResult.ResourceReference,
+		hclPortResult.ResourceName,
 		PortLoaCustomerName,
 		email,
 	)
@@ -418,9 +423,9 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 		hclName,
 		uniqueDesc,
 		backboneVCepl,
-		portTestResultA.ResourceReference,
+		portTestResultA.ResourceName,
 		backboneVCvlan1Value,
-		portTestResultZ.ResourceReference,
+		portTestResultZ.ResourceName,
 		backboneVCvlan2Value,
 		backboneVClonghaulType,
 		backboneVCspeed,
@@ -439,11 +444,11 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 		Epl:  backboneVCepl,
 		InterfaceBackboneA: InterfaceBackbone{
 			Vlan:          backboneVCvlan1Value,
-			PortCircuitID: portTestResultA.ResourceReference,
+			PortCircuitID: portTestResultA.ResourceName,
 		},
 		InterfaceBackboneZ: InterfaceBackbone{
 			Vlan:          backboneVCvlan2Value,
-			PortCircuitID: portTestResultZ.ResourceReference,
+			PortCircuitID: portTestResultZ.ResourceName,
 		},
 		BandwidthBackbone: BandwidthBackbone{
 			LonghaulType:     backboneVClonghaulType,
@@ -556,6 +561,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		DesiredSpeed:          CloudRouterConnAwsSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
+		HasCloudRouter:        true,
 		IsCloudConnection:     true,
 	}
 
@@ -592,7 +598,9 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 
 // packetfabric_cloud_router_connection_port
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
+
 	portDetails := CreateBasePortDetails()
+
 	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
@@ -605,7 +613,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		hclName,
 		uniqueDesc,
 		cloudRouterResult.ResourceName,
-		portTestResult.ResourceReference,
+		portTestResult.ResourceName,
 		CloudRouterConnPortSpeed,
 		CloudRouterConnPortVlan,
 	)
@@ -618,11 +626,11 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		CloudRouterResult: cloudRouterResult,
-		PortResult:        portTestResult,
-		Desc:              uniqueDesc,
-		Speed:             CloudRouterConnPortSpeed,
-		Vlan:              CloudRouterConnPortVlan,
+		CloudRouter: cloudRouterResult,
+		PortResult:  portTestResult,
+		Desc:        uniqueDesc,
+		Speed:       CloudRouterConnPortSpeed,
+		Vlan:        CloudRouterConnPortVlan,
 	}
 }
 
@@ -691,7 +699,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 	awsHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSAwsHostedConnection,
 		hclName,
-		portTestResult.ResourceReference,
+		portTestResult.ResourceName,
 		os.Getenv("PF_AWS_ACCOUNT_ID"),
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
@@ -902,6 +910,8 @@ func DHclDataSourcePorts() DHclPortResult {
 	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
+	log.Printf("Data-source name: %s\n", hclName)
+
 	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
@@ -910,6 +920,29 @@ func DHclDataSourcePorts() DHclPortResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataPort,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_billing
+func DHclDatasourceBilling() DHclDatasourceBillingResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceBilling)
+	log.Printf("Data-source name: %s\n", hclName)
+
+	billingHcl := fmt.Sprintf(DDatasourceBilling,
+		hclName,
+		hclCloudRouterRes.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, billingHcl)
+
+	return DHclDatasourceBillingResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceBilling,
 			ResourceName: resourceName,
 		},
 	}
