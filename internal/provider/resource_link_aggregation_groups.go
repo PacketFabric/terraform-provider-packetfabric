@@ -75,7 +75,7 @@ func resourceLinkAggregationGroups() *schema.Resource {
 				Type:        schema.TypeBool,
 				Default:     true,
 				Optional:    true,
-				Description: "Sets the status of the lag",
+				Description: "Change LAG Admin Status. Set it to true when LAG is enabled, false when LAG is disabled. ",
 			},
 		},
 		Importer: &schema.ResourceImporter{
