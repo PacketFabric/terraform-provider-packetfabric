@@ -12,7 +12,7 @@ func TestAccGoogleDedicatedConnectionRequiredFields(t *testing.T) {
 
 	testutil.SkipIfEnvNotSet(t)
 
-	csGoogleDedicatedConnectionResult := testutil.RHclCSGoogleDedicatedConnection()
+	csGoogleDedicatedConnectionResult := testutil.RHclCsGoogleDedicatedConnection()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
