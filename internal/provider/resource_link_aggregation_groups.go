@@ -110,8 +110,8 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 			if err != nil {
 				diags = append(diags, diag.FromErr(err)...)
 			}
-    }
-  }
+		}
+	}
 
 	enabled := d.Get("enabled").(bool)
 	if !enabled {
