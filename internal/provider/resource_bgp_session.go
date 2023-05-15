@@ -331,10 +331,15 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 		_ = d.Set("l3_address", nil)
 		_ = d.Set("remote_address", nil)
 		// There is no way to know which Subnet is the primary or the secondary one
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  fmt.Sprintf("Manually set primary_subnet or secondary_subnet in Terraform state file using %s", bgp.Subnet),
-		})
+		// Display warning in case none of the is set in the state file
+		if _, ok := d.GetOk("primary_subnet"); !ok {
+			if _, ok := d.GetOk("secondary_subnet"); !ok {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  fmt.Sprintf("Manually set primary_subnet or secondary_subnet in Terraform state file using %s", bgp.Subnet),
+				})
+			}
+		}
 	}
 
 	if _, ok := d.GetOk("md5"); ok {
