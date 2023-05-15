@@ -1,7 +1,10 @@
-# Use Case: PacketFabric Hosted cloud connection to AWS
+# Use Case: PacketFabric Hosted cloud connection to AWS with Cloud Side Provisioning
 
 This use case shows an example on how to use the PacketFabric & AWS Terraform providers 
 to automate the creation of a Hosted Cloud Connection between PacketFabric and AWS in a Cloud On-Ramps facility.
+This example uses AWS Private VIF & Gateway.
+
+**Note:** This example demonstrates the use of PacketFabric's Cloud Side provisioning feature. To view the required permissions for the AWS access key, please refer to our [documentation](https://docs.packetfabric.com/cloud/aws/hosted/credentials/). If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
 ## Useful links
 
@@ -23,11 +26,9 @@ to automate the creation of a Hosted Cloud Connection between PacketFabric and A
 - "aws_vpn_gateway_attachment"
 - "aws_route_table"
 - "aws_route_table_association"
-- "packetfabric_cs_aws_hosted_connection"
-- "time_sleep"
-- "aws_dx_connection_confirmation"
 - "aws_dx_gateway"
-- "aws_dx_private_virtual_interface"
+- "packetfabric_cs_aws_hosted_connection"
+- "packetfabric_cs_hosted_connection_router_config"
 
 **Estimated time:** ~15 min for AWS & PacketFabric resources + ~10-15 min for AWS Direct Connect Gateway association with AWS Virtual Private Gateways
 
@@ -48,7 +49,7 @@ Ensure you have the following items available:
 
 - [AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html)
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
-- [Packet Fabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
+- [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
 
 ## Quick start
@@ -70,8 +71,8 @@ Set additional environment variables for AWS:
 
 ```sh
 export PF_AWS_ACCOUNT_ID="98765432"
-export AWS_ACCESS_KEY_ID = "ABCDEFGH"
-export AWS_SECRET_ACCESS_KEY = "secret"
+export AWS_ACCESS_KEY_ID="ABCDEFGH"
+export AWS_SECRET_ACCESS_KEY="secret"
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.

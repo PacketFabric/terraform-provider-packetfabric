@@ -131,6 +131,16 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"gateway_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The IBM Gateway ID.",
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -185,21 +195,49 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 		_ = d.Set("ibm_account_id", resp.CloudSettings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.CloudSettings.BgpAsn)
-		_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
-		_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
+			_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
+		}
+		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		}
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("zone", resp.Zone)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp.Zone)
+		}
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
+		if resp.CloudSettings.GatewayID == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The gateway_id is currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("gateway_id", resp.CloudSettings.GatewayID)
+		}
 		// unsetFields: published_quote_line_uuid
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 

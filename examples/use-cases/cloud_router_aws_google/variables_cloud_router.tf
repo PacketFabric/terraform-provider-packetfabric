@@ -16,19 +16,14 @@ variable "pf_cr_regions" {
   default     = ["US"] # ["UK"] ["US", "UK"]
 }
 
-# PacketFabric Google Cloud Router Connection - AWS and Google
+# PacketFabric Cloud Router Connection - Common
 variable "pf_crc_speed" {
   type        = string
   description = "The speed of the new connection"
   default     = "50Mbps"
 }
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
-}
 
-# PacketFabric AWS Cloud Router Connection - AWS
+# PacketFabric Cloud Router Connection - AWS
 variable "pf_crc_pop1" {
   type        = string
   description = "The POP in which you want to provision the connection"
@@ -36,19 +31,12 @@ variable "pf_crc_pop1" {
 }
 variable "pf_crc_zone1" {
   type    = string
-  default = "C"
+  default = "C" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 
-# PacketFabric Google Cloud Router Connection - Google
+# PacketFabric Cloud Router Connection - Google
 variable "pf_crc_pop2" {
   type        = string
   description = "The POP in which you want to provision the connection"
   default     = "SFO1"
-}
-
-# PacketFabric Google Cloud Router Connection - AWS
-variable "pf_crc_is_public" {
-  type        = bool
-  description = "Whether PacketFabric should allocate a public IP address for this connection"
-  default     = false
 }

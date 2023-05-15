@@ -166,7 +166,7 @@ variable "google_pairing_key" {
 }
 variable "google_vlan_attachment_name" {
   sensitive = true
-  default   = "vlan_attachment_name"
+  default   = "my_vlan_attachment"
 }
 variable "pf_cs_pop1" {
   type    = string
@@ -179,6 +179,23 @@ variable "pf_cs_speed1" {
 variable "pf_cs_vlan1" {
   type    = number
   default = 106
+}
+# Google Cloud Side Provisioning  (also used for AWS Cloud Router Connection)
+variable "pf_cs_google_region" {
+  type    = string
+  default = "us-west1"
+}
+variable "pf_cs_google_vpc_name" {
+  type    = string
+  default = "default"
+}
+variable "pf_cs_google_customer_asn" {
+  type    = number
+  default = 64517
+}
+variable "pf_cs_google_bgp_md5" {
+  type    = string
+  default = "changeme"
 }
 
 # AWS Hosted Connection
@@ -198,7 +215,7 @@ variable "pf_cs_vlan2" {
   type    = number
   default = 107
 }
-# AWS Cloud Side Provisioning
+# AWS Cloud Side Provisioning (also used for AWS Cloud Router Connection)
 variable "pf_cs_aws_region" {
   description = "The AWS region that should be used."
   type        = string
@@ -208,11 +225,6 @@ variable "pf_cs_mtu" {
   description = "Maximum Transmission Unit this port supports (size of the largest supported PDU)"
   type        = number
   default     = 1500
-}
-variable "pf_cs_aws_vif_type" {
-  description = "The type of VIF to use for this connection."
-  type        = string
-  default     = "private"
 }
 variable "pf_cs_customer_asn" {
   description = "The customer ASN of this connection."

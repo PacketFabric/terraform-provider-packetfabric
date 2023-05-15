@@ -32,6 +32,8 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Optional
 
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
 - `cloud_provider_region` (String) Region short name.
@@ -88,6 +90,14 @@ Read-Only:
 - `bgp_settings` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--bgp_settings))
 - `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--cloud_state))
 - `credentials_uuid` (String)
+- `google_cloud_router_name` (String)
+- `google_dataplane_version` (Number)
+- `google_edge_availability_domain` (Number)
+- `google_interface_name` (String)
+- `google_pairing_key` (String)
+- `google_project_id` (String)
+- `google_region` (String)
+- `google_vlan_attachment_name` (String)
 - `mtu` (Number)
 - `svlan_id_cust` (Number)
 - `vlan_id_cust` (Number)
@@ -101,10 +111,15 @@ Read-Only:
 - `address_family` (String)
 - `advertised_prefixes` (List of String)
 - `customer_asn` (Number)
+- `customer_router_ip` (String)
+- `google_advertise_mode` (String)
+- `google_advertised_ip_ranges` (List of String)
+- `google_keepalive_interval` (Number)
 - `l3_address` (String)
 - `md5` (String)
 - `remote_address` (String)
 - `remote_asn` (Number)
+- `remote_router_ip` (String)
 
 
 <a id="nestedobjatt--cloud_settings--cloud_state"></a>
@@ -116,6 +131,8 @@ Read-Only:
 - `aws_dx_port_encryption_status` (String)
 - `aws_vif_state` (String)
 - `bgp_state` (String)
+- `google_interconnect_admin_enabled` (Boolean)
+- `google_interconnect_state` (String)
 
 
 
@@ -124,12 +141,30 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String)
 - `aws_account_id` (String)
 - `aws_connection_id` (String)
 - `aws_hosted_type` (String)
 - `aws_region` (String)
+- `azure_connection_type` (String)
+- `azure_service_key` (String)
+- `azure_service_tag` (Number)
+- `bgp_asn` (Number)
+- `bgp_cer_cidr` (String)
+- `bgp_ibm_cidr` (String)
+- `gateway_id` (String)
+- `google_pairing_key` (String)
+- `google_vlan_attachment_name` (String)
+- `name` (String)
+- `oracle_region` (String)
+- `port_compartment_ocid` (String)
+- `port_cross_connect_ocid` (String)
+- `port_id` (String)
 - `svlan_id_cust` (Number)
+- `vc_ocid` (String)
 - `vlan_id_cust` (Number)
+- `vlan_id_microsoft` (Number)
 - `vlan_id_pf` (Number)
+- `vlan_id_private` (Number)
 
 

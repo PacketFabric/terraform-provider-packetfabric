@@ -10,9 +10,6 @@ resource "packetfabric_port" "port_1" {
   subscription_term = 1
   zone              = "A"
 }
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
 
 ### Get the site filtering on the pop using packetfabric_locations
 
@@ -27,18 +24,12 @@ locals {
   val["pop"] => val }
   pf_port_site1 = local.helper_map["SEA2"]["site_code"]
 }
-output "pf_port_site1" {
-  value = local.pf_port_site1
-}
 
 # Create Cross Connect
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
   description   = "hello world"
-  document_uuid = var.pf_document_uuid1
+  document_uuid = "55a7a654-4c3c-4c69-bcbe-755790f0417c" # Document uuid for the LOA
   port          = packetfabric_port.port_1.id
   site          = local.pf_port_site1
-}
-output "packetfabric_outbound_cross_connect1" {
-  value = packetfabric_outbound_cross_connect.crossconnect_1
 }

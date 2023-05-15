@@ -60,8 +60,9 @@ resource "packetfabric_point_to_point" "ptp1" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
-- `ptp_circuit_id` (String) The point-to-point connection ID.
+- `ptp_uuid` (String) The point-to-point connection UUID.
 
 <a id="nestedblock--endpoints"></a>
 ### Nested Schema for `endpoints`
@@ -76,6 +77,10 @@ Optional:
 
 - `customer_site_code` (String) Unique site code of the customer's equipment.
 - `loa` (String) A base64 encoded string of a PDF of a LOA.
+
+Read-Only:
+
+- `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
 
 
 <a id="nestedblock--timeouts"></a>
