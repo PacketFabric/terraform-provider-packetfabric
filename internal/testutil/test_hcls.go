@@ -1,14 +1,12 @@
 package testutil
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 )
 
 // ########################################
@@ -397,113 +395,5 @@ func RHclCSGoogleDedicatedConnection() RHclCSGoogleDedicatedConnectionResult {
 		ServiceClass:     GoogleDedicatedConnServiceClass,
 		Autoneg:          false,
 		Speed:            GoogleDedicatedConnSpeed,
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
-	}
-	return
-}
-
-func _generateResourceName(resource string) (resourceName, hclName string) {
-	hclName = GenerateUniqueResourceName()
-	resourceName = fmt.Sprintf("%s.%s", resource, hclName)
-	return
-}
-
-func _generateUniqueNameOrDesc(targetResource string) (unique string) {
-	unique = fmt.Sprintf("pf_testacc_%s_%s", targetResource, strings.ReplaceAll(uuid.NewString(), "-", "_"))
-	return
-}
-
-func (details PortDetails) FetchCloudPops() (popsAvailable []string, err error) {
-	if details.DesiredProvider == "" {
-		err = errors.New("please provide a valid cloud provider to fetch pop")
-	}
-	if details.PFClient == nil {
-		err = errors.New("please create PFClient to fetch cloud pop")
-		return
-	}
-	if cloudLocations, locErr := details.PFClient.GetCloudLocations(
-		details.DesiredProvider,
-		details.DesiredConnectionType,
-		details.IsNatCapable,
-		details.HasCloudRouter,
-		details.AnyType,
-		details.DesiredPop,
-		details.DesiredCity,
-		details.DesiredState,
-		details.DesiredMarket,
-		details.DesiredRegion); locErr != nil {
-		err = locErr
-		return
-	} else {
-		for _, loc := range cloudLocations {
-			popsAvailable = append(popsAvailable, loc.Pop)
-		}
-	}
-	return
-}
-
-func _contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
-func (details PortDetails) GetAvailableCloudPort(desiredPop string) (zone, media string, err error) {
-	if desiredPop == "" {
-		err = errors.New("please provide a valid pop")
-		return
-	}
-	if details.PFClient == nil {
-		err = errors.New("please create a PFClient to fetch available cloud port")
-		return
-	}
-
-	var ports []packetfabric.PortAvailability
-	if ports, err = details.PFClient.GetLocationPortAvailability(desiredPop); err != nil {
-		return
-	}
-	for _, port := range ports {
-		if port.Count > 0 && port.Speed == details.DesiredSpeed {
-			zone = port.Zone
-			media = port.Media
-			return
-		}
-	}
-	err = errors.New("there's no port available for the requested speed")
-	return
-}
-
-func CreateBasePortDetails() PortDetails {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-	return PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
 	}
 }
