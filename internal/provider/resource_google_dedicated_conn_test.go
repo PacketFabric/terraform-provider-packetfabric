@@ -1,3 +1,5 @@
+//go:build resource || dedicated_cloud || all
+
 package provider
 
 import (
@@ -9,17 +11,9 @@ import (
 )
 
 func TestAccGoogleDedicatedConnectionRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
+	testutil.PreCheck(t, nil)
 	csGoogleDedicatedConnectionResult := testutil.RHclCsGoogleDedicatedConnection()
-
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

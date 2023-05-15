@@ -91,7 +91,8 @@ const HostedCloudVlan = 100
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
-const DedicatedCloudSpeed = "1Gbps"
+const DedicatedCloudSpeed1 = "1Gbps"  // AWS
+const DedicatedCloudSpeed2 = "10Gbps" // Google
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
@@ -753,7 +754,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          DedicatedCloudSpeed,
+		DesiredSpeed:          DedicatedCloudSpeed1,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
@@ -771,7 +772,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
-		DedicatedCloudSpeed,
+		DedicatedCloudSpeed1,
 	)
 
 	return RHclCsAwsDedicatedConnectionResult{
@@ -788,7 +789,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
-		Speed:            DedicatedCloudSpeed,
+		Speed:            DedicatedCloudSpeed1,
 	}
 }
 
@@ -800,13 +801,13 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		log.Panic(err)
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfGoogleDedicatedConn)
+	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          DedicatedCloudSpeed,
+		DesiredSpeed:          DedicatedCloudSpeed2,
 		DesiredProvider:       "google",
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
@@ -821,13 +822,13 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
-		DedicatedCloudSpeed,
+		DedicatedCloudSpeed2,
 	)
 
 	return RHclCsGoogleDedicatedConnectionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfGoogleDedicatedConn,
+			Resource:     pfCsGoogleDedicatedConn,
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
@@ -836,7 +837,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
-		Speed:            DedicatedCloudSpeed,
+		Speed:            DedicatedCloudSpeed2,
 	}
 }
 
