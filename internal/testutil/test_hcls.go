@@ -716,7 +716,6 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 	}
 }
 
-
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
