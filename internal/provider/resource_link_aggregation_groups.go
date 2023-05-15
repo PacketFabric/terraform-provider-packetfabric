@@ -231,7 +231,7 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	time.Sleep(45 * time.Second)
-	resp, err := c.DeleteLinkAggregationGroup(d.Id())
+	_, err := c.DeleteLinkAggregationGroup(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
