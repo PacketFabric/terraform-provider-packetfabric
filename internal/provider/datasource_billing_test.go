@@ -1,3 +1,5 @@
+//go:build datasource || all
+
 package provider
 
 import (
