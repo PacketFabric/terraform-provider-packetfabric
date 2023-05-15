@@ -97,6 +97,7 @@ resource "random_pet" "name" {}
 #   pop       = var.pf_port_pop1
 #   labels    = var.pf_labels
 #   po_number = var.pf_po_number
+#   enabled   = false
 # }
 
 # data "packetfabric_link_aggregation_group" "lag_1" {
