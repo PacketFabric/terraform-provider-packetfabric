@@ -1,7 +1,6 @@
 package testutil
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -22,7 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-const pfDatasourceBilling = "data.packetfabric_billing."
+const pfDatasourceBilling = "data.packetfabric_billing"
 
 // data-sources
 const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
@@ -610,9 +609,9 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	hclPortResult := portDetails.RHclPort()
+	hclPortResult := portDetails.RHclPort(false)
 
-	resourceName, hclName := _generateResourceName(pfDatasourceBilling)
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceBilling)
 
 	billingHcl := fmt.Sprintf(DDatasourceBilling,
 		hclName,
@@ -626,28 +625,6 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 			Resource:     pfDatasourceBilling,
 			ResourceName: resourceName,
 		},
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
 	}
 }
 
