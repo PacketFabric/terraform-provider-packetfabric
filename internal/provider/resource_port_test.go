@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccPort(t *testing.T) {
+func TestAccPortRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 	portDetails := testutil.CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -21,16 +21,16 @@ func TestAccPort(t *testing.T) {
 			{
 				Config: portTestResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "description", portTestResult.Description),
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "speed", portTestResult.Speed),
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "media", portTestResult.Media),
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "subscription_term", strconv.Itoa(portTestResult.SubscriptionTerm)),
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "pop", portTestResult.Pop),
-					resource.TestCheckResourceAttr(portTestResult.ResourceReference, "enabled", strconv.FormatBool(portTestResult.Enabled)),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "description", portTestResult.Description),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "speed", portTestResult.Speed),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "media", portTestResult.Media),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "subscription_term", strconv.Itoa(portTestResult.SubscriptionTerm)),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "pop", portTestResult.Pop),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "enabled", strconv.FormatBool(portTestResult.Enabled)),
 				),
 			},
 			{
-				ResourceName:      portTestResult.ResourceReference,
+				ResourceName:      portTestResult.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

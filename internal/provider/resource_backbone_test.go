@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccHclVcBackboneVlanRequiredFields(t *testing.T) {
+func TestAccVcBackboneVlanRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 	backboneVirtualCircuitResult := testutil.RHclBackboneVirtualCircuitVlan()
 	resource.ParallelTest(t, resource.TestCase{

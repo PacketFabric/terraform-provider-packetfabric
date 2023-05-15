@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceLocationsComputedRequiredFields(t *testing.T) {
+func TestAccDataSourceLocationsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 	datasourceLocationsResult := testutil.DHclDataSourceLocations()
 	resource.ParallelTest(t, resource.TestCase{
