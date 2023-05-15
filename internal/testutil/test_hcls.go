@@ -21,6 +21,7 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
 
 // data-sources
 const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
@@ -44,7 +45,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
+var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"} // TODO: add LAB1 when fixed
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -85,6 +86,12 @@ const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 // packetfabric_cs_aws_hosted_connection
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
+
+// packetfabric_cs_aws_dedicated_connection
+const DedicatedCloudSpeed = "1Gbps"
+const DedicatedCloudServiceClass = "longhaul"
+const DedicatedCloudAutoneg = false
+const DedicatedCloudShouldCreateLag = false
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -136,6 +143,44 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
+}
+
+// packetfabric_backbone_virtual_circuit
+type RHclBackboneVirtualCircuitResult struct {
+	HclResultBase
+	Desc               string
+	Epl                bool
+	InterfaceBackboneA InterfaceBackbone
+	InterfaceBackboneZ InterfaceBackbone
+	BandwidthBackbone
+}
+
+type InterfaceBackbone struct {
+	PortCircuitID string
+	Untagged      bool
+	Vlan          int
+}
+
+type BandwidthBackbone struct {
+	LonghaulType     string
+	Speed            string
+	SubscriptionTerm int
+}
+
+// packetfabric_point_to_point
+type RHclPointToPointResult struct {
+	HclResultBase
+	Desc             string
+	Speed            string
+	Media            string
+	SubscriptionTerm int
+	Pop1             string
+	Zone1            string
+	Autoneg1         bool
+	Pop2             string
+	Zone2            string
+	Autoneg2         bool
+	UpdatedDesc      int
 }
 
 // packetfabric_cloud_router
@@ -199,42 +244,18 @@ type RHclHostedCloudAwsResult struct {
 	Vlan         int
 }
 
-// packetfabric_backbone_virtual_circuit
-type RHclBackboneVirtualCircuitResult struct {
+// packetfabric_cs_aws_dedicated_connection
+type RHclCsAwsDedicatedConnectionResult struct {
 	HclResultBase
-	Desc               string
-	Epl                bool
-	InterfaceBackboneA InterfaceBackbone
-	InterfaceBackboneZ InterfaceBackbone
-	BandwidthBackbone
-}
-
-type InterfaceBackbone struct {
-	PortCircuitID string
-	Untagged      bool
-	Vlan          int
-}
-
-type BandwidthBackbone struct {
-	LonghaulType     string
-	Speed            string
+	AwsRegion        string
+	Description      string
+	Pop              string
+	Zone             string
+	ShouldCreateLag  bool
 	SubscriptionTerm int
-}
-
-// packetfabric_point_to_point
-type RHclPointToPointResult struct {
-	HclResultBase
-	Desc             string
+	ServiceClass     string
+	Autoneg          bool
 	Speed            string
-	Media            string
-	SubscriptionTerm int
-	Pop1             string
-	Zone1            string
-	Autoneg1         bool
-	Pop2             string
-	Zone2            string
-	Autoneg2         bool
-	UpdatedDesc      int
 }
 
 // data packetfabric_locations_cloud
@@ -286,6 +307,7 @@ type DHclPortResult struct {
 // ########################################
 // ###### HCLs FOR REQUIRED FIELDS
 // ########################################
+
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	var pop, media, speed, market string
@@ -537,7 +559,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
@@ -657,7 +679,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -691,6 +713,58 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		Speed:        HostedCloudSpeed,
 		Pop:          pop,
 		Vlan:         HostedCloudVlan,
+	}
+}
+
+// packetfabric_cs_aws_dedicated_connection
+func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCSAwsDedicatedConnection)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          DedicatedCloudSpeed,
+		DesiredProvider:       "aws",
+		DesiredConnectionType: "dedicated",
+	}
+	pop, zone, region := popDetails.FindAvailableCloudPopZone()
+
+	hcl := fmt.Sprintf(
+		RResourceCSAwsDedicatedConnection,
+		hclName,
+		region,
+		uniqueDesc,
+		pop,
+		zone,
+		DedicatedCloudShouldCreateLag,
+		subscriptionTerm,
+		DedicatedCloudServiceClass,
+		DedicatedCloudAutoneg,
+		DedicatedCloudSpeed,
+	)
+
+	return RHclCsAwsDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCSAwsDedicatedConnection,
+			ResourceName: resourceName,
+		},
+		AwsRegion:        region,
+		Description:      uniqueDesc,
+		Pop:              pop,
+		Zone:             zone,
+		ShouldCreateLag:  DedicatedCloudShouldCreateLag,
+		SubscriptionTerm: subscriptionTerm,
+		ServiceClass:     DedicatedCloudServiceClass,
+		Autoneg:          DedicatedCloudAutoneg,
+		Speed:            DedicatedCloudSpeed,
 	}
 }
 
