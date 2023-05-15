@@ -65,6 +65,7 @@ resource "packetfabric_link_aggregation_group" "lag_1" {
 
 ### Optional
 
+- `enabled` (Boolean) Sets the status of the lagDefaults: true
 - `labels` (List of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
