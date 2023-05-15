@@ -98,6 +98,15 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		}
 	}
 
+	if len(lag.Members) > 0 {
+		for _, member := range lag.Members {
+			_, err := c.CreateLagMember(d.Id(), member)
+			if err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		}
+	}
+
 	diagnostics, updated := updatePort(c, d)
 	if !updated {
 		return diagnostics

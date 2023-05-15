@@ -31,6 +31,10 @@ type LinkAggregationGroupWorkflowResp struct {
 	WorkflowName string `json:"workflow_name"`
 }
 
+type CreateLAGMemberPayload struct {
+	MemberPortCircuitId string `json:"member_port_circuit_id"`
+}
+
 func (c *PFClient) CreateLinkAggregationGroup(lag LinkAggregationGroup) (*LinkAggregationGroupCreateResp, error) {
 	expectedResp := &LinkAggregationGroupCreateResp{}
 	_, err := c.sendRequest(lagURI, postMethod, lag, expectedResp)
@@ -101,6 +105,16 @@ func (c *PFClient) DeleteLinkAggregationGroupMember(lagPortCircuitID, memberPort
 	formatedURI := fmt.Sprintf(lagInterfacesCircuitMemberURI, lagPortCircuitID, memberPortCircuitID)
 	expectedResp := &LinkAggregationGroupWorkflowResp{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) CreateLagMember(lagId string, member string) (*LinkAggregationGroupWorkflowResp, error) {
+	formatedURI := fmt.Sprintf(lagInterfacesMemberURI, lagId)
+	expectedResp := &LinkAggregationGroupWorkflowResp{}
+	_, err := c.sendRequest(formatedURI, postMethod, CreateLAGMemberPayload{MemberPortCircuitId: member}, expectedResp)
 	if err != nil {
 		return nil, err
 	}
