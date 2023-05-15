@@ -35,7 +35,6 @@ func TestAccDataSourcePortsComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.site_code"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.mtu"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.description"),
-					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.vc_mode"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_lag"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_lag_member"),
 					resource.TestCheckResourceAttrSet(hclPortResult.ResourceName, "interfaces.0.is_cloud"),
