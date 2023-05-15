@@ -212,7 +212,6 @@ func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]
 		return
 	} else {
 		for _, loc := range cloudLocations {
-			// popsWithZones[loc.Pop] = loc.Zones
 			popsWithZones[loc.Pop] = append(loc.Zones, loc.CloudConnectionDetails.Region)
 
 		}
