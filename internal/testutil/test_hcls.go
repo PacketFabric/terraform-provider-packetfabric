@@ -44,7 +44,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
+var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"} // TODO: add LAB1 when fixed
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -90,6 +90,7 @@ const HostedCloudVlan = 100
 const DedicatedCloudSpeed = "1Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
+const DedicatedCloudShouldCreateLag = false
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -248,6 +249,8 @@ type RHclCsAwsDedicatedConnectionResult struct {
 	AwsRegion        string
 	Description      string
 	Pop              string
+	Zone             string
+	ShouldCreateLag  bool
 	SubscriptionTerm int
 	ServiceClass     string
 	Autoneg          bool
@@ -724,7 +727,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
 	}
-	pop, _, region := popDetails.FindAvailableCloudPopZone()
+	pop, zone, region := popDetails.FindAvailableCloudPopZone()
 
 	hcl := fmt.Sprintf(
 		RResourceCSAwsDedicatedConnection,
@@ -732,6 +735,8 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		region,
 		uniqueDesc,
 		pop,
+		zone,
+		DedicatedCloudShouldCreateLag,
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
@@ -747,6 +752,8 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		AwsRegion:        region,
 		Description:      uniqueDesc,
 		Pop:              pop,
+		Zone:             zone,
+		ShouldCreateLag:  DedicatedCloudShouldCreateLag,
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
