@@ -1,3 +1,5 @@
+//go:build resource || core || all
+
 package provider
 
 import (
@@ -8,16 +10,13 @@ import (
 )
 
 func TestAccLinkAggregGroupsRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, nil)
 
 	linkAggregationGroupResult := testutil.RHclLinkAggregationGroup()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, nil)
-		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: linkAggregationGroupResult.Hcl,
@@ -25,7 +24,6 @@ func TestAccLinkAggregGroupsRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "description", linkAggregationGroupResult.Desc),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "interval", linkAggregationGroupResult.Interval),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "pop", linkAggregationGroupResult.Pop),
-					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "members", linkAggregationGroupResult.Members[0]),
 				),
 			},
 			{

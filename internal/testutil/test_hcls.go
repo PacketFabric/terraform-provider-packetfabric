@@ -102,6 +102,7 @@ const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
+// packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
 
 type PortDetails struct {
@@ -508,62 +509,31 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	resourceName, _ := GenerateUniqueResourceName(pfLinkAggregationGroup)
-	uniqueDesc := GenerateUniqueName()
 	portDetails1 := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          portSpeed,
-		DesiredProvider:       "google",
-		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
 	}
 
-	pop1, _, media1 := portDetails1._findAvailableCloudPopZoneAndMedia()
-	if pop1 == "" {
-		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
-	}
-
-	portDetails1.DesiredPop = pop1
-	portDetails1.DesiredMedia = media1
-
-	hclPortResult1 := portDetails1.RHclPort()
-
-	portDetails2 := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          portSpeed,
-		DesiredProvider:       "google",
-		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
-	}
-
-	pop2, _, media2 := portDetails2._findAvailableCloudPopZoneAndMedia()
-	if pop2 == "" {
-		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
-	}
-	portDetails2.DesiredPop = pop2
-	portDetails2.DesiredMedia = media2
-
-	hclPortResult2 := portDetails2.RHclPort()
+	hclPortResult1 := portDetails1.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
-	uniqueDesc = GenerateUniqueName()
+	uniqueDesc := GenerateUniqueName()
 
 	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
 		hclName,
 		uniqueDesc,
 		LinkAggGroupInterval,
-		hclPortResult1.ResourceReference,
-		hclPortResult2.ResourceReference,
-		pop1,
+		hclName,
+		hclPortResult1.Pop,
+		resourceName,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult1.Hcl, hclPortResult2.Hcl, linkAggGroupHcl)
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
 
 	return RHclLinkAggregationGroupResult{
 		HclResultBase: HclResultBase{
@@ -575,45 +545,8 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		Interval: LinkAggGroupInterval,
 		Members: []string{
 			hclPortResult1.ResourceName,
-			hclPortResult2.ResourceName,
 		},
-		Pop: pop1,
-	}
-}
-
-// packetfabric_port_loa
-func RHclPortLoa() RHclPortLoaResult {
-
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	portDetails := PortDetails{
-		PFClient:          c,
-		DesiredSpeed:      portSpeed,
-		IsCloudConnection: true,
-	}
-
-	hclPortResult := portDetails.RHclPort(false)
-	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
-	email := os.Getenv("PF_USER_EMAIL")
-
-	hcl := fmt.Sprintf(RResourcePortLoa,
-		hclName,
-		hclPortResult.ResourceReference,
-		PortLoaCustomerName,
-		email,
-	)
-
-	return RHclPortLoaResult{
-		HclResultBase: HclResultBase{
-			Hcl:          fmt.Sprintf("%s\n%s", hclPortResult.Hcl, hcl),
-			Resource:     pfPortLoa,
-			ResourceName: resourceName,
-		},
-		LoaCustomerName:  PortLoaCustomerName,
-		DestinationEmail: email,
+		Pop: hclPortResult1.Pop,
 	}
 }
 
