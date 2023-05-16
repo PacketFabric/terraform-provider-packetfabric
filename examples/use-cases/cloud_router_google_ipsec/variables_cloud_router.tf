@@ -29,11 +29,6 @@ variable "pf_crc_pop1" {
   description = "The POP in which you want to provision the connection"
   default     = "SFO1"
 }
-variable "pf_crc_maybe_nat" {
-  type        = bool
-  description = "Set this to true if you intend to use NAT on this connection"
-  default     = false
-}
 
 # PacketFabric Cloud Router Connections - IPsec
 variable "pf_crc_pop2" {

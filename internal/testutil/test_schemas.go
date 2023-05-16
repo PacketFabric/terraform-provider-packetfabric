@@ -344,9 +344,15 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   provider    = packetfabric
   description = "%s"
   interval    = "%s"
-  members     = ["%s", "%s"]
+  members     = [%s.id]
   pop         = "%s"
-}`
+}
+
+resource "time_sleep" "wait_for_lag" {
+  depends_on = [%s]
+  destroy_duration = "3m"
+}
+`
 
 // Resource: packetfabric_marketplace_service_port_accept_request
 const RResourceMarketplaceServicePortAcceptRequest = `resource "packetfabric_marketplace_service_port_accept_request" "%s" {

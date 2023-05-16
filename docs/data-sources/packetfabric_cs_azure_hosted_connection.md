@@ -30,6 +30,8 @@ output "packetfabric_cs_azure_hosted_connection_data" {
 
 ### Optional
 
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
 - `cloud_provider_region` (String) Region short name.

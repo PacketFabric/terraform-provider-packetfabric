@@ -25,6 +25,7 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -107,6 +108,9 @@ const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
+// packetfabric_link_aggregation_group
+const LinkAggGroupInterval = "fast"
+
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -157,6 +161,15 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
+}
+
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
 }
 
 // packetfabric_backbone_virtual_circuit

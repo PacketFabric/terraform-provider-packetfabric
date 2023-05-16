@@ -36,7 +36,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -77,7 +77,12 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Read-Only
 
+- `azure_connection_type` (String) The Azure connection type.
+		Example: primary or seconday
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
+- `vlan_id_microsoft` (Number) The microsoft peering vlan.
+- `vlan_id_private` (Number) The private peering vlan.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`

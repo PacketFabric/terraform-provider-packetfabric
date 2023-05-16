@@ -1,5 +1,5 @@
 resource "packetfabric_streaming_events" "example" {
-  provider    = packetfabric
+  provider = packetfabric
   streams {
     type   = "customer"
     events = ["auth", "physical_interface"]
