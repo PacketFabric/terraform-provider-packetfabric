@@ -17,8 +17,6 @@ and you have a pretty-printed JSON file named `google_credentials.json`, you can
 cat google_credentials.json | jq -c
 ```
 
-!> **Warning:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
-
 ## Example Usage
 
 ```terraform
