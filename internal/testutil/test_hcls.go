@@ -751,6 +751,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 			ResourceName:           resourceName,
 			AdditionalResourceName: hclCloudRouterRes.ResourceName,
 		},
+		Desc:        uniqueDesc,
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Speed:       CloudRouterConnSpeed,
 		Pop:         pop,

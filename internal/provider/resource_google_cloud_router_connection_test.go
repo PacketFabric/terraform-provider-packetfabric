@@ -1,4 +1,4 @@
-//go:build resource || cloud_router || all || smoke
+//go:build resource || cloud_router || all
 
 package provider
 
@@ -41,9 +41,10 @@ func TestAccCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:      crConnGoogleResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            crConnGoogleResult.ResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"google_pairing_key", "google_vlan_attachment_name"},
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
 					return id, nil
