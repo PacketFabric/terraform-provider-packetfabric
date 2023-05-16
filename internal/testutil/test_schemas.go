@@ -447,3 +447,9 @@ const DDataSourcePorts = `data "packetfabric_ports" "%s" {
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
 }`
+
+// Datasource: packetfabric_cs_aws_hosted_connection
+const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection" "%s" {
+  provider          = packetfabric
+  cloud_circuit_id  = %s.id
+}`

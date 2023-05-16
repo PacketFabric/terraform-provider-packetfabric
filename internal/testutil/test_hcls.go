@@ -36,6 +36,7 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
+const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -48,7 +49,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"} // TODO: add LAB1 when fixed
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -331,6 +332,11 @@ type DHclPortResult struct {
 
 // data packetfabric_billing
 type DHclDatasourceBillingResult struct {
+	HclResultBase
+}
+
+// data packetfabric_cs_aws_hosted_connection
+type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
@@ -1070,6 +1076,29 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data packetfabric_cs_aws_hosted_connection
+func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
+
+	csAwsHostedConnectionResult := RHclAwsHostedConnection()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceCsAwsHostedConn)
+	log.Printf("Data-source name: %s\n", hclName)
+
+	hostedAwsConnHcl := fmt.Sprintf(DDatasourceCsAwsHostedConn,
+		hclName,
+		csAwsHostedConnectionResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", csAwsHostedConnectionResult.Hcl, hostedAwsConnHcl)
+
+	return DHclCsAwsHostedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceCsAwsHostedConn,
 			ResourceName: resourceName,
 		},
 	}
