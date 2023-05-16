@@ -94,7 +94,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
 - `cloud_settings` (Block List, Max: 1) Provision the cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
