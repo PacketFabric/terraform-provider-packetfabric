@@ -24,6 +24,7 @@ const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -100,6 +101,9 @@ const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
+
+// packetfabric_link_aggregation_group
+const LinkAggGroupInterval = "fast"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -340,6 +344,15 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -491,6 +504,50 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
+	}
+}
+
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails1 := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult1 := portDetails1.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
+		hclName,
+		uniqueDesc,
+		LinkAggGroupInterval,
+		hclName,
+		hclPortResult1.Pop,
+		resourceName,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: LinkAggGroupInterval,
+		Members: []string{
+			hclPortResult1.ResourceName,
+		},
+		Pop: hclPortResult1.Pop,
 	}
 }
 
