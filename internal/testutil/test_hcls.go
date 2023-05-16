@@ -523,6 +523,50 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 	}
 }
 
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails1 := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult1 := portDetails1.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
+		hclName,
+		uniqueDesc,
+		LinkAggGroupInterval,
+		hclName,
+		hclPortResult1.Pop,
+		resourceName,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: LinkAggGroupInterval,
+		Members: []string{
+			hclPortResult1.ResourceName,
+		},
+		Pop: hclPortResult1.Pop,
+	}
+}
+
 // packetfabric_point_to_point
 func RHclPointToPoint() RHclPointToPointResult {
 
