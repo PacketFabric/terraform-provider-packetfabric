@@ -186,7 +186,7 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 			return diag.FromErr(err3)
 		}
 		if resp.PortType == "dedicated" {
-			if resp.ServiceProvider == "aws" { // LAG is not enabled in the ACC in dev environment
+			if resp.ServiceProvider == "aws" || resp.ServiceProvider == "azure" { // LAG is not enabled in the ACC in dev environment for AWS
 				if toggleErr := _togglePortStatus(c, false, cloudCID.(string)); toggleErr != nil {
 					return diag.FromErr(toggleErr)
 				}

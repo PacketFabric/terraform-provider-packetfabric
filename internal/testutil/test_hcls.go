@@ -863,7 +863,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		log.Panic(err)
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleDedicatedConn)
+	resourceName, hclName := GenerateUniqueResourceName(pfCsAzureDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
@@ -878,7 +878,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 
 	hcl := fmt.Sprintf(
 		RResourceCSAzureDedicatedConnection,
-		aclName,
+		hclName,
 		uniqueDesc,
 		pop,
 		subscriptionTerm,
