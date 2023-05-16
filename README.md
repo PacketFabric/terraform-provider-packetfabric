@@ -114,6 +114,7 @@ environmental variables:
 export PF_HOST="https://api.packetfabric.com"
 export PF_TOKEN="api-secret"
 export PF_ACCOUNT_ID="123456789"
+export PF_USER_EMAIL="usert@example.com"
 ```
 
 Some tests require specific environment variables to be set. You can find examples of these variables in the [source_env_var.sh.sample](./examples/source_env_var.sh.sample) file.
@@ -129,6 +130,8 @@ To run all tests, you can use the all tag. Navigate to the internal/provider dir
 ```sh
 $ cd internal/provider;  TF_ACC=1 go test -v -timeout 120m -tags=all
 ```
+
+> **Warning**: Add `-parallel 1` if running the test in dev environement.
 
 ### Running Tests with Specific Tags
 

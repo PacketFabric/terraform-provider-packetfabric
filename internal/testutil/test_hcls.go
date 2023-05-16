@@ -23,6 +23,7 @@ const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
+const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -91,10 +92,13 @@ const HostedCloudVlan = 100
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
+// packetfabric_cs_azure_dedicated_connection
 const DedicatedCloudSpeed = "10Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
+const DedicatedCloudEncap = "qinq"      // Azure only
+const DedicatedCloudPortCat = "primary" // Azure only
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -270,6 +274,18 @@ type RHclCsGoogleDedicatedConnectionResult struct {
 	SubscriptionTerm int
 	ServiceClass     string
 	Autoneg          bool
+	Speed            string
+}
+
+// packetfabric_cs_azure_dedicated_connection
+type RHclCsAzureDedicatedConnectionResult struct {
+	HclResultBase
+	Desc             string
+	Pop              string
+	SubscriptionTerm int
+	ServiceClass     string
+	Encapsulation    string
+	PortCategory     string
 	Speed            string
 }
 
@@ -836,6 +852,53 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
+		Speed:            DedicatedCloudSpeed,
+	}
+}
+
+// packetfabric_cs_azure_dedicated_connection
+func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCsAzureDedicatedConn)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          DedicatedCloudSpeed,
+		DesiredProvider:       "azure",
+		DesiredConnectionType: "dedicated",
+		IsCloudConnection:     true,
+	}
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	hcl := fmt.Sprintf(
+		RResourceCSAzureDedicatedConnection,
+		hclName,
+		uniqueDesc,
+		pop,
+		subscriptionTerm,
+		DedicatedCloudServiceClass,
+		DedicatedCloudEncap,
+		DedicatedCloudPortCat,
+		DedicatedCloudSpeed)
+
+	return RHclCsAzureDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAzureDedicatedConn,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Pop:              pop,
+		SubscriptionTerm: subscriptionTerm,
+		ServiceClass:     DedicatedCloudServiceClass,
+		Encapsulation:    DedicatedCloudEncap,
+		PortCategory:     DedicatedCloudPortCat,
 		Speed:            DedicatedCloudSpeed,
 	}
 }
