@@ -134,6 +134,16 @@ func resourceHostedIbmConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"gateway_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The IBM Gateway ID.",
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -187,6 +197,22 @@ func resourceHostedIbmConnCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 
+	time.Sleep(90 * time.Second) // wait for the connection to show in IBM
+	resp, err := c.GetCloudConnInfo(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp.Settings.GatewayID == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Incomplete Cloud Information",
+			Detail:   "The gateway_id is currently unavailable.",
+		})
+		return diags
+	} else {
+		_ = d.Set("gateway_id", resp.Settings.GatewayID)
+	}
+
 	if labels, ok := d.GetOk("labels"); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
@@ -205,7 +231,6 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
@@ -213,10 +238,24 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
-		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
-		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
+			_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
+		}
+		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		}
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
+		}
+		if resp.Settings.GatewayID == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The gateway_id is currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("gateway_id", resp.Settings.GatewayID)
 		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
@@ -225,18 +264,33 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		}
 	}
 	// unsetFields: published_quote_line_uuid
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 

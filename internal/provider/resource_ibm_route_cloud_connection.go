@@ -131,6 +131,16 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"gateway_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The IBM Gateway ID.",
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -200,6 +210,16 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
 		}
+		if resp.CloudSettings.GatewayID == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The gateway_id is currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("gateway_id", resp.CloudSettings.GatewayID)
+		}
 		// unsetFields: published_quote_line_uuid
 	}
 
@@ -209,6 +229,14 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }

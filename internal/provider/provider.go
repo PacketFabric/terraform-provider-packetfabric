@@ -115,6 +115,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_provider_credential_google":        resourceCloudProviderCredentialGoogle(),
 			"packetfabric_user":                                    resourceUser(),
 			"packetfabric_streaming_events":                        resourceStreamingEvents(),
+			"packetfabric_document":                                resourceDocuments(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -126,7 +127,8 @@ func Provider() *schema.Provider {
 		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
 			"packetfabric_cloud_router":                       dataSourceCloudRouter(),
-			"packetfabric_cloud_router_connections":           dataSourceCloudConn(),
+			"packetfabric_cloud_router_connection":            dataSourceCloudConnection(),
+			"packetfabric_cloud_router_connections":           dataSourceCloudConnections(),
 			"packetfabric_cloud_router_bgp_session":           dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":           dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_ibm_hosted_connection":           datasourceHostedIBMConn(),
@@ -143,7 +145,7 @@ func Provider() *schema.Provider {
 			"packetfabric_activitylog":                        datasourceActivityLog(),
 			"packetfabric_marketplace_service_port_requests":  dataSourceVcRequests(),
 			"packetfabric_virtual_circuits":                   datasourceBackboneServices(),
-			"packetfabric_point_to_point":                     datasourcePointToPoint(),
+			"packetfabric_point_to_points":                    datasourcePointToPoints(),
 			"packetfabric_port_vlans":                         dataSourcePortVlanSummary(),
 			"packetfabric_locations_markets":                  dataSourceLocationsMarkets(),
 			"packetfabric_locations_port_availability":        dataSourcePortAvailability(),
@@ -154,6 +156,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations_cloud":                    datasourceCloudLocations(),
 			"packetfabric_quick_connect_requests":             datasourceQuickConnectRequests(),
 			"packetfabric_cs_hosted_connection_router_config": datasourceHostedCloudRouterConfig(),
+			"packetfabric_document":                           datasourceDocuments(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

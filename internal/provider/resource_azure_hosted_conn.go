@@ -82,6 +82,7 @@ func resourceAzureReqExpressHostedConn() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(speedOptions(), true),
 				Description:  "The peed of the new connection.\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
+				Deprecated:   "This field is deprecated and will be removed in a future release.",
 			},
 			"po_number": {
 				Type:         schema.TypeString,
@@ -96,6 +97,11 @@ func resourceAzureReqExpressHostedConn() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -154,14 +160,13 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
-		_ = d.Set("vlan_private", resp.Settings.VlanIDPrivate)
-		_ = d.Set("vlan_microsoft", resp.Settings.VlanIDMicrosoft)
+		_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
+		_ = d.Set("vlan_microsoft", resp.Settings.VlanMicrosoft)
 		if _, ok := d.GetOk("po_number"); ok {
 			_ = d.Set("po_number", resp.PONumber)
 		}
@@ -172,17 +177,32 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		}
 	}
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 
