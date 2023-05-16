@@ -192,7 +192,7 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 				}
 			}
 			if resp.ServiceProvider == "google" {
-				if toggleErr := DisableLinkAggregationGroup(cloudCID.(string)); toggleErr != nil {
+				if _, toggleErr := c.DisableLinkAggregationGroup(cloudCID.(string)); toggleErr != nil {
 					return diag.FromErr(toggleErr)
 				}
 			}

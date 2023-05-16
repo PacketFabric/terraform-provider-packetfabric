@@ -91,8 +91,7 @@ const HostedCloudVlan = 100
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
-const DedicatedCloudSpeed1 = "1Gbps"  // AWS
-const DedicatedCloudSpeed2 = "10Gbps" // Google
+const DedicatedCloudSpeed = "10Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
@@ -754,7 +753,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          DedicatedCloudSpeed1,
+		DesiredSpeed:          DedicatedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
@@ -772,7 +771,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
-		DedicatedCloudSpeed1,
+		DedicatedCloudSpeed,
 	)
 
 	return RHclCsAwsDedicatedConnectionResult{
@@ -789,7 +788,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
-		Speed:            DedicatedCloudSpeed1,
+		Speed:            DedicatedCloudSpeed,
 	}
 }
 
@@ -807,7 +806,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          DedicatedCloudSpeed2,
+		DesiredSpeed:          DedicatedCloudSpeed,
 		DesiredProvider:       "google",
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
@@ -822,7 +821,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
-		DedicatedCloudSpeed2,
+		DedicatedCloudSpeed,
 	)
 
 	return RHclCsGoogleDedicatedConnectionResult{
@@ -837,7 +836,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
-		Speed:            DedicatedCloudSpeed2,
+		Speed:            DedicatedCloudSpeed,
 	}
 }
 
