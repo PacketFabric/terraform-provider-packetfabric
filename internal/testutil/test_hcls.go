@@ -523,6 +523,7 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
 	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
 		hclName,
