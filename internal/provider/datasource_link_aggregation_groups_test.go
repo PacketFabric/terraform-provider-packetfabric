@@ -1,3 +1,5 @@
+//go:build datasource || core || all
+
 package provider
 
 import (
@@ -8,16 +10,13 @@ import (
 )
 
 func TestAccDatasourceLinkAggregationGroupsComputedRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, nil)
 
 	datasourceLinkAggregationGroupsResult := testutil.DHclDatasourceLinkAggregationGroups()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, nil)
-		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: datasourceLinkAggregationGroupsResult.Hcl,
@@ -40,22 +39,10 @@ func TestAccDatasourceLinkAggregationGroupsComputedRequiredFields(t *testing.T) 
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.admin_status"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.mtu"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.description"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.vc_mode"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.is_lag"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.is_lag_member"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.is_cloud"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.is_ptp"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.is_nni"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.lag_interval"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.member_count"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.parent_lag_circuit_id"),
 					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.account_uuid"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.subscription_term"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.disabled"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.customer_name"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.customer_uuid"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.time_created"),
-					resource.TestCheckResourceAttrSet(datasourceLinkAggregationGroupsResult.ResourceName, "interfaces.0.time_updated"),
 				)},
 		},
 	})

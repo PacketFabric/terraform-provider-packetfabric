@@ -26,6 +26,7 @@ const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
+const pfPortLoa = "packetfabric_port_loa"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -35,11 +36,9 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
-const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
@@ -113,8 +112,6 @@ const DedicatedCloudPortCat = "primary" // Azure only
 // packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
 
-const LinkAggGroupInterval = "fast"
-
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -165,15 +162,6 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
-}
-
-// packetfabric_link_aggregation_group
-type RHclLinkAggregationGroupResult struct {
-	HclResultBase
-	Desc     string
-	Interval string
-	Members  []string
-	Pop      string
 }
 
 // packetfabric_backbone_virtual_circuit
@@ -562,7 +550,7 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		hclName,
 		uniqueDesc,
 		LinkAggGroupInterval,
-		hclName,
+		hclPortResult1.ResourceName,
 		hclPortResult1.Pop,
 		resourceName,
 	)
@@ -956,79 +944,6 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	}
 }
 
-// packetfabric_link_aggregation_group
-func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	portDetails1 := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          portSpeed,
-		DesiredProvider:       "google",
-		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
-	}
-
-	pop1, _, media1 := portDetails1._findAvailableCloudPopZoneAndMedia()
-	if pop1 == "" {
-		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
-	}
-
-	portDetails1.DesiredPop = pop1
-	portDetails1.DesiredMedia = media1
-
-	hclPortResult1 := portDetails1.RHclPort()
-
-	portDetails2 := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          portSpeed,
-		DesiredProvider:       "google",
-		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
-	}
-
-	pop2, _, media2 := portDetails2._findAvailableCloudPopZoneAndMedia()
-	if pop2 == "" {
-		log.Fatalf("Resource: %s: %s", pfLinkAggregationGroup, "pop cannot be empty")
-	}
-	portDetails2.DesiredPop = pop2
-	portDetails2.DesiredMedia = media2
-
-	hclPortResult2 := portDetails2.RHclPort()
-
-	resourceName, hclName := _generateResourceName(pfLinkAggregationGroup)
-	uniqueDesc := _generateUniqueNameOrDesc(pfLinkAggregationGroup)
-
-	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
-		hclName,
-		uniqueDesc,
-		LinkAggGroupInterval,
-		hclPortResult1.ResourceReference,
-		hclPortResult2.ResourceReference,
-		pop1,
-	)
-
-	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult1.Hcl, hclPortResult2.Hcl, linkAggGroupHcl)
-
-	return RHclLinkAggregationGroupResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfLinkAggregationGroup,
-			ResourceName: resourceName,
-		},
-		Desc:     uniqueDesc,
-		Interval: LinkAggGroupInterval,
-		Members: []string{
-			hclPortResult1.ResourceName,
-			hclPortResult2.ResourceName,
-		},
-		Pop: pop1,
-	}
-}
-
 // packetfabric_cs_google_dedicated_connection
 func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 	c, err := _createPFClient()
@@ -1077,9 +992,8 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 }
 
 func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
-
 	linkAggregationGroupResult := RHclLinkAggregationGroup()
-	resourceName, hclName := _generateResourceName(pfDatasourceLinkAggregationGroups)
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceLinkAggregationGroups)
 
 	linkAggregationGroupsHcl := fmt.Sprintf(
 		DDatasourceLinkAggregationGroups,

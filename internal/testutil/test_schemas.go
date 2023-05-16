@@ -430,7 +430,6 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 }`
 
 // End of resources templates for required fields only
-<<<<<<< HEAD
 
 // Datasource: packetfabric_locations_cloud
 const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
@@ -486,9 +485,8 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   provider          = packetfabric
   cloud_circuit_id  = %s.id
 }`
-=======
+
 const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
   provider       = packetfabric
   lag_circuit_id = %s.id
-s}`
->>>>>>> 51b6ab7 (Generating HCL for datasources packetfabric_link_aggregation_group)
+}`

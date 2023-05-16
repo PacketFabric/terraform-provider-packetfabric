@@ -20,12 +20,6 @@ func TestAccLinkAggregGroupsRequiredFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: linkAggregationGroupResult.Hcl,
-			}
-		},
-		Steps: []resource.TestStep{
-			{
-				Config:             linkAggregationGroupResult.Hcl,
-				Config: linkAggregationGroupResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "description", linkAggregationGroupResult.Desc),
 					resource.TestCheckResourceAttr(linkAggregationGroupResult.ResourceName, "interval", linkAggregationGroupResult.Interval),
