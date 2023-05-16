@@ -191,11 +191,6 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("autoneg", resp2.Autoneg)
 		_ = d.Set("zone", resp2.Zone)
 		_ = d.Set("po_number", resp2.PONumber)
-		if resp2.IsLag {
-			_ = d.Set("should_create_lag", true)
-		} else {
-			_ = d.Set("should_create_lag", false)
-		}
 	}
 	// unsetFields: loa, published_quote_line_uuid
 
