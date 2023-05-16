@@ -21,19 +21,20 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
+const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
+const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 
 // data-sources
-const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
-const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
 const pfDataLocations = "data.packetfabric_locations"
-const pfDataZones = "data.packetfabric_locations_pop_zones"
+const pfDataLocationsCloud = "data.packetfabric_locations_cloud"
+const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
+const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
-const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
+const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
-const pfDatasourceBilling = "data.packetfabric_billing"
+const pfDataBilling = "data.packetfabric_billing"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -89,7 +90,8 @@ const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
 
 // packetfabric_cs_aws_dedicated_connection
-const DedicatedCloudSpeed = "1Gbps"
+// packetfabric_cs_google_dedicated_connection
+const DedicatedCloudSpeed = "10Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
@@ -253,6 +255,18 @@ type RHclCsAwsDedicatedConnectionResult struct {
 	Pop              string
 	Zone             string
 	ShouldCreateLag  bool
+	SubscriptionTerm int
+	ServiceClass     string
+	Autoneg          bool
+	Speed            string
+}
+
+// packetfabric_cs_google_dedicated_connection
+type RHclCsGoogleDedicatedConnectionResult struct {
+	HclResultBase
+	Desc             string
+	Zone             string
+	Pop              string
 	SubscriptionTerm int
 	ServiceClass     string
 	Autoneg          bool
@@ -686,6 +700,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		DesiredSpeed:          HostedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
 	}
 	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
@@ -732,7 +747,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		log.Panic(err)
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfCSAwsDedicatedConnection)
+	resourceName, hclName := GenerateUniqueResourceName(pfCsAwsDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
@@ -741,6 +756,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		DesiredSpeed:          DedicatedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
+		IsCloudConnection:     true,
 	}
 	pop, zone, region := popDetails.FindAvailableCloudPopZone()
 
@@ -761,7 +777,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	return RHclCsAwsDedicatedConnectionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfCSAwsDedicatedConnection,
+			Resource:     pfCsAwsDedicatedConn,
 			ResourceName: resourceName,
 		},
 		AwsRegion:        region,
@@ -776,17 +792,65 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	}
 }
 
+// packetfabric_cs_google_dedicated_connection
+func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleDedicatedConn)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          DedicatedCloudSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "dedicated",
+		IsCloudConnection:     true,
+	}
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
+
+	hcl := fmt.Sprintf(RResourceCSGoogleDedicatedConnection,
+		hclName,
+		uniqueDesc,
+		zone,
+		pop,
+		subscriptionTerm,
+		DedicatedCloudServiceClass,
+		DedicatedCloudAutoneg,
+		DedicatedCloudSpeed,
+	)
+
+	return RHclCsGoogleDedicatedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsGoogleDedicatedConn,
+			ResourceName: resourceName,
+		},
+		Desc:             uniqueDesc,
+		Zone:             zone,
+		Pop:              pop,
+		SubscriptionTerm: subscriptionTerm,
+		ServiceClass:     DedicatedCloudServiceClass,
+		Autoneg:          DedicatedCloudAutoneg,
+		Speed:            DedicatedCloudSpeed,
+	}
+}
+
 // data.packetfabric_locations_cloud
 func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataSourceLocationsCloud)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
 	log.Printf("Data-source name: %s\n", hclName)
 	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
 
 	return DHclDatasourceLocationsCloudResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataSourceLocationsCloud,
+			Resource:     pfDataLocationsCloud,
 			ResourceName: resourceName,
 		},
 	}
@@ -833,7 +897,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 
 	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataZones)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsZones)
 	log.Printf("Data-source name: %s\n", hclName)
 
 	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
@@ -841,7 +905,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 	return DHclLocationsZonesResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataZones,
+			Resource:     pfDataLocationsZones,
 			ResourceName: resourceName,
 		},
 	}
@@ -930,7 +994,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceBilling)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataBilling)
 	log.Printf("Data-source name: %s\n", hclName)
 
 	billingHcl := fmt.Sprintf(DDatasourceBilling,
@@ -942,7 +1006,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 	return DHclDatasourceBillingResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDatasourceBilling,
+			Resource:     pfDataBilling,
 			ResourceName: resourceName,
 		},
 	}
