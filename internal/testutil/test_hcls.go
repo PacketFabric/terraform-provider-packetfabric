@@ -12,7 +12,7 @@ import (
 // ###### RESOURCES & DATA-SOURCES CONSTs
 // ########################################
 
-// resources
+// ###### Resources
 const pfPort = "packetfabric_port"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
@@ -26,8 +26,9 @@ const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
+const pfPortLoa = "packetfabric_port_loa"
 
-// data-sources
+// ###### Data-sources
 const pfDataLocations = "data.packetfabric_locations"
 const pfDataLocationsCloud = "data.packetfabric_locations_cloud"
 const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
@@ -35,10 +36,10 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -55,6 +56,9 @@ var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
+
+// packetfabric_link_aggregation_group
+const LinkAggGroupInterval = "fast"
 
 // packetfbaric_backbone_virtual_circuit
 const backboneVCspeed = "50Mbps"
@@ -108,9 +112,6 @@ const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
-// packetfabric_link_aggregation_group
-const LinkAggGroupInterval = "fast"
-
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
 	DesiredSpeed          string
@@ -134,6 +135,8 @@ type PortDetails struct {
 // ########################################
 // ###### HCLs RESULTS FOR ASSERTIONS
 // ########################################
+
+// ###### Resources
 
 type HclResultBase struct {
 	Hcl                    string
@@ -319,6 +322,8 @@ type RHclCsAzureDedicatedConnectionResult struct {
 	Speed            string
 }
 
+// ###### Data-sources
+
 // data packetfabric_locations_cloud
 type DHclDatasourceLocationsCloudResult struct {
 	HclResultBase
@@ -369,6 +374,11 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
+// packetfabric_link_aggregation_group
+type DHclDatasourceLinkAggregationGroupsResult struct {
+	HclResultBase
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -378,6 +388,8 @@ type DHclCsAwsHostedConnectionResult struct {
 // ########################################
 // ###### HCLs FOR REQUIRED FIELDS
 // ########################################
+
+// ###### Resources
 
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
@@ -465,6 +477,50 @@ func RHclPortLoa() RHclPortLoaResult {
 	}
 }
 
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails1 := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult1 := portDetails1.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
+		hclName,
+		uniqueDesc,
+		LinkAggGroupInterval,
+		hclPortResult1.ResourceName,
+		hclPortResult1.Pop,
+		resourceName,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: LinkAggGroupInterval,
+		Members: []string{
+			hclPortResult1.ResourceName,
+		},
+		Pop: hclPortResult1.Pop,
+	}
+}
+
 // packetfabric_backbone_virtual_circuit
 func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
@@ -520,50 +576,6 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 			Speed:            backboneVCspeed,
 			SubscriptionTerm: subscriptionTerm,
 		},
-	}
-}
-
-// packetfabric_link_aggregation_group
-func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	portDetails1 := PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
-	}
-
-	hclPortResult1 := portDetails1.RHclPort(false)
-
-	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
-	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
-
-	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
-		hclName,
-		uniqueDesc,
-		LinkAggGroupInterval,
-		hclName,
-		hclPortResult1.Pop,
-		resourceName,
-	)
-
-	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
-
-	return RHclLinkAggregationGroupResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfLinkAggregationGroup,
-			ResourceName: resourceName,
-		},
-		Desc:     uniqueDesc,
-		Interval: LinkAggGroupInterval,
-		Members: []string{
-			hclPortResult1.ResourceName,
-		},
-		Pop: hclPortResult1.Pop,
 	}
 }
 
@@ -889,7 +901,6 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -942,7 +953,6 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
 // packetfabric_cs_google_dedicated_connection
 func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1034,6 +1044,8 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		Speed:            DedicatedCloudSpeed,
 	}
 }
+
+// ###### Data-sources
 
 // data.packetfabric_locations_cloud
 func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
@@ -1207,7 +1219,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 	}
 }
 
-// data packetfabric_cs_aws_hosted_connection
+// data.packetfabric_cs_aws_hosted_connection
 func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 
 	csAwsHostedConnectionResult := RHclAwsHostedConnection()
@@ -1225,6 +1237,27 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDatasourceCsAwsHostedConn,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_link_aggregation_group
+func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
+	linkAggregationGroupResult := RHclLinkAggregationGroup()
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceLinkAggregationGroups)
+
+	linkAggregationGroupsHcl := fmt.Sprintf(
+		DDatasourceLinkAggregationGroups,
+		hclName,
+		linkAggregationGroupResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
+
+	return DHclDatasourceLinkAggregationGroupsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceLinkAggregationGroups,
 			ResourceName: resourceName,
 		},
 	}

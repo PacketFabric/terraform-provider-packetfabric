@@ -485,3 +485,8 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   provider          = packetfabric
   cloud_circuit_id  = %s.id
 }`
+
+const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+  provider       = packetfabric
+  lag_circuit_id = %s.id
+}`

@@ -33,5 +33,4 @@ func TestAccLinkAggregGroupsRequiredFields(t *testing.T) {
 			},
 		},
 	})
-
 }
