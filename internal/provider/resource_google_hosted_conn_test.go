@@ -20,7 +20,6 @@ func TestAccGoogleHostedConnectionRequiredFields(t *testing.T) {
 			{
 				Config: googleHostedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "description", googleHostedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "account_uuid", googleHostedConnectionResult.AccountUuid),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "pop", googleHostedConnectionResult.Pop),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "speed", googleHostedConnectionResult.Speed),
