@@ -56,7 +56,7 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
 	Example: SSBhbSBhIFBERg==

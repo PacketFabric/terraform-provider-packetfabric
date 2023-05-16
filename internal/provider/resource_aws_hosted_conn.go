@@ -102,7 +102,7 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{

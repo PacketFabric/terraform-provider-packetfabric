@@ -5,13 +5,15 @@ import (
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // Labels
-
 func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
 	var labelsData []string
-	for _, label := range labels.([]interface{}) {
+	// Convert labels (TypeSet) to a list
+	labelsList := labels.(*schema.Set).List()
+	for _, label := range labelsList {
 		labelsData = append(labelsData, label.(string))
 	}
 	labelPayload := packetfabric.LabelsPayload{Labels: labelsData}
@@ -24,7 +26,9 @@ func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}
 
 func updateLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
 	var labelsData []string
-	for _, label := range labels.([]interface{}) {
+	// Convert labels (TypeSet) to a list
+	labelsList := labels.(*schema.Set).List()
+	for _, label := range labelsList {
 		labelsData = append(labelsData, label.(string))
 	}
 	labelPayload := packetfabric.LabelsPayload{Labels: labelsData}

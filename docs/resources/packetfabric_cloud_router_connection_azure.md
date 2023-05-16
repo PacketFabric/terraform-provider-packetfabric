@@ -68,7 +68,7 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 ### Optional
 
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). Defaults: false
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.

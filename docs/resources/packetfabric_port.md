@@ -50,7 +50,7 @@ resource "packetfabric_port" "port_1" {
 
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true
 - `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Defaults: true
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com. Defaults: false
