@@ -743,7 +743,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return RHclCloudRouterConnectionGoogleResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
