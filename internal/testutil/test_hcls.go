@@ -288,11 +288,12 @@ type RHclCsHostedCloudAwsResult struct {
 // packetfabric_cs_google_hosted_connection
 type RHclCsHostedCloudGoogleResult struct {
 	HclResultBase
-	Port             RHclPortResult
-	Desc             string
-	Speed            string
-	Pop              string
-	Vlan             int
+	PortResult  RHclPortResult
+	AccountUuid string
+	Desc        string
+	Speed       string
+	Pop         string
+	Vlan        int
 }
 
 // packetfabric_cs_aws_dedicated_connection
@@ -860,11 +861,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 }
 
 // packetfabric_cs_aws_hosted_connection
-<<<<<<< HEAD
 func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
-=======
-func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
->>>>>>> main
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -915,7 +912,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 }
 
 // packetfabric_cs_google_hosted_connection
-func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
+func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -924,7 +921,7 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 	popDetails := PortDetails{
 		PFClient:              c,
 		DesiredSpeed:          HostedCloudSpeed,
-		DesiredProvider:       "aws",
+		DesiredProvider:       "google",
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
@@ -937,7 +934,7 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
-	awsHostedConnectionHcl := fmt.Sprintf(
+	googleHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSGoogleHostedConnection,
 		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
@@ -950,7 +947,7 @@ func RHclCsGoogleReqHostedConnect() RHclCsGoogleReqHostedConnectResult {
 		HostedCloudSpeed,
 		HostedCloudVlan)
 
-	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, awsHostedConnectionHcl)
+	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, googleHostedConnectionHcl)
 
 	return RHclCsHostedCloudGoogleResult{
 		HclResultBase: HclResultBase{
