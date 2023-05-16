@@ -21,7 +21,6 @@ const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-<<<<<<< HEAD
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
@@ -37,21 +36,6 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
-=======
-const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
-
-// data-sources
-const pfDataSourceLocationsCloud = "data.packetfabric_locations_cloud"
-const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availability"
-const pfDataLocations = "data.packetfabric_locations"
-const pfDataZones = "data.packetfabric_locations_pop_zones"
-const pfDataLocationsRegions = "data.packetfabric_locations_regions"
-const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
-const pfPortLoa = "packetfabric_port_loa"
-const pfDataPort = "data.packetfabric_ports"
-const pfDatasourceBilling = "data.packetfabric_billing"
->>>>>>> main
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -107,7 +91,6 @@ const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
 
 // packetfabric_cs_aws_dedicated_connection
-<<<<<<< HEAD
 // packetfabric_cs_google_dedicated_connection
 // packetfabric_cs_azure_dedicated_connection
 const DedicatedCloudSpeed = "10Gbps"
@@ -116,12 +99,6 @@ const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
-=======
-const DedicatedCloudSpeed = "1Gbps"
-const DedicatedCloudServiceClass = "longhaul"
-const DedicatedCloudAutoneg = false
-const DedicatedCloudShouldCreateLag = false
->>>>>>> main
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -288,7 +265,6 @@ type RHclCsAwsDedicatedConnectionResult struct {
 	Speed            string
 }
 
-<<<<<<< HEAD
 // packetfabric_cs_google_dedicated_connection
 type RHclCsGoogleDedicatedConnectionResult struct {
 	HclResultBase
@@ -313,8 +289,6 @@ type RHclCsAzureDedicatedConnectionResult struct {
 	Speed            string
 }
 
-=======
->>>>>>> main
 // data packetfabric_locations_cloud
 type DHclDatasourceLocationsCloudResult struct {
 	HclResultBase
@@ -788,11 +762,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		log.Panic(err)
 	}
 
-<<<<<<< HEAD
 	resourceName, hclName := GenerateUniqueResourceName(pfCsAwsDedicatedConn)
-=======
-	resourceName, hclName := GenerateUniqueResourceName(pfCSAwsDedicatedConnection)
->>>>>>> main
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
@@ -801,10 +771,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		DesiredSpeed:          DedicatedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "dedicated",
-<<<<<<< HEAD
 		IsCloudConnection:     true,
-=======
->>>>>>> main
 	}
 	pop, zone, region := popDetails.FindAvailableCloudPopZone()
 
