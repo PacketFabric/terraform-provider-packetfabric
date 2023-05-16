@@ -295,13 +295,14 @@ resource "google_compute_interconnect_attachment" "google_interconnect2" {
 }
 resource "packetfabric_cs_google_hosted_connection" "%s" {
   provider                    = packetfabric
-  description                 = "%s"
   port                        = %s.id
-  speed                       = "%s"
   google_pairing_key          = google_compute_interconnect_attachment.google_interconnect2.pairing_key
   google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect2.name
-  pop                         = "%s"
-  vlan                        = %v
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_google_hosted_marketplace_connection

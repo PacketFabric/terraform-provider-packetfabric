@@ -12,7 +12,7 @@ import (
 
 func TestAccGoogleHostedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"GOOGLE_CREDENTIALS", "TF_VAR_gcp_project_id"})
-	googleHostedConnectionResult := testutil.RHclCsGoogleReqHostedConnect()
+	googleHostedConnectionResult := testutil.RHclCsGoogleHostedConnection()
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
@@ -21,6 +21,7 @@ func TestAccGoogleHostedConnectionRequiredFields(t *testing.T) {
 				Config: googleHostedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "description", googleHostedConnectionResult.Desc),
+					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "account_uuid", googleHostedConnectionResult.AccountUuid),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "pop", googleHostedConnectionResult.Pop),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "speed", googleHostedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(googleHostedConnectionResult.ResourceName, "vlan", strconv.Itoa(googleHostedConnectionResult.Vlan)),
