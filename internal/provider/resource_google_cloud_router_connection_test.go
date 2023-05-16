@@ -1,41 +1,52 @@
 package provider
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccHclCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
-	cloudRouterConnectionAwsResult := testutil.RHclCloudRouterConnectionGoogle()
+func TestAccCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
+	testutil.PreCheck(t, []string{"GOOGLE_CREDENTIALS"})
+	crConnGoogleResult := testutil.RHclCloudRouterConnectionGoogle()
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-				testutil.PF_CRC_GOOGLE_PAIRING_KEY,
-				testutil.PF_CRC_GOOGLE_VLAN_ATTACHMENT_NAME_KEY,
-			})
-		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: cloudRouterConnectionAwsResult.Hcl,
+				Config: crConnGoogleResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "description", cloudRouterConnectionAwsResult.Desc),
-					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "google_pairing_key", cloudRouterConnectionAwsResult.GooglePairingKey),
-					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "google_vlan_attachment_name", cloudRouterConnectionAwsResult.GoogleVlanAttachmentName),
-					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "pop", cloudRouterConnectionAwsResult.Pop),
-					resource.TestCheckResourceAttr(cloudRouterConnectionAwsResult.ResourceName, "speed", cloudRouterConnectionAwsResult.Speed),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "description", crConnGoogleResult.Desc),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "account_uuid", crConnGoogleResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "pop", crConnGoogleResult.Pop),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "speed", crConnGoogleResult.Speed),
 				),
 			},
 			{
-				ResourceName:      cloudRouterConnectionAwsResult.ResourceName,
+				Config: crConnGoogleResult.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[crConnGoogleResult.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", crConnGoogleResult.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
+					return nil
+				},
+			},
+			{
+				ResourceName:      crConnGoogleResult.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
+					return id, nil
+				},
 			},
 		},
 	})

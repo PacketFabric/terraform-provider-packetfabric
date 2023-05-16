@@ -12,6 +12,10 @@ var testAccExternalProviders = map[string]resource.ExternalProvider{
 		VersionConstraint: "0.9.1",
 		Source:            "hashicorp/time",
 	},
+	"google": {
+		VersionConstraint: "4.61.0",
+		Source:            "hashicorp/google",
+	},
 }
 
 var testAccProviders = map[string]*schema.Provider{
