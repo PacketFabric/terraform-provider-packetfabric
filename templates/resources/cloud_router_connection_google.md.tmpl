@@ -12,7 +12,11 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
+!> **Warning 1:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
+
+!> **Warning 2:** When using `cloud_settings`, the `advertised_ip_ranges` in Google Cloud Router will be managed via BGP `in` prefixes configured `packetfabric_cloud_router_connection_google`. Also, the `advertise_mode` of the Google Cloud Router must be set to "CUSTOM".
+
+->**Note:** It is recommended to ignore the `asn` attribute as it may be changed to a private ASN by PacketFabric in the event of multiple Google connections in the same Cloud Router.
 
 ## Example Usage
 

@@ -12,7 +12,11 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
+!> **Warning 1:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
+
+!> **Warning 2:** When using `cloud_settings`, the `advertised_ip_ranges` in Google Cloud Router will be managed via BGP `in` prefixes configured `packetfabric_cloud_router_connection_google`. Also, the `advertise_mode` of the Google Cloud Router must be set to "CUSTOM".
+
+->**Note:** It is recommended to ignore the `asn` attribute as it may be changed to a private ASN by PacketFabric in the event of multiple Google connections in the same Cloud Router.
 
 ## Example Usage
 
@@ -47,6 +51,27 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+# Google Cloud Router
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "CUSTOM"
+  }
+  lifecycle {
+    # advertised_ip_ranges managed via BGP prefixes in configured in packetfabric_cloud_router_connection_google
+    # asn could be change to a private ASN by PacketFabric in case of multiple google connection in the same cloud router
+    ignore_changes = [
+      bgp[0].advertised_ip_ranges,
+      bgp[0].asn
+    ]
+  }
+}
+
 resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider    = packetfabric
   description = "hello world"
@@ -58,7 +83,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {
@@ -123,7 +148,7 @@ Required:
 
 Optional:
 
-- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 or 2.
+- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 (primary) or 2 (secondary).
 
 	Enum: ["1", "2"] Defaults: 1
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.

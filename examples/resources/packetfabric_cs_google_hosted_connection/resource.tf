@@ -18,6 +18,18 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "DEFAULT"
+  }
+}
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
   provider    = packetfabric
   description = "hello world"
@@ -30,7 +42,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {

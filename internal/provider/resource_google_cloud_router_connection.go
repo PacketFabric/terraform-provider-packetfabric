@@ -204,7 +204,7 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 							Optional:     true,
 							Default:      1,
 							ValidateFunc: validation.IntInSlice([]int{1, 2}),
-							Description:  "The Google Edge Availability Domain. Must be 1 or 2.\n\n\tEnum: [\"1\", \"2\"] ",
+							Description:  "The Google Edge Availability Domain. Must be 1 (primary) or 2 (secondary).\n\n\tEnum: [\"1\", \"2\"] ",
 						},
 						"bgp_settings": {
 							Type:     schema.TypeList,

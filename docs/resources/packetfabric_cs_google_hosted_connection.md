@@ -12,6 +12,8 @@ A hosted cloud connection to your Google Cloud environment. For more information
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
+!> **Warning:** When using `cloud_settings`, the `advertised_ip_ranges` in Google Cloud Router can be managed via `google_advertised_ip_ranges` under `cloud_settings.bgp_settings` configured in `packetfabric_cs_google_hosted_connection`.
+
 ## Example Usage
 
 ```terraform
@@ -35,6 +37,18 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "DEFAULT"
+  }
+}
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
   provider    = packetfabric
   description = "hello world"
@@ -47,7 +61,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {
@@ -104,7 +118,7 @@ Required:
 
 Optional:
 
-- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 or 2.
+- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be (primary) or 2 (secondary).
 
 	Enum: ["1", "2"] Defaults: 1
 - `google_project_id` (String) The Google Project Id to be used. If not present the project id of the credentials will be used.
