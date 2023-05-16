@@ -18,7 +18,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -52,7 +52,7 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
 ### Optional
 
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Defaults: false
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
@@ -62,6 +62,7 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 

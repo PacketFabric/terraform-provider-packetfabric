@@ -154,8 +154,8 @@ type AzureComponents struct {
 	IfdPortCircuitIDPf   string `json:"ifd_port_circuit_id_pf,omitempty"`
 }
 type AzureSettings struct {
-	VlanIDPrivate   int    `json:"vlan_id_private,omitempty"`
-	VlanIDMicrosoft int    `json:"vlan_id_microsoft,omitempty"`
+	VlanPrivate     int    `json:"vlan_id_private,omitempty"`
+	VlanMicrosoft   int    `json:"vlan_id_microsoft,omitempty"`
 	AzureServiceKey string `json:"azure_service_key,omitempty"`
 }
 

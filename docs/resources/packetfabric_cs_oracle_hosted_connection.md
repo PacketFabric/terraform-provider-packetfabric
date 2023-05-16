@@ -42,7 +42,7 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -51,6 +51,7 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

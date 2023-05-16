@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -95,12 +96,32 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"azure_connection_type": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Azure connection type.\n\t\tExample: primary or seconday",
+			},
+			"vlan_id_private": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "The private peering vlan.",
+			},
+			"vlan_id_microsoft": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "The microsoft peering vlan.",
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -120,17 +141,40 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
+		if err := checkCloudRouterConnectionStatus(c, cid.(string), resp.CloudCircuitID); err != nil {
 			return diag.FromErr(err)
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+
+			time.Sleep(90 * time.Second) // wait for the connection to show on AWS
+			resp, err := c.ReadCloudRouterConnection(cid.(string), resp.CloudCircuitID)
+			if err != nil {
+				diags = diag.FromErr(err)
+				return diags
+			}
+
+			if resp.CloudSettings.AzureConnectionType == "" {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The azure_connection_type is currently unavailable.",
+				})
+				return diags
+			} else {
+				_ = d.Set("azure_connection_type", resp.CloudSettings.AzureConnectionType)
+			}
+			if resp.CloudSettings.VlanPrivate == 0 && resp.CloudSettings.VlanMicrosoft == 0 {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The vlan_id_private/vlan_id_microsoft are currently unavailable.",
+				})
+				return diags
+			} else {
+				_ = d.Set("vlan_id_private", resp.CloudSettings.VlanPrivate)
+				_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanMicrosoft)
+			}
 
 			if labels, ok := d.GetOk("labels"); ok {
 				diagnostics, created := createLabels(c, d.Id(), labels)
@@ -139,8 +183,6 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 				}
 			}
 		}
-		// Adding delay after Azure Cloud Router Connection created
-		time.Sleep(30 * time.Second)
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -155,30 +197,54 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
-		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
-		if err != nil {
-			diags = diag.FromErr(err)
-			return diags
-		}
-
-		_ = d.Set("account_uuid", resp.AccountUUID)
-		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("description", resp.Description)
-		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
-
-		if resp.CloudSettings.PublicIP != "" {
-			_ = d.Set("is_public", true)
-		} else {
-			_ = d.Set("is_public", false)
-		}
-		// unsetFields: published_quote_line_uuid
+	circuitID, ok := d.GetOk("circuit_id")
+	if !ok {
+		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
 	}
+	cloudConnCID := d.Get("id")
+	resp, err := c.ReadCloudRouterConnection(circuitID.(string), cloudConnCID.(string))
+	if err != nil {
+		diags = diag.FromErr(err)
+		return diags
+	}
+
+	_ = d.Set("account_uuid", resp.AccountUUID)
+	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+	_ = d.Set("description", resp.Description)
+	_ = d.Set("speed", resp.Speed)
+	_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
+	if _, ok := d.GetOk("po_number"); ok {
+		_ = d.Set("po_number", resp.PONumber)
+	}
+
+	if resp.CloudSettings.PublicIP != "" {
+		_ = d.Set("is_public", true)
+	} else {
+		_ = d.Set("is_public", false)
+	}
+
+	if resp.CloudSettings.AzureConnectionType == "" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Incomplete Cloud Information",
+			Detail:   "The azure_connection_type is currently unavailable.",
+		})
+		return diags
+	} else {
+		_ = d.Set("azure_connection_type", resp.CloudSettings.AzureConnectionType)
+	}
+	if resp.CloudSettings.VlanPrivate == 0 && resp.CloudSettings.VlanMicrosoft == 0 {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Incomplete Cloud Information",
+			Detail:   "The vlan_id_private/vlan_id_microsoft are currently unavailable.",
+		})
+		return diags
+	} else {
+		_ = d.Set("vlan_id_private", resp.CloudSettings.VlanPrivate)
+		_ = d.Set("vlan_id_microsoft", resp.CloudSettings.VlanMicrosoft)
+	}
+	// unsetFields: published_quote_line_uuid
 
 	if _, ok := d.GetOk("labels"); ok {
 		labels, err2 := getLabels(c, d.Id())
@@ -186,6 +252,13 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }

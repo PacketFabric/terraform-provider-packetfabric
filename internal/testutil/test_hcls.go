@@ -862,7 +862,11 @@ func RHclBgpSession() RHclBgpSessionResult {
 }
 
 // packetfabric_cs_aws_hosted_connection
+<<<<<<< HEAD
 func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
+=======
+func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
+>>>>>>> main
 
 	c, err := _createPFClient()
 	if err != nil {

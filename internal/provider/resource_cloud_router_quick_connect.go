@@ -129,7 +129,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Description: "The Quick Connect time updated.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{

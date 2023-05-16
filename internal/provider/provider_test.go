@@ -5,12 +5,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const testPrefix = "tf-acc"
-
 var testAccExternalProviders = map[string]resource.ExternalProvider{
 	"time": {
 		VersionConstraint: "0.9.1",
 		Source:            "hashicorp/time",
+	},
+	"google": {
+		VersionConstraint: "4.61.0",
+		Source:            "hashicorp/google",
 	},
 }
 

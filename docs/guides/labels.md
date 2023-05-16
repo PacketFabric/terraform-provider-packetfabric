@@ -23,7 +23,9 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 ```
+
+Please note, when importing existing infrastructure into Terraform using `terraform import`, the labels attribute will not be imported. However, you can safely reapply labels using Terraform without causing service disruptions. Terraform will detect and resolve any discrepancies between your configuration and the actual state of your resources during the next terraform apply operation.

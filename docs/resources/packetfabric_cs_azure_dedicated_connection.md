@@ -53,7 +53,7 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF for the LOA that you generated from the Azure portal
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
@@ -62,6 +62,7 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

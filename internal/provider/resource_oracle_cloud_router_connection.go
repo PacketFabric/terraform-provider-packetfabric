@@ -103,12 +103,17 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -128,13 +133,7 @@ func resourceOracleCloudRouteConnCreate(ctx context.Context, d *schema.ResourceD
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
+		if err := checkCloudRouterConnectionStatus(c, cid.(string), resp.CloudCircuitID); err != nil {
 			return diag.FromErr(err)
 		}
 		if resp != nil {
@@ -190,6 +189,14 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }
