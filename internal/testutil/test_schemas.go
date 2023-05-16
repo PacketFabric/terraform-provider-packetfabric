@@ -100,12 +100,38 @@ const RResourceCloudRouterConnectionAzure = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
-const RResourceCloudRouterConnectionGoogle = `resource "packetfabric_cloud_router_connection_google" "%s" {
+const RResourceCloudRouterConnectionGoogle = `variable "gcp_project_id" {
+  type = string
+}
+resource "google_compute_router" "google_router" {
+  provider = google
+  project  = var.gcp_project_id
+  region   = "%s"
+  name     = "terraform-test-acc-google-router"
+  network  = "%s"
+  bgp {
+    asn               = 16550
+    advertise_mode    = "DEFAULT"
+  }
+}
+resource "google_compute_interconnect_attachment" "google_interconnect" {
+  provider                 = google
+  project                  = var.gcp_project_id
+  name                     = "terraform-test-acc-google-interconnect"
+  region                   = "%s"
+  description              = "terraform Test ACC Interconnect to PacketFabric Network"
+  type                     = "PARTNER"
+  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  admin_enabled            = true
+  router                   = google_compute_router.google_router.id
+}
+resource "packetfabric_cloud_router_connection_google" "%s" {
   provider                    = packetfabric
-  description                 = "%s"
   circuit_id                  = %s.id
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
+  account_uuid                = "%s"
+  description                 = "%s"
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect.name
   pop                         = "%s"
   speed                       = "%s"
 }`
@@ -324,9 +350,15 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   provider    = packetfabric
   description = "%s"
   interval    = "%s"
-  members     = ["%s", "%s"]
+  members     = [%s.id]
   pop         = "%s"
-}`
+}
+
+resource "time_sleep" "wait_for_lag" {
+  depends_on = [%s]
+  destroy_duration = "3m"
+}
+`
 
 // Resource: packetfabric_marketplace_service_port_accept_request
 const RResourceMarketplaceServicePortAcceptRequest = `resource "packetfabric_marketplace_service_port_accept_request" "%s" {
@@ -446,4 +478,15 @@ const DDataSourcePorts = `data "packetfabric_ports" "%s" {
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_cs_aws_hosted_connection
+const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection" "%s" {
+  provider          = packetfabric
+  cloud_circuit_id  = %s.id
+}`
+
+const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+  provider       = packetfabric
+  lag_circuit_id = %s.id
 }`
