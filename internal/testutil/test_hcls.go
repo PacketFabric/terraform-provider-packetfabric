@@ -18,12 +18,14 @@ const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
 const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
+const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 
 // data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -36,6 +38,7 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
+const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -48,7 +51,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"} // TODO: add LAB1 when fixed
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -68,7 +71,12 @@ const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
 
 // packetfabric_cloud_router_connection_aws
-const CloudRouterConnAwsSpeed = "50Mbps"
+// packetfabric_cloud_router_connection_google
+const CloudRouterConnSpeed = "50Mbps"
+
+// packetfabric_cloud_router_connection_google
+const CloudRouterConnGoogleRegion = "us-west1"
+const CloudRouterConnGoogleNetwork = "default"
 
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
@@ -99,6 +107,9 @@ const DedicatedCloudAutoneg = false
 const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
+
+// packetfabric_link_aggregation_group
+const LinkAggGroupInterval = "fast"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -150,6 +161,15 @@ type RHclPortLoaResult struct {
 	Port             RHclPortResult
 	LoaCustomerName  string
 	DestinationEmail string
+}
+
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
 }
 
 // packetfabric_backbone_virtual_circuit
@@ -212,6 +232,16 @@ type RHclCloudRouterConnectionAwsResult struct {
 	Desc         string
 	Pop          string
 	Speed        string
+}
+
+// packetfabric_cloud_router_connection_google
+type RHclCloudRouterConnectionGoogleResult struct {
+	HclResultBase
+	CloudRouter RHclCloudRouterResult
+	AccountUuid string
+	Desc        string
+	Pop         string
+	Speed       string
 }
 
 // packetfabric_cloud_router_connection_port
@@ -331,6 +361,11 @@ type DHclPortResult struct {
 
 // data packetfabric_billing
 type DHclDatasourceBillingResult struct {
+	HclResultBase
+}
+
+// data packetfabric_cs_aws_hosted_connection
+type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
@@ -488,6 +523,50 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 	}
 }
 
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails1 := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult1 := portDetails1.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
+		hclName,
+		uniqueDesc,
+		LinkAggGroupInterval,
+		hclName,
+		hclPortResult1.Pop,
+		resourceName,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+
+	return RHclLinkAggregationGroupResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfLinkAggregationGroup,
+			ResourceName: resourceName,
+		},
+		Desc:     uniqueDesc,
+		Interval: LinkAggGroupInterval,
+		Members: []string{
+			hclPortResult1.ResourceName,
+		},
+		Pop: hclPortResult1.Pop,
+	}
+}
+
 // packetfabric_point_to_point
 func RHclPointToPoint() RHclPointToPointResult {
 
@@ -588,7 +667,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	}
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          CloudRouterConnAwsSpeed,
+		DesiredSpeed:          CloudRouterConnSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
 		HasCloudRouter:        true,
@@ -610,8 +689,10 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
-		CloudRouterConnAwsSpeed)
+		CloudRouterConnSpeed)
+
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
 	return RHclCloudRouterConnectionAwsResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
@@ -621,8 +702,59 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		},
 		AwsAccountID: os.Getenv("PF_AWS_ACCOUNT_ID"),
 		AccountUuid:  os.Getenv("PF_ACCOUNT_ID"),
-		Speed:        CloudRouterConnAwsSpeed,
+		Speed:        CloudRouterConnSpeed,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_google
+func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          CloudRouterConnSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		HasCloudRouter:        true,
+		IsCloudConnection:     true,
+	}
+
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionGoogle,
+		CloudRouterConnGoogleRegion,
+		CloudRouterConnGoogleNetwork,
+		CloudRouterConnGoogleRegion,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		pop,
+		CloudRouterConnSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnGoogle,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+		Pop:         pop,
 	}
 }
 
@@ -631,7 +763,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	portDetails := CreateBasePortDetails()
 
-	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
@@ -642,13 +774,13 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		RResourceCloudRouterConnectionPort,
 		hclName,
 		uniqueDesc,
-		cloudRouterResult.ResourceName,
+		hclCloudRouterRes.ResourceName,
 		portTestResult.ResourceName,
 		CloudRouterConnPortSpeed,
 		CloudRouterConnPortVlan,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, hclCloudRouterRes.Hcl, crConnPortHcl)
 
 	return RHclCloudRouterConnectionPortResult{
 		HclResultBase: HclResultBase{
@@ -656,7 +788,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		CloudRouter: cloudRouterResult,
+		CloudRouter: hclCloudRouterRes,
 		PortResult:  portTestResult,
 		Desc:        uniqueDesc,
 		Speed:       CloudRouterConnPortSpeed,
@@ -1070,6 +1202,29 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data packetfabric_cs_aws_hosted_connection
+func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
+
+	csAwsHostedConnectionResult := RHclAwsHostedConnection()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceCsAwsHostedConn)
+	log.Printf("Data-source name: %s\n", hclName)
+
+	hostedAwsConnHcl := fmt.Sprintf(DDatasourceCsAwsHostedConn,
+		hclName,
+		csAwsHostedConnectionResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", csAwsHostedConnectionResult.Hcl, hostedAwsConnHcl)
+
+	return DHclCsAwsHostedConnectionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDatasourceCsAwsHostedConn,
 			ResourceName: resourceName,
 		},
 	}
