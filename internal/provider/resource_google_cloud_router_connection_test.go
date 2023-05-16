@@ -1,8 +1,9 @@
+//go:build resource || cloud_router || all || smoke
+
 package provider
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"

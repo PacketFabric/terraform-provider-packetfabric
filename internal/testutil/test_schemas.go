@@ -100,9 +100,14 @@ const RResourceCloudRouterConnectionAzure = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
-const RResourceCloudRouterConnectionGoogle = `resource "google_compute_router" "google_router" {
+const RResourceCloudRouterConnectionGoogle = `variable "gcp_project_id" {
+  type = string
+}
+resource "google_compute_router" "google_router" {
   provider = google
-  name     = %s"
+  project  = var.gcp_project_id
+  region   = "%s"
+  name     = "terraform-test-acc-google-router"
   network  = "%s"
   bgp {
     asn               = 16550
@@ -111,9 +116,10 @@ const RResourceCloudRouterConnectionGoogle = `resource "google_compute_router" "
 }
 resource "google_compute_interconnect_attachment" "google_interconnect" {
   provider                 = google
-  name                     = "%s"
+  project                  = var.gcp_project_id
+  name                     = "terraform-test-acc-google-interconnect"
   region                   = "%s"
-  description              = "Interconnect to PacketFabric Network"
+  description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
   edge_availability_domain = "AVAILABILITY_DOMAIN_1"
   admin_enabled            = true

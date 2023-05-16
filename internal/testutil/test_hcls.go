@@ -726,15 +726,14 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
-	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionGoogle,
-		uniqueDesc,
+		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
-		hclName,
 		CloudRouterConnGoogleRegion,
 		hclName,
 		hclCloudRouterRes.ResourceName,
@@ -744,7 +743,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
-
+	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
 	return RHclCloudRouterConnectionGoogleResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
@@ -763,7 +762,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	portDetails := CreateBasePortDetails()
 
-	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
@@ -774,13 +773,13 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		RResourceCloudRouterConnectionPort,
 		hclName,
 		uniqueDesc,
-		cloudRouterResult.ResourceName,
+		hclCloudRouterRes.ResourceName,
 		portTestResult.ResourceName,
 		CloudRouterConnPortSpeed,
 		CloudRouterConnPortVlan,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, hclCloudRouterRes.Hcl, crConnPortHcl)
 
 	return RHclCloudRouterConnectionPortResult{
 		HclResultBase: HclResultBase{
@@ -788,7 +787,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		CloudRouter: cloudRouterResult,
+		CloudRouter: hclCloudRouterRes,
 		PortResult:  portTestResult,
 		Desc:        uniqueDesc,
 		Speed:       CloudRouterConnPortSpeed,
