@@ -21,12 +21,8 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
-}
-
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
 }
 ```
 
@@ -54,6 +50,7 @@ output "packetfabric_cloud_router" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

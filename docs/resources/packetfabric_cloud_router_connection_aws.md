@@ -8,25 +8,9 @@ description: |-
 
 # packetfabric_cloud_router_connection_aws (Resource)
 
-A connection from your cloud router to your AWS environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/).
+A connection from your cloud router to your AWS environment. For more information, see [Cloud Router in the PacketFabric documentation](https://docs.packetfabric.com/cr/) and [Cloud Router NAT](https://docs.packetfabric.com/cr/nat/).
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
-
-To retrieve the VLAN ID for establishing AWS peering via [`aws_dx_transit_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_transit_virtual_interface) or [`aws_dx_private_virtual_interface`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dx_private_virtual_interface), utilize the [`packetfabric_cloud_router_connections (Data Source)`](https://registry.terraform.io/providers/PacketFabric/packetfabric/latest/docs/data-sources/packetfabric_cloud_router_connections) and loop through its output in a `locals` block. 
-
-The code to do this is provided below:
-
-```terraform
-locals {
-  cloud_connections = data.packetfabric_cloud_router_connections.current.cloud_connections[*]
-  helper_map = { for val in local.cloud_connections :
-  val["description"] => val }
-  cc1 = local.helper_map["${var.pf_crc_description}"]
-}
-output "cc1_vlan_id_pf" {
-  value = one(local.cc1.cloud_settings[*].vlan_id_pf)
-}
-```
 
 ## Example Usage
 
@@ -36,9 +20,10 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
 }
 
+# Example PacketFabric side provisioning only
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
   provider    = packetfabric
   circuit_id  = packetfabric_cloud_router.cr1.id
@@ -51,29 +36,54 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
   labels      = ["terraform", "dev"]
 }
 
-output "packetfabric_cloud_router_connection_aws" {
-  value = packetfabric_cloud_router_connection_aws.crc1
-}
-
-# Wait for the connection to show up in AWS
-resource "time_sleep" "wait_aws_connection" {
-  create_duration = "2m"
-  depends_on = [
-    packetfabric_cloud_router_connection_aws.crc1
-  ]
-}
-
-# Retrieve the Direct Connect connections in AWS
-data "aws_dx_connection" "current" {
-  provider   = aws
-  name       = "hello world"
-  depends_on = [time_sleep.wait_aws_connection]
-}
-
-# Accept the connection
 resource "aws_dx_connection_confirmation" "confirmation" {
   provider      = aws
-  connection_id = data.aws_dx_connection.current.id
+  connection_id = packetfabric_cloud_router_connection_aws.crc1.cloud_provider_connection_id
+}
+
+
+# Example PacketFabric side + AWS side provisioning
+resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
+  provider       = packetfabric
+  description    = "AWS Staging Environement"
+  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+}
+
+resource "packetfabric_cloud_router_connection_aws" "crc1" {
+  provider    = packetfabric
+  circuit_id  = packetfabric_cloud_router.cr1.id
+  maybe_nat   = false
+  description = "hello world"
+  pop         = "PDX2"
+  zone        = "A"
+  is_public   = false
+  speed       = "1Gbps"
+  cloud_settings {
+    credentials_uuid = packetfabric_cloud_provider_credential_aws.aws_creds1.id
+    aws_region       = "us-west-1"
+    mtu              = 1500
+    aws_vif_type     = "private" # or transit
+    aws_gateways {
+      type = "directconnect"
+      id   = "760f047b-53ce-4a9d-9ed6-6fac5ca2fa81"
+    }
+    aws_gateways { #  Private VIF
+      type   = "private"
+      id     = "vgw-066eb6dcd07dcbb65"
+      vpc_id = "vpc-bea401c4"
+    }
+    # aws_gateways { # Transit VIF
+    #   type = "transit"
+    #   id   = "tgw-0b7a1390af74b9728"
+    #   vpc_id = "vpc-bea401c4"
+    #   subnet_ids = [
+    #     "subnet-0c222c8047660ca13",
+    #     "subnet-03838a8ea2270c40a"
+    #   ]
+    # }
+  }
+  labels = ["terraform", "dev"]
 }
 ```
 
@@ -93,6 +103,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 
 ### Optional
 
+- `bgp_settings_uuid` (String) BGP session ID generated when the cloud-side connection is provisioned by PacketFabric.
+- `cloud_settings` (Block List, Max: 1) Provision the Cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to use a public VIF on the AWS side. Defaults: false
 - `labels` (List of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
@@ -104,7 +116,133 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 
 ### Read-Only
 
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
+- `vlan_id_pf` (Number) PacketFabric VLAN ID.
+
+<a id="nestedblock--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Required:
+
+- `aws_vif_type` (String) The type of VIF to use for this connection.
+- `bgp_settings` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings))
+- `credentials_uuid` (String) The UUID of the credentials to be used with this connection.
+
+Optional:
+
+- `aws_gateways` (Block List, Max: 2) Only for Private or Transit VIF. (see [below for nested schema](#nestedblock--cloud_settings--aws_gateways))
+- `aws_region` (String) The AWS region that should be used.
+- `mtu` (Number) Maximum Transmission Unit this port supports (size of the largest supported PDU).
+
+	Enum: ["1500", "9001"] Defaults: 1500
+
+<a id="nestedblock--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
+
+Required:
+
+- `prefixes` (Block Set, Min: 1) The list of BGP prefixes (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--prefixes))
+
+Optional:
+
+- `as_prepend` (Number) The BGP prepend value for this instance. It is used when type = out.
+
+	Available range is 1 through 5.
+- `bfd_interval` (Number) If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.
+
+	Available range is 3 through 30000.
+- `bfd_multiplier` (Number) If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.
+
+	Available range is 2 through 16.
+- `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
+- `l3_address` (String) The prefix of the customer router. Required for public VIFs.
+- `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
+
+	Available range is 1 through 4294967295.
+- `md5` (String) The MD5 value of the authenticated BGP sessions. Required for AWS.
+- `med` (Number) The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.
+
+	Available range is 1 through 4294967295.
+- `nat` (Block Set, Max: 1) Translate the source or destination IP address. (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--nat))
+- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes. Defaults: false
+- `remote_address` (String) The prefix of the remote router. Required for public VIFs.
+
+<a id="nestedblock--cloud_settings--bgp_settings--prefixes"></a>
+### Nested Schema for `cloud_settings.bgp_settings.prefixes`
+
+Required:
+
+- `prefix` (String) The actual IP Prefix of this instance.
+- `type` (String) Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).
+		Enum: in, out.
+
+Optional:
+
+- `as_prepend` (Number) The BGP prepend value of this prefix. It is used when type = out.
+
+	Available range is 1 through 5.
+- `local_preference` (Number) The local_preference of this prefix. It is used when type = in.
+
+	Available range is 1 through 4294967295.
+- `match_type` (String) The match type of this prefix.
+
+	Enum: `"exact"` `"orlonger"` Defaults: exact
+- `med` (Number) The MED of this prefix. It is used when type = out.
+
+	Available range is 1 through 4294967295.
+
+
+<a id="nestedblock--cloud_settings--bgp_settings--nat"></a>
+### Nested Schema for `cloud_settings.bgp_settings.nat`
+
+Optional:
+
+- `direction` (String) If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). 
+		Enum: output, input. Defaults: output
+- `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--cloud_settings--bgp_settings--nat--dnat_mappings))
+- `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
+		Enum: overload, inline_dnat. Defaults: overload
+- `pool_prefixes` (List of String) If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.
+
+	Example: 10.0.0.0/32
+- `pre_nat_sources` (List of String) If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.
+
+	Example: 10.0.0.0/24
+
+<a id="nestedblock--cloud_settings--bgp_settings--nat--dnat_mappings"></a>
+### Nested Schema for `cloud_settings.bgp_settings.nat.dnat_mappings`
+
+Required:
+
+- `private_prefix` (String) Post-translation IP prefix.
+- `public_prefix` (String) Pre-translation IP prefix.
+
+Optional:
+
+- `conditional_prefix` (String) Post-translation prefix must be equal to or included within the conditional IP prefix.
+
+
+
+
+<a id="nestedblock--cloud_settings--aws_gateways"></a>
+### Nested Schema for `cloud_settings.aws_gateways`
+
+Required:
+
+- `type` (String) The type of this AWS Gateway.
+
+Optional:
+
+- `asn` (Number) The ASN of the AWS Gateway to be used.
+- `id` (String) The ID of the AWS Gateway to be used.
+- `name` (String) The name of the AWS Gateway, required if creating a new DirectConnect Gateway.
+- `subnet_ids` (List of String) An array of subnet IDs to associate with this Gateway. Required for transit Gateways.
+- `vpc_id` (String) The AWS VPC ID this Gateway should be associated with. Required for private and transit Gateways.
+
+
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
@@ -120,6 +258,8 @@ Optional:
 
 
 ## Import
+
+->**Note:** Import is not supported if `cloud_settings` are used.
 
 Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
 

@@ -78,6 +78,11 @@ func resourceCloudRouter() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -132,14 +137,26 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			regions = append(regions, region.Code)
 		}
 		_ = d.Set("regions", regions)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 
@@ -164,7 +181,9 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
-	_ = d.Set("po_number", resp.PONumber)
+	if d.HasChange("po_number") {
+		_ = d.Set("po_number", resp.PONumber)
+	}
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -183,9 +202,16 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 	var diags diag.Diagnostics
 
 	cID := d.Get("id").(string)
-	_, err := c.DeleteCloudRouter(cID)
+
+	etlDiags, err := addETLWarning(c, cID)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+	diags = append(diags, etlDiags...)
+
+	_, err2 := c.DeleteCloudRouter(cID)
+	if err2 != nil {
+		return diag.FromErr(err2)
 	}
 
 	d.SetId("")

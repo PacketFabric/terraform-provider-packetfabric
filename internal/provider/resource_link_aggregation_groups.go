@@ -71,6 +71,12 @@ func resourceLinkAggregationGroups() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"enabled": {
+				Type:        schema.TypeBool,
+				Default:     true,
+				Optional:    true,
+				Description: "Change LAG Admin Status. Set it to true when LAG is enabled, false when LAG is disabled. ",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -95,6 +101,14 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
 			return diagnostics
+		}
+	}
+
+	enabled := d.Get("enabled").(bool)
+	if !enabled {
+		_, err := c.DisableLinkAggregationGroup(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
@@ -128,6 +142,22 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
+
+	if d.HasChange("enabled") {
+		enabled := d.Get("enabled").(bool)
+		if !enabled {
+			_, err := c.DisableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		} else {
+			_, err := c.EnableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	}
+
 	return diags
 }
 
@@ -177,11 +207,13 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	}
 	_ = d.Set("members", members)
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diags
 }
 

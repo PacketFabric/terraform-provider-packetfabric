@@ -14,6 +14,10 @@ variable "regions" {
   type = list(string)
 }
 
+variable "labels" {
+  type = list(string)
+}
+
 variable "aws_connections" {
   type = map(map(string))
 }

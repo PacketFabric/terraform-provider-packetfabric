@@ -9,8 +9,3 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
   vlan        = 102
   labels      = ["terraform", "dev"]
 }
-
-output "packetfabric_cs_oracle_hosted_connection" {
-  value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
-  sensitive = true
-}

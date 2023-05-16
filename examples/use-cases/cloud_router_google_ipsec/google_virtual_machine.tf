@@ -1,6 +1,6 @@
 resource "google_compute_firewall" "ssh-rule" {
   provider = google
-  name     = "${var.tag_name}-${random_pet.name.id}"
+  name     = "${var.resource_name}-${random_pet.name.id}"
   network  = google_compute_network.vpc_1.name
   allow {
     protocol = "icmp"
@@ -14,10 +14,10 @@ resource "google_compute_firewall" "ssh-rule" {
 
 resource "google_compute_instance" "vm_1" {
   provider     = google
-  name         = "${var.tag_name}-${random_pet.name.id}-vm1"
+  name         = "${var.resource_name}-${random_pet.name.id}-vm1"
   machine_type = "e2-micro"
   zone         = var.gcp_zone1
-  tags         = ["${var.tag_name}-${random_pet.name.id}"]
+  tags         = ["${var.resource_name}-${random_pet.name.id}"]
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2204-lts"
@@ -35,7 +35,7 @@ resource "google_compute_instance" "vm_1" {
 
 data "google_compute_instance" "vm_1" {
   provider = google
-  name     = "${var.tag_name}-${random_pet.name.id}-vm1"
+  name     = "${var.resource_name}-${random_pet.name.id}-vm1"
   zone     = var.gcp_zone1
   depends_on = [
     google_compute_instance.vm_1

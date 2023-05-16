@@ -26,7 +26,3 @@ resource "packetfabric_backbone_virtual_circuit_marketplace" "vc_marketplace_con
     subscription_term = 1
   }
 }
-
-output "packetfabric_backbone_virtual_circuit_marketplace" {
-  value = packetfabric_backbone_virtual_circuit_marketplace.vc_marketplace_conn1
-}

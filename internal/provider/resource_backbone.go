@@ -2,10 +2,12 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -169,7 +171,40 @@ func resourceBackbone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+
+				interfaces := []string{"interface_a", "interface_z"}
+
+				for _, iface := range interfaces {
+					oldRaw, newRaw := d.GetChange(iface)
+					oldSet := oldRaw.(*schema.Set)
+					newSet := newRaw.(*schema.Set)
+
+					for _, oldElem := range oldSet.List() {
+						for _, newElem := range newSet.List() {
+							oldResource := oldElem.(map[string]interface{})
+							newResource := newElem.(map[string]interface{})
+
+							if oldResource["port_circuit_id"] != newResource["port_circuit_id"] {
+								return fmt.Errorf("updating %s port_circuit_id in-place is not supported, delete and recreate the resource with the updated values", iface)
+							}
+						}
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -185,19 +220,8 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	createOk := make(chan bool)
-	defer close(createOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(resp.VcCircuitID); ok {
-				ticker.Stop()
-				createOk <- true
-			}
-		}
-	}()
-	<-createOk
 	if resp != nil {
+		checkBackboneComplete(c, resp.VcCircuitID)
 		d.SetId(resp.VcCircuitID)
 
 		if labels, ok := d.GetOk("labels"); ok {
@@ -293,14 +317,26 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		} else {
 			_ = d.Set("flex_bandwidth_id", nil)
 		}
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 
@@ -321,35 +357,13 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 			return diag.FromErr(err)
 		}
-		updateOk := make(chan bool)
-		defer close(updateOk)
-		ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-		go func() {
-			for range ticker.C {
-				if ok := c.IsBackboneComplete(d.Id()); ok {
-					ticker.Stop()
-					updateOk <- true
-				}
-			}
-		}()
-		<-updateOk
+		checkBackboneComplete(c, d.Id())
 	}
 
 	if _, err := c.UpdateServiceSettings(d.Id(), settings); err != nil {
 		return diag.FromErr(err)
 	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
-	go func() {
-		for range ticker.C {
-			if ok := c.IsBackboneComplete(d.Id()); ok {
-				ticker.Stop()
-				updateOk <- true
-			}
-		}
-	}()
-	<-updateOk
+	checkBackboneComplete(c, d.Id())
 
 	if d.HasChange("labels") {
 		labels := d.Get("labels")
@@ -361,11 +375,31 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
+func checkBackboneComplete(c *packetfabric.PFClient, id string) {
+	done := make(chan bool)
+	defer close(done)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
+	go func() {
+		for range ticker.C {
+			if ok := c.IsBackboneComplete(id); ok {
+				ticker.Stop()
+				done <- true
+			}
+		}
+	}()
+	<-done
+}
+
 func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	if vcCircuitID, ok := d.GetOk("id"); ok {
+		etlDiags, err2 := addETLWarning(c, vcCircuitID.(string))
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		diags = append(diags, etlDiags...)
 		_, err := c.DeleteBackbone(vcCircuitID.(string))
 		if err != nil {
 			return diag.FromErr(err)
