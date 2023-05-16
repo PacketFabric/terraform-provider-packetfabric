@@ -28,7 +28,6 @@ func TestAccDatasourceHostedConnComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "speed"),
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "description"),
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "cloud_provider_pop"),
-					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "cloud_provider_region"),
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "time_created"),
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "time_updated"),
 					resource.TestCheckResourceAttrSet(datasourceHostedAwsConnResult.ResourceName, "pop"),

@@ -49,7 +49,7 @@ const subscriptionTerm = 1
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
 
-var listPortsLab = []string{"LAB2", "LAB4", "LAB6", "LAB8"} // TODO: add LAB1 when fixed
+var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -1094,7 +1094,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 		csAwsHostedConnectionResult.ResourceName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsHostedConnectionResult.Hcl, hostedAwsConnHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return DHclCsAwsHostedConnectionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
