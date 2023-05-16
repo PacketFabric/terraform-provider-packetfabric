@@ -948,7 +948,7 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		HostedCloudVlan)
 
 	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, googleHostedConnectionHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return RHclCsHostedCloudGoogleResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
