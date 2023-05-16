@@ -1,4 +1,4 @@
-//go:build datasource || all
+//go:build datasource || hosted_cloud || all
 
 package provider
 
