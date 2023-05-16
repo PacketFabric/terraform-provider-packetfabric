@@ -243,16 +243,11 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 		time.Sleep(time.Duration(90) * time.Second)
 	}
 	time.Sleep(45 * time.Second)
-	resp, err := c.DeleteLinkAggregationGroup(d.Id())
+	_, err := c.DeleteLinkAggregationGroup(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	time.Sleep(45 * time.Second)
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Link Aggregation Group delete workflow",
-		Detail:   resp.WorkflowName,
-	})
 	return diags
 }
 
