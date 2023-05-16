@@ -716,6 +716,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		DesiredSpeed:          HostedCloudSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
 	}
 	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
