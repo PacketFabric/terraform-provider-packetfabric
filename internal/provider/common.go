@@ -8,7 +8,6 @@ import (
 )
 
 // Labels
-
 func createLabels(c *packetfabric.PFClient, circuitId string, labels interface{}) (diag.Diagnostics, bool) {
 	var labelsData []string
 	for _, label := range labels.([]interface{}) {
