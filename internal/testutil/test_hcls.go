@@ -18,6 +18,7 @@ const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
 const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
+const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
@@ -70,7 +71,12 @@ const CloudRouterRegionUK = "UK"
 const CloudRouterASN = 4556
 
 // packetfabric_cloud_router_connection_aws
-const CloudRouterConnAwsSpeed = "50Mbps"
+// packetfabric_cloud_router_connection_google
+const CloudRouterConnSpeed = "50Mbps"
+
+// packetfabric_cloud_router_connection_google
+const CloudRouterConnGoogleRegion = "us-west1"
+const CloudRouterConnGoogleNetwork = "default"
 
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
@@ -157,6 +163,15 @@ type RHclPortLoaResult struct {
 	DestinationEmail string
 }
 
+// packetfabric_link_aggregation_group
+type RHclLinkAggregationGroupResult struct {
+	HclResultBase
+	Desc     string
+	Interval string
+	Members  []string
+	Pop      string
+}
+
 // packetfabric_backbone_virtual_circuit
 type RHclBackboneVirtualCircuitResult struct {
 	HclResultBase
@@ -217,6 +232,16 @@ type RHclCloudRouterConnectionAwsResult struct {
 	Desc         string
 	Pop          string
 	Speed        string
+}
+
+// packetfabric_cloud_router_connection_google
+type RHclCloudRouterConnectionGoogleResult struct {
+	HclResultBase
+	CloudRouter RHclCloudRouterResult
+	AccountUuid string
+	Desc        string
+	Pop         string
+	Speed       string
 }
 
 // packetfabric_cloud_router_connection_port
@@ -342,15 +367,6 @@ type DHclDatasourceBillingResult struct {
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
-}
-
-// packetfabric_link_aggregation_group
-type RHclLinkAggregationGroupResult struct {
-	HclResultBase
-	Desc     string
-	Interval string
-	Members  []string
-	Pop      string
 }
 
 // Patterns:
@@ -651,7 +667,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	}
 	popDetails := PortDetails{
 		PFClient:              c,
-		DesiredSpeed:          CloudRouterConnAwsSpeed,
+		DesiredSpeed:          CloudRouterConnSpeed,
 		DesiredProvider:       "aws",
 		DesiredConnectionType: "hosted",
 		HasCloudRouter:        true,
@@ -673,8 +689,10 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
-		CloudRouterConnAwsSpeed)
+		CloudRouterConnSpeed)
+
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
 	return RHclCloudRouterConnectionAwsResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
@@ -684,8 +702,59 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		},
 		AwsAccountID: os.Getenv("PF_AWS_ACCOUNT_ID"),
 		AccountUuid:  os.Getenv("PF_ACCOUNT_ID"),
-		Speed:        CloudRouterConnAwsSpeed,
+		Speed:        CloudRouterConnSpeed,
 		Pop:          pop,
+	}
+}
+
+// packetfabric_cloud_router_connection_google
+func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          CloudRouterConnSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		HasCloudRouter:        true,
+		IsCloudConnection:     true,
+	}
+
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionGoogle,
+		CloudRouterConnGoogleRegion,
+		CloudRouterConnGoogleNetwork,
+		CloudRouterConnGoogleRegion,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		pop,
+		CloudRouterConnSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnGoogle,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+		Pop:         pop,
 	}
 }
 
@@ -694,7 +763,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	portDetails := CreateBasePortDetails()
 
-	cloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	portTestResult := portDetails.RHclPort(false)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
@@ -705,13 +774,13 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		RResourceCloudRouterConnectionPort,
 		hclName,
 		uniqueDesc,
-		cloudRouterResult.ResourceName,
+		hclCloudRouterRes.ResourceName,
 		portTestResult.ResourceName,
 		CloudRouterConnPortSpeed,
 		CloudRouterConnPortVlan,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, cloudRouterResult.Hcl, crConnPortHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, hclCloudRouterRes.Hcl, crConnPortHcl)
 
 	return RHclCloudRouterConnectionPortResult{
 		HclResultBase: HclResultBase{
@@ -719,7 +788,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 			Resource:     pfCloudRouterConnPort,
 			ResourceName: resourceName,
 		},
-		CloudRouter: cloudRouterResult,
+		CloudRouter: hclCloudRouterRes,
 		PortResult:  portTestResult,
 		Desc:        uniqueDesc,
 		Speed:       CloudRouterConnPortSpeed,
