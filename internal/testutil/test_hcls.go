@@ -286,13 +286,11 @@ type RHclCsHostedCloudAwsResult struct {
 }
 
 // packetfabric_cs_google_hosted_connection
-type RHclCsGoogleReqHostedConnectResult struct {
+type RHclCsHostedCloudGoogleResult struct {
 	HclResultBase
-	Desc             string
 	Port             RHclPortResult
+	Desc             string
 	Speed            string
-	GooglePairingKey string
-	GoogleVlan       string
 	Pop              string
 	Vlan             int
 }

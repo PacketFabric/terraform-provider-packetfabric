@@ -103,35 +103,35 @@ const RResourceCloudRouterConnectionAzure = `resource "packetfabric_cloud_router
 const RResourceCloudRouterConnectionGoogle = `variable "gcp_project_id" {
   type = string
 }
-resource "google_compute_router" "google_router" {
+resource "google_compute_router" "google_router1" {
   provider = google
   project  = var.gcp_project_id
   region   = "%s"
-  name     = "terraform-test-acc-google-router"
+  name     = "terraform-test-acc-google-router1"
   network  = "%s"
   bgp {
     asn               = 16550
     advertise_mode    = "DEFAULT"
   }
 }
-resource "google_compute_interconnect_attachment" "google_interconnect" {
+resource "google_compute_interconnect_attachment" "google_interconnect1" {
   provider                 = google
   project                  = var.gcp_project_id
-  name                     = "terraform-test-acc-google-interconnect"
+  name                     = "terraform-test-acc-google-interconnect1"
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
   edge_availability_domain = "AVAILABILITY_DOMAIN_1"
   admin_enabled            = true
-  router                   = google_compute_router.google_router.id
+  router                   = google_compute_router.google_router1.id
 }
 resource "packetfabric_cloud_router_connection_google" "%s" {
   provider                    = packetfabric
   circuit_id                  = %s.id
   account_uuid                = "%s"
   description                 = "%s"
-  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect.pairing_key
-  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect.name
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect1.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect1.name
   pop                         = "%s"
   speed                       = "%s"
 }`
@@ -268,13 +268,38 @@ const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_d
 }`
 
 // Resource: packetfabric_cs_google_hosted_connection
-const RResourceCSGoogleHostedConnection = `resource "packetfabric_cs_google_hosted_connection" "%s" {
+const RResourceCSGoogleHostedConnection = `variable "gcp_project_id" {
+  type = string
+}
+resource "google_compute_router" "google_router2" {
+  provider = google
+  project  = var.gcp_project_id
+  region   = "%s"
+  name     = "terraform-test-acc-google-router2"
+  network  = "%s"
+  bgp {
+    asn               = 16550
+    advertise_mode    = "DEFAULT"
+  }
+}
+resource "google_compute_interconnect_attachment" "google_interconnect2" {
+  provider                 = google
+  project                  = var.gcp_project_id
+  name                     = "terraform-test-acc-google-interconnect2"
+  region                   = "%s"
+  description              = "terraform Test ACC Interconnect to PacketFabric Network"
+  type                     = "PARTNER"
+  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  admin_enabled            = true
+  router                   = google_compute_router.google_router2.id
+}
+resource "packetfabric_cs_google_hosted_connection" "%s" {
   provider                    = packetfabric
   description                 = "%s"
   port                        = %s.id
   speed                       = "%s"
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect2.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect2.name
   pop                         = "%s"
   vlan                        = %v
 }`
