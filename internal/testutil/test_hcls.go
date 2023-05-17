@@ -106,7 +106,7 @@ const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
 
 // packetfabric_cloud_router_connection_azure
-// packetfabric_cs_aws_hosted_connection
+// packetfabric_cs_azure_hosted_connection
 const AzureLocationProd = "East US"
 const AzureLocationDev = "West Central US"
 const AzureVnetCidr = "10.7.0.0/16"

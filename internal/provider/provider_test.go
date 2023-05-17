@@ -32,6 +32,7 @@ var testAccExternalProviders = map[string]resource.ExternalProvider{
 					},
 				},
 			},
+		},
 	},
 	"ibm": {
 		VersionConstraint: "1.53.0",
