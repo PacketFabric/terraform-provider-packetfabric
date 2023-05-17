@@ -104,12 +104,17 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -168,7 +173,6 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
@@ -183,8 +187,12 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	}
 	if resp2 != nil {
 		_ = d.Set("autoneg", resp2.Autoneg)
-		_ = d.Set("zone", resp2.Zone)
-		_ = d.Set("po_number", resp2.PONumber)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Zone)
+		}
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp2.PONumber)
+		}
 		if resp2.IsLag {
 			_ = d.Set("should_create_lag", true)
 		} else {
@@ -193,11 +201,20 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	}
 	// unsetFields: loa
 
-	labels, err2 := getLabels(c, d.Id())
-	if err2 != nil {
-		return diag.FromErr(err2)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err2 := getLabels(c, d.Id())
+		if err2 != nil {
+			return diag.FromErr(err2)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
 	return diags
 }
 

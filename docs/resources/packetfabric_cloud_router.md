@@ -21,12 +21,8 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
-}
-
-output "packetfabric_cloud_router" {
-  value = packetfabric_cloud_router.cr1
 }
 ```
 
@@ -48,12 +44,13 @@ output "packetfabric_cloud_router" {
 - `asn` (Number) The ASN of the cloud router.
 
 	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534. Defaults: 4556
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

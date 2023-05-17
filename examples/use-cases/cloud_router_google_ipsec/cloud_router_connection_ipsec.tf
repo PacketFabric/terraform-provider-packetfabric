@@ -1,6 +1,7 @@
-resource "packetfabric_cloud_router_connection_ipsec" "crc_2" {
+resource "packetfabric_cloud_router_connection_ipsec" "crc_ipsec" {
   provider                     = packetfabric
-  description                  = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  description                  = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  labels                       = var.pf_labels
   circuit_id                   = packetfabric_cloud_router.cr.id
   pop                          = var.pf_crc_pop2
   speed                        = var.pf_crc_speed
@@ -18,12 +19,11 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc_2" {
   shared_key                   = var.pf_crc_shared_key
 }
 
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_ipsec" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_ipsec.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_ipsec.crc_ipsec.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.vpn_side_asn2
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.vpn_remote_address # On-Prem side
@@ -37,6 +37,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_2" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_2
+# output "packetfabric_cloud_router_bgp_session_crbs_ipsec" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_ipsec
 # }

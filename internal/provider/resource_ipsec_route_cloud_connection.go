@@ -148,12 +148,17 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -234,19 +239,33 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("phase1_lifetime", resp2.Phase1Lifetime)
 		_ = d.Set("phase2_pfs_group", resp2.Phase2PfsGroup)
 		_ = d.Set("phase2_encryption_algo", resp2.Phase2EncryptionAlgo)
-		_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
+		if _, ok := d.GetOk("phase2_authentication_algo"); ok {
+			_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
+		}
 		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 		// unsetFields: published_quote_line_uuid
 	}
-
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 

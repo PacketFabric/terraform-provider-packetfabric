@@ -3,7 +3,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -16,8 +16,4 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
   maybe_nat         = false
   is_public         = false
   labels            = ["terraform", "dev"]
-}
-
-output "packetfabric_cloud_router_connection_azure" {
-  value = packetfabric_cloud_router_connection_azure.crc4
 }

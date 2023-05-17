@@ -19,14 +19,38 @@ resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
   provider    = packetfabric
   ibm_bgp_asn = 64536
   description = "hello world"
-  pop         = "BOS1"
+  pop         = "WDC1"
   port        = packetfabric_port.port_1.id
   vlan        = 102
   speed       = "10Gbps"
   labels      = ["terraform", "dev"]
 }
-output "packetfabric_cs_ibm_hosted_connection" {
-  value = packetfabric_cs_ibm_hosted_connection.cs_conn1_hosted_ibm
+
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "1m"
+}
+data "ibm_dl_gateway" "current" {
+  provider   = ibm
+  name       = "hello world" # same as the PacketFabric IBM Hosted Cloud description
+  depends_on = [time_sleep.wait_ibm_connection]
+}
+data "ibm_resource_group" "existing_rg" {
+  provider = ibm
+  name     = "My Resource Group"
+}
+
+resource "ibm_dl_gateway_action" "confirmation" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current.id
+  resource_group = data.ibm_resource_group.existing_rg.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }
 ```
 
@@ -50,7 +74,7 @@ output "packetfabric_cs_ibm_hosted_connection" {
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.
 - `ibm_bgp_ibm_cidr` (String) The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -59,6 +83,8 @@ output "packetfabric_cs_ibm_hosted_connection" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
+- `gateway_id` (String) The IBM Gateway ID.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>
