@@ -847,7 +847,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return RHclCloudRouterConnectionAzureResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
