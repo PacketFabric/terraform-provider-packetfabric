@@ -22,6 +22,7 @@ const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
+const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
@@ -273,7 +274,7 @@ type RHclBgpSessionResult struct {
 }
 
 // packetfabric_cs_aws_hosted_connection
-type RHclHostedCloudAwsResult struct {
+type RHclCsHostedCloudAwsResult struct {
 	HclResultBase
 	PortResult   RHclPortResult
 	AwsAccountID string
@@ -282,6 +283,17 @@ type RHclHostedCloudAwsResult struct {
 	Pop          string
 	Speed        string
 	Vlan         int
+}
+
+// packetfabric_cs_google_hosted_connection
+type RHclCsHostedCloudGoogleResult struct {
+	HclResultBase
+	PortResult  RHclPortResult
+	AccountUuid string
+	Desc        string
+	Speed       string
+	Pop         string
+	Vlan        int
 }
 
 // packetfabric_cs_aws_dedicated_connection
@@ -849,7 +861,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 }
 
 // packetfabric_cs_aws_hosted_connection
-func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
+func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -884,7 +896,7 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 
 	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, awsHostedConnectionHcl)
 
-	return RHclHostedCloudAwsResult{
+	return RHclCsHostedCloudAwsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfCsAwsHostedConn,
@@ -896,6 +908,58 @@ func RHclAwsHostedConnection() RHclHostedCloudAwsResult {
 		Speed:        HostedCloudSpeed,
 		Pop:          pop,
 		Vlan:         HostedCloudVlan,
+	}
+}
+
+// packetfabric_cs_google_hosted_connection
+func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          HostedCloudSpeed,
+		DesiredProvider:       "google",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleHostedConn)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	googleHostedConnectionHcl := fmt.Sprintf(
+		RResourceCSGoogleHostedConnection,
+		CloudRouterConnGoogleRegion,
+		CloudRouterConnGoogleNetwork,
+		CloudRouterConnGoogleRegion,
+		hclName,
+		portTestResult.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		pop,
+		HostedCloudSpeed,
+		HostedCloudVlan)
+
+	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, googleHostedConnectionHcl)
+
+	return RHclCsHostedCloudGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsGoogleHostedConn,
+			ResourceName: resourceName,
+		},
+		PortResult:  portTestResult,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       HostedCloudSpeed,
+		Pop:         pop,
+		Vlan:        HostedCloudVlan,
 	}
 }
 
@@ -1222,7 +1286,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 // data.packetfabric_cs_aws_hosted_connection
 func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 
-	csAwsHostedConnectionResult := RHclAwsHostedConnection()
+	csAwsHostedConnectionResult := RHclCsAwsHostedConnection()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceCsAwsHostedConn)
 	log.Printf("Data-source name: %s\n", hclName)

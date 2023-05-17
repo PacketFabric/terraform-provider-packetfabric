@@ -241,6 +241,9 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				if d.Id() == "" {
 					return nil
 				}
+				if _, ok := d.GetOk("cloud_settings"); !ok {
+					return nil
+				}
 
 				attributes := []string{
 					"cloud_settings.0.google_region",
