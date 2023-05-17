@@ -97,28 +97,28 @@ const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
     }
   }
 }
-resource "azurerm_resource_group" "resource_group" {
-  name     = "terraform-test-acc-azure-rg"
+resource "azurerm_resource_group" "resource_group1" {
+  name     = "terraform-test-acc-azure-rg1"
   location = "%s"
 }
-resource "azurerm_virtual_network" "virtual_network" {
-  name                = "terraform-test-acc-azure-vnet"
+resource "azurerm_virtual_network" "virtual_network1" {
+  name                = "terraform-test-acc-azure-vnet1"
   location            = "%s"
-  resource_group_name = azurerm_resource_group.resource_group.name
+  resource_group_name = azurerm_resource_group.resource_group1.name
   address_space       = ["%s"]
   tags = {
-    environment = "terraform-test-acc-azure"
+    environment = "terraform-test-acc-azure1"
   }
 }
-resource "azurerm_subnet" "subnet" {
-  name                 = "terraform-test-acc-azure-subnet"
+resource "azurerm_subnet" "subnet1" {
+  name                 = "terraform-test-acc-azure-subnet1"
   address_prefixes     = ["%s"]
-  resource_group_name  = azurerm_resource_group.resource_group.name
-  virtual_network_name = azurerm_virtual_network.virtual_network.name
+  resource_group_name  = azurerm_resource_group.resource_group1.name
+  virtual_network_name = azurerm_virtual_network.virtual_network1.name
 }
-resource "azurerm_express_route_circuit" "azure_express_route" {
-  name                  = "terraform-test-acc-azure-express-route"
-  resource_group_name   = azurerm_resource_group.resource_group.name
+resource "azurerm_express_route_circuit" "azure_express_route1" {
+  name                  = "terraform-test-acc-azure-express-route1"
+  resource_group_name   = azurerm_resource_group.resource_group1.name
   location              = "%s"
   peering_location      = "%s"
   service_provider_name = "%s"
@@ -128,7 +128,7 @@ resource "azurerm_express_route_circuit" "azure_express_route" {
     family = "%s"
   }
   tags = {
-    environment = "terraform-test-acc-azure"
+    environment = "terraform-test-acc-azure1"
   }
 }
 resource "packetfabric_cloud_router_connection_azure" "%s" {
@@ -137,7 +137,7 @@ resource "packetfabric_cloud_router_connection_azure" "%s" {
   account_uuid      = "%s"
   description       = "%s"
   speed             = "%s"
-  azure_service_key = azurerm_express_route_circuit.azure_express_route.service_key
+  azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
@@ -283,28 +283,28 @@ const RResourceCSAzureHostedConnection = `provider "azurerm" {
     }
   }
 }
-resource "azurerm_resource_group" "resource_group" {
-  name     = "terraform-test-acc-azure-rg"
+resource "azurerm_resource_group" "resource_group2" {
+  name     = "terraform-test-acc-azure-rg2"
   location = "%s"
 }
-resource "azurerm_virtual_network" "virtual_network" {
-  name                = "terraform-test-acc-azure-vnet"
+resource "azurerm_virtual_network" "virtual_network2" {
+  name                = "terraform-test-acc-azure-vnet2"
   location            = "%s"
-  resource_group_name = azurerm_resource_group.resource_group.name
+  resource_group_name = azurerm_resource_group.resource_group2.name
   address_space       = ["%s"]
   tags = {
-    environment = "terraform-test-acc-azure"
+    environment = "terraform-test-acc-azure2"
   }
 }
 resource "azurerm_subnet" "subnet" {
-  name                 = "terraform-test-acc-azure-subnet"
+  name                 = "terraform-test-acc-azure-subnet2"
   address_prefixes     = ["%s"]
-  resource_group_name  = azurerm_resource_group.resource_group.name
-  virtual_network_name = azurerm_virtual_network.virtual_network.name
+  resource_group_name  = azurerm_resource_group.resource_group2.name
+  virtual_network_name = azurerm_virtual_network.virtual_network2.name
 }
-resource "azurerm_express_route_circuit" "azure_express_route" {
-  name                  = "terraform-test-acc-azure-express-route"
-  resource_group_name   = azurerm_resource_group.resource_group.name
+resource "azurerm_express_route_circuit" "azure_express_route2" {
+  name                  = "terraform-test-acc-azure-express-route2"
+  resource_group_name   = azurerm_resource_group.resource_group2.name
   location              = "%s"
   peering_location      = "%s"
   service_provider_name = "%s"
@@ -314,15 +314,15 @@ resource "azurerm_express_route_circuit" "azure_express_route" {
     family = "%s"
   }
   tags = {
-    environment = "terraform-test-acc-azure"
+    environment = "terraform-test-acc-azure2"
   }
 }
 resource "packetfabric_cs_azure_hosted_connection" "%s" {
   provider          = packetfabric
+  port              = %s.id
   account_uuid      = "%s"
   description       = "%s"
-  azure_service_key = azurerm_express_route_circuit.azure_express_route.service_key
-  port              = %s.id
+  azure_service_key = azurerm_express_route_circuit.azure_express_route2.service_key
   speed             = "%s"
   vlan_private      = %v
 }`
@@ -333,7 +333,6 @@ const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_a
   description       = "%s"
   azure_service_key = "%s"
   routing_id        = %s.id
-  market            = "%s"
   speed             = "%s"
 }`
 
@@ -403,10 +402,10 @@ const RResourceCSGGoogleHostedMarketplaceConnection = `resource "packetfabric_cs
 // Resource: packetfabric_cs_ibm_hosted_connection
 const RResourceCSIBMHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
   provider    = packetfabric
+  port        = %s.id
   ibm_bgp_asn = %v
   description = "%s"
   pop         = "%s"
-  port        = %s.id
   vlan        = %v
   speed       = "%s"
 }`
@@ -414,10 +413,10 @@ const RResourceCSIBMHostedConnection = `resource "packetfabric_cs_ibm_hosted_con
 // Resource: packetfabric_cs_oracle_hosted_connection
 const RResourceCSOracleHostedConnection = `resource "packetfabric_cs_oracle_hosted_connection" "%s" {
   provider    = packetfabric
+  port        = %s.id
   description = "%s"
   vc_ocid     = "%s"
   region      = "%s"
-  port        = %s.id
   pop         = "%s"
   zone        = "%s"
   vlan        = %v
@@ -594,6 +593,7 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   cloud_circuit_id  = %s.id
 }`
 
+// Datasource: packetfabric_link_aggregation_group
 const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
   provider       = packetfabric
   lag_circuit_id = %s.id
