@@ -196,7 +196,14 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("description", lag.Description)
 	_ = d.Set("pop", lag.Pop)
 	_ = d.Set("interval", lag.LagInterval)
-	_ = d.Set("po_number", lag.PONumber)
+	if _, ok := d.GetOk("po_number"); ok {
+		_ = d.Set("po_number", lag.PONumber)
+	}
+	if lag.Disabled {
+		_ = d.Set("enabled", false)
+	} else {
+		_ = d.Set("enabled", true)
+	}
 
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {

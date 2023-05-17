@@ -230,3 +230,23 @@ func CreateBasePortDetails() PortDetails {
 		skipDesiredMarket: nil,
 	}
 }
+
+func setAzureLocations(host string) (string, string, string) {
+	var AzureLocation string
+	var AzurePeeringLocation string
+	var AzureServiceProviderName string
+
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		AzureLocation = AzureLocationDev
+		AzurePeeringLocation = AzurePeeringLocationDev
+		AzureServiceProviderName = AzureServiceProviderNameDev
+	} else {
+		AzureLocation = AzureLocationProd
+		AzurePeeringLocation = AzurePeeringLocationProd
+		AzureServiceProviderName = AzureServiceProviderNameProd
+	}
+
+	return AzureLocation, AzurePeeringLocation, AzureServiceProviderName
+}

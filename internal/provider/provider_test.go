@@ -14,6 +14,18 @@ var testAccExternalProviders = map[string]resource.ExternalProvider{
 		VersionConstraint: "4.61.0",
 		Source:            "hashicorp/google",
 	},
+	"azurerm": {
+		VersionConstraint: "3.56.0",
+		Source:            "hashicorp/azurerm",
+	},
+	"ibm": {
+		VersionConstraint: "1.53.0",
+		Source:            "IBM-Cloud/ibm",
+	},
+	"oci": {
+		VersionConstraint: "4.111.0",
+		Source:            "oracle/oci",
+	},
 }
 
 var testAccProviders = map[string]*schema.Provider{
