@@ -229,7 +229,6 @@ func CreateBasePortDetails() PortDetails {
 		DesiredSpeed:      portSpeed,
 		skipDesiredMarket: nil,
 	}
-	return false
 }
 
 func setAzureLocations(host string) (string, string, string) {

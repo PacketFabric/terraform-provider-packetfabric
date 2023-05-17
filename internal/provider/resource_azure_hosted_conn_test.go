@@ -27,7 +27,7 @@ func TestAccAzureHostedConnectionRequiredFields(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            googleHostedConnectionResult.ResourceName,
+				ResourceName:            azureHostedConnectionResult.ResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"azure_service_key"},

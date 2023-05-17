@@ -90,7 +90,14 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 }`
 
 // Resource: packetfabric_cloud_router_connection_azure
-const RResourceCloudRouterConnectionAzure = `resource "azurerm_resource_group" "resource_group" {
+const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+resource "azurerm_resource_group" "resource_group" {
   name     = "terraform-test-acc-azure-rg"
   location = "%s"
 }
@@ -115,7 +122,7 @@ resource "azurerm_express_route_circuit" "azure_express_route" {
   location              = "%s"
   peering_location      = "%s"
   service_provider_name = "%s"
-  bandwidth_in_mbps     = "%s"
+  bandwidth_in_mbps     = %v
   sku {
     tier   = "%s"
     family = "%s"
@@ -269,7 +276,14 @@ const RResourceCSAzureDedicatedConnection = `resource "packetfabric_cs_azure_ded
 }`
 
 // Resource: packetfabric_cs_azure_hosted_connection
-const RResourceCSAzureHostedConnection = `resource "azurerm_resource_group" "resource_group" {
+const RResourceCSAzureHostedConnection = `provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+resource "azurerm_resource_group" "resource_group" {
   name     = "terraform-test-acc-azure-rg"
   location = "%s"
 }
@@ -294,7 +308,7 @@ resource "azurerm_express_route_circuit" "azure_express_route" {
   location              = "%s"
   peering_location      = "%s"
   service_provider_name = "%s"
-  bandwidth_in_mbps     = "%s"
+  bandwidth_in_mbps     = %v
   sku {
     tier   = "%s"
     family = "%s"

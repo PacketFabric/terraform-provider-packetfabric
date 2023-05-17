@@ -13,18 +13,18 @@ import (
 
 func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
-	cloudRouterConnectionAzureResult := testutil.RHclCloudRouterConnectionAzure()
+	crConnGoogleResult := testutil.RHclCloudRouterConnectionAzure()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: cloudRouterConnectionAzureResult.Hcl,
+				Config: crConnGoogleResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "description", cloudRouterConnectionAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "description", crConnGoogleResult.Desc),
 					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "account_uuid", crConnGoogleResult.AccountUuid),
-					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "speed", cloudRouterConnectionAzureResult.Speed),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "speed", crConnGoogleResult.Speed),
 				),
 			},
 			{

@@ -322,13 +322,13 @@ type RHclCsHostedCloudGoogleResult struct {
 }
 
 // packetfabric_cs_azure_hosted_connection
-type RHclCSAzureHostedConnectionResult struct {
+type RHclCsHostedCloudAzureResult struct {
 	HclResultBase
-	Port          RHclPortResult
-	Desc          string
-	Speed         string
-	VlanPrivate   int
-	VlanMicrosoft int
+	PortResult  RHclPortResult
+	AccountUuid string
+	Desc        string
+	Speed       string
+	VlanPrivate int
 }
 
 // packetfabric_cs_aws_dedicated_connection
@@ -820,21 +820,6 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 // packetfabric_cloud_router_connection_azure
 func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-	popDetails := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          CloudRouterConnSpeed,
-		DesiredProvider:       "azure",
-		DesiredConnectionType: "hosted",
-		HasCloudRouter:        true,
-		IsCloudConnection:     true,
-	}
-
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
-
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
 	uniqueDesc := GenerateUniqueName()
@@ -862,7 +847,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
-
+	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
 	return RHclCloudRouterConnectionAzureResult{
 		HclResultBase: HclResultBase{
 			Hcl:                    hcl,
@@ -1060,19 +1045,6 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 // packetfabric_cs_azure_hosted_connection
 func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-	popDetails := PortDetails{
-		PFClient:              c,
-		DesiredSpeed:          HostedCloudSpeed,
-		DesiredProvider:       "azure",
-		DesiredConnectionType: "hosted",
-		IsCloudConnection:     true,
-	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
-
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
 
@@ -1099,7 +1071,6 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 		portTestResult.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
-		pop,
 		HostedCloudSpeed,
 		HostedCloudVlan)
 
@@ -1114,7 +1085,7 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 		PortResult:  portTestResult,
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Speed:       HostedCloudSpeed,
-		Vlan:        HostedCloudVlan,
+		VlanPrivate: HostedCloudVlan,
 	}
 }
 
