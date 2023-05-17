@@ -1,3 +1,5 @@
+//go:build resource || cloud_router || all
+
 package provider
 
 import (
@@ -9,17 +11,11 @@ import (
 )
 
 func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, []string{})
 
 	cloudRouterConnectionIpsecResult := testutil.RHclCloudRouterConnectionIpsec()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-			})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

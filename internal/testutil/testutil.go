@@ -226,8 +226,7 @@ func CreateBasePortDetails() PortDetails {
 		log.Panic(err)
 	}
 	return PortDetails{
-		PFClient:          c,
-		DesiredSpeed:      portSpeed,
-		skipDesiredMarket: nil,
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
 	}
 }

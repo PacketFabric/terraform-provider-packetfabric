@@ -115,7 +115,7 @@ const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
 const CloudRouterConnIpsecGatewayAddress = "104.198.66.55"
-const CloudRouterConnIpsecSpeed = "50Mbps"
+const CloudRouterConnIpsecSpeed = "1Gbps"
 const CloudRouterConnIpsecPhase1AuthenticationMethod = "pre-shared-key"
 const CloudRouterConnIpsecPhase1Group = "group5"
 const CloudRouterConnIpsecPhase1EncryptionAlgo = "aes-256-cbc"
@@ -1001,14 +1001,12 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
 // packetfabric_cloud_router_connection_ipsec
 func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
-
-	pop, _, _, _, error := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed)
-
-	if error != nil {
-		log.Panic(error)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil)
+	if err != nil {
+		log.Panic(err)
 	}
 
-	hclCloudRouterResult := RHclCloudRouter()
+	hclCloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
 	uniqueDesc := GenerateUniqueName()
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIpsec)
@@ -1420,16 +1418,5 @@ func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsRe
 			Resource:     pfDatasourceLinkAggregationGroups,
 			ResourceName: resourceName,
 		},
-	}
-}
-
-func CreateBasePortDetails() PortDetails {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-	return PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
 	}
 }
