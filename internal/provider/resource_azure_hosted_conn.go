@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -165,6 +166,7 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
 		if _, ok := d.GetOk("vlan_private"); ok {
+			fmt.Printf("\n[DEBUG RJ2] %v\n", resp.Settings)
 			_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
 		}
 		if _, ok := d.GetOk("vlan_microsoft"); ok {

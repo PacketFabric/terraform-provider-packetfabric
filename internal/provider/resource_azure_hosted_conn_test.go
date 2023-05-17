@@ -18,9 +18,9 @@ func TestAccAzureHostedConnectionRequiredFields(t *testing.T) {
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             azureHostedConnectionResult.Hcl,
-				ExpectNonEmptyPlan: true,
+				Config: azureHostedConnectionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "account_uuid", azureHostedConnectionResult.AccountUuid),
 					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "speed", azureHostedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "vlan_private", strconv.Itoa(azureHostedConnectionResult.VlanPrivate)),
 				),
