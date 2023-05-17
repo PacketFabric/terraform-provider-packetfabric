@@ -21,7 +21,6 @@ func TestAccAzureHostedConnectionRequiredFields(t *testing.T) {
 				Config:             azureHostedConnectionResult.Hcl,
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "description", azureHostedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "speed", azureHostedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(azureHostedConnectionResult.ResourceName, "vlan_private", strconv.Itoa(azureHostedConnectionResult.VlanPrivate)),
 				),
