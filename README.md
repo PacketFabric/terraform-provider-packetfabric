@@ -146,7 +146,7 @@ $ cd internal/provider;  TF_ACC=1 go test -v -timeout 120m -tags=smoke
 You can also run individual tests by specifying the test's function name with the -run flag. For example, to run the TestAccPort test, use the following command:
 
 ```sh
-$ cd internal/provider; TF_ACC=1 go test -v -tags=all -run=TestAccPort
+$ cd internal/provider; TF_ACC=1 go test -v -timeout 30m -tags=all -run=TestAccPort
 ```
 
 **Note:** Setting the `TF_ACC` environment variable to 1 enables acceptance tests, which hit real APIs and can take a long time to run.
