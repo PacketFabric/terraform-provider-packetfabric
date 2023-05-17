@@ -7,6 +7,8 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 
 If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
 ## Useful links
@@ -19,6 +21,8 @@ If you are looking for an example that does not utilize the Cloud Side provision
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Demo video
+
+Check out our demo video to see how the PacketFabric Terraform Provider can be used to automate the provisioning and management of PacketFabric resources.
 
 <p align="center"><a href="https://www.youtube.com/watch?v=EblOg0Uaf8Q" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/EblOg0Uaf8Q/1.jpg"></a></p>
 

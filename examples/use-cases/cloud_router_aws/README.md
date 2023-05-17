@@ -3,6 +3,8 @@
 This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
 Terraform providers used: PacketFabric and AWS. This example uses AWS Private VIF & Gateway.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
 ## Useful links

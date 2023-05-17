@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between IBM Cloud Platform and Oracle CLoud.
 Terraform providers used: PacketFabric, IBM and Oracle.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)

@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between AWS, Oracle and a PacketFabric Port.
 Terraform providers used: PacketFabric, AWS and Oracle. This example uses AWS Transit VIF & Gateway.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws_oracle_port.png)
 
 ## Useful links
