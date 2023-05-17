@@ -17,22 +17,6 @@ var testAccExternalProviders = map[string]resource.ExternalProvider{
 	"azurerm": {
 		VersionConstraint: "3.56.0",
 		Source:            "hashicorp/azurerm",
-		Components: []resource.ExternalComponent{
-			{
-				ProviderName: "azurerm",
-				Config: map[string]interface{}{
-					"features": []map[string]interface{}{
-						{
-							"resource_group": []map[string]interface{}{
-								{
-									"prevent_deletion_if_contains_resources": false,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
 	},
 	"ibm": {
 		VersionConstraint: "1.53.0",
