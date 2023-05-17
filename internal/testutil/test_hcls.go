@@ -1142,7 +1142,6 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 	}
 }
 
-<<<<<<< HEAD
 // packetfabric_cs_azure_hosted_connection
 func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
@@ -1192,7 +1191,6 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
 // packetfabric_cs_ibm_hosted_connection
 func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1242,7 +1240,9 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		Speed:       HostedCloudSpeed,
 		Vlan:        HostedCloudVlan,
 		IbmBgpAsn:   IbmBgpAsn,
-=======
+	}
+}
+
 // packetfabric_outbound_cross_connect
 func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 	c, err := _createPFClient()
@@ -1255,10 +1255,10 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	hclPortResult := portDetails.RHclPort()
+	hclPortResult := portDetails.RHclPort(false)
 
-	resourceName, hclName := _generateResourceName(pfOutboundCrossConnect)
-	uniqueDesc := _generateUniqueNameOrDesc(pfOutboundCrossConnect)
+	resourceName, hclName := GenerateUniqueResourceName(pfOutboundCrossConnect)
+	uniqueDesc := GenerateUniqueName()
 
 	locations, err := c.ListLocations()
 	if err != nil {
@@ -1276,8 +1276,8 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
 		hclName,
 		uniqueDesc,
-		os.Getenv(PF_DOCUMENT_UUID1_KEY),
-		hclPortResult.ResourceReference,
+		os.Getenv("PF_DOCUMENT_UUID1_KEY"),
+		hclPortResult.ResourceName,
 		site)
 
 	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, outboundCrossHcl)
@@ -1289,31 +1289,8 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 			ResourceName: resourceName,
 		},
 		Desc:         uniqueDesc,
-		DocumentUuid: os.Getenv(PF_DOCUMENT_UUID1_KEY),
+		DocumentUuid: os.Getenv("PF_DOCUMENT_UUID1_KEY"),
 		Site:         site,
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
->>>>>>> 295e2d4 (Acc test structure: Resource packetfabric_outbound_cross_connect)
 	}
 }
 

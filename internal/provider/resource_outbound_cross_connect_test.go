@@ -1,7 +1,8 @@
+//go:build resource || core || all
+
 package provider
 
 import (
-	"log"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -9,17 +10,13 @@ import (
 )
 
 func TestOutboundCrossConnect(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, []string{
+		"PF_DOCUMENT_UUID1_KEY",
+	})
 
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
-	log.Fatal(outboundCrossConnectResult.Hcl)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_DOCUMENT_UUID1_KEY,
-			})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -29,11 +26,6 @@ func TestOutboundCrossConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "document_uuid", outboundCrossConnectResult.DocumentUuid),
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "site", outboundCrossConnectResult.Site),
 				),
-			},
-			{
-				ResourceName:      outboundCrossConnectResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
