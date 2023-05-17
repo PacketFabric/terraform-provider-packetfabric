@@ -1,39 +1,53 @@
+//go:build resource || cloud_router || all
+
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAzureCloudRouterConnectionRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
-
+func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
+	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
 	cloudRouterConnectionAzureResult := testutil.RHclCloudRouterConnectionAzure()
-
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_ACCOUNT_ID_KEY,
-				testutil.PF_CRC_AZURE_SERVICE_KEY,
-			})
-		},
-		Providers: testAccProviders,
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: cloudRouterConnectionAzureResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "azure_service_key", cloudRouterConnectionAzureResult.AzureServiceKey),
 					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "description", cloudRouterConnectionAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "account_uuid", crConnGoogleResult.AccountUuid),
 					resource.TestCheckResourceAttr(cloudRouterConnectionAzureResult.ResourceName, "speed", cloudRouterConnectionAzureResult.Speed),
 				),
 			},
 			{
-				ResourceName:      cloudRouterConnectionAzureResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				Config: crConnGoogleResult.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[crConnGoogleResult.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", crConnGoogleResult.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
+					return nil
+				},
+			},
+			{
+				ResourceName:            crConnGoogleResult.ResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"azure_service_key"},
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
+					return id, nil
+				},
 			},
 		},
 	})
