@@ -20,6 +20,7 @@ const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
+const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
@@ -41,7 +42,6 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -273,6 +273,27 @@ type RHclCloudRouterConnectionPortResult struct {
 	Vlan        int
 }
 
+// packetfabric_cloud_router_connection_ipsec
+type RHclCloudRouterConnectionIpsecResult struct {
+	HclResultBase
+	Port                       RHclPortResult
+	Desc                       string
+	Pop                        string
+	Speed                      string
+	GatewayAddress             string
+	IkeVersion                 int
+	Phase1AuthenticationMethod string
+	Phase1Group                string
+	Phase1EncryptionAlgo       string
+	Phase1AuthenticationAlgo   string
+	Phase1Lifetime             int
+	Phase2PfsGroup             string
+	Phase2EncryptionAlgo       string
+	Phase2AuthenticationAlgo   string
+	Phase2Lifetime             int
+	SharedKey                  string
+}
+
 // packetfabric_cloud_router_bgp_session
 type RHclBgpSessionResult struct {
 	HclResultBase
@@ -404,27 +425,6 @@ type DHclCsAwsHostedConnectionResult struct {
 // packetfabric_link_aggregation_group
 type DHclDatasourceLinkAggregationGroupsResult struct {
 	HclResultBase
-}
-
-// packetfabric_cloud_router_connection_ipsec
-type RHclCloudRouterConnectionIpsecResult struct {
-	HclResultBase
-	Desc                       string
-	Port                       RHclPortResult
-	Pop                        string
-	Speed                      string
-	GatewayAddress             string
-	IkeVersion                 int
-	Phase1AuthenticationMethod string
-	Phase1Group                string
-	Phase1EncryptionAlgo       string
-	Phase1AuthenticationAlgo   string
-	Phase1Lifetime             int
-	Phase2PfsGroup             string
-	Phase2EncryptionAlgo       string
-	Phase2AuthenticationAlgo   string
-	Phase2Lifetime             int
-	SharedKey                  string
 }
 
 // Patterns:
@@ -856,6 +856,64 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_ipsec
+func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	hclCloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
+
+	uniqueDesc := GenerateUniqueName()
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIpsec)
+
+	cloudRouterIpsecHcl := fmt.Sprintf(RResourceCloudRouterConnectionIpsec,
+		hclName,
+		uniqueDesc,
+		hclCloudRouterResult.ResourceName,
+		pop,
+		CloudRouterConnIpsecSpeed,
+		CloudRouterConnIpsecGatewayAddress,
+		CloudRouterConnIpsecIkeVersion,
+		CloudRouterConnIpsecPhase1AuthenticationMethod,
+		CloudRouterConnIpsecPhase1Group,
+		CloudRouterConnIpsecPhase1EncryptionAlgo,
+		CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		CloudRouterConnIpsecPhase1Lifetime,
+		CloudRouterConnIpsecPhase2pfsGroup,
+		CloudRouterConnIpsecPhase2EncryptionAlgo,
+		CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		CloudRouterConnIpsecPhase2Lifetime,
+		CloudRouterConnIpsecSharedKey,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterResult.Hcl, cloudRouterIpsecHcl)
+
+	return RHclCloudRouterConnectionIpsecResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnIpsec,
+			ResourceName: resourceName,
+		},
+		Desc:                       uniqueDesc,
+		Pop:                        pop,
+		Speed:                      CloudRouterConnIpsecSpeed,
+		GatewayAddress:             CloudRouterConnIpsecGatewayAddress,
+		IkeVersion:                 CloudRouterConnIpsecIkeVersion,
+		Phase1AuthenticationMethod: CloudRouterConnIpsecPhase1AuthenticationMethod,
+		Phase1Group:                CloudRouterConnIpsecPhase1Group,
+		Phase1EncryptionAlgo:       CloudRouterConnIpsecPhase1EncryptionAlgo,
+		Phase1AuthenticationAlgo:   CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		Phase1Lifetime:             CloudRouterConnIpsecPhase1Lifetime,
+		Phase2PfsGroup:             CloudRouterConnIpsecPhase2pfsGroup,
+		Phase2EncryptionAlgo:       CloudRouterConnIpsecPhase2EncryptionAlgo,
+		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
+		SharedKey:                  CloudRouterConnIpsecSharedKey,
+	}
+}
+
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
 
@@ -996,64 +1054,6 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		Speed:       HostedCloudSpeed,
 		Pop:         pop,
 		Vlan:        HostedCloudVlan,
-	}
-}
-
-// packetfabric_cloud_router_connection_ipsec
-func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	hclCloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
-
-	uniqueDesc := GenerateUniqueName()
-	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIpsec)
-
-	cloudRouterIpsecHcl := fmt.Sprintf(RResourceCloudRouterConnectionIpsec,
-		hclName,
-		uniqueDesc,
-		hclCloudRouterResult.ResourceName,
-		pop,
-		CloudRouterConnIpsecSpeed,
-		CloudRouterConnIpsecGatewayAddress,
-		CloudRouterConnIpsecIkeVersion,
-		CloudRouterConnIpsecPhase1AuthenticationMethod,
-		CloudRouterConnIpsecPhase1Group,
-		CloudRouterConnIpsecPhase1EncryptionAlgo,
-		CloudRouterConnIpsecPhase1AuthenticationAlgo,
-		CloudRouterConnIpsecPhase1Lifetime,
-		CloudRouterConnIpsecPhase2pfsGroup,
-		CloudRouterConnIpsecPhase2EncryptionAlgo,
-		CloudRouterConnIpsecPhase2AuthenticationAlgo,
-		CloudRouterConnIpsecPhase2Lifetime,
-		CloudRouterConnIpsecSharedKey,
-	)
-
-	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterResult.Hcl, cloudRouterIpsecHcl)
-
-	return RHclCloudRouterConnectionIpsecResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfCloudRouterConnIpsec,
-			ResourceName: resourceName,
-		},
-		Desc:                       uniqueDesc,
-		Pop:                        pop,
-		Speed:                      CloudRouterConnIpsecSpeed,
-		GatewayAddress:             CloudRouterConnIpsecGatewayAddress,
-		IkeVersion:                 CloudRouterConnIpsecIkeVersion,
-		Phase1AuthenticationMethod: CloudRouterConnIpsecPhase1AuthenticationMethod,
-		Phase1Group:                CloudRouterConnIpsecPhase1Group,
-		Phase1EncryptionAlgo:       CloudRouterConnIpsecPhase1EncryptionAlgo,
-		Phase1AuthenticationAlgo:   CloudRouterConnIpsecPhase1AuthenticationAlgo,
-		Phase1Lifetime:             CloudRouterConnIpsecPhase1Lifetime,
-		Phase2PfsGroup:             CloudRouterConnIpsecPhase2pfsGroup,
-		Phase2EncryptionAlgo:       CloudRouterConnIpsecPhase2EncryptionAlgo,
-		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
-		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
-		SharedKey:                  CloudRouterConnIpsecSharedKey,
 	}
 }
 

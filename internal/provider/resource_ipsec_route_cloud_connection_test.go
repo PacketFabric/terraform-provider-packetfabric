@@ -3,18 +3,19 @@
 package provider
 
 import (
+	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
+func TestAccCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{})
-
 	cloudRouterConnectionIpsecResult := testutil.RHclCloudRouterConnectionIpsec()
-
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -39,9 +40,25 @@ func TestAccHclCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 				),
 			},
 			{
+				Config: cloudRouterConnectionIpsecResult.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[cloudRouterConnectionIpsecResult.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", cloudRouterConnectionIpsecResult.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
+					return nil
+				},
+			},
+			{
 				ResourceName:      cloudRouterConnectionIpsecResult.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					id := fmt.Sprintf("%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId)
+					return id, nil
+				},
 			},
 		},
 	})
