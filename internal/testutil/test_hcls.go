@@ -19,11 +19,13 @@ const pfPoinToPoint = "packetfabric_point_to_point"
 const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
+const pfCloudRouterConnAzure = "packetfabric_cloud_router_connection_azure"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
+const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
@@ -78,7 +80,7 @@ const CloudRouterASN = 4556
 
 // packetfabric_cloud_router_connection_aws
 // packetfabric_cloud_router_connection_google
-const CloudRouterConnSpeed = "50Mbps"
+const CloudRouterConnSpeed = "100Mbps"
 
 // packetfabric_cloud_router_connection_google
 const CloudRouterConnGoogleRegion = "us-west1"
@@ -88,7 +90,7 @@ const CloudRouterConnGoogleNetwork = "default"
 const CloudRouterConnPortSpeed = "1Gbps"
 const CloudRouterConnPortVlan = 101
 
-// packetfabric_cloud_router_bg_session
+// packetfabric_cloud_router_bgp_session
 const CrbsAddressFmly = "v4"
 const CloudRouterBgpSessionASN = 64534
 const CloudRouterBgpSessionPrefix1 = "10.0.0.0/8"
@@ -103,6 +105,20 @@ const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 // packetfabric_cs_aws_hosted_connection
 const HostedCloudSpeed = "100Mbps"
 const HostedCloudVlan = 100
+
+// packetfabric_cloud_router_connection_azure
+// packetfabric_cs_azure_hosted_connection
+const AzureLocationProd = "East US"
+const AzureLocationDev = "West Central US"
+const AzureVnetCidr = "10.7.0.0/16"
+const AzureSubnetCidr = "10.7.1.0/24"
+const AzurePeeringLocationProd = "New York"
+const AzurePeeringLocationDev = "Denver Test"
+const AzureServiceProviderNameProd = "PacketFabric"
+const AzureServiceProviderNameDev = "Packet Fabric Test"
+const AzureExpressRouteTier = "Standard"
+const AzureExpressRouteFamily = "MeteredData"
+const AzurePeeringBandwidth = 100 // match const CloudRouterConnSpeed and HostedCloudSpeed
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
@@ -263,6 +279,15 @@ type RHclCloudRouterConnectionGoogleResult struct {
 	Speed       string
 }
 
+// packetfabric_cloud_router_connection_azure
+type RHclCloudRouterConnectionAzureResult struct {
+	HclResultBase
+	CloudRouter RHclCloudRouterResult
+	AccountUuid string
+	Desc        string
+	Speed       string
+}
+
 // packetfabric_cloud_router_connection_port
 type RHclCloudRouterConnectionPortResult struct {
 	HclResultBase
@@ -330,6 +355,16 @@ type RHclCsHostedCloudGoogleResult struct {
 	Speed       string
 	Pop         string
 	Vlan        int
+}
+
+// packetfabric_cs_azure_hosted_connection
+type RHclCsHostedCloudAzureResult struct {
+	HclResultBase
+	PortResult  RHclPortResult
+	AccountUuid string
+	Desc        string
+	Speed       string
+	VlanPrivate int
 }
 
 // packetfabric_cs_aws_dedicated_connection
@@ -818,6 +853,50 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_azure
+func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzure,
+		AzureLocation,
+		AzureLocation,
+		AzureVnetCidr,
+		AzureSubnetCidr,
+		AzureLocation,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		CloudRouterConnSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnAzure,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+	}
+}
+
 // packetfabric_cloud_router_connection_port
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
@@ -1054,6 +1133,53 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		Speed:       HostedCloudSpeed,
 		Pop:         pop,
 		Vlan:        HostedCloudVlan,
+	}
+}
+
+// packetfabric_cs_azure_hosted_connection
+func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
+
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCsAzureHostedConn)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	azureHostedConnectionHcl := fmt.Sprintf(
+		RResourceCSAzureHostedConnection,
+		AzureLocation,
+		AzureLocation,
+		AzureVnetCidr,
+		AzureSubnetCidr,
+		AzureLocation,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		portTestResult.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		HostedCloudSpeed,
+		HostedCloudVlan)
+
+	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, azureHostedConnectionHcl)
+
+	return RHclCsHostedCloudAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsAzureHostedConn,
+			ResourceName: resourceName,
+		},
+		PortResult:  portTestResult,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       HostedCloudSpeed,
+		VlanPrivate: HostedCloudVlan,
 	}
 }
 
