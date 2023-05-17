@@ -16,19 +16,14 @@ description: |-
 ```terraform
 resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
   provider    = packetfabric
-  description = var.pf_description
+  description = "hello world"
   vc_ocid     = var.oracle_vc_ocid
-  region      = var.oracle_region
-  port        = var.pf_port
-  pop         = var.pf_cs_zone
-  zone        = var.pf_cs_pop
-  vlan        = var.pf_cs_vlan
-  src_svlan   = var.pf_cs_src_svlan
-}
-
-output "packetfabric_cs_oracle_hosted_connection" {
-  value     = packetfabric_cs_oracle_hosted_connection.cs_conn1_hosted_oracle
-  sensitive = true
+  region      = "us-ashburn-1"
+  port        = packetfabric_port.port_1.id
+  pop         = "A"
+  zone        = "BOS1"
+  vlan        = 102
+  labels      = ["terraform", "dev"]
 }
 ```
 
@@ -47,7 +42,7 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
@@ -56,6 +51,7 @@ output "packetfabric_cs_oracle_hosted_connection" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

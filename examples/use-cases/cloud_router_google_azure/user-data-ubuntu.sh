@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 user="ubuntu"
 
 # install nginx
 sudo apt-get update
-sudo apt-get -y install nginx iperf3 docker.io docker-compose
+sudo apt-get -y install nginx iperf3 net-tools docker.io docker-compose
 # make sure nginx is started
 sudo service nginx start
 # disable firewall

@@ -15,17 +15,14 @@ This is a port located in a Google cloud on-ramp facility, which will be connect
 ```terraform
 resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_google" {
   provider          = packetfabric
-  description       = var.pf_description
-  zone              = var.pf_cs_zone
-  pop               = var.pf_cs_pop
-  subscription_term = var.pf_cs_subterm
-  service_class     = var.pf_cs_srvclass
-  autoneg           = var.pf_cs_autoneg
-  speed             = var.pf_cs_speed4
-}
-
-output "packetfabric_cs_google_dedicated_connection" {
-  value = data.packetfabric_cs_google_dedicated_connection.pf_cs_conn1_dedicated_google
+  description       = "hello world"
+  zone              = "A"
+  pop               = "BOS1"
+  subscription_term = 1
+  service_class     = "longhaul"
+  autoneg           = false
+  speed             = "10Gbps"
+  labels            = ["terraform", "dev"]
 }
 ```
 
@@ -50,7 +47,7 @@ output "packetfabric_cs_google_dedicated_connection" {
 ### Optional
 
 - `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that Google provided.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
@@ -59,6 +56,7 @@ output "packetfabric_cs_google_dedicated_connection" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

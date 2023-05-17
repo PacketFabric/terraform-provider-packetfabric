@@ -17,25 +17,50 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   provider    = packetfabric
-  description = var.pf_crc_description
+  description = "hello world"
   circuit_id  = packetfabric_cloud_router.cr1.id
   ibm_bgp_asn = packetfabric_cloud_router.cr1.asn
-  pop         = var.pf_crc_pop
-  zone        = var.pf_crc_zone
-  maybe_nat   = var.pf_crc_maybe_nat
-  speed       = var.pf_crc_speed
+  pop         = "DAL2"
+  zone        = "A"
+  maybe_nat   = false
+  speed       = "1Gbps"
+  labels      = ["terraform", "dev"]
 }
 
-output "packetfabric_cloud_router_connection_ibm" {
-  value = packetfabric_cloud_router_connection_ibm.crc5
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "1m"
+}
+data "ibm_dl_gateway" "current" {
+  provider   = ibm
+  name       = "hello world" # same as the PacketFabric IBM Cloud Router Connection description
+  depends_on = [time_sleep.wait_ibm_connection]
+}
+data "ibm_resource_group" "existing_rg" {
+  provider = ibm
+  name     = "My Resource Group"
+}
+
+resource "ibm_dl_gateway_action" "confirmation" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current.id
+  resource_group = data.ibm_resource_group.existing_rg.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }
 ```
 
@@ -59,7 +84,7 @@ output "packetfabric_cloud_router_connection_ibm" {
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.
 - `ibm_bgp_ibm_cidr` (String) The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
@@ -69,6 +94,8 @@ output "packetfabric_cloud_router_connection_ibm" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
+- `gateway_id` (String) The IBM Gateway ID.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

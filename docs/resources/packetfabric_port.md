@@ -16,28 +16,15 @@ A port on the PacketFabric network. For more information, see [Ports in the Pack
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   enabled           = true
-  autoneg           = var.pf_port_autoneg
-  description       = var.pf_description
-  media             = var.pf_port_media
-  nni               = var.pf_port_nni
-  pop               = var.pf_port_pop1
-  speed             = var.pf_port_speed
-  subscription_term = var.pf_port_subterm
-  zone              = var.pf_port_avzone1
+  autoneg           = true
+  description       = "hello world"
+  media             = "LX"
+  nni               = false
+  pop               = "SEA2"
+  speed             = "1Gbps"
+  subscription_term = 1
+  zone              = "A"
   labels            = ["terraform", "dev"]
-}
-output "packetfabric_port_1" {
-  value = packetfabric_port.port_1
-}
-data "packetfabric_port" "ports_all" {
-  provider   = packetfabric
-  depends_on = [packetfabric_port.port_1]
-}
-locals {
-  port_1_details = toset([for each in data.packetfabric_port.ports_all.interfaces[*] : each if each.port_circuit_id == packetfabric_port.port_1.id])
-}
-output "packetfabric_port_1_details" {
-  value = local.port_1_details
 }
 ```
 
@@ -63,7 +50,7 @@ output "packetfabric_port_1_details" {
 
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true
 - `enabled` (Boolean) Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. Defaults: true
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `nni` (Boolean) Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.
 
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com. Defaults: false
@@ -73,6 +60,7 @@ output "packetfabric_port_1_details" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

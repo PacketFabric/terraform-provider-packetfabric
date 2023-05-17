@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.2.0"
+      version = ">= 1.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -27,7 +27,7 @@ resource "aws_vpc" "vpc_1" {
   cidr_block           = var.aws_vpc_cidr1
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "subnet_1" {
   vpc_id     = aws_vpc.vpc_1.id
   cidr_block = var.aws_subnet_cidr1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "gw_1" {
   provider = aws
   vpc_id   = aws_vpc.vpc_1.id
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_vpn_gateway" "vpn_gw_1" {
   provider        = aws
   amazon_side_asn = var.amazon_side_asn1
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
   depends_on = [
     aws_vpc.vpc_1
@@ -78,7 +78,7 @@ resource "aws_route_table" "route_table_1" {
   }
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw_1.id}"]
   tags = {
-    Name = "${var.tag_name}-${random_pet.name.id}"
+    Name = "${var.resource_name}-${random_pet.name.id}"
   }
 }
 
@@ -93,7 +93,8 @@ resource "aws_route_table_association" "route_association_1" {
 resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
   provider          = packetfabric
   aws_region        = var.aws_region1
-  description       = "${var.tag_name}-${random_pet.name.id}"
+  description       = "${var.resource_name}-${random_pet.name.id}"
+  labels            = var.pf_labels
   zone              = var.pf_cs_zone1
   pop               = var.pf_cs_pop1
   subscription_term = var.pf_cs_subterm
@@ -133,7 +134,7 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1" {
 # From the AWS side: Create the Direct Connect Connection 
 resource "aws_dx_connection" "current_1" {
   provider      = aws
-  name          = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+  name          = "${var.resource_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
   bandwidth     = var.pf_cs_speed
   location      = var.aws_dx_location
   provider_name = "PacketFabric"
@@ -153,7 +154,7 @@ resource "aws_dx_connection" "current_1" {
 # # Retrieve the Direct Connect connections in AWS
 # data "aws_dx_connection" "current_1" {
 #   provider = aws
-#   name     = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+#   name     = "${var.resource_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
 #   depends_on = [
 #     null_resource.next,
 #     packetfabric_cs_aws_dedicated_connection.pf_cs_conn1
@@ -173,7 +174,7 @@ resource "aws_dx_connection" "current_1" {
 # # Create Cross Connect
 # resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 #   provider      = packetfabric
-#   description   = "${var.tag_name}-${random_pet.name.id}"
+#   description   = "${var.resource_name}-${random_pet.name.id}"
 #   document_uuid = var.pf_document_uuid1
 #   port          = var.pf_interface_a_circuit_id
 #   #port          = data.packetfabric_cs_aws_dedicated_connection.pf_cs_conn1.cloud_circuit_id
@@ -190,7 +191,8 @@ resource "aws_dx_connection" "current_1" {
 # # Create backbone Virtual Circuit
 # resource "packetfabric_backbone_virtual_circuit" "vc_1" {
 #   provider    = packetfabric
-#   description = "${var.tag_name}-${random_pet.name.id}"
+#   description = "${var.resource_name}-${random_pet.name.id}"
+#  labels       = var.pf_labels
 #   epl         = false
 #   interface_a {
 #     port_circuit_id = var.pf_interface_a_circuit_id # AWS dedicated cloud
@@ -215,7 +217,7 @@ resource "aws_dx_connection" "current_1" {
 # # From the AWS side: Create a gateway
 # resource "aws_dx_gateway" "direct_connect_gw_1" {
 #   provider        = aws
-#   name            = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+#   name            = "${var.resource_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
 #   amazon_side_asn = var.amazon_side_asn1
 #   depends_on = [
 #     packetfabric_cloud_router_connection_aws.crc_1
@@ -227,7 +229,7 @@ resource "aws_dx_connection" "current_1" {
 #   provider       = aws
 #   connection_id  = data.aws_dx_connection.current_1.id
 #   dx_gateway_id  = aws_dx_gateway.direct_connect_gw_1.id
-#   name           = "${var.tag_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
+#   name           = "${var.resource_name}-${random_pet.name.id}-${var.pf_cs_pop1}"
 #   vlan           = var.pf_cs_vlan1
 #   address_family = "ipv4"
 #   bgp_asn        = var.customer_side_asn1

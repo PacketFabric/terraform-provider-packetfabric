@@ -213,16 +213,12 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	if err != nil {
 		return nil, err
 	}
-	createOk := make(chan bool)
-	defer close(createOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(expectedResp.PortCircuitID)
+	checked := checkPortStatus(c, expectedResp.PortCircuitID)
+	if checked {
+		return expectedResp, nil
+	} else {
+		return nil, fmt.Errorf("could not determine port status")
 	}
-	go c.CheckServiceStatus(createOk, fn)
-	if !<-createOk {
-		return nil, err
-	}
-	return expectedResp, nil
 }
 
 func (c *PFClient) SendPortLoa(portCID string, portLoa PortLoa) (*PortLoaResp, error) {
@@ -255,15 +251,12 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	if err != nil {
 		return nil, err
 	}
-	statusChangeOk := make(chan bool)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(portCID)
+	statusChangeOk := checkPortStatus(c, portCID)
+	if statusChangeOk {
+		return expectedResp, nil
+	} else {
+		return nil, fmt.Errorf("could not determine port status")
 	}
-	go c.CheckServiceStatus(statusChangeOk, fn)
-	if !<-statusChangeOk {
-		return nil, err
-	}
-	return expectedResp, nil
 }
 
 func (c *PFClient) EnablePortAutoneg(portCID string) (*InterfaceReadResp, error) {
@@ -287,15 +280,12 @@ func (c *PFClient) changePortStateAutoneg(portCID string, enable bool) (*Interfa
 	if err != nil {
 		return nil, err
 	}
-	updateAutonegChangeOk := make(chan bool)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(portCID)
+	updateAutonegChangeOk := checkPortStatus(c, portCID)
+	if updateAutonegChangeOk {
+		return expectedResp, nil
+	} else {
+		return nil, fmt.Errorf("could not determine port status")
 	}
-	go c.CheckServiceStatus(updateAutonegChangeOk, fn)
-	if !<-updateAutonegChangeOk {
-		return nil, err
-	}
-	return expectedResp, nil
 }
 
 func (c *PFClient) GetPortByCID(portCID string) (*InterfaceReadResp, error) {
@@ -365,16 +355,12 @@ func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*Inter
 	if err != nil {
 		return nil, err
 	}
-	updateOk := make(chan bool)
-	defer close(updateOk)
-	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(expectedResp.PortCircuitID)
+	updated := checkPortStatus(c, expectedResp.PortCircuitID)
+	if updated {
+		return expectedResp, nil
+	} else {
+		return nil, fmt.Errorf("could not determine port status")
 	}
-	go c.CheckServiceStatus(updateOk, fn)
-	if !<-updateOk {
-		return nil, err
-	}
-	return expectedResp, nil
 }
 
 func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
@@ -384,13 +370,20 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	deleteOk := make(chan bool)
+	deleted := checkPortStatus(c, portCID)
+	if deleted {
+		return expectedResp, nil
+	} else {
+		return nil, fmt.Errorf("could not determine port status")
+	}
+}
+
+func checkPortStatus(c *PFClient, portId string) bool {
+	done := make(chan bool)
+	defer close(done)
 	fn := func() (*ServiceState, error) {
-		return c.GetPortStatus(portCID)
+		return c.GetPortStatus(portId)
 	}
-	go c.CheckServiceStatus(deleteOk, fn)
-	if !<-deleteOk {
-		return nil, err
-	}
-	return expectedResp, nil
+	go c.CheckServiceStatus(done, fn)
+	return <-done
 }

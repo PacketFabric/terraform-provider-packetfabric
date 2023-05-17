@@ -17,19 +17,16 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 ```terraform
 resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" {
   provider          = packetfabric
-  aws_region        = var.aws_region
-  description       = var.pf_description
-  zone              = var.pf_cs_zone
-  pop               = var.pf_cs_pop
-  subscription_term = var.pf_cs_subterm
-  service_class     = var.pf_cs_srvclass
-  autoneg           = var.pf_cs_autoneg
-  speed             = var.pf_cs_speed
-  should_create_lag = var.should_create_lag
-}
-
-output "packetfabric_cs_aws_dedicated_connection" {
-  value = packetfabric_cs_aws_dedicated_connection.pf_cs_conn1_dedicated_aws
+  aws_region        = "us-east-1"
+  description       = "hello world"
+  zone              = "A"
+  pop               = "BOS1"
+  subscription_term = 1
+  service_class     = "longhaul"
+  autoneg           = false
+  speed             = "10Gbps"
+  should_create_lag = true
+  labels            = ["terraform", "dev"]
 }
 ```
 
@@ -59,7 +56,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
 	Example: SSBhbSBhIFBERg==
@@ -72,6 +69,7 @@ output "packetfabric_cs_aws_dedicated_connection" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

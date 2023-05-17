@@ -17,25 +17,23 @@ For examples on how to use a cloud's Terraform provider alongside PacketFabric, 
 ```terraform
 resource "packetfabric_cloud_router" "cr1" {
   provider = packetfabric
-  asn      = var.pf_cr_asn
-  name     = var.pf_cr_name
-  capacity = var.pf_cr_capacity
-  regions  = var.pf_cr_regions
+  asn      = 4556
+  name     = "hello world"
+  capacity = "10Gbps"
+  regions  = ["US"]
+  labels   = ["terraform", "dev"]
 }
 
 resource "packetfabric_cloud_router_connection_oracle" "crc6" {
   provider    = packetfabric
-  description = var.pf_crc_description
+  description = "hello world"
   circuit_id  = packetfabric_cloud_router.cr1.id
-  region      = var.pf_crc_oracle_region
+  region      = "us-ashburn-1"
   vc_ocid     = var.pf_crc_oracle_vc_ocid
-  pop         = var.pf_crc_pop
-  zone        = var.pf_crc_zone
-  maybe_nat   = var.pf_crc_maybe_nat
-}
-
-output "packetfabric_cloud_router_connection_oracle" {
-  value = packetfabric_cloud_router_connection_oracle.crc6
+  pop         = "SFO1"
+  zone        = "A"
+  maybe_nat   = false
+  labels      = ["terraform", "dev"]
 }
 ```
 
@@ -53,7 +51,7 @@ output "packetfabric_cloud_router_connection_oracle" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
@@ -63,6 +61,7 @@ output "packetfabric_cloud_router_connection_oracle" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

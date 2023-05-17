@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -38,17 +41,17 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 			},
 			"google_pairing_key": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.",
+				Description:  "The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.",
 			},
 			"google_vlan_attachment_name": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The name you used for your VLAN attachment in Google.",
+				Description:  "The name you used for your VLAN attachment in Google. Required if not using cloud_settings.",
 			},
 			"description": {
 				Type:         schema.TypeString,
@@ -70,10 +73,11 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				Description:  "Valid VLAN range is from 4-4094, inclusive.",
 			},
 			"src_svlan": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Valid S-VLAN range is from 4-4094, inclusive.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.IntBetween(4, 4094),
+				Description:  "Valid S-VLAN range is from 4-4094, inclusive.",
 			},
 			"pop": {
 				Type:         schema.TypeString,
@@ -95,14 +99,172 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
+			"cloud_settings": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provision the Cloud side of the connection with PacketFabric.",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"credentials_uuid": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.IsUUID,
+							Description:  "The UUID of the credentials to be used with this connection.",
+						},
+						"mtu": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1500,
+							ValidateFunc: validation.IntInSlice([]int{1500, 1440}),
+							Description:  "Maximum Transmission Unit this port supports (size of the largest supported PDU).\n\n\tEnum: [\"1500\", \"1440\"] ",
+						},
+						"google_region": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The Google region that should be used.\n\n\tEnum: Enum: [\"asia-east1\", \"asia-east2\", \"asia-northeast1\", \"asia-northeast2\", \"asia-northeast3\", \"asia-south1\", \"asia-southeast1\", \"asia-southeast2\", \"australia-southeast1\", \"europe-north1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west6\", \"northamerica-northeast1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-west1\", \"us-west2\", \"us-west3\", \"us-west4\"]",
+							ValidateFunc: validation.StringInSlice([]string{
+								"asia-east1",
+								"asia-east2",
+								"asia-northeast1",
+								"asia-northeast2",
+								"asia-northeast3",
+								"asia-south1",
+								"asia-southeast1",
+								"asia-southeast2",
+								"australia-southeast1",
+								"europe-north1",
+								"europe-west1",
+								"europe-west2",
+								"europe-west3",
+								"europe-west4",
+								"europe-west6",
+								"northamerica-northeast1",
+								"southamerica-east1",
+								"us-central1",
+								"us-east1",
+								"us-east4",
+								"us-west1",
+								"us-west2",
+								"us-west3",
+								"us-west4",
+							}, false),
+						},
+						"google_project_id": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Project Id to be used. If not present the project id of the credentials will be used.",
+						},
+						"google_vlan_attachment_name": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Interconnect Attachment name. No whitespace allowed.",
+						},
+						"google_cloud_router_name": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google Cloud Router Attachment name. No whitespace allowed.",
+						},
+						"google_vpc_name": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsNotEmpty,
+							Description:  "The Google VPC name. Required if a new router needs to be created.",
+						},
+						"google_edge_availability_domain": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      1,
+							ValidateFunc: validation.IntInSlice([]int{1, 2}),
+							Description:  "The Google Edge Availability Domain. Must be 1 or 2.\n\n\tEnum: [\"1\", \"2\"] ",
+						},
+						"bgp_settings": {
+							Type:     schema.TypeList,
+							Required: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"customer_asn": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "The customer ASN of this connection.",
+									},
+									"remote_asn": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     16550,
+										Description: "The Google ASN of this connection. Must be 16550, between 64512 and 65534, or between 4200000000 and 4294967294.",
+									},
+									"md5": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringIsNotEmpty,
+										Description:  "The MD5 value of the authenticated BGP sessions.",
+									},
+									"google_keepalive_interval": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Default:      20,
+										ValidateFunc: validation.IntBetween(20, 60),
+										Description:  "The Keepalive Interval. Must be between 20 and 60. ",
+									},
+									"google_advertised_ip_ranges": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "An array of prefixes that will be advertised. Advertise Mode set to DEFAULT if not set.",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+				if _, ok := d.GetOk("cloud_settings"); !ok {
+					return nil
+				}
+
+				attributes := []string{
+					"cloud_settings.0.google_region",
+					"cloud_settings.0.google_project_id",
+					"cloud_settings.0.google_vlan_attachment_name",
+					"cloud_settings.0.google_pairing_key",
+					"cloud_settings.0.google_cloud_router_name",
+					"cloud_settings.0.google_vpc_name",
+					"cloud_settings.0.google_edge_availability_domain",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -130,7 +292,7 @@ func resourceGoogleReqHostConnCreate(ctx context.Context, d *schema.ResourceData
 	}
 	createOk := make(chan bool)
 	defer close(createOk)
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration(30+c.GetRandomSeconds()) * time.Second)
 	go func() {
 		for range ticker.C {
 			dedicatedConns, err := c.GetCurrentCustomersHosted()
@@ -169,14 +331,43 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		_ = d.Set("google_pairing_key", resp.Settings.GooglePairingKey)
-		_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
+		if _, ok := d.GetOk("cloud_settings"); !ok {
+			if _, ok := d.GetOk("google_pairing_key"); ok {
+				_ = d.Set("google_pairing_key", resp.Settings.GooglePairingKey)
+			}
+			if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
+				_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
+			}
+		}
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
+
+		if _, ok := d.GetOk("cloud_settings"); ok {
+			cloudSettings := make(map[string]interface{})
+			cloudSettings["credentials_uuid"] = resp.CloudSettings.CredentialsUUID
+			cloudSettings["google_region"] = resp.CloudSettings.GoogleRegion
+			cloudSettings["google_project_id"] = resp.CloudSettings.GoogleProjectID
+			cloudSettings["google_vlan_attachment_name"] = resp.CloudSettings.GoogleVlanAttachmentName
+			cloudSettings["google_pairing_key"] = resp.CloudSettings.GooglePairingKey
+			cloudSettings["google_cloud_router_name"] = resp.CloudSettings.GoogleCloudRouterName
+			cloudSettings["google_edge_availability_domain"] = resp.CloudSettings.GoogleEdgeAvailabilityDomain
+			cloudSettings["mtu"] = resp.CloudSettings.Mtu
+
+			bgpSettings := make(map[string]interface{})
+			bgpSettings["customer_asn"] = resp.CloudSettings.BgpSettings.CustomerAsn
+			bgpSettings["remote_asn"] = resp.CloudSettings.BgpSettings.RemoteAsn
+			bgpSettings["md5"] = resp.CloudSettings.BgpSettings.Md5
+			bgpSettings["google_keepalive_interval"] = resp.CloudSettings.BgpSettings.GoogleKeepaliveInterval
+			bgpSettings["google_advertised_ip_ranges"] = resp.CloudSettings.BgpSettings.GoogleAdvertisedIPRanges
+
+			cloudSettings["bgp_settings"] = bgpSettings
+		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -184,18 +375,32 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		_ = d.Set("po_number", resp2.PONumber)
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		}
 	}
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 
@@ -208,36 +413,94 @@ func resourceGoogeReqHostConnDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 func extractGoogleReqConn(d *schema.ResourceData) packetfabric.GoogleReqHostedConn {
-	googleHosted := packetfabric.GoogleReqHostedConn{}
+	hostedGoogleConn := packetfabric.GoogleReqHostedConn{}
+
 	if accountUUID, ok := d.GetOk("account_uuid"); ok {
-		googleHosted.AccountUUID = accountUUID.(string)
+		hostedGoogleConn.AccountUUID = accountUUID.(string)
 	}
 	if pairingKey, ok := d.GetOk("google_pairing_key"); ok {
-		googleHosted.GooglePairingKey = pairingKey.(string)
+		hostedGoogleConn.GooglePairingKey = pairingKey.(string)
 	}
 	if vlanAttach, ok := d.GetOk("google_vlan_attachment_name"); ok {
-		googleHosted.GoogleVlanAttachmentName = vlanAttach.(string)
+		hostedGoogleConn.GoogleVlanAttachmentName = vlanAttach.(string)
 	}
 	if description, ok := d.GetOk("description"); ok {
-		googleHosted.Description = description.(string)
+		hostedGoogleConn.Description = description.(string)
 	}
 	if pop, ok := d.GetOk("pop"); ok {
-		googleHosted.Pop = pop.(string)
+		hostedGoogleConn.Pop = pop.(string)
 	}
 	if port, ok := d.GetOk("port"); ok {
-		googleHosted.Port = port.(string)
+		hostedGoogleConn.Port = port.(string)
 	}
 	if vlan, ok := d.GetOk("vlan"); ok {
-		googleHosted.Vlan = vlan.(int)
+		hostedGoogleConn.Vlan = vlan.(int)
 	}
 	if srcSvlan, ok := d.GetOk("src_svlan"); ok {
-		googleHosted.SrcSvlan = srcSvlan.(int)
+		hostedGoogleConn.SrcSvlan = srcSvlan.(int)
 	}
 	if speed, ok := d.GetOk("speed"); ok {
-		googleHosted.Speed = speed.(string)
+		hostedGoogleConn.Speed = speed.(string)
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
-		googleHosted.PONumber = poNumber.(string)
+		hostedGoogleConn.PONumber = poNumber.(string)
 	}
-	return googleHosted
+	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
+		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
+		hostedGoogleConn.CloudSettings = extractCloudSettingsForGoogleReq(cs)
+	}
+
+	return hostedGoogleConn
+}
+
+func extractCloudSettingsForGoogleReq(cs map[string]interface{}) *packetfabric.CloudSettings {
+	cloudSettings := &packetfabric.CloudSettings{}
+
+	cloudSettings.CredentialsUUID = cs["credentials_uuid"].(string)
+	cloudSettings.GoogleRegion = cs["google_region"].(string)
+
+	if googleProjectID, ok := cs["google_project_id"]; ok {
+		cloudSettings.GoogleProjectID = googleProjectID.(string)
+	}
+	cloudSettings.GoogleVlanAttachmentName = cs["google_vlan_attachment_name"].(string)
+	cloudSettings.GoogleCloudRouterName = cs["google_cloud_router_name"].(string)
+
+	if googleVPCName, ok := cs["google_vpc_name"]; ok {
+		cloudSettings.GoogleVPCName = googleVPCName.(string)
+	}
+	if googleEdgeAvailabilityDomain, ok := cs["google_edge_availability_domain"]; ok {
+		cloudSettings.GoogleEdgeAvailabilityDomain = googleEdgeAvailabilityDomain.(int)
+	}
+	if mtu, ok := cs["mtu"]; ok {
+		cloudSettings.Mtu = mtu.(int)
+	}
+	if bgpSettings, ok := cs["bgp_settings"]; ok {
+		bgpSettingsMap := bgpSettings.([]interface{})[0].(map[string]interface{})
+		cloudSettings.BgpSettings = extractBgpSettingsForGoogleReq(bgpSettingsMap)
+	}
+
+	return cloudSettings
+}
+
+func extractBgpSettingsForGoogleReq(bgpSettingsMap map[string]interface{}) *packetfabric.BgpSettings {
+	bgpSettings := &packetfabric.BgpSettings{}
+
+	bgpSettings.CustomerAsn = bgpSettingsMap["customer_asn"].(int)
+	bgpSettings.RemoteAsn = bgpSettingsMap["remote_asn"].(int)
+
+	if md5, ok := bgpSettingsMap["md5"]; ok {
+		bgpSettings.Md5 = md5.(string)
+	}
+	if googleKeepaliveInterval, ok := bgpSettingsMap["google_keepalive_interval"]; ok {
+		bgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval.(int)
+	}
+	if googleAdvertisedIPRangesInterface, ok := bgpSettingsMap["google_advertised_ip_ranges"].([]interface{}); ok {
+		googleAdvertisedIPRanges := make([]string, len(googleAdvertisedIPRangesInterface))
+		for i, elem := range googleAdvertisedIPRangesInterface {
+			googleAdvertisedIPRanges[i] = elem.(string)
+		}
+		bgpSettings.GoogleAdvertisedIPRanges = googleAdvertisedIPRanges
+	}
+
+	return bgpSettings
 }

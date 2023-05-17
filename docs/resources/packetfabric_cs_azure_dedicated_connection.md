@@ -15,18 +15,15 @@ This is a port located in a Microsoft Azure cloud on-ramp facility, which will b
 ```terraform
 resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azure" {
   provider          = packetfabric
-  description       = var.pf_description
-  zone              = var.pf_cs_zone
-  pop               = var.pf_cs_pop
-  subscription_term = var.pf_cs_subterm
-  service_class     = var.pf_cs_srvclass
-  encapsulation     = var.encapsulation
-  port_category     = var.port_category
-  speed             = var.pf_cs_speed
-}
-
-output "packetfabric_cs_azure_dedicated_connection" {
-  value = packetfabric_cs_azure_dedicated_connection.pf_cs_conn1_dedicated_azure
+  description       = "hello world"
+  zone              = "A"
+  pop               = "BOS1"
+  subscription_term = 1
+  service_class     = "longhaul"
+  encapsulation     = "dot1q"
+  port_category     = "primary" # secondary
+  speed             = "10Gbps"
+  labels            = ["terraform", "dev"]
 }
 ```
 
@@ -56,7 +53,7 @@ output "packetfabric_cs_azure_dedicated_connection" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF for the LOA that you generated from the Azure portal
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
@@ -65,6 +62,7 @@ output "packetfabric_cs_azure_dedicated_connection" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

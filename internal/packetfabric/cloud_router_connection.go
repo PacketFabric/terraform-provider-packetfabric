@@ -16,17 +16,18 @@ const ipsecConnServiceByCidURI = "/v2/services/ipsec/%s"
 const oracleCloudRouterConnectionByCidURI = "/v2.1/services/cloud-routers/%s/connections/oracle"
 
 type AwsConnection struct {
-	AwsAccountID           string `json:"aws_account_id,omitempty"`
-	AccountUUID            string `json:"account_uuid,omitempty"`
-	MaybeNat               bool   `json:"maybe_nat,omitempty"`
-	MaybeDNat              bool   `json:"maybe_dnat,omitempty"`
-	Description            string `json:"description,omitempty"`
-	Pop                    string `json:"pop,omitempty"`
-	Zone                   string `json:"zone,omitempty"`
-	IsPublic               bool   `json:"is_public,omitempty"`
-	Speed                  string `json:"speed,omitempty"`
-	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
-	PONumber               string `json:"po_number,omitempty"`
+	AwsAccountID           string         `json:"aws_account_id,omitempty"`
+	AccountUUID            string         `json:"account_uuid,omitempty"`
+	MaybeNat               bool           `json:"maybe_nat,omitempty"`
+	MaybeDNat              bool           `json:"maybe_dnat,omitempty"`
+	Description            string         `json:"description,omitempty"`
+	Pop                    string         `json:"pop,omitempty"`
+	Zone                   string         `json:"zone,omitempty"`
+	IsPublic               bool           `json:"is_public,omitempty"`
+	Speed                  string         `json:"speed,omitempty"`
+	PublishedQuoteLineUUID string         `json:"published_quote_line_uuid,omitempty"`
+	PONumber               string         `json:"po_number,omitempty"`
+	CloudSettings          *CloudSettings `json:"cloud_settings,omitempty"`
 }
 
 type AwsConnectionCreateResponse struct {
@@ -88,36 +89,6 @@ type BgpStateObj struct {
 	BgpState        string `json:"bgp_state,omitempty"`
 }
 
-type CloudSettings struct {
-	VlanIDPf                 int    `json:"vlan_id_pf,omitempty"`
-	VlanIDCust               int    `json:"vlan_id_cust,omitempty"`
-	SvlanIDCust              int    `json:"svlan_id_cust,omitempty"`
-	AwsRegion                string `json:"aws_region,omitempty"`
-	AwsHostedType            string `json:"aws_hosted_type,omitempty"`
-	AwsAccountID             string `json:"aws_account_id,omitempty"`
-	AwsConnectionID          string `json:"aws_connection_id,omitempty"`
-	GooglePairingKey         string `json:"google_pairing_key,omitempty"`
-	GoogleVlanAttachmentName string `json:"google_vlan_attachment_name,omitempty"`
-	VlanPrivate              int    `json:"vlan_id_private,omitempty"`
-	VlanMicrosoft            int    `json:"vlan_id_microsoft,omitempty"`
-	AzureServiceKey          string `json:"azure_service_key,omitempty"`
-	AzureServiceTag          int    `json:"azure_service_tag,omitempty"`
-	AzureConnectionType      string `json:"azure_connection_type,omitempty"`
-	AzureEncapsulation       string `json:"encapsulation,omitempty"`
-	OracleRegion             string `json:"oracle_region,omitempty"`
-	VcOcid                   string `json:"vc_ocid,omitempty"`
-	PortCrossConnectOcid     string `json:"port_cross_connect_ocid,omitempty"`
-	PortCompartmentOcid      string `json:"port_compartment_ocid,omitempty"`
-	AccountID                string `json:"account_id,omitempty"`
-	GatewayID                string `json:"gateway_id,omitempty"`
-	PortID                   string `json:"port_id,omitempty"`
-	Name                     string `json:"name,omitempty"`
-	BgpAsn                   int    `json:"bgp_asn,omitempty"`
-	BgpCerCidr               string `json:"bgp_cer_cidr,omitempty"`
-	BgpIbmCidr               string `json:"bgp_ibm_cidr,omitempty"`
-	PublicIP                 string `json:"public_ip,omitempty"`
-	NatPublicIP              string `json:"nat_public_ip,omitempty"`
-}
 type CloudProvider struct {
 	Pop    string `json:"pop,omitempty"`
 	Site   string `json:"site,omitempty"`
@@ -162,8 +133,9 @@ type AwsComponents struct {
 }
 
 type CloudRouterUpdateData struct {
-	Description string `json:"description"`
-	PONumber    string `json:"po_number,omitempty"`
+	Description   string        `json:"description"`
+	PONumber      string        `json:"po_number,omitempty"`
+	CloudSettings CloudSettings `json:"cloud_settings,omitempty"`
 }
 
 type ConnectionDeleteResp struct {
@@ -373,7 +345,7 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 		return nil, err
 	}
 	// Upon requested on issue #157
-	time.Sleep(20 * time.Second)
+	time.Sleep(30 * time.Second)
 	return expectedResp, nil
 }
 
