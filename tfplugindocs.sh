@@ -9,6 +9,10 @@ fi
 
 os_name=$(uname)
 
+echo -e "\nFormat examples..."
+terraform fmt -recursive examples
+
+echo -e "\nGenerating docs..."
 if [ "$os_name" == "Linux" ]; then
     tfplugindocs generate --provider-name packetfabric
     cd docs/resources

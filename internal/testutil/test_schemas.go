@@ -188,8 +188,7 @@ const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_c
   ibm_bgp_asn  = %v
 }
 resource "time_sleep" "wait_ibm_connection1" {
-  create_duration = "1m"
-  depends_on = [packetfabric_cloud_router_connection_ibm.%s]
+  create_duration = "60s"
 }
 provider "ibm" {
   region = "%s"
@@ -219,13 +218,8 @@ resource "ibm_dl_gateway_action" "confirmation1" {
   speed_mbps     = %v
   provisioner "local-exec" {
     when    = destroy
-    command = "sleep 60"
+    command = "sleep 30"
   }
-}
-resource "time_sleep" "wait_ibm_provisioning1" {
-  create_duration  = "3m"
-  destroy_duration = "3m"
-  depends_on = [ibm_dl_gateway_action.confirmation1]
 }`
 
 // Resource: packetfabric_cloud_router_connection_ipsec
@@ -308,6 +302,7 @@ const RResourceCSAzureDedicatedConnection = `resource "packetfabric_cs_azure_ded
   provider          = packetfabric
   description       = "%s"
   pop               = "%s"
+  zone              = "%s"
   subscription_term = %v
   service_class     = "%s"
   encapsulation     = "%s"
@@ -451,8 +446,7 @@ const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_con
   ibm_bgp_asn  = %v
 }
 resource "time_sleep" "wait_ibm_connection2" {
-  create_duration = "1m"
-  depends_on = [packetfabric_cs_ibm_hosted_connection.%s]
+  create_duration = "60s"
 }
 provider "ibm" {
   region = "%s"
@@ -482,13 +476,8 @@ resource "ibm_dl_gateway_action" "confirmation2" {
   speed_mbps     = %v
   provisioner "local-exec" {
     when    = destroy
-    command = "sleep 60"
+    command = "sleep 30"
   }
-}
-resource "time_sleep" "wait_ibm_provisioning2" {
-  create_duration  = "3m"
-  destroy_duration = "3m"
-  depends_on = [ibm_dl_gateway_action.confirmation2]
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_connection

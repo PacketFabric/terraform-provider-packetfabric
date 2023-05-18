@@ -54,6 +54,10 @@ variable "pf_cs_speed" {
   type    = string
   default = "50Mbps"
 }
+variable "pf_cs_speed_ibm" {
+  type    = number
+  default = 50
+}
 variable "pf_cs_vlan1" {
   type    = number
   default = 110

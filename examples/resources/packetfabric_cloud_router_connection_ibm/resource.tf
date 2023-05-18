@@ -20,8 +20,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
 }
 
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "1m"
-  depends_on = [packetfabric_cloud_router_connection_ibm.crc5]
+  create_duration = "60s"
 }
 data "ibm_dl_gateway" "current" {
   provider   = ibm
@@ -34,12 +33,16 @@ data "ibm_resource_group" "existing_rg" {
 }
 
 resource "ibm_dl_gateway_action" "confirmation" {
-  provider       = ibm
-  gateway        = data.ibm_dl_gateway.current.id
-  resource_group = data.ibm_resource_group.existing_rg.id
-  action         = "create_gateway_approve"
-  global         = true
-  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  provider                    = ibm
+  gateway                     = data.ibm_dl_gateway.current.id
+  resource_group              = data.ibm_resource_group.existing_rg.id
+  action                      = "create_gateway_approve"
+  global                      = true
+  metered                     = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  bgp_asn                     = packetfabric_cloud_router.cr1.asn
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps                  = 1000 # must match PacketFabric speed
 
   provisioner "local-exec" {
     when    = destroy

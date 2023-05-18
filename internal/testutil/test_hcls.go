@@ -54,7 +54,7 @@ const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const subscriptionTerm = 1
 
 var labPopsPort = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
-var labPopsCloud = []string{"LAB1", "LAB2", "LAB6", "LAB8"}
+var labPopsCloud = []string{"DEV1", "LAB1", "LAB2", "LAB6", "LAB8"}
 
 // packetfabric_port
 // packetfabric_point_to_point
@@ -134,7 +134,7 @@ const AzurePeeringBandwidth = 100 // must match const CloudRouterConnSpeed and H
 const DedicatedCloudSpeed = "10Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
-const DedicatedCloudEncap = "qinq"      // Azure only
+const DedicatedCloudEncap = "dot1q"     // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
 type PortDetails struct {
@@ -142,7 +142,7 @@ type PortDetails struct {
 	DesiredSpeed          string
 	DesiredPop            string
 	DesiredZone           string
-	DesiredMedia          string
+	DesiredMedia          *string
 	DesiredProvider       string
 	DesiredConnectionType string
 	DesiredMarket         string
@@ -154,7 +154,7 @@ type PortDetails struct {
 	AnyType               bool
 	IsCloudConnection     bool
 	PortEnabled           bool
-	skipDesiredMarket     *string
+	SkipDesiredMarket     *string
 }
 
 // ########################################
@@ -378,8 +378,8 @@ type RHclCsAwsDedicatedConnectionResult struct {
 type RHclCsGoogleDedicatedConnectionResult struct {
 	HclResultBase
 	Desc             string
-	Zone             string
 	Pop              string
+	Zone             string
 	SubscriptionTerm int
 	ServiceClass     string
 	Autoneg          bool
@@ -391,6 +391,7 @@ type RHclCsAzureDedicatedConnectionResult struct {
 	HclResultBase
 	Desc             string
 	Pop              string
+	Zone             string
 	SubscriptionTerm int
 	ServiceClass     string
 	Encapsulation    string
@@ -473,11 +474,15 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	var err error
 
 	log.Println("Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
-	var skipDesiredMarket *string
-	if details.skipDesiredMarket != nil {
-		skipDesiredMarket = details.skipDesiredMarket
+	var SkipDesiredMarket *string
+	if details.SkipDesiredMarket != nil {
+		SkipDesiredMarket = details.SkipDesiredMarket
 	}
-	pop, _, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, skipDesiredMarket)
+	var DesiredMedia *string
+	if details.DesiredMedia != nil {
+		DesiredMedia = details.DesiredMedia
+	}
+	pop, _, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
@@ -607,8 +612,8 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 	log.Println("Market from first port: ", marketA)
 
 	portDetailsZ := CreateBasePortDetails()
-	portDetailsZ.skipDesiredMarket = &marketA // Send the market for the second port so it selects a different one to avoid to build a metro VC
-	log.Println("Sending the market to the second port: ", *portDetailsZ.skipDesiredMarket)
+	portDetailsZ.SkipDesiredMarket = &marketA // Send the market for the second port so it selects a different one to avoid to build a metro VC
+	log.Println("Sending the market to the second port: ", *portDetailsZ.SkipDesiredMarket)
 	portTestResultZ := portDetailsZ.RHclPort(true)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfBackboneVirtualCircuit)
@@ -659,17 +664,17 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 func RHclPointToPoint() RHclPointToPointResult {
 
 	var speed = portSpeed
-	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil)
+	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil, nil)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
 
-	pop2, zone2, media, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1)
+	pop2, zone2, _, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1, &media)
 	if err2 != nil {
 		log.Println("Error getting pop and zone with available port: ", err2)
-		log.Panic(err)
+		log.Panic(err2)
 	}
 	log.Println("Pop2, media, and speed set to: ", pop2, zone2, media, market2, speed)
 
@@ -762,7 +767,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
@@ -811,7 +816,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
@@ -906,7 +911,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIbm)
@@ -922,7 +927,6 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		pop,
 		CloudRouterConnSpeed,
 		IbmBgpAsn,
-		hclName,
 		IbmRegion,
 		uniqueDesc,
 		IbmBgpAsn,
@@ -1037,7 +1041,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1088,7 +1092,7 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1187,7 +1191,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1206,7 +1210,6 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		HostedCloudSpeed,
 		HostedCloudVlan,
 		IbmBgpAsn,
-		hclName,
 		IbmRegion,
 		uniqueDesc,
 		IbmBgpAsn,
@@ -1247,10 +1250,13 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
 	}
-	pop, zone, region := popDetails.FindAvailableCloudPopZone()
+	pop, zone, region, err := popDetails.FindAvailableCloudPopZoneDedicated()
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
-	hcl := fmt.Sprintf(
-		RResourceCSAwsDedicatedConnection,
+	hcl := fmt.Sprintf(RResourceCSAwsDedicatedConnection,
 		hclName,
 		region,
 		uniqueDesc,
@@ -1296,7 +1302,11 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
 	}
-	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _, err := popDetails.FindAvailableCloudPopZoneDedicated()
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	hcl := fmt.Sprintf(RResourceCSGoogleDedicatedConnection,
 		hclName,
@@ -1343,13 +1353,18 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		DesiredConnectionType: "dedicated",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _, err := popDetails.FindAvailableCloudPopZoneDedicated()
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	hcl := fmt.Sprintf(
 		RResourceCSAzureDedicatedConnection,
 		hclName,
 		uniqueDesc,
 		pop,
+		zone,
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudEncap,
@@ -1364,6 +1379,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		},
 		Desc:             uniqueDesc,
 		Pop:              pop,
+		Zone:             zone,
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Encapsulation:    DedicatedCloudEncap,
@@ -1393,7 +1409,7 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 // data.packetfabric_locations_port_availability
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
+	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
 	log.Printf("Data-source name: %s\n", hclName)
@@ -1429,7 +1445,7 @@ func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 // data.packetfabric_locations_pop_zones
 func DHclDataSourceZones() DHclLocationsZonesResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil)
+	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsZones)
 	log.Printf("Data-source name: %s\n", hclName)
