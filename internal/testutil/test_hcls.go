@@ -1122,7 +1122,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 // packetfabric_cloud_router_connection_ipsec
 func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil)
 	if err != nil {
 		log.Panic(err)
 	}
