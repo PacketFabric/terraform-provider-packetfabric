@@ -97,6 +97,7 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
 # From the IBM side: Accept the connection
 resource "time_sleep" "wait_ibm_connection" {
   create_duration = "1m"
+  depends_on = [packetfabric_cs_ibm_hosted_connection.pf_cs_conn1]
 }
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {
@@ -108,7 +109,7 @@ data "ibm_dl_gateway" "current" {
 # Used in case you are using an existing resource group and you don't create a new one
 # data "ibm_resource_group" "existing_rg" {
 #   provider   = ibm
-#   name       = "Packet Fabric"
+#   name       = var.ibm_resource_group
 # }
 
 resource "ibm_dl_gateway_action" "confirmation" {

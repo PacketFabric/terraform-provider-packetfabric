@@ -38,6 +38,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
 
 resource "time_sleep" "wait_ibm_connection" {
   create_duration = "1m"
+  depends_on = [packetfabric_cloud_router_connection_ibm.crc5]
 }
 data "ibm_dl_gateway" "current" {
   provider   = ibm

@@ -146,7 +146,7 @@ const RResourceCloudRouterConnectionGoogle = `variable "gcp_project_id" {
 }
 resource "google_compute_router" "google_router1" {
   provider = google
-  project  = var.gcp_project_id
+  project  = var.gcp_project_id # set in Env
   region   = "%s"
   name     = "terraform-test-acc-google-router1"
   network  = "%s"
@@ -157,7 +157,7 @@ resource "google_compute_router" "google_router1" {
 }
 resource "google_compute_interconnect_attachment" "google_interconnect1" {
   provider                 = google
-  project                  = var.gcp_project_id
+  project                  = var.gcp_project_id # set in Env
   name                     = "terraform-test-acc-google-interconnect1"
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
@@ -178,13 +178,54 @@ resource "packetfabric_cloud_router_connection_google" "%s" {
 }`
 
 // Resource: packetfabric_cloud_router_connection_ibm
-const RResourceCloudRouterConnectionIBM = `resource "packetfabric_cloud_router_connection_ibm" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  circuit_id  = %s.id
-  ibm_bgp_asn = %v
-  pop         = "%s"
-  speed       = "%s"
+const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_connection_ibm" "%s" {
+  provider     = packetfabric
+  circuit_id   = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  speed        = "%s"
+  ibm_bgp_asn  = %v
+}
+resource "time_sleep" "wait_ibm_connection1" {
+  create_duration = "1m"
+  depends_on = [packetfabric_cloud_router_connection_ibm.%s]
+}
+provider "ibm" {
+  region = "%s"
+}
+data "ibm_dl_gateway" "current1" {
+  provider   = ibm
+  name       = "%s"
+  depends_on = [time_sleep.wait_ibm_connection1]
+}
+variable "ibm_resource_group" {
+  type        = string
+}
+data "ibm_resource_group" "existing_rg1" {
+  provider   = ibm
+  name       = var.ibm_resource_group # set in Env
+}
+resource "ibm_dl_gateway_action" "confirmation1" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current1.id
+  resource_group = data.ibm_resource_group.existing_rg1.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true
+  bgp_asn        = %v
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps     = %v
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 60"
+  }
+}
+resource "time_sleep" "wait_ibm_provisioning1" {
+  create_duration  = "3m"
+  destroy_duration = "3m"
+  depends_on = [ibm_dl_gateway_action.confirmation1]
 }`
 
 // Resource: packetfabric_cloud_router_connection_ipsec
@@ -235,7 +276,6 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
   description       = "%s"
   pop               = "%s"
   zone              = "%s"
-  should_create_lag = %t
   subscription_term = %v
   service_class     = "%s"
   autoneg           = %t
@@ -340,8 +380,8 @@ const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_a
 const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_dedicated_connection" "%s" {
   provider          = packetfabric
   description       = "%s"
-  zone              = "%s"
   pop               = "%s"
+  zone              = "%s"
   subscription_term = %v
   service_class     = "%s"
   autoneg           = %t
@@ -354,7 +394,7 @@ const RResourceCSGoogleHostedConnection = `variable "gcp_project_id" {
 }
 resource "google_compute_router" "google_router2" {
   provider = google
-  project  = var.gcp_project_id
+  project  = var.gcp_project_id # set in Env
   region   = "%s"
   name     = "terraform-test-acc-google-router2"
   network  = "%s"
@@ -365,7 +405,7 @@ resource "google_compute_router" "google_router2" {
 }
 resource "google_compute_interconnect_attachment" "google_interconnect2" {
   provider                 = google
-  project                  = var.gcp_project_id
+  project                  = var.gcp_project_id # set in Env
   name                     = "terraform-test-acc-google-interconnect2"
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
@@ -400,14 +440,55 @@ const RResourceCSGGoogleHostedMarketplaceConnection = `resource "packetfabric_cs
 }`
 
 // Resource: packetfabric_cs_ibm_hosted_connection
-const RResourceCSIBMHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
-  provider    = packetfabric
-  port        = %s.id
-  ibm_bgp_asn = %v
-  description = "%s"
-  pop         = "%s"
-  vlan        = %v
-  speed       = "%s"
+const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
+  provider     = packetfabric
+  port         = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  speed        = "%s"
+  vlan         = %v
+  ibm_bgp_asn  = %v
+}
+resource "time_sleep" "wait_ibm_connection2" {
+  create_duration = "1m"
+  depends_on = [packetfabric_cs_ibm_hosted_connection.%s]
+}
+provider "ibm" {
+  region = "%s"
+}
+data "ibm_dl_gateway" "current2" {
+  provider   = ibm
+  name       = "%s"
+  depends_on = [time_sleep.wait_ibm_connection2]
+}
+variable "ibm_resource_group" {
+  type        = string
+}
+data "ibm_resource_group" "existing_rg2" {
+  provider   = ibm
+  name       = var.ibm_resource_group # set in Env
+}
+resource "ibm_dl_gateway_action" "confirmation2" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current2.id
+  resource_group = data.ibm_resource_group.existing_rg2.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true
+  bgp_asn        = %v
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps     = %v
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 60"
+  }
+}
+resource "time_sleep" "wait_ibm_provisioning2" {
+  create_duration  = "3m"
+  destroy_duration = "3m"
+  depends_on = [ibm_dl_gateway_action.confirmation2]
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_connection

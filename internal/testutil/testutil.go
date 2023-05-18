@@ -118,6 +118,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
 	for _, l := range locations {
+		// log.Printf("Checking PoP: %s\n", l.Pop)
 		// Skip Colt locations
 		if l.Vendor == "Colt" {
 			continue
@@ -127,7 +128,6 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 		if skipDesiredMarket != nil && l.Market == *skipDesiredMarket {
 			continue
 		}
-
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
 			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
@@ -135,7 +135,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 		}
 
 		for _, p := range portAvailability {
-			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
+			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(labPopsPort, l.Pop)) {
 				pop = l.Pop
 				zone = p.Zone
 				media = p.Media
@@ -162,9 +162,10 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string
 	log.Println("Starting to search for available Cloud PoP and zone...")
 	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
 
-	for popAvailable, zones := range popsWithZones {
-		log.Printf("Checking PoP: %s\n", popAvailable)
+	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
+	for popAvailable, zones := range popsWithZones {
+		// log.Printf("Checking PoP: %s\n", popAvailable)
 		if len(popsToSkip) == len(popsWithZones) {
 			log.Fatal(errors.New("there's no port available on any pop"))
 		}
@@ -172,7 +173,7 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string
 			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
 			continue
 		} else {
-			if len(zones) > 1 {
+			if len(zones) > 1 && (!testingInLab || _contains(labPopsCloud, popAvailable)) {
 				pop = popAvailable
 				zone = zones[0]
 				region = zones[len(zones)-1]

@@ -127,7 +127,7 @@ func resourceAwsReqDedicatedConnCreate(ctx context.Context, d *schema.ResourceDa
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	dedicatedConn := extractDedicatedConn(d)
+	dedicatedConn := extractAwsDedicatedConn(d)
 	expectedResp, err := c.CreateDedicadedAWSConn(dedicatedConn)
 	if err != nil {
 		return diag.FromErr(err)
@@ -185,6 +185,7 @@ func resourceAwsReqDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 	if err2 != nil {
 		return diag.FromErr(err2)
 	}
+
 	if resp2 != nil {
 		_ = d.Set("autoneg", resp2.Autoneg)
 		if _, ok := d.GetOk("zone"); ok {
@@ -226,19 +227,43 @@ func resourceAwsServicesDelete(ctx context.Context, d *schema.ResourceData, m in
 	return resourceCloudSourceDelete(ctx, d, m, "AWS Service Delete")
 }
 
-func extractDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn {
-	return packetfabric.DedicatedAwsConn{
-		AwsRegion:        d.Get("aws_region").(string),
-		AccountUUID:      d.Get("account_uuid").(string),
-		Description:      d.Get("description").(string),
-		Zone:             d.Get("zone").(string),
-		Pop:              d.Get("pop").(string),
-		SubscriptionTerm: d.Get("subscription_term").(int),
-		ServiceClass:     d.Get("service_class").(string),
-		AutoNeg:          d.Get("autoneg").(bool),
-		Speed:            d.Get("speed").(string),
-		ShouldCreateLag:  d.Get("should_create_lag").(bool),
-		Loa:              d.Get("loa"),
-		PONumber:         d.Get("po_number").(string),
+func extractAwsDedicatedConn(d *schema.ResourceData) packetfabric.DedicatedAwsConn {
+	dedicatedConn := packetfabric.DedicatedAwsConn{}
+	if awsRegion, ok := d.GetOk("aws_region"); ok {
+		dedicatedConn.AwsRegion = awsRegion.(string)
 	}
+	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+		dedicatedConn.AccountUUID = accountUUID.(string)
+	}
+	if description, ok := d.GetOk("description"); ok {
+		dedicatedConn.Description = description.(string)
+	}
+	if zone, ok := d.GetOk("zone"); ok {
+		dedicatedConn.Zone = zone.(string)
+	}
+	if pop, ok := d.GetOk("pop"); ok {
+		dedicatedConn.Pop = pop.(string)
+	}
+	if subTerm, ok := d.GetOk("subscription_term"); ok {
+		dedicatedConn.SubscriptionTerm = subTerm.(int)
+	}
+	if serviceClass, ok := d.GetOk("service_class"); ok {
+		dedicatedConn.ServiceClass = serviceClass.(string)
+	}
+	if autoneg, ok := d.GetOk("autoneg"); ok {
+		dedicatedConn.AutoNeg = autoneg.(bool)
+	}
+	if speed, ok := d.GetOk("speed"); ok {
+		dedicatedConn.Speed = speed.(string)
+	}
+	if shouldCreateLag, ok := d.GetOk("should_create_lag"); ok {
+		dedicatedConn.ShouldCreateLag = shouldCreateLag.(bool)
+	}
+	if loa, ok := d.GetOk("loa"); ok {
+		dedicatedConn.Loa = loa.(string)
+	}
+	if poNumber, ok := d.GetOk("po_number"); ok {
+		dedicatedConn.PONumber = poNumber.(string)
+	}
+	return dedicatedConn
 }

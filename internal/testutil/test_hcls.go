@@ -14,22 +14,24 @@ import (
 
 // ###### Resources
 const pfPort = "packetfabric_port"
+const pfPortLoa = "packetfabric_port_loa"
+const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
 const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
 const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnAzure = "packetfabric_cloud_router_connection_azure"
+const pfCloudRouterConnIbm = "packetfabric_cloud_router_connection_ibm"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
+const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
 const pfCsAwsDedicatedConn = "packetfabric_cs_aws_dedicated_connection"
 const pfCsGoogleDedicatedConn = "packetfabric_cs_google_dedicated_connection"
 const pfCsAzureDedicatedConn = "packetfabric_cs_azure_dedicated_connection"
-const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
-const pfPortLoa = "packetfabric_port_loa"
 
 // ###### Data-sources
 const pfDataLocations = "data.packetfabric_locations"
@@ -41,8 +43,8 @@ const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
-const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
-const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
+const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -51,11 +53,12 @@ const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_gr
 // common
 const subscriptionTerm = 1
 
+var labPopsPort = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
+var labPopsCloud = []string{"LAB1", "LAB2", "LAB6", "LAB8"}
+
 // packetfabric_port
 // packetfabric_point_to_point
 const portSpeed = "1Gbps"
-
-var listPortsLab = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
@@ -79,11 +82,17 @@ const CloudRouterASN = 4556
 
 // packetfabric_cloud_router_connection_aws
 // packetfabric_cloud_router_connection_google
-const CloudRouterConnSpeed = "100Mbps"
+const CloudRouterConnSpeed = "100Mbps" // must match const AzurePeeringBandwidth and IbmSpeed
 
 // packetfabric_cloud_router_connection_google
 const CloudRouterConnGoogleRegion = "us-west1"
 const CloudRouterConnGoogleNetwork = "default"
+
+// packetfabric_cloud_router_connection_ibm
+// packetfabric_cs_ibm_hosted_connection
+const IbmBgpAsn = 64536
+const IbmRegion = "us-east"
+const IbmSpeed = 100 // must match const CloudRouterConnSpeed and HostedCloudSpeed
 
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
@@ -102,7 +111,7 @@ const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 
 // packetfabric_cs_aws_hosted_connection
-const HostedCloudSpeed = "100Mbps"
+const HostedCloudSpeed = "100Mbps" // must match const AzurePeeringBandwidth and IbmSpeed
 const HostedCloudVlan = 100
 
 // packetfabric_cloud_router_connection_azure
@@ -117,7 +126,7 @@ const AzureServiceProviderNameProd = "PacketFabric"
 const AzureServiceProviderNameDev = "Packet Fabric Test"
 const AzureExpressRouteTier = "Standard"
 const AzureExpressRouteFamily = "MeteredData"
-const AzurePeeringBandwidth = 100 // match const CloudRouterConnSpeed and HostedCloudSpeed
+const AzurePeeringBandwidth = 100 // must match const CloudRouterConnSpeed and HostedCloudSpeed
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
@@ -125,7 +134,6 @@ const AzurePeeringBandwidth = 100 // match const CloudRouterConnSpeed and Hosted
 const DedicatedCloudSpeed = "10Gbps"
 const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
-const DedicatedCloudShouldCreateLag = false
 const DedicatedCloudEncap = "qinq"      // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
 
@@ -273,6 +281,17 @@ type RHclCloudRouterConnectionAzureResult struct {
 	Speed       string
 }
 
+// packetfabric_cloud_router_connection_ibm
+type RHclCloudRouterConnectionIbmResult struct {
+	HclResultBase
+	CloudRouter RHclCloudRouterResult
+	AccountUuid string
+	Desc        string
+	Pop         string
+	Speed       string
+	IbmBgpAsn   int
+}
+
 // packetfabric_cloud_router_connection_port
 type RHclCloudRouterConnectionPortResult struct {
 	HclResultBase
@@ -331,14 +350,24 @@ type RHclCsHostedCloudAzureResult struct {
 	VlanPrivate int
 }
 
+// packetfabric_cs_ibm_hosted_connection
+type RHclCsHostedCloudIbmResult struct {
+	HclResultBase
+	PortResult  RHclPortResult
+	AccountUuid string
+	Desc        string
+	Pop         string
+	Vlan        int
+	Speed       string
+	IbmBgpAsn   int
+}
+
 // packetfabric_cs_aws_dedicated_connection
 type RHclCsAwsDedicatedConnectionResult struct {
 	HclResultBase
-	AwsRegion        string
 	Description      string
 	Pop              string
 	Zone             string
-	ShouldCreateLag  bool
 	SubscriptionTerm int
 	ServiceClass     string
 	Autoneg          bool
@@ -861,6 +890,61 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_ibm
+func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          CloudRouterConnSpeed,
+		DesiredProvider:       "ibm",
+		DesiredConnectionType: "hosted",
+		HasCloudRouter:        true,
+		IsCloudConnection:     true,
+	}
+
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIbm)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionIbm,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		pop,
+		CloudRouterConnSpeed,
+		IbmBgpAsn,
+		hclName,
+		IbmRegion,
+		uniqueDesc,
+		IbmBgpAsn,
+		IbmSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionIbmResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnIbm,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Pop:         pop,
+		Speed:       CloudRouterConnSpeed,
+		IbmBgpAsn:   IbmBgpAsn,
+	}
+}
+
 // packetfabric_cloud_router_connection_port
 func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
@@ -1089,6 +1173,62 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 	}
 }
 
+// packetfabric_cs_ibm_hosted_connection
+func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+	popDetails := PortDetails{
+		PFClient:              c,
+		DesiredSpeed:          HostedCloudSpeed,
+		DesiredProvider:       "ibm",
+		DesiredConnectionType: "hosted",
+		IsCloudConnection:     true,
+	}
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCsIbmHostedConn)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+
+	IbmHostedConnectionHcl := fmt.Sprintf(
+		RResourceCSIbmHostedConnection,
+		hclName,
+		portTestResult.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		pop,
+		HostedCloudSpeed,
+		HostedCloudVlan,
+		IbmBgpAsn,
+		hclName,
+		IbmRegion,
+		uniqueDesc,
+		IbmBgpAsn,
+		IbmSpeed)
+
+	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, IbmHostedConnectionHcl)
+
+	return RHclCsHostedCloudIbmResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCsIbmHostedConn,
+			ResourceName: resourceName,
+		},
+		PortResult:  portTestResult,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Pop:         pop,
+		Speed:       HostedCloudSpeed,
+		Vlan:        HostedCloudVlan,
+		IbmBgpAsn:   IbmBgpAsn,
+	}
+}
+
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 	c, err := _createPFClient()
@@ -1116,7 +1256,6 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		uniqueDesc,
 		pop,
 		zone,
-		DedicatedCloudShouldCreateLag,
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
@@ -1129,11 +1268,9 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 			Resource:     pfCsAwsDedicatedConn,
 			ResourceName: resourceName,
 		},
-		AwsRegion:        region,
 		Description:      uniqueDesc,
 		Pop:              pop,
 		Zone:             zone,
-		ShouldCreateLag:  DedicatedCloudShouldCreateLag,
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
@@ -1164,8 +1301,8 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 	hcl := fmt.Sprintf(RResourceCSGoogleDedicatedConnection,
 		hclName,
 		uniqueDesc,
-		zone,
 		pop,
+		zone,
 		subscriptionTerm,
 		DedicatedCloudServiceClass,
 		DedicatedCloudAutoneg,
@@ -1179,8 +1316,8 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 			ResourceName: resourceName,
 		},
 		Desc:             uniqueDesc,
-		Zone:             zone,
 		Pop:              pop,
+		Zone:             zone,
 		SubscriptionTerm: subscriptionTerm,
 		ServiceClass:     DedicatedCloudServiceClass,
 		Autoneg:          DedicatedCloudAutoneg,
@@ -1414,7 +1551,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 
 	csAwsHostedConnectionResult := RHclCsAwsHostedConnection()
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceCsAwsHostedConn)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCsAwsHostedConn)
 	log.Printf("Data-source name: %s\n", hclName)
 
 	hostedAwsConnHcl := fmt.Sprintf(DDatasourceCsAwsHostedConn,
@@ -1426,7 +1563,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 	return DHclCsAwsHostedConnectionResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDatasourceCsAwsHostedConn,
+			Resource:     pfDataCsAwsHostedConn,
 			ResourceName: resourceName,
 		},
 	}
@@ -1435,7 +1572,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 // data.packetfabric_link_aggregation_group
 func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
 	linkAggregationGroupResult := RHclLinkAggregationGroup()
-	resourceName, hclName := GenerateUniqueResourceName(pfDatasourceLinkAggregationGroups)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
 
 	linkAggregationGroupsHcl := fmt.Sprintf(
 		DDatasourceLinkAggregationGroups,
@@ -1447,7 +1584,7 @@ func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsRe
 	return DHclDatasourceLinkAggregationGroupsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDatasourceLinkAggregationGroups,
+			Resource:     pfDataLinkAggregationGroups,
 			ResourceName: resourceName,
 		},
 	}
