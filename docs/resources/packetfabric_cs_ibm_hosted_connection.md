@@ -27,7 +27,7 @@ resource "packetfabric_cs_ibm_hosted_connection" "cs_conn1_hosted_ibm" {
 }
 
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "60s"
+  create_duration = "5m"
 }
 data "ibm_dl_gateway" "current" {
   provider   = ibm

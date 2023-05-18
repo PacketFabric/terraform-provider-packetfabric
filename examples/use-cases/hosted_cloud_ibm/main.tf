@@ -92,7 +92,7 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
 
 # From the IBM side: Accept the connection
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "60s"
+  create_duration = "5m"
 }
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {

@@ -13,7 +13,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc_ibm" {
 
 # From the IBM side: Accept the connection
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "60s"
+  create_duration = "3m"
 }
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {

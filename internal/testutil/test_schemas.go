@@ -188,7 +188,7 @@ const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_c
   ibm_bgp_asn  = %v
 }
 resource "time_sleep" "wait_ibm_connection1" {
-  create_duration = "60s"
+  create_duration = "3m"
 }
 provider "ibm" {
   region = "%s"
@@ -446,7 +446,7 @@ const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_con
   ibm_bgp_asn  = %v
 }
 resource "time_sleep" "wait_ibm_connection2" {
-  create_duration = "60s"
+  create_duration = "5m"
 }
 provider "ibm" {
   region = "%s"
