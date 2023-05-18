@@ -244,7 +244,7 @@ const RResourceCloudRouterConnectionIpsec = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_oracle
-const RResourceCloudRouterconnectionOracle = `variable "parent_compartment_id" {
+const RResourceCloudRouterConnectionOracle = `variable "parent_compartment_id" {
   type        = string
 }
 variable "fingerprint" {
