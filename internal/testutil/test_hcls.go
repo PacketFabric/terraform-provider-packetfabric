@@ -48,6 +48,7 @@ const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
+const pfDocument = "packetfabric_document"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -462,10 +463,14 @@ type DHclDatasourceLinkAggregationGroupsResult struct {
 // packetfabric_outbound_cross_connect
 type RHclOutboundCrossConnectResult struct {
 	HclResultBase
-	Desc         string
-	DocumentUuid string
-	Port         RHclPortResult
-	Site         string
+	Desc string
+	Port RHclPortResult
+	Site string
+}
+
+// packetfabric_document
+type RHclDocumentResult struct {
+	HclResultBase
 }
 
 // Patterns:
@@ -1243,6 +1248,22 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 	}
 }
 
+// packetfabric_document
+func RHclDocumentMSA() RHclDocumentResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfDocument)
+	uniqueDesc := GenerateUniqueName()
+
+	hcl := fmt.Sprintf(RResourceDocumentMSA, hclName, "testdata/filename.pdf", uniqueDesc)
+
+	return RHclDocumentResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDocument,
+			ResourceName: resourceName,
+		},
+	}
+}
+
 // packetfabric_outbound_cross_connect
 func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 	c, err := _createPFClient()
@@ -1273,14 +1294,16 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 		}
 	}
 
+	documentResult := RHclDocumentMSA()
+
 	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
 		hclName,
 		uniqueDesc,
-		os.Getenv("PF_DOCUMENT_UUID1_KEY"),
+		documentResult.ResourceName,
 		hclPortResult.ResourceName,
 		site)
 
-	hcl := fmt.Sprintf("%s\n%s", hclPortResult.Hcl, outboundCrossHcl)
+	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult.Hcl, documentResult.Hcl, outboundCrossHcl)
 
 	return RHclOutboundCrossConnectResult{
 		HclResultBase: HclResultBase{
@@ -1288,9 +1311,8 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 			Resource:     pfOutboundCrossConnect,
 			ResourceName: resourceName,
 		},
-		Desc:         uniqueDesc,
-		DocumentUuid: os.Getenv("PF_DOCUMENT_UUID1_KEY"),
-		Site:         site,
+		Desc: uniqueDesc,
+		Site: site,
 	}
 }
 

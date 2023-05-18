@@ -10,9 +10,7 @@ import (
 )
 
 func TestOutboundCrossConnect(t *testing.T) {
-	testutil.PreCheck(t, []string{
-		"PF_DOCUMENT_UUID1_KEY",
-	})
+	testutil.PreCheck(t, []string{})
 
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
 
@@ -23,7 +21,7 @@ func TestOutboundCrossConnect(t *testing.T) {
 				Config: outboundCrossConnectResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "description", outboundCrossConnectResult.Desc),
-					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "document_uuid", outboundCrossConnectResult.DocumentUuid),
+					resource.TestCheckResourceAttrSet(outboundCrossConnectResult.ResourceName, "document_uuid"),
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "site", outboundCrossConnectResult.Site),
 				),
 			},
