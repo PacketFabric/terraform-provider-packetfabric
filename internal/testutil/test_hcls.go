@@ -58,7 +58,7 @@ const subscriptionTerm = 1
 
 var labPopsPort = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
 var labPopsHostedCloud = []string{"DEV1", "LAB1", "LAB4", "LAB6"}
-var labPopsDedicatedCloud = []string{"DEV1", "LAB1", "LAB4", "LAB5"}
+var labPopsDedicatedCloud = []string{"DEV1", "LAB4", "LAB5"} // removed LAB1
 
 // packetfabric_port
 // packetfabric_point_to_point
