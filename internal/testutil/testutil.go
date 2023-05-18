@@ -47,6 +47,7 @@ func GenerateUniqueName() string {
 	birdName := birdNames[rand.Intn(len(birdNames))]
 	return fmt.Sprintf("terraform_testacc_%s", birdName)
 }
+
 func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
 	uuid := uuid.NewString()
 	shortUuid := uuid[0:8]

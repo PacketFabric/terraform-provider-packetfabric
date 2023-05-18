@@ -162,7 +162,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect1" {
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
-  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  edge_availability_domain = "%s"
   admin_enabled            = true
   router                   = google_compute_router.google_router1.id
 }
@@ -405,7 +405,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect2" {
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
-  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  edge_availability_domain = "%s"
   admin_enabled            = true
   router                   = google_compute_router.google_router2.id
 }
@@ -559,7 +559,7 @@ const RResourceMarketplaceServicePortRejectRequest = `resource "packetfabric_mar
 const RResourceOutboundCrossConnect = `resource "packetfabric_outbound_cross_connect" "%s" {
   provider      = packetfabric
   description   = "%s"
-  document_uuid = "%s"
+  document_uuid = %s.id
   port          = %s.id
   site          = "%s"
 }`
@@ -604,6 +604,14 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   port_circuit_id   = %s.id
   loa_customer_name = "%s"
   destination_email = "%s"
+}`
+
+// Resource: packetfabric_outbound_cross_connect
+const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
+  provider        = packetfabric
+  document        = "%s"
+  type            = "msa"
+  description     = "%s"
 }`
 
 // End of resources templates for required fields only

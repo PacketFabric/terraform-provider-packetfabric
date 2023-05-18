@@ -15,6 +15,8 @@ import (
 // ###### Resources
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
+const pfDocument = "packetfabric_document"
+const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
@@ -24,6 +26,7 @@ const pfCloudRouterConnGoogle = "packetfabric_cloud_router_connection_google"
 const pfCloudRouterConnAzure = "packetfabric_cloud_router_connection_azure"
 const pfCloudRouterConnIbm = "packetfabric_cloud_router_connection_ibm"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
+const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
@@ -63,6 +66,9 @@ const portSpeed = "1Gbps"
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
 
+// packetfabric_document
+const TestFileName = "testdata/test_acc_document.pdf"
+
 // packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
 
@@ -97,6 +103,21 @@ const IbmSpeed = 100 // must match const CloudRouterConnSpeed and HostedCloudSpe
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
 const CloudRouterConnPortVlan = 101
+
+// packetfabric_cloud_router_connection_ipsec
+const CloudRouterConnIpsecGatewayAddress = "104.198.66.55"
+const CloudRouterConnIpsecSpeed = "1Gbps"
+const CloudRouterConnIpsecPhase1AuthenticationMethod = "pre-shared-key"
+const CloudRouterConnIpsecPhase1Group = "group5"
+const CloudRouterConnIpsecPhase1EncryptionAlgo = "aes-256-cbc"
+const CloudRouterConnIpsecPhase1AuthenticationAlgo = "sha1"
+const CloudRouterConnIpsecPhase2pfsGroup = "group5"
+const CloudRouterConnIpsecPhase2EncryptionAlgo = "aes-128-gcm"
+const CloudRouterConnIpsecPhase2AuthenticationAlgo = "hmac-sha1-96"
+const CloudRouterConnIpsecSharedKey = "superCoolKey"
+const CloudRouterConnIpsecIkeVersion = 1
+const CloudRouterConnIpsecPhase1Lifetime = 10800
+const CloudRouterConnIpsecPhase2Lifetime = 28800
 
 // packetfabric_cloud_router_bgp_session
 const CrbsAddressFmly = "v4"
@@ -200,6 +221,24 @@ type RHclLinkAggregationGroupResult struct {
 	Pop      string
 }
 
+// packetfabric_link_aggregation_group
+type DHclDatasourceLinkAggregationGroupsResult struct {
+	HclResultBase
+}
+
+// packetfabric_outbound_cross_connect
+type RHclOutboundCrossConnectResult struct {
+	HclResultBase
+	Desc string
+	Port RHclPortResult
+	Site string
+}
+
+// packetfabric_document
+type RHclDocumentResult struct {
+	HclResultBase
+}
+
 // packetfabric_backbone_virtual_circuit
 type RHclBackboneVirtualCircuitResult struct {
 	HclResultBase
@@ -300,6 +339,27 @@ type RHclCloudRouterConnectionPortResult struct {
 	PortResult  RHclPortResult
 	Speed       string
 	Vlan        int
+}
+
+// packetfabric_cloud_router_connection_ipsec
+type RHclCloudRouterConnectionIpsecResult struct {
+	HclResultBase
+	Port                       RHclPortResult
+	Desc                       string
+	Pop                        string
+	Speed                      string
+	GatewayAddress             string
+	IkeVersion                 int
+	Phase1AuthenticationMethod string
+	Phase1Group                string
+	Phase1EncryptionAlgo       string
+	Phase1AuthenticationAlgo   string
+	Phase1Lifetime             int
+	Phase2PfsGroup             string
+	Phase2EncryptionAlgo       string
+	Phase2AuthenticationAlgo   string
+	Phase2Lifetime             int
+	SharedKey                  string
 }
 
 // packetfabric_cloud_router_bgp_session
@@ -451,11 +511,6 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
-// packetfabric_link_aggregation_group
-type DHclDatasourceLinkAggregationGroupsResult struct {
-	HclResultBase
-}
-
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -555,6 +610,74 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_document
+func RHclDocumentMSA() RHclDocumentResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfDocument)
+	uniqueDesc := GenerateUniqueName()
+
+	hcl := fmt.Sprintf(RResourceDocumentMSA, hclName, TestFileName, uniqueDesc)
+
+	return RHclDocumentResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDocument,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// packetfabric_outbound_cross_connect
+func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult := portDetails.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfOutboundCrossConnect)
+	uniqueDesc := GenerateUniqueName()
+
+	locations, err := c.ListLocations()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var site string
+	for _, location := range locations {
+		if location.Pop == hclPortResult.Pop {
+			site = location.SiteCode
+			break
+		}
+	}
+
+	documentResult := RHclDocumentMSA()
+
+	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
+		hclName,
+		uniqueDesc,
+		documentResult.ResourceName,
+		hclPortResult.ResourceName,
+		site)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult.Hcl, documentResult.Hcl, outboundCrossHcl)
+
+	return RHclOutboundCrossConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfOutboundCrossConnect,
+			ResourceName: resourceName,
+		},
+		Desc: uniqueDesc,
+		Site: site,
 	}
 }
 
@@ -803,6 +926,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cloud_router_connection_google
 func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 
+	var edgeAvailabilityDomain string
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -823,11 +948,19 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
+	if pop == "LAB1" {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
+	} else {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_1"
+	}
+	log.Printf("Edge Availability Domain %s\n", edgeAvailabilityDomain)
+
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionGoogle,
 		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
 		CloudRouterConnGoogleRegion,
+		edgeAvailabilityDomain,
 		hclName,
 		hclCloudRouterRes.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
@@ -987,6 +1120,64 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 	}
 }
 
+// packetfabric_cloud_router_connection_ipsec
+func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	hclCloudRouterResult := RHclCloudRouter(DefaultRHclCloudRouterInput())
+
+	uniqueDesc := GenerateUniqueName()
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIpsec)
+
+	cloudRouterIpsecHcl := fmt.Sprintf(RResourceCloudRouterConnectionIpsec,
+		hclName,
+		uniqueDesc,
+		hclCloudRouterResult.ResourceName,
+		pop,
+		CloudRouterConnIpsecSpeed,
+		CloudRouterConnIpsecGatewayAddress,
+		CloudRouterConnIpsecIkeVersion,
+		CloudRouterConnIpsecPhase1AuthenticationMethod,
+		CloudRouterConnIpsecPhase1Group,
+		CloudRouterConnIpsecPhase1EncryptionAlgo,
+		CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		CloudRouterConnIpsecPhase1Lifetime,
+		CloudRouterConnIpsecPhase2pfsGroup,
+		CloudRouterConnIpsecPhase2EncryptionAlgo,
+		CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		CloudRouterConnIpsecPhase2Lifetime,
+		CloudRouterConnIpsecSharedKey,
+	)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterResult.Hcl, cloudRouterIpsecHcl)
+
+	return RHclCloudRouterConnectionIpsecResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterConnIpsec,
+			ResourceName: resourceName,
+		},
+		Desc:                       uniqueDesc,
+		Pop:                        pop,
+		Speed:                      CloudRouterConnIpsecSpeed,
+		GatewayAddress:             CloudRouterConnIpsecGatewayAddress,
+		IkeVersion:                 CloudRouterConnIpsecIkeVersion,
+		Phase1AuthenticationMethod: CloudRouterConnIpsecPhase1AuthenticationMethod,
+		Phase1Group:                CloudRouterConnIpsecPhase1Group,
+		Phase1EncryptionAlgo:       CloudRouterConnIpsecPhase1EncryptionAlgo,
+		Phase1AuthenticationAlgo:   CloudRouterConnIpsecPhase1AuthenticationAlgo,
+		Phase1Lifetime:             CloudRouterConnIpsecPhase1Lifetime,
+		Phase2PfsGroup:             CloudRouterConnIpsecPhase2pfsGroup,
+		Phase2EncryptionAlgo:       CloudRouterConnIpsecPhase2EncryptionAlgo,
+		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
+		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
+		SharedKey:                  CloudRouterConnIpsecSharedKey,
+	}
+}
+
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
 
@@ -1081,6 +1272,8 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
+	var edgeAvailabilityDomain string
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1101,11 +1294,19 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
+	if pop == "LAB1" {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
+	} else {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_1"
+	}
+	log.Printf("Edge Availability Domain %s\n", edgeAvailabilityDomain)
+
 	googleHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSGoogleHostedConnection,
 		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
 		CloudRouterConnGoogleRegion,
+		edgeAvailabilityDomain,
 		hclName,
 		portTestResult.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
@@ -1179,7 +1380,6 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
 // packetfabric_cs_ibm_hosted_connection
 func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)

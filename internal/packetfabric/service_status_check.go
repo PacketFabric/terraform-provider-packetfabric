@@ -78,7 +78,7 @@ func (c *PFClient) CheckIPSecStatus(ch chan bool, fn func() (*ServiceState, erro
 			ch <- false
 		}
 		if state != nil {
-			if state.Status.Current.State == "BGP_NOT_CREATED" {
+			if state.Status.Current.State == "COMPLETE" {
 				ticker.Stop()
 				ch <- true
 			}
