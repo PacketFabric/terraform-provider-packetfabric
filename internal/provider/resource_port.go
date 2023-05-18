@@ -258,7 +258,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 			}
 		}
 		// allow time for port to be disabled
-		time.Sleep(time.Duration(90) * time.Second)
+		time.Sleep(time.Duration(120) * time.Second)
 	}
 
 	_, err := c.DeletePort(d.Id())
