@@ -107,7 +107,6 @@ const IbmSpeed = 100 // must match const CloudRouterConnSpeed and HostedCloudSpe
 // packetfabric_cloud_router_connection_oracle
 // packetfabric_cs_oracle_hosted_connection
 const OracleProviderName = "PacketFabric"
-const OracleRegion = "us-ashburn-1"
 const OracleBandwidth = 100
 const OracleBgpAsn = 64537
 const OracleAuthKey = "dd02c7c2232759874e1c20558"
@@ -933,7 +932,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
@@ -984,7 +983,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
@@ -1087,7 +1086,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIbm)
@@ -1141,7 +1140,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, zone := popDetails.FindAvailableCloudPopZone()
+	pop, zone, region := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnOracle)
@@ -1150,8 +1149,9 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionOracle,
+		region,
 		OracleProviderName,
-		OracleRegion,
+		region,
 		OracleBandwidth,
 		OracleBgpAsn,
 		OracleAuthKey,
@@ -1163,7 +1163,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 		uniqueDesc,
 		pop,
 		zone,
-		OracleRegion)
+		region)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1331,7 +1331,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1384,7 +1384,7 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1490,7 +1490,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _ := popDetails.FindAvailableCloudPopZone()
+	pop, _, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1545,7 +1545,7 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, zone := popDetails.FindAvailableCloudPopZone()
+	pop, zone, region := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1556,8 +1556,9 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 
 	oracleHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSOracleHostedConnection,
+		region,
 		OracleProviderName,
-		OracleRegion,
+		region,
 		OracleBandwidth,
 		OracleBgpAsn,
 		OracleAuthKey,
@@ -1570,7 +1571,7 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 		pop,
 		zone,
 		HostedCloudVlan5,
-		OracleRegion)
+		region)
 
 	hcl := fmt.Sprintf("%s\n%s", portTestResult.Hcl, oracleHostedConnectionHcl)
 

@@ -266,6 +266,14 @@ variable "user_ocid" {
 variable "pf_cs_oracle_drg_ocid" {
   type        = string
 }
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
+}
 data "oci_core_fast_connect_provider_services" "packetfabric_provider1" {
   provider = oci
   compartment_id = var.parent_compartment_id
@@ -552,6 +560,14 @@ variable "user_ocid" {
 }
 variable "pf_cs_oracle_drg_ocid" {
   type        = string
+}
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
 }
 data "oci_core_fast_connect_provider_services" "packetfabric_provider2" {
   provider = oci

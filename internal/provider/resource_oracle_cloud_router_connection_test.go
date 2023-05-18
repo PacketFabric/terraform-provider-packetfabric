@@ -30,11 +30,11 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 				),
 			},
 			{
-				Config: crConnGoogleResult.Hcl,
+				Config: cloudRouterConnectionOracleResult.Hcl,
 				Check: func(s *terraform.State) error {
-					rs, ok := s.RootModule().Resources[crConnGoogleResult.ResourceName]
+					rs, ok := s.RootModule().Resources[cloudRouterConnectionOracleResult.ResourceName]
 					if !ok {
-						return fmt.Errorf("Not found: %s", crConnGoogleResult.ResourceName)
+						return fmt.Errorf("Not found: %s", cloudRouterConnectionOracleResult.ResourceName)
 					}
 					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
 					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
@@ -42,7 +42,7 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:            crConnGoogleResult.ResourceName,
+				ResourceName:            cloudRouterConnectionOracleResult.ResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"vc_ocid", "region"},
