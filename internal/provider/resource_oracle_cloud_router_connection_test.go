@@ -24,6 +24,7 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 				Config: cloudRouterConnectionOracleResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "description", cloudRouterConnectionOracleResult.Desc),
+					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "account_uuid", cloudRouterConnectionOracleResult.AccountUuid),
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "pop", cloudRouterConnectionOracleResult.Pop),
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "zone", cloudRouterConnectionOracleResult.Zone),
 				),

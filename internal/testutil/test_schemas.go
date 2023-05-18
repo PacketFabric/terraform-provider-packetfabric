@@ -293,13 +293,14 @@ resource "oci_core_virtual_circuit" "fast_connect1" {
   provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider1.fast_connect_provider_services.0.id
 }
 resource "packetfabric_cloud_router_connection_oracle" "%s" {
-  provider    = packetfabric
-  circuit_id  = %s.id
-  description = "%s"
-  pop         = "%s"
-  zone        = "%s"
-  c_ocid      = oci_core_virtual_circuit.fast_connect1.id
-  region      = "%s"
+  provider     = packetfabric
+  circuit_id   = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vc_ocid      = oci_core_virtual_circuit.fast_connect1.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_connection_port
@@ -579,14 +580,15 @@ resource "oci_core_virtual_circuit" "fast_connect2" {
   provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider2.fast_connect_provider_services.0.id
 }
 resource "packetfabric_cs_oracle_hosted_connection" "%s" {
-  provider    = packetfabric
-  port        = %s.id
-  description = "%s"
-  pop         = "%s"
-  zone        = "%s"
-  vlan        = %v
-  vc_ocid     = oci_core_virtual_circuit.fast_connect2.id
-  region      = "%s"
+  provider     = packetfabric
+  port         = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vlan         = %v
+  vc_ocid      = oci_core_virtual_circuit.fast_connect2.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_marketplace_connection
