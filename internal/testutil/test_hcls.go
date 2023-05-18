@@ -110,8 +110,10 @@ const OracleProviderName = "PacketFabric"
 const OracleBandwidth = "1 Gbps"
 const OracleBgpAsn = 64537
 const OracleAuthKey = "dd02c7c2232759874e1c20558"
-const OracleBgpPeeringIp1 = "169.254.247.41/30"
-const OracleBgpPeeringIp2 = "169.254.247.42/30"
+const OracleBgpPeeringIp1 = "169.254.246.41/30"
+const OracleBgpPeeringIp2 = "169.254.246.42/30"
+const OracleBgpPeeringIp3 = "169.254.247.41/30"
+const OracleBgpPeeringIp4 = "169.254.247.42/30"
 
 // packetfabric_cloud_router_connection_port
 const CloudRouterConnPortSpeed = "1Gbps"
@@ -1582,8 +1584,8 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 		OracleBandwidth,
 		OracleBgpAsn,
 		OracleAuthKey,
-		OracleBgpPeeringIp1,
-		OracleBgpPeeringIp2,
+		OracleBgpPeeringIp3,
+		OracleBgpPeeringIp4,
 		hclName,
 		portTestResult.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),

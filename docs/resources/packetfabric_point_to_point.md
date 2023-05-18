@@ -40,7 +40,7 @@ resource "packetfabric_point_to_point" "ptp1" {
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
-- `endpoints` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--endpoints))
+- `endpoints` (Block List, Min: 1) (see [below for nested schema](#nestedblock--endpoints))
 - `media` (String) Optic media type.
 
 	Enum: ["LX" "EX" "ZX" "LR" "ER" "ER DWDM" "ZR" "ZR DWDM" "LR4" "ER4" "CWDM4" "LR4" "ER4 Lite"]

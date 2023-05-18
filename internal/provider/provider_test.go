@@ -24,7 +24,7 @@ var testAccExternalProviders = map[string]resource.ExternalProvider{
 	},
 	"oci": {
 		Source:            "oracle/oci",
-		VersionConstraint: "4.111.0",
+		VersionConstraint: "4.121.0",
 	},
 }
 

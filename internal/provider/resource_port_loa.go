@@ -16,9 +16,9 @@ func resourcePortLoa() *schema.Resource {
 		ReadContext:   resourcePortLoaRead,
 		DeleteContext: resourcePortLoaDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
