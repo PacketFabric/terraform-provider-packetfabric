@@ -803,6 +803,8 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 // packetfabric_cloud_router_connection_google
 func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 
+	var edgeAvailabilityDomain string
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -823,11 +825,19 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
+	if pop == "LAB1" {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
+	} else {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_1"
+	}
+	log.Printf("Edge Availability Domain %s\n", edgeAvailabilityDomain)
+
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionGoogle,
 		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
 		CloudRouterConnGoogleRegion,
+		edgeAvailabilityDomain,
 		hclName,
 		hclCloudRouterRes.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
@@ -1081,6 +1091,8 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
+	var edgeAvailabilityDomain string
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1101,11 +1113,19 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
 
+	if pop == "LAB1" {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
+	} else {
+		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_1"
+	}
+	log.Printf("Edge Availability Domain %s\n", edgeAvailabilityDomain)
+
 	googleHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSGoogleHostedConnection,
 		CloudRouterConnGoogleRegion,
 		CloudRouterConnGoogleNetwork,
 		CloudRouterConnGoogleRegion,
+		edgeAvailabilityDomain,
 		hclName,
 		portTestResult.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),

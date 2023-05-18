@@ -162,7 +162,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect1" {
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
-  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  edge_availability_domain = "%s"
   admin_enabled            = true
   router                   = google_compute_router.google_router1.id
 }
@@ -405,7 +405,7 @@ resource "google_compute_interconnect_attachment" "google_interconnect2" {
   region                   = "%s"
   description              = "terraform Test ACC Interconnect to PacketFabric Network"
   type                     = "PARTNER"
-  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
+  edge_availability_domain = "%s"
   admin_enabled            = true
   router                   = google_compute_router.google_router2.id
 }
