@@ -57,7 +57,7 @@ func resourcePointToPoint() *schema.Resource {
 				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
 			},
 			"endpoints": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -302,7 +302,7 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	testingInLab := strings.Contains(host, "api.dev")
 
 	if testingInLab {
-		endpoints := d.Get("endpoints").(*schema.Set).List()
+		endpoints := d.Get("endpoints").([]interface{})
 		for _, v := range endpoints {
 			endpoint := v.(map[string]interface{})
 			portCircuitID := endpoint["port_circuit_id"].(string)
@@ -347,7 +347,7 @@ func extractPtpService(d *schema.ResourceData) packetfabric.PointToPoint {
 	}
 	if endpoints, ok := d.GetOk("endpoints"); ok {
 		edps := make([]packetfabric.Endpoints, 0)
-		for _, endpoint := range endpoints.(*schema.Set).List() {
+		for _, endpoint := range endpoints.([]interface{}) {
 			edps = append(edps, packetfabric.Endpoints{
 				Pop:              endpoint.(map[string]interface{})["pop"].(string),
 				Zone:             endpoint.(map[string]interface{})["zone"].(string),
