@@ -302,8 +302,8 @@ func resourcePointToPointDelete(ctx context.Context, d *schema.ResourceData, m i
 	testingInLab := strings.Contains(host, "api.dev")
 
 	if testingInLab {
-		endpoints := d.Get("endpoints").(*schema.Set)
-		for _, v := range endpoints.List() {
+		endpoints := d.Get("endpoints").([]interface{})
+		for _, v := range endpoints {
 			endpoint := v.(map[string]interface{})
 			portCircuitID := endpoint["port_circuit_id"].(string)
 			if toggleErr := _togglePortStatus(c, false, portCircuitID); toggleErr != nil {
