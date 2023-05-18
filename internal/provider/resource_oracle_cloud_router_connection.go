@@ -103,7 +103,7 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -174,12 +174,8 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp.Zone)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
 

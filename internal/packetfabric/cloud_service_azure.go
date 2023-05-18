@@ -146,19 +146,6 @@ type AzureExpressRouteConn struct {
 	PONumber               string `json:"po_number,omitempty"`
 }
 
-type AzureBilling struct {
-	AccountUUID string `json:"account_uuid,omitempty"`
-}
-type AzureComponents struct {
-	IfdPortCircuitIDCust string `json:"ifd_port_circuit_id_cust,omitempty"`
-	IfdPortCircuitIDPf   string `json:"ifd_port_circuit_id_pf,omitempty"`
-}
-type AzureSettings struct {
-	VlanPrivate     int    `json:"vlan_id_private,omitempty"`
-	VlanMicrosoft   int    `json:"vlan_id_microsoft,omitempty"`
-	AzureServiceKey string `json:"azure_service_key,omitempty"`
-}
-
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/azure_dedicated_connection_post
 type AzureExpressRouteDedicated struct {
 	AccountUUID            string `json:"account_uuid,omitempty"`

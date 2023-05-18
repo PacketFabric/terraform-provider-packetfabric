@@ -17,10 +17,10 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 		UpdateContext: resourceIBMCloudRouteConnUpdate,
 		DeleteContext: resourceIBMCloudRouteConnDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -124,7 +124,7 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -204,12 +204,9 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("speed", resp.Speed)
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp.Zone)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
+
 		if resp.CloudSettings.GatewayID == "" {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,

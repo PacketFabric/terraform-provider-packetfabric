@@ -20,10 +20,10 @@ func resourceLinkAggregationGroups() *schema.Resource {
 		UpdateContext: resourceLinkAggregationGroupsUpdate,
 		DeleteContext: resourceLinkAggregationGroupsDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -66,7 +66,7 @@ func resourceLinkAggregationGroups() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -206,6 +206,12 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("pop", lag.Pop)
 	_ = d.Set("interval", lag.LagInterval)
 	_ = d.Set("po_number", lag.PONumber)
+
+	if lag.Disabled {
+		_ = d.Set("enabled", false)
+	} else {
+		_ = d.Set("enabled", true)
+	}
 
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {

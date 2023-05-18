@@ -16,10 +16,10 @@ import (
 func resourceGoogleRequestHostConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceGoogleReqHostConnCreate,
 		UpdateContext: resourceGoogleReqHostConnUpdate,
@@ -99,7 +99,7 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -241,6 +241,9 @@ func resourceGoogleRequestHostConn() *schema.Resource {
 				if d.Id() == "" {
 					return nil
 				}
+				if _, ok := d.GetOk("cloud_settings"); !ok {
+					return nil
+				}
 
 				attributes := []string{
 					"cloud_settings.0.google_region",
@@ -341,9 +344,7 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 				_ = d.Set("google_vlan_attachment_name", resp.Settings.GoogleVlanAttachmentName)
 			}
 		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
@@ -376,9 +377,6 @@ func resourceGoogleReqHostConnRead(ctx context.Context, d *schema.ResourceData, 
 			if resp2.Interfaces[0].Svlan != 0 {
 				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 			}
-		}
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 		}
 	}
 

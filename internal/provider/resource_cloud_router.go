@@ -71,7 +71,7 @@ func resourceCloudRouter() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -137,9 +137,7 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			regions = append(regions, region.Code)
 		}
 		_ = d.Set("regions", regions)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 	}
 
 	if _, ok := d.GetOk("labels"); ok {

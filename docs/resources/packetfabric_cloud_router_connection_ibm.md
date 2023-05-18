@@ -37,7 +37,7 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
 }
 
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "1m"
+  create_duration = "3m"
 }
 data "ibm_dl_gateway" "current" {
   provider   = ibm
@@ -50,12 +50,16 @@ data "ibm_resource_group" "existing_rg" {
 }
 
 resource "ibm_dl_gateway_action" "confirmation" {
-  provider       = ibm
-  gateway        = data.ibm_dl_gateway.current.id
-  resource_group = data.ibm_resource_group.existing_rg.id
-  action         = "create_gateway_approve"
-  global         = true
-  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  provider                    = ibm
+  gateway                     = data.ibm_dl_gateway.current.id
+  resource_group              = data.ibm_resource_group.existing_rg.id
+  action                      = "create_gateway_approve"
+  global                      = true
+  metered                     = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  bgp_asn                     = packetfabric_cloud_router.cr1.asn
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps                  = 1000 # must match PacketFabric speed
 
   provisioner "local-exec" {
     when    = destroy
@@ -84,7 +88,7 @@ resource "ibm_dl_gateway_action" "confirmation" {
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.
 - `ibm_bgp_ibm_cidr` (String) The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.

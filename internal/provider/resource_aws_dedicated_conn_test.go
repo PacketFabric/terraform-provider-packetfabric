@@ -21,6 +21,7 @@ func TestAccAwsDedicatedConnectionRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "description", csAwsDedicatedConnectionResult.Description),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "pop", csAwsDedicatedConnectionResult.Pop),
+					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "zone", csAwsDedicatedConnectionResult.Zone),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "subscription_term", strconv.Itoa(csAwsDedicatedConnectionResult.SubscriptionTerm)),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "service_class", csAwsDedicatedConnectionResult.ServiceClass),
 					resource.TestCheckResourceAttr(csAwsDedicatedConnectionResult.ResourceName, "autoneg", strconv.FormatBool(csAwsDedicatedConnectionResult.Autoneg)),

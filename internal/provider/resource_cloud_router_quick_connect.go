@@ -129,7 +129,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Description: "The Quick Connect time updated.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -172,11 +172,13 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 
 func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
-	labels, err := getLabels(c, d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err := getLabels(c, d.Id())
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
 	return diag.Diagnostics{}
 }
 
@@ -191,7 +193,7 @@ func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("labels") {
+	if _, ok := d.GetOk("labels"); ok {
 		labels := d.Get("labels")
 		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {

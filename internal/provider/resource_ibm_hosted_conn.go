@@ -16,7 +16,7 @@ func resourceHostedIbmConn() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Minute),
 			Update: schema.DefaultTimeout(30 * time.Minute),
-			Read:   schema.DefaultTimeout(30 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 		CreateContext: resourceHostedIbmConnCreate,
@@ -127,7 +127,7 @@ func resourceHostedIbmConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
@@ -239,14 +239,12 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
 		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
-			_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
+			_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
 		}
 		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
-			_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
 		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 		if resp.Settings.GatewayID == "" {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
@@ -269,9 +267,7 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 			}
 		}
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 	}
 	// unsetFields: published_quote_line_uuid
 

@@ -27,6 +27,7 @@ func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "account_uuid", crConnAwsResult.AccountUuid),
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "speed", crConnAwsResult.Speed),
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "pop", crConnAwsResult.Pop),
+					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "zone", crConnAwsResult.Zone),
 					resource.TestCheckResourceAttrSet(crConnAwsResult.ResourceName, "circuit_id"),
 					resource.TestCheckResourceAttrSet(crConnAwsResult.ResourceName, "id"),
 				),
