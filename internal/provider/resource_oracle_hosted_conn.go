@@ -177,7 +177,6 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
-		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("vc_ocid", resp.Settings.VcOcid)
 		_ = d.Set("region", resp.Settings.OracleRegion)

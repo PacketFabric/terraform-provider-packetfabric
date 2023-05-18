@@ -594,7 +594,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfPort)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfPort, hclName, uniqueDesc)
 
 	log.Println("Generating HCL")
 	hcl := fmt.Sprintf(
@@ -642,6 +642,8 @@ func RHclPortLoa() RHclPortLoaResult {
 
 	hclPortResult := portDetails.RHclPort(false)
 	resourceName, hclName := GenerateUniqueResourceName(pfPortLoa)
+	log.Printf("Resource: %s, Resource name: %s\n", pfPortLoa, hclName)
+
 	email := os.Getenv("PF_USER_EMAIL")
 
 	hcl := fmt.Sprintf(RResourcePortLoa,
@@ -666,6 +668,7 @@ func RHclPortLoa() RHclPortLoaResult {
 func RHclDocumentMSA() RHclDocumentResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDocument)
 	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfDocument, hclName, uniqueDesc)
 
 	hcl := fmt.Sprintf(RResourceDocumentMSA, hclName, TestFileName, uniqueDesc)
 
@@ -694,6 +697,7 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfOutboundCrossConnect)
 	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfOutboundCrossConnect, hclName, uniqueDesc)
 
 	locations, err := c.ListLocations()
 	if err != nil {
@@ -746,7 +750,7 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfLinkAggregationGroup, hclName, uniqueDesc)
 
 	linkAggGroupHcl := fmt.Sprintf(RResourceLinkAggregationGroup,
 		hclName,
@@ -790,7 +794,7 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfBackboneVirtualCircuit)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfBackboneVirtualCircuit, hclName, uniqueDesc)
 
 	backboneVirtualCircuitHcl := fmt.Sprintf(
 		RResourceBackboneVirtualCircuitVlan,
@@ -852,7 +856,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 
 	uniqueDesc := GenerateUniqueName()
 	resourceName, hclName := GenerateUniqueResourceName(pfPoinToPoint)
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfPoinToPoint, hclName, uniqueDesc)
 
 	hcl := fmt.Sprintf(RResourcePointToPoint,
 		hclName,
@@ -899,7 +903,7 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 }
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", input.HclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouter, input.HclName, uniqueDesc)
 
 	hcl := fmt.Sprintf(
 		RResourcePacketfabricCloudRouter,
@@ -944,7 +948,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAws, hclName, uniqueDesc)
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionAws,
@@ -997,7 +1001,7 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnGoogle)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnGoogle, hclName, uniqueDesc)
 
 	if pop == "LAB1" {
 		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
@@ -1041,7 +1045,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
 
 	host := os.Getenv("PF_HOST")
 	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
@@ -1100,7 +1104,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIbm)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnIbm, hclName, uniqueDesc)
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionIbm,
@@ -1156,7 +1160,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnOracle)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnOracle, hclName, uniqueDesc)
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionOracle,
@@ -1202,7 +1206,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnPort)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnPort, hclName, uniqueDesc)
 
 	crConnPortHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionPort,
@@ -1241,6 +1245,7 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 
 	uniqueDesc := GenerateUniqueName()
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIpsec)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnIpsec, hclName, uniqueDesc)
 
 	cloudRouterIpsecHcl := fmt.Sprintf(RResourceCloudRouterConnectionIpsec,
 		hclName,
@@ -1294,7 +1299,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
-	log.Printf("Resource name: %s\n", hclName)
+	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
 
 	bgpSessionHcl := fmt.Sprintf(
 		RResourceCloudRouterBgpSession,
@@ -1349,7 +1354,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsAwsHostedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsAwsHostedConn, hclName, uniqueDesc)
 
 	awsHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSAwsHostedConnection,
@@ -1404,7 +1409,7 @@ func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleHostedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsGoogleHostedConn, hclName, uniqueDesc)
 
 	if pop == "LAB1" {
 		edgeAvailabilityDomain = "AVAILABILITY_DOMAIN_2"
@@ -1451,7 +1456,7 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsAzureHostedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsAzureHostedConn, hclName, uniqueDesc)
 
 	host := os.Getenv("PF_HOST")
 	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
@@ -1510,7 +1515,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsIbmHostedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsIbmHostedConn, hclName, uniqueDesc)
 
 	IbmHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSIbmHostedConnection,
@@ -1567,7 +1572,7 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsOracleHostedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsOracleHostedConn, hclName, uniqueDesc)
 
 	oracleHostedConnectionHcl := fmt.Sprintf(
 		RResourceCSOracleHostedConnection,
@@ -1613,7 +1618,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsAwsDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsAwsDedicatedConn, hclName, uniqueDesc)
 
 	popDetails := PortDetails{
 		PFClient:              c,
@@ -1665,7 +1670,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsGoogleDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsGoogleDedicatedConn, hclName, uniqueDesc)
 
 	popDetails := PortDetails{
 		PFClient:              c,
@@ -1716,7 +1721,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCsAzureDedicatedConn)
 	uniqueDesc := GenerateUniqueName()
-	log.Printf("Resource name: %s, description: %s\n", hclName, uniqueDesc)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCsAzureDedicatedConn, hclName, uniqueDesc)
 
 	popDetails := PortDetails{
 		PFClient:              c,
@@ -1766,7 +1771,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
 	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
 
 	return DHclDatasourceLocationsCloudResult{
@@ -1784,7 +1789,7 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
 
 	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
 
@@ -1801,7 +1806,7 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocations, hclName)
 
 	hcl := fmt.Sprintf(DDatasourceLocations, hclName)
 
@@ -1820,7 +1825,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsZones)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsZones, hclName)
 
 	hcl := fmt.Sprintf(DDatasourceLocationsPopZones, hclName, pop)
 
@@ -1837,7 +1842,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsRegions)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsRegions, hclName)
 
 	hcl := fmt.Sprintf(DDataSourceLocationsRegions, hclName)
 
@@ -1854,7 +1859,7 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 func DHclDataSourceActivityLog() DHclActivityLogResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
 
 	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
 
@@ -1871,7 +1876,7 @@ func DHclDataSourceActivityLog() DHclActivityLogResult {
 func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsMarkets)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsMarkets, hclName)
 
 	hcl := fmt.Sprintf(DDataSourceLocationsMarkets, hclName)
 
@@ -1896,7 +1901,7 @@ func DHclDataSourcePorts() DHclPortResult {
 	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPort, hclName)
 
 	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
 
@@ -1917,7 +1922,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataBilling)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataBilling, hclName)
 
 	billingHcl := fmt.Sprintf(DDatasourceBilling,
 		hclName,
@@ -1940,7 +1945,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 	csAwsHostedConnectionResult := RHclCsAwsHostedConnection()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataCsAwsHostedConn)
-	log.Printf("Data-source name: %s\n", hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsAwsHostedConn, hclName)
 
 	hostedAwsConnHcl := fmt.Sprintf(DDatasourceCsAwsHostedConn,
 		hclName,
@@ -1961,6 +1966,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
 	linkAggregationGroupResult := RHclLinkAggregationGroup()
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLinkAggregationGroups, hclName)
 
 	linkAggregationGroupsHcl := fmt.Sprintf(
 		DDatasourceLinkAggregationGroups,
