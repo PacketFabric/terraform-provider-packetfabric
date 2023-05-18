@@ -219,6 +219,7 @@ type RHclPortResult struct {
 	Description      string
 	Media            string
 	Pop              string
+	Zone             string
 	Speed            string
 	SubscriptionTerm int
 	Enabled          bool
@@ -319,6 +320,7 @@ type RHclCloudRouterConnectionAwsResult struct {
 	AccountUuid  string
 	Desc         string
 	Pop          string
+	Zone         string
 	Speed        string
 }
 
@@ -348,6 +350,7 @@ type RHclCloudRouterConnectionIbmResult struct {
 	AccountUuid string
 	Desc        string
 	Pop         string
+	Zone        string
 	Speed       string
 	IbmBgpAsn   int
 }
@@ -416,6 +419,7 @@ type RHclCsHostedCloudAwsResult struct {
 	AccountUuid  string
 	Desc         string
 	Pop          string
+	Zone         string
 	Speed        string
 	Vlan         int
 }
@@ -448,6 +452,7 @@ type RHclCsHostedCloudIbmResult struct {
 	AccountUuid string
 	Desc        string
 	Pop         string
+	Zone        string
 	Vlan        int
 	Speed       string
 	IbmBgpAsn   int
@@ -567,7 +572,7 @@ type DHclCsAwsHostedConnectionResult struct {
 
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
-	var pop, media, speed, market string
+	var pop, zone, media, speed, market string
 	var err error
 
 	log.Println("Getting pop and zone with available port for desired speed: ", details.DesiredSpeed)
@@ -579,13 +584,13 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	if details.DesiredMedia != nil {
 		DesiredMedia = details.DesiredMedia
 	}
-	pop, _, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia)
+	pop, zone, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 	speed = details.DesiredSpeed
-	log.Println("Pop, media, market, and speed set to: ", pop, media, market, speed)
+	log.Println("Pop,Zone, media, market, and speed set to: ", pop, zone, media, market, speed)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfPort)
 	uniqueDesc := GenerateUniqueName()
@@ -598,6 +603,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 		uniqueDesc,
 		media,
 		pop,
+		zone,
 		speed,
 		subscriptionTerm,
 		portEnabled)
@@ -613,6 +619,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 		Description:      uniqueDesc,
 		Media:            media,
 		Pop:              pop,
+		Zone:             zone,
 		Speed:            speed,
 		SubscriptionTerm: subscriptionTerm,
 		Enabled:          portEnabled,
@@ -932,7 +939,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAws)
@@ -947,6 +954,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
+		zone,
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
@@ -962,6 +970,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		AccountUuid:  os.Getenv("PF_ACCOUNT_ID"),
 		Speed:        CloudRouterConnSpeed,
 		Pop:          pop,
+		Zone:         zone,
 	}
 }
 
@@ -1086,7 +1095,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnIbm)
@@ -1100,6 +1109,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
+		zone,
 		CloudRouterConnSpeed,
 		IbmBgpAsn,
 		IbmRegion,
@@ -1119,6 +1129,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		Desc:        uniqueDesc,
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Pop:         pop,
+		Zone:        zone,
 		Speed:       CloudRouterConnSpeed,
 		IbmBgpAsn:   IbmBgpAsn,
 	}
@@ -1331,7 +1342,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1348,6 +1359,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
+		zone,
 		HostedCloudSpeed,
 		HostedCloudVlan1)
 
@@ -1364,6 +1376,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 		AccountUuid:  os.Getenv("PF_ACCOUNT_ID"),
 		Speed:        HostedCloudSpeed,
 		Pop:          pop,
+		Zone:         zone,
 		Vlan:         HostedCloudVlan1,
 	}
 }
@@ -1490,7 +1503,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, _, _ := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1506,6 +1519,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
+		zone,
 		HostedCloudSpeed,
 		HostedCloudVlan4,
 		IbmBgpAsn,
@@ -1525,6 +1539,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		PortResult:  portTestResult,
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Pop:         pop,
+		Zone:        zone,
 		Speed:       HostedCloudSpeed,
 		Vlan:        HostedCloudVlan4,
 		IbmBgpAsn:   IbmBgpAsn,

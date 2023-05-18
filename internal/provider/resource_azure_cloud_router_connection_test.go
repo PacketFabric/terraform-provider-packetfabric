@@ -13,26 +13,28 @@ import (
 
 func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
-	crConnGoogleResult := testutil.RHclCloudRouterConnectionAzure()
+	crConnAzureResult := testutil.RHclCloudRouterConnectionAzure()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: crConnGoogleResult.Hcl,
+				Config: crConnAzureResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "description", crConnGoogleResult.Desc),
-					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "account_uuid", crConnGoogleResult.AccountUuid),
-					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "speed", crConnGoogleResult.Speed),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
 				),
 			},
 			{
-				Config: crConnGoogleResult.Hcl,
+				Config: crConnAzureResult.Hcl,
 				Check: func(s *terraform.State) error {
-					rs, ok := s.RootModule().Resources[crConnGoogleResult.ResourceName]
+					rs, ok := s.RootModule().Resources[crConnAzureResult.ResourceName]
 					if !ok {
-						return fmt.Errorf("Not found: %s", crConnGoogleResult.ResourceName)
+						return fmt.Errorf("Not found: %s", crConnAzureResult.ResourceName)
 					}
 					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
 					cloudRouterConnectionCircuitId = rs.Primary.Attributes["id"]
@@ -40,7 +42,7 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:            crConnGoogleResult.ResourceName,
+				ResourceName:            crConnAzureResult.ResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"azure_service_key"},

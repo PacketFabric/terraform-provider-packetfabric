@@ -25,6 +25,7 @@ func TestAccAwsHostedConnectionRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "account_uuid", awsHostedConnectionResult.AccountUuid),
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "speed", awsHostedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "pop", awsHostedConnectionResult.Pop),
+					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "zone", awsHostedConnectionResult.Zone),
 					resource.TestCheckResourceAttr(awsHostedConnectionResult.ResourceName, "vlan", strconv.Itoa(awsHostedConnectionResult.Vlan)),
 				),
 			},

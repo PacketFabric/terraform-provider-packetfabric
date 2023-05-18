@@ -26,6 +26,7 @@ func TestAccPortRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(portTestResult.ResourceName, "media", portTestResult.Media),
 					resource.TestCheckResourceAttr(portTestResult.ResourceName, "subscription_term", strconv.Itoa(portTestResult.SubscriptionTerm)),
 					resource.TestCheckResourceAttr(portTestResult.ResourceName, "pop", portTestResult.Pop),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, "zone", portTestResult.Zone),
 					resource.TestCheckResourceAttr(portTestResult.ResourceName, "enabled", strconv.FormatBool(portTestResult.Enabled)),
 				),
 			},

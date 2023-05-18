@@ -536,13 +536,9 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
 	_ = d.Set("pop", resp.CloudProvider.Pop)
-	if _, ok := d.GetOk("zone"); ok {
-		_ = d.Set("zone", resp.Zone)
-	}
+	_ = d.Set("zone", resp.Zone)
 	_ = d.Set("aws_account_id", resp.CloudSettings.AwsAccountID)
-	if _, ok := d.GetOk("po_number"); ok {
-		_ = d.Set("po_number", resp.PONumber)
-	}
+	_ = d.Set("po_number", resp.PONumber)
 
 	if resp.CloudSettings.PublicIP != "" {
 		_ = d.Set("is_public", true)

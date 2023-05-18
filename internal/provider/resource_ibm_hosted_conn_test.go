@@ -22,6 +22,7 @@ func TestAccIbmHostedConnectionRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "account_uuid", csIbmHostedConnectionResult.AccountUuid),
 					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "pop", csIbmHostedConnectionResult.Pop),
+					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "zone", csIbmHostedConnectionResult.Zone),
 					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "speed", csIbmHostedConnectionResult.Speed),
 					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "vlan", strconv.Itoa(csIbmHostedConnectionResult.Vlan)),
 					resource.TestCheckResourceAttr(csIbmHostedConnectionResult.ResourceName, "ibm_bgp_asn", strconv.Itoa(csIbmHostedConnectionResult.IbmBgpAsn)),

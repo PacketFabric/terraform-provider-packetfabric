@@ -238,15 +238,9 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
-		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
-			_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
-		}
-		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
-			_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
+		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		_ = d.Set("po_number", resp.PONumber)
 		if resp.Settings.GatewayID == "" {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
@@ -269,9 +263,7 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 			}
 		}
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
-		}
+		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 	}
 	// unsetFields: published_quote_line_uuid
 

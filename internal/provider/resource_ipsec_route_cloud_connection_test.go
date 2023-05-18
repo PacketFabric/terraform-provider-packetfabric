@@ -37,6 +37,8 @@ func TestAccCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionIpsecResult.ResourceName, "phase2_authentication_algo", cloudRouterConnectionIpsecResult.Phase2AuthenticationAlgo),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIpsecResult.ResourceName, "phase2_lifetime", strconv.Itoa(cloudRouterConnectionIpsecResult.Phase2Lifetime)),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIpsecResult.ResourceName, "shared_key", cloudRouterConnectionIpsecResult.SharedKey),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionIpsecResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionIpsecResult.ResourceName, "id"),
 				),
 			},
 			{

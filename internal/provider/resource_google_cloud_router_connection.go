@@ -526,9 +526,8 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 	if _, ok := d.GetOk("google_vlan_attachment_name"); ok {
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
 	}
-	if _, ok := d.GetOk("po_number"); ok {
-		_ = d.Set("po_number", resp.PONumber)
-	}
+	_ = d.Set("po_number", resp.PONumber)
+
 	if _, ok := d.GetOk("cloud_settings"); ok {
 		// Extract the BGP settings UUID
 		var bgpSettingsUUID string

@@ -27,7 +27,10 @@ func TestAccCloudRouterConnectionIbmRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "account_uuid", cloudRouterConnectionIbmResult.AccountUuid),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "pop", cloudRouterConnectionIbmResult.Pop),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "speed", cloudRouterConnectionIbmResult.Speed),
+					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "zone", cloudRouterConnectionIbmResult.Zone),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "ibm_bgp_asn", strconv.Itoa(cloudRouterConnectionIbmResult.IbmBgpAsn)),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionIbmResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionIbmResult.ResourceName, "id"),
 				),
 			},
 			{

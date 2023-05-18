@@ -68,6 +68,7 @@ const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_c
   account_uuid    = "%s"
   description     = "%s"
   pop             = "%s"
+  zone            = "%s"
   speed           = "%s"
 }`
 
@@ -184,6 +185,7 @@ const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_c
   account_uuid = "%s"
   description  = "%s"
   pop          = "%s"
+  zone          = "%s"
   speed        = "%s"
   ibm_bgp_asn  = %v
 }
@@ -342,17 +344,9 @@ const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_con
   account_uuid    = "%s"
   description     = "%s"
   pop             = "%s"
+  zone            = "%s"
   speed           = "%s"
   vlan            = %v
-}`
-
-// Resource: packetfabric_cs_aws_hosted_marketplace_connection
-const RResourceCSAwsHostedMarketplaceConnection = `resource "packetfabric_cs_aws_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  routing_id  = %s.id
-  market      = "%s"
-  speed       = "%s"
-  pop         = "%s"
 }`
 
 // Resource: packetfabric_cs_azure_dedicated_connection
@@ -420,15 +414,6 @@ resource "packetfabric_cs_azure_hosted_connection" "%s" {
   vlan_private      = %v
 }`
 
-// Resource: packetfabric_cs_azure_hosted_marketplace_connection
-const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_azure_hosted_marketplace_connection" "%s" {
-  provider          = packetfabric
-  description       = "%s"
-  azure_service_key = "%s"
-  routing_id        = %s.id
-  speed             = "%s"
-}`
-
 // Resource: packetfabric_cs_google_dedicated_connection
 const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_dedicated_connection" "%s" {
   provider          = packetfabric
@@ -479,19 +464,6 @@ resource "packetfabric_cs_google_hosted_connection" "%s" {
   vlan            = %v
 }`
 
-// Resource: packetfabric_cs_google_hosted_marketplace_connection
-const RResourceCSGGoogleHostedMarketplaceConnection = `resource "packetfabric_cs_google_hosted_marketplace_connection" "%s" {
-  provider                    = packetfabric
-  description                 = "%s"
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
-  routing_id                  = %s.id
-  market                      = "%s"
-  speed                       = "%s"
-  pop                         = "%s"
-
-}`
-
 // Resource: packetfabric_cs_ibm_hosted_connection
 const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
   provider     = packetfabric
@@ -499,6 +471,7 @@ const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_con
   account_uuid = "%s"
   description  = "%s"
   pop          = "%s"
+  zone         = "%s"
   speed        = "%s"
   vlan         = %v
   ibm_bgp_asn  = %v
@@ -607,17 +580,6 @@ resource "packetfabric_cs_oracle_hosted_connection" "%s" {
   region       = "%s"
 }`
 
-// Resource: packetfabric_cs_oracle_hosted_marketplace_connection
-const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_oracle_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
-  routing_id  = %s.id
-  market      = "%s"
-  pop         = "%s"
-}`
-
 // Resource: packetfabric_ix_virtual_circuit_marketplace
 const RResourceIXVirtualCircuitMarketplace = `resource "packetfabric_ix_virtual_circuit_marketplace" "%s" {
   provider    = packetfabric
@@ -708,6 +670,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   description       = "%s"
   media             = "%s"
   pop               = "%s"
+  zone              = "%s"
   speed             = "%s"
   subscription_term = %v
   enabled           = %t

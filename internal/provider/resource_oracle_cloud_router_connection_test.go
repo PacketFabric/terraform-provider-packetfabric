@@ -27,6 +27,8 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "account_uuid", cloudRouterConnectionOracleResult.AccountUuid),
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "pop", cloudRouterConnectionOracleResult.Pop),
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "zone", cloudRouterConnectionOracleResult.Zone),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionOracleResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionOracleResult.ResourceName, "id"),
 				),
 			},
 			{
