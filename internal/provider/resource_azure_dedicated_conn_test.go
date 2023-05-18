@@ -21,6 +21,7 @@ func TestAccAzureDedicatedConnectionRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "description", csAzureDedicatedConnectionResult.Desc),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "pop", csAzureDedicatedConnectionResult.Pop),
+					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "zone", csAzureDedicatedConnectionResult.Zone),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "subscription_term", strconv.Itoa(csAzureDedicatedConnectionResult.SubscriptionTerm)),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "service_class", csAzureDedicatedConnectionResult.ServiceClass),
 					resource.TestCheckResourceAttr(csAzureDedicatedConnectionResult.ResourceName, "speed", csAzureDedicatedConnectionResult.Speed),
