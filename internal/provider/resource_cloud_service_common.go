@@ -2,6 +2,9 @@ package provider
 
 import (
 	"context"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -34,12 +37,15 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 	if d.HasChange("cloud_settings") {
 		if cloudSettings, ok := d.GetOk("cloud_settings"); ok {
 			cs := cloudSettings.(map[string]interface{})
-			updateServiceConnData.CloudSettings = &packetfabric.CloudSettingsHosted{}
+			updateServiceConnData.CloudSettings = &packetfabric.CloudSettings{}
 			if credentialsUUID, ok := cs["credentials_uuid"].(string); ok {
 				updateServiceConnData.CloudSettings.CredentialsUUID = credentialsUUID
 			}
 			if awsRegion, ok := cs["aws_region"].(string); ok {
 				updateServiceConnData.CloudSettings.AwsRegion = awsRegion
+			}
+			if googleRegion, ok := cs["google_region"].(string); ok {
+				updateServiceConnData.CloudSettings.GoogleRegion = googleRegion
 			}
 			if mtu, ok := cs["mtu"].(int); ok {
 				updateServiceConnData.CloudSettings.Mtu = mtu
@@ -48,11 +54,31 @@ func resourceServicesHostedUpdate(ctx context.Context, d *schema.ResourceData, m
 				bgp := bgpSettings[0].(map[string]interface{})
 				updateServiceConnData.CloudSettings.BgpSettings = &packetfabric.BgpSettings{}
 				if advertisedPrefixes, ok := bgp["advertised_prefixes"].([]interface{}); ok {
-					ap := make([]string, len(advertisedPrefixes))
+					ap_aws := make([]string, len(advertisedPrefixes))
 					for i, elem := range advertisedPrefixes {
-						ap[i] = elem.(string)
+						ap_aws[i] = elem.(string)
 					}
-					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap
+					updateServiceConnData.CloudSettings.BgpSettings.AdvertisedPrefixes = ap_aws
+				}
+				if customerAsn, ok := bgp["customer_asn"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.CustomerAsn = customerAsn
+				}
+				if remoteAsn, ok := bgp["remote_asn"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.RemoteAsn = remoteAsn
+				}
+				if md5, ok := bgp["md5"].(string); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.Md5 = md5
+				}
+				if googleKeepaliveInterval, ok := bgp["google_keepalive_interval"].(int); ok {
+					updateServiceConnData.CloudSettings.BgpSettings.GoogleKeepaliveInterval = googleKeepaliveInterval
+				}
+
+				if advertisedPrefixes, ok := bgp["google_advertised_ip_ranges"].([]interface{}); ok {
+					ap_google := make([]string, len(advertisedPrefixes))
+					for i, elem := range advertisedPrefixes {
+						ap_google[i] = elem.(string)
+					}
+					updateServiceConnData.CloudSettings.BgpSettings.GoogleAdvertisedIPRanges = ap_google
 				}
 			}
 			changed = true
@@ -151,6 +177,37 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 		})
 		return diags
 	}
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		resp, err3 := c.GetCloudConnInfo(d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		if resp.PortType == "dedicated" {
+			if resp.ServiceProvider == "azure" { // LAG is not enabled in the ACC in dev environment for AWS
+				if toggleErr := _togglePortStatus(c, false, cloudCID.(string)); toggleErr != nil {
+					return diag.FromErr(toggleErr)
+				}
+			}
+			if resp.ServiceProvider == "aws" || resp.ServiceProvider == "google" {
+				if _, toggleErr := c.DisableLinkAggregationGroup(cloudCID.(string)); toggleErr != nil {
+					return diag.FromErr(toggleErr)
+				}
+			}
+			time.Sleep(time.Duration(180) * time.Second)
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "In the dev environment, ports are disabled prior to deletion.",
+			})
+		}
+	}
+	etlDiags, err2 := addETLWarning(c, cloudCID.(string))
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	diags = append(diags, etlDiags...)
 	err := c.DeleteCloudService(cloudCID.(string))
 	if err != nil {
 		return diag.FromErr(err)

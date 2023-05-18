@@ -3,7 +3,7 @@ resource "oci_core_drg" "dyn_routing_gw_1" {
   provider = oci
   # compartment_id = oci_identity_compartment.compartment_1.id
   compartment_id = var.parent_compartment_id
-  display_name   = "${var.tag_name}-${random_pet.name.id}"
+  display_name   = "${var.resource_name}-${random_pet.name.id}"
 }
 # output "oci_core_drg" {
 #   value = oci_core_drg.dyn_routing_gw_1
@@ -27,7 +27,7 @@ resource "oci_core_virtual_circuit" "fast_connect_1" {
   provider = oci
   # compartment_id       = oci_identity_compartment.compartment_1.id
   compartment_id       = var.parent_compartment_id
-  display_name         = "${var.tag_name}-${random_pet.name.id}"
+  display_name         = "${var.resource_name}-${random_pet.name.id}"
   region               = var.oracle_region1
   type                 = "PRIVATE"
   gateway_id           = oci_core_drg.dyn_routing_gw_1.id
@@ -52,9 +52,10 @@ resource "oci_core_virtual_circuit" "fast_connect_1" {
 # }
 
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
+resource "packetfabric_cloud_router_connection_oracle" "crbs_oracle" {
   provider    = packetfabric
-  description = "${var.tag_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  description = "${var.resource_name}-${random_pet.name.id}-${var.pf_crc_pop2}"
+  labels      = var.pf_labels
   circuit_id  = packetfabric_cloud_router.cr.id
   region      = var.oracle_region1
   vc_ocid     = oci_core_virtual_circuit.fast_connect_1.id
@@ -64,12 +65,11 @@ resource "packetfabric_cloud_router_connection_oracle" "crc_2" {
 }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_oracle" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_oracle.crc_2.id
+  connection_id  = packetfabric_cloud_router_connection_oracle.crbs_oracle.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.oracle_bgp_peering_prefix   # Oracle side
@@ -84,7 +84,7 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_2" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_2" {
-#   value     = packetfabric_cloud_router_bgp_session.crbs_2
+# output "packetfabric_cloud_router_bgp_session_crbs_oracle" {
+#   value     = packetfabric_cloud_router_bgp_session.crbs_oracle
 #   sensitive = true
 # }

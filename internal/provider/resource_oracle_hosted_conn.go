@@ -105,12 +105,17 @@ func resourceOracleHostedConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -169,7 +174,6 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
@@ -177,7 +181,9 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("vc_ocid", resp.Settings.VcOcid)
 		_ = d.Set("region", resp.Settings.OracleRegion)
-		_ = d.Set("po_number", resp.PONumber)
+		if _, ok := d.GetOk("po_number"); ok {
+			_ = d.Set("po_number", resp.PONumber)
+		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -185,18 +191,34 @@ func resourceOracleHostedConnRead(ctx context.Context, d *schema.ResourceData, m
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		if _, ok := d.GetOk("zone"); ok {
+			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
+		}
 	}
 	// unsetFields: published_quote_line_uuid
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 

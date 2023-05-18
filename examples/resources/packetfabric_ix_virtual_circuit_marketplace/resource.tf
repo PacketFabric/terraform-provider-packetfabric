@@ -28,7 +28,3 @@ resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
     subscription_term = 1
   }
 }
-
-output "packetfabric_ix_virtual_circuit_marketplace" {
-  value = packetfabric_ix_virtual_circuit_marketplace.ix_marketplace_conn1
-}

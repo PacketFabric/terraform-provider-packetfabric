@@ -12,6 +12,3 @@ resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
     match_type = "orlonger"
   }
 }
-output "packetfabric_cloud_router_quick_connect" {
-  value = packetfabric_cloud_router_quick_connect.cr_quick_connect
-}
