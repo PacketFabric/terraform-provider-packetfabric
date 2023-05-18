@@ -66,7 +66,7 @@ const portSpeed = "1Gbps"
 const PortLoaCustomerName = "loa"
 
 // packetfabric_document
-const TestFileName = "testdata/filename.pdf"
+const TestFileName = "testdata/test_acc_document.pdf"
 
 // packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
