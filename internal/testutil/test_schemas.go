@@ -244,13 +244,62 @@ const RResourceCloudRouterConnectionIpsec = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_oracle
-const RResourceCloudRouterconnectionOracle = `resource "packetfabric_cloud_router_connection_oracle" "%s" {
+const RResourceCloudRouterconnectionOracle = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider1" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect1" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect1"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = %v
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider1.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cloud_router_connection_oracle" "%s" {
   provider    = packetfabric
-  description = "%s"
   circuit_id  = %s.id
-  region      = "%s"
-  vc_ocid     = "%s"
+  description = "%s"
   pop         = "%s"
+  zone        = "%s"
+  c_ocid      = oci_core_virtual_circuit.fast_connect1.id
+  region      = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_connection_port
@@ -481,15 +530,63 @@ resource "ibm_dl_gateway_action" "confirmation2" {
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_connection
-const RResourceCSOracleHostedConnection = `resource "packetfabric_cs_oracle_hosted_connection" "%s" {
+const RResourceCSOracleHostedConnection = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider2" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect2" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect2"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = %v
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider2.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cs_oracle_hosted_connection" "%s" {
   provider    = packetfabric
   port        = %s.id
   description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
   pop         = "%s"
   zone        = "%s"
   vlan        = %v
+  vc_ocid     = oci_core_virtual_circuit.fast_connect2.id
+  region      = "%s"
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_marketplace_connection
