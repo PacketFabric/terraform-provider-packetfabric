@@ -15,6 +15,8 @@ import (
 // ###### Resources
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
+const pfDocument = "packetfabric_document"
+const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
 const pfPoinToPoint = "packetfabric_point_to_point"
@@ -45,10 +47,6 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-const pfDatasourceCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
-const pfDatasourceLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
-const pfDocument = "packetfabric_document"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -66,6 +64,9 @@ const portSpeed = "1Gbps"
 
 // packetfabric_port_loa
 const PortLoaCustomerName = "loa"
+
+// packetfabric_document
+const TestFileName = "testdata/filename.pdf"
 
 // packetfabric_link_aggregation_group
 const LinkAggGroupInterval = "fast"
@@ -202,6 +203,24 @@ type RHclLinkAggregationGroupResult struct {
 	Interval string
 	Members  []string
 	Pop      string
+}
+
+// packetfabric_link_aggregation_group
+type DHclDatasourceLinkAggregationGroupsResult struct {
+	HclResultBase
+}
+
+// packetfabric_outbound_cross_connect
+type RHclOutboundCrossConnectResult struct {
+	HclResultBase
+	Desc string
+	Port RHclPortResult
+	Site string
+}
+
+// packetfabric_document
+type RHclDocumentResult struct {
+	HclResultBase
 }
 
 // packetfabric_backbone_virtual_circuit
@@ -455,24 +474,6 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
-// packetfabric_link_aggregation_group
-type DHclDatasourceLinkAggregationGroupsResult struct {
-	HclResultBase
-}
-
-// packetfabric_outbound_cross_connect
-type RHclOutboundCrossConnectResult struct {
-	HclResultBase
-	Desc string
-	Port RHclPortResult
-	Site string
-}
-
-// packetfabric_document
-type RHclDocumentResult struct {
-	HclResultBase
-}
-
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -572,6 +573,74 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_document
+func RHclDocumentMSA() RHclDocumentResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfDocument)
+	uniqueDesc := GenerateUniqueName()
+
+	hcl := fmt.Sprintf(RResourceDocumentMSA, hclName, TestFileName, uniqueDesc)
+
+	return RHclDocumentResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDocument,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// packetfabric_outbound_cross_connect
+func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	hclPortResult := portDetails.RHclPort(false)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfOutboundCrossConnect)
+	uniqueDesc := GenerateUniqueName()
+
+	locations, err := c.ListLocations()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var site string
+	for _, location := range locations {
+		if location.Pop == hclPortResult.Pop {
+			site = location.SiteCode
+			break
+		}
+	}
+
+	documentResult := RHclDocumentMSA()
+
+	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
+		hclName,
+		uniqueDesc,
+		documentResult.ResourceName,
+		hclPortResult.ResourceName,
+		site)
+
+	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult.Hcl, documentResult.Hcl, outboundCrossHcl)
+
+	return RHclOutboundCrossConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfOutboundCrossConnect,
+			ResourceName: resourceName,
+		},
+		Desc: uniqueDesc,
+		Site: site,
 	}
 }
 
@@ -1245,74 +1314,6 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		Speed:       HostedCloudSpeed,
 		Vlan:        HostedCloudVlan,
 		IbmBgpAsn:   IbmBgpAsn,
-	}
-}
-
-// packetfabric_document
-func RHclDocumentMSA() RHclDocumentResult {
-	resourceName, hclName := GenerateUniqueResourceName(pfDocument)
-	uniqueDesc := GenerateUniqueName()
-
-	hcl := fmt.Sprintf(RResourceDocumentMSA, hclName, "testdata/filename.pdf", uniqueDesc)
-
-	return RHclDocumentResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDocument,
-			ResourceName: resourceName,
-		},
-	}
-}
-
-// packetfabric_outbound_cross_connect
-func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	portDetails := PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
-	}
-
-	hclPortResult := portDetails.RHclPort(false)
-
-	resourceName, hclName := GenerateUniqueResourceName(pfOutboundCrossConnect)
-	uniqueDesc := GenerateUniqueName()
-
-	locations, err := c.ListLocations()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var site string
-	for _, location := range locations {
-		if location.Pop == hclPortResult.Pop {
-			site = location.SiteCode
-			break
-		}
-	}
-
-	documentResult := RHclDocumentMSA()
-
-	outboundCrossHcl := fmt.Sprintf(RResourceOutboundCrossConnect,
-		hclName,
-		uniqueDesc,
-		documentResult.ResourceName,
-		hclPortResult.ResourceName,
-		site)
-
-	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult.Hcl, documentResult.Hcl, outboundCrossHcl)
-
-	return RHclOutboundCrossConnectResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfOutboundCrossConnect,
-			ResourceName: resourceName,
-		},
-		Desc: uniqueDesc,
-		Site: site,
 	}
 }
 

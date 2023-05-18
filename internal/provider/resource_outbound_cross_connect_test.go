@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestOutboundCrossConnect(t *testing.T) {
+func TestAccOutboundCrossConnect(t *testing.T) {
 	testutil.PreCheck(t, []string{})
 
 	outboundCrossConnectResult := testutil.RHclOutboundCrossConnect()
