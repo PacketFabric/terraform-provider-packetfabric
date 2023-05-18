@@ -289,7 +289,7 @@ resource "oci_core_virtual_circuit" "fast_connect1" {
   region               = "%s"
   type                 = "PRIVATE"
   gateway_id           = var.pf_cs_oracle_drg_ocid
-  bandwidth_shape_name = %v
+  bandwidth_shape_name = "%s"
   customer_asn         = %v
   ip_mtu               = "MTU_1500"
   is_bfd_enabled       = false
@@ -584,7 +584,7 @@ resource "oci_core_virtual_circuit" "fast_connect2" {
   region               = "%s"
   type                 = "PRIVATE"
   gateway_id           = var.pf_cs_oracle_drg_ocid
-  bandwidth_shape_name = %v
+  bandwidth_shape_name = "%s"
   customer_asn         = %v
   ip_mtu               = "MTU_1500"
   is_bfd_enabled       = false

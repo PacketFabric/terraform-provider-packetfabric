@@ -1,4 +1,4 @@
-//go:build resource || cloud_router || all
+//go:build resource || cloud_router || all || smoke
 
 package provider
 

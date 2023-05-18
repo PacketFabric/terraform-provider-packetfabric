@@ -107,7 +107,7 @@ const IbmSpeed = 100 // must match const CloudRouterConnSpeed and HostedCloudSpe
 // packetfabric_cloud_router_connection_oracle
 // packetfabric_cs_oracle_hosted_connection
 const OracleProviderName = "PacketFabric"
-const OracleBandwidth = 100
+const OracleBandwidth = "1 Gbps"
 const OracleBgpAsn = 64537
 const OracleAuthKey = "dd02c7c2232759874e1c20558"
 const OracleBgpPeeringIp1 = "169.254.247.41/30"
