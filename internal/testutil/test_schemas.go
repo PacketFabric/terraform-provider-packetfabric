@@ -559,7 +559,7 @@ const RResourceMarketplaceServicePortRejectRequest = `resource "packetfabric_mar
 const RResourceOutboundCrossConnect = `resource "packetfabric_outbound_cross_connect" "%s" {
   provider      = packetfabric
   description   = "%s"
-  document_uuid = "%s"
+  document_uuid = %s.id
   port          = %s.id
   site          = "%s"
 }`
@@ -604,6 +604,14 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   port_circuit_id   = %s.id
   loa_customer_name = "%s"
   destination_email = "%s"
+}`
+
+// Resource: packetfabric_outbound_cross_connect
+const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
+  provider        = packetfabric
+  document        = "%s"
+  type            = "msa"
+  description     = "%s"
 }`
 
 // End of resources templates for required fields only
