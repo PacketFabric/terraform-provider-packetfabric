@@ -38,6 +38,11 @@ variable "pf_crc_speed" {
   description = "The speed of the new connection"
   default     = "1Gbps"
 }
+variable "pf_crc_speed_ibm" {
+  type        = number
+  description = "The speed of the new connection"
+  default     = 1000
+}
 
 # PacketFabric Cloud Router Connection - Oracle
 variable "pf_crc_pop2" {

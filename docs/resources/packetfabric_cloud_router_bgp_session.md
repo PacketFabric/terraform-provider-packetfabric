@@ -44,7 +44,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
   remote_asn     = 64535
-  remote_address = "169.254.247.41/30"  # AWS side
+  remote_address = "169.254.247.41/30" # AWS side
   l3_address     = "169.254.247.42/30" # PF side
   prefixes {
     prefix = "10.1.1.0/24"
@@ -70,7 +70,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
   remote_asn     = 64535
-  remote_address = "169.254.247.41/30"  # AWS side
+  remote_address = "169.254.247.41/30" # AWS side
   l3_address     = "169.254.247.42/30" # PF side
   nat {
     direction       = "input" # input=ingress output=egress
@@ -94,13 +94,13 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
   circuit_id     = packetfabric_cloud_router.cr1.id
   connection_id  = packetfabric_cloud_router_connection_aws.crc1.id
   remote_asn     = 64535
-  remote_address = "169.254.247.41/30"  # AWS side
+  remote_address = "169.254.247.41/30" # AWS side
   l3_address     = "169.254.247.42/30" # PF side
   nat {
     nat_type = "inline_dnat"
     dnat_mappings {
-      public_prefix      = "185.161.1.42/32" # Pre-translation IP prefix
-      private_prefix     = "10.1.1.123/32" # Post-translation IP prefix
+      public_prefix  = "185.161.1.42/32" # Pre-translation IP prefix
+      private_prefix = "10.1.1.123/32"   # Post-translation IP prefix
       # Note that the post-translation prefix must be equal to or included within the conditional IP prefix
       conditional_prefix = "10.1.1.0/24" # Conditional IP prefix
     }

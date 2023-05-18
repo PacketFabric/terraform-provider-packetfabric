@@ -96,7 +96,8 @@ func _contains(s []string, str string) bool {
 	return false
 }
 
-func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *string) (pop, zone, media, market string, availabilityErr error) {
+// Used for Port and Point-to-Point
+func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *string, DesiredMedia *string) (pop, zone, media, market string, availabilityErr error) {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -118,16 +119,16 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
 	for _, l := range locations {
+		// log.Printf("Checking PoP: %s\n", l.Pop)
 		// Skip Colt locations
 		if l.Vendor == "Colt" {
 			continue
 		}
 
-		// Do not select a port in the same market as the one set in skipDesiredMarket
-		if skipDesiredMarket != nil && l.Market == *skipDesiredMarket {
+		// Do not select a port in the same market as the one set in SkipDesiredMarket
+		if SkipDesiredMarket != nil && l.Market == *SkipDesiredMarket {
 			continue
 		}
-
 		portAvailability, err := c.GetLocationPortAvailability(l.Pop)
 		if err != nil {
 			log.Println("Error getting location port availability for ", l.Pop, ": ", err)
@@ -135,19 +136,31 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 		}
 
 		for _, p := range portAvailability {
-			if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(listPortsLab, l.Pop)) {
-				pop = l.Pop
-				zone = p.Zone
-				media = p.Media
-				market = l.Market
-				log.Println("Found available port at ", pop, zone, media, market)
-				if skipDesiredMarket == nil {
-					log.Println("Not specified Market to avoid.")
-				} else {
-					log.Println("Specified Market to avoid: ", *skipDesiredMarket)
+			// if DesiredMedia specified, only select ports with that media
+			if DesiredMedia != nil {
+				if p.Speed == desiredSpeed && p.Media == *DesiredMedia && p.Count > 0 && (!testingInLab || _contains(labPopsPort, l.Pop)) {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					market = l.Market
+					log.Println("Specified Media to match: ", *DesiredMedia)
+					log.Println("Found available port at ", pop, zone, media, market)
+					return
 				}
-
-				return
+			} else {
+				if p.Speed == desiredSpeed && p.Count > 0 && (!testingInLab || _contains(labPopsPort, l.Pop)) {
+					pop = l.Pop
+					zone = p.Zone
+					media = p.Media
+					market = l.Market
+					log.Println("Found available port at ", pop, zone, media, market)
+					if SkipDesiredMarket == nil {
+						log.Println("Not specified Market to avoid.")
+					} else {
+						log.Println("Specified Market to avoid: ", *SkipDesiredMarket)
+					}
+					return
+				}
 			}
 		}
 	}
@@ -155,16 +168,18 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, skipDesiredMarket *stri
 	return "", "", "", "", errors.New("no pops with available ports")
 }
 
-func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string) {
+// Used for Hosted Cloud and Cloud Router Connection
+func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
 	popsWithZones, _ := details.FetchCloudPopsAndZones()
 	popsToSkip := make([]string, 0)
 
 	log.Println("Starting to search for available Cloud PoP and zone...")
 	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
 
-	for popAvailable, zones := range popsWithZones {
-		log.Printf("Checking PoP: %s\n", popAvailable)
+	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
+	for popAvailable, zones := range popsWithZones {
+		// log.Printf("Checking PoP: %s\n", popAvailable)
 		if len(popsToSkip) == len(popsWithZones) {
 			log.Fatal(errors.New("there's no port available on any pop"))
 		}
@@ -172,19 +187,67 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string
 			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
 			continue
 		} else {
-			if len(zones) > 1 {
+			if len(zones) > 1 && (!testingInLab || _contains(labPopsCloud, popAvailable)) {
 				pop = popAvailable
-				zone = zones[0]
-				region = zones[len(zones)-1]
-				log.Printf("Found available PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
+				zone = zones[0] // always take the first zone available
+				log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s\n", pop, zone)
 				return
 			} else {
 				popsToSkip = append(popsToSkip, popAvailable)
 			}
 		}
 	}
+	log.Println("No available Hosted Cloud/Cloud Router Connection PoP and zone found.")
+	return
+}
 
-	log.Println("No available Cloud PoP, zone, and region found.")
+// Used for Dedicated Cloud
+func (details PortDetails) FindAvailableCloudPopZoneDedicated() (pop, zone, region string, availabilityErr error) {
+	popsWithZones, _ := details.FetchCloudPopsAndZones()
+	popsToSkip := make([]string, 0)
+
+	c, err := _createPFClient()
+	if err != nil {
+		log.Println("Error creating PF client: ", err)
+		return "", "", "", err
+	}
+
+	log.Println("Starting to search for available Cloud PoP and zone...")
+	log.Printf("Available PoPs with Zones: %v\n", popsWithZones)
+
+	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
+
+	for popAvailable, zones := range popsWithZones {
+		// log.Printf("Checking PoP: %s\n", popAvailable)
+		if len(popsToSkip) == len(popsWithZones) {
+			log.Fatal(errors.New("there's no port available on any pop"))
+		}
+		if _contains(popsToSkip, popAvailable) {
+			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
+			continue
+		} else {
+			if len(zones) > 1 && (!testingInLab || _contains(labPopsCloud, popAvailable)) {
+				portAvailability, err := c.GetLocationPortAvailability(popAvailable)
+				if err != nil {
+					log.Println("Error getting location port availability for ", popAvailable, ": ", err)
+					return "", "", "", fmt.Errorf("error getting location port availability: %w", err)
+				}
+				for _, p := range portAvailability {
+					if p.Speed == details.DesiredSpeed && p.Count > 0 {
+						pop = popAvailable
+						zone = p.Zone // get the zone available via /v2/locations/%s/port-availability
+						region = zones[len(zones)-1]
+						log.Printf("Found available Dedicated Cloud PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
+						return
+					}
+				}
+				return
+			} else {
+				popsToSkip = append(popsToSkip, popAvailable)
+			}
+		}
+	}
+	log.Println("No available Dedicated Cloud PoP, zone found.")
 	return
 }
 
@@ -227,7 +290,7 @@ func CreateBasePortDetails() PortDetails {
 	return PortDetails{
 		PFClient:          c,
 		DesiredSpeed:      portSpeed,
-		skipDesiredMarket: nil,
+		SkipDesiredMarket: nil,
 	}
 }
 
