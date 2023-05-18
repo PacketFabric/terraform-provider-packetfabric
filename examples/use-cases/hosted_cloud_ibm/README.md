@@ -69,7 +69,7 @@ export PF_IBM_ACCOUNT_ID="123456789"
 export IC_API_KEY="ibmcloud_api_key"
 export IAAS_CLASSIC_USERNAME="iaas_classic_username"
 export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
+export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan" # see link Create an SSH key pair in the pre-req
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
