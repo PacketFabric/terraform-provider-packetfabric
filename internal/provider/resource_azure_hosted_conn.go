@@ -180,7 +180,6 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 			}
 		}
-		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 	}
 
 	if _, ok := d.GetOk("labels"); ok {

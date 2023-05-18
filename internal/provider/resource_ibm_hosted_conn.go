@@ -238,8 +238,12 @@ func resourceHostedIbmConnRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("ibm_account_id", resp.Settings.AccountID)
 		_ = d.Set("ibm_bgp_asn", resp.Settings.BgpAsn)
-		_ = d.Set("ibm_bgp_cer_cidr", resp.Settings.BgpCerCidr)
-		_ = d.Set("ibm_bgp_ibm_cidr", resp.Settings.BgpIbmCidr)
+		if _, ok := d.GetOk("ibm_bgp_cer_cidr"); ok {
+			_ = d.Set("ibm_bgp_cer_cidr", resp.CloudSettings.BgpCerCidr)
+		}
+		if _, ok := d.GetOk("ibm_bgp_ibm_cidr"); ok {
+			_ = d.Set("ibm_bgp_ibm_cidr", resp.CloudSettings.BgpIbmCidr)
+		}
 		_ = d.Set("po_number", resp.PONumber)
 		if resp.Settings.GatewayID == "" {
 			diags = append(diags, diag.Diagnostic{
