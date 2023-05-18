@@ -39,7 +39,7 @@ var birdNames = []string{
 	"woodpecker",
 	"xantus",
 	"yellowhammer",
-	"zebra finch",
+	"zebrafinch",
 }
 
 func GenerateUniqueName() string {
