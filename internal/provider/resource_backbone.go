@@ -15,10 +15,10 @@ import (
 func resourceBackbone() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
 			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceBackboneCreate,
 		UpdateContext: resourceBackboneUpdate,
@@ -317,9 +317,8 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		} else {
 			_ = d.Set("flex_bandwidth_id", nil)
 		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
+
 	}
 
 	if _, ok := d.GetOk("labels"); ok {

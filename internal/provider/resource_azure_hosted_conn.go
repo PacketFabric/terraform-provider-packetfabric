@@ -13,10 +13,10 @@ import (
 func resourceAzureReqExpressHostedConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceAzureReqExpressHostedConnCreate,
 		ReadContext:   resourceAzureReqExpressHostedConnRead,
@@ -166,9 +166,8 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 		_ = d.Set("azure_service_key", resp.Settings.AzureServiceKey)
 		_ = d.Set("vlan_private", resp.Settings.VlanPrivate)
 		_ = d.Set("vlan_microsoft", resp.Settings.VlanMicrosoft)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
+
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
 	if err2 != nil {
@@ -180,9 +179,6 @@ func resourceAzureReqExpressHostedConnRead(ctx context.Context, d *schema.Resour
 			if resp2.Interfaces[0].Svlan != 0 {
 				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
 			}
-		}
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 		}
 	}
 

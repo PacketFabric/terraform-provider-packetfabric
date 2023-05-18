@@ -39,7 +39,32 @@ var birdNames = []string{
 	"woodpecker",
 	"xantus",
 	"yellowhammer",
-	"zebra finch",
+	"zebrafinch",
+	"ape",
+	"bear",
+	"cheetah",
+	"dog",
+	"elephant",
+	"fox",
+	"giraffe",
+	"hippo",
+	"iguana",
+	"jaguar",
+	"koala",
+	"lion",
+	"monkey",
+	"narwhal",
+	"otter",
+	"panda",
+	"quokka",
+	"rabbit",
+	"sheep",
+	"tiger",
+	"unicorn",
+	"viper",
+	"whale",
+	"yak",
+	"zebra",
 }
 
 func GenerateUniqueName() string {
@@ -170,7 +195,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *stri
 }
 
 // Used for Hosted Cloud and Cloud Router Connection
-func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
+func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string) {
 	popsWithZones, _ := details.FetchCloudPopsAndZones()
 	popsToSkip := make([]string, 0)
 
@@ -191,14 +216,16 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
 			if len(zones) > 1 && (!testingInLab || _contains(labPopsHostedCloud, popAvailable)) {
 				pop = popAvailable
 				zone = zones[0] // always take the first zone available
-				log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s\n", pop, zone)
+				region = zones[len(zones)-1]
+				log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
 				return
 			} else {
 				popsToSkip = append(popsToSkip, popAvailable)
 			}
 		}
 	}
-	log.Println("No available Hosted Cloud/Cloud Router Connection PoP and zone found.")
+
+	log.Println("No available Hosted Cloud PoP, zone, and region found.")
 	return
 }
 

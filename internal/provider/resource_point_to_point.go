@@ -204,9 +204,7 @@ func resourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m int
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("media", resp.Media)
 		_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 
 		if len(resp.Interfaces) == 2 {
 			interface1 := make(map[string]interface{})
