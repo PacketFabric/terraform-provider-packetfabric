@@ -57,6 +57,7 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `untagged` (Boolean) Whether the interface should be untagged. Do not specify a VLAN if this is to be an untagged connection. Defaults: false
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 
@@ -64,6 +65,17 @@ resource "packetfabric_cloud_router_connection_port" "crc7" {
 
 - `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `delete` (String)
+- `read` (String)
+- `update` (String)
+
 
 
 

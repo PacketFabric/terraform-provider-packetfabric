@@ -181,12 +181,9 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("pop", resp.Pop)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp.Zone)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
+
 		if resp.Disabled {
 			_ = d.Set("enabled", false)
 		} else {
@@ -261,7 +258,7 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 			}
 		}
 		// allow time for port to be disabled
-		time.Sleep(time.Duration(90) * time.Second)
+		time.Sleep(time.Duration(120) * time.Second)
 	}
 
 	_, err := c.DeletePort(d.Id())

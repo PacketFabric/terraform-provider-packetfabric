@@ -68,6 +68,7 @@ const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_c
   account_uuid    = "%s"
   description     = "%s"
   pop             = "%s"
+  zone            = "%s"
   speed           = "%s"
 }`
 
@@ -184,6 +185,7 @@ const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_c
   account_uuid = "%s"
   description  = "%s"
   pop          = "%s"
+  zone          = "%s"
   speed        = "%s"
   ibm_bgp_asn  = %v
 }
@@ -244,13 +246,71 @@ const RResourceCloudRouterConnectionIpsec = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_oracle
-const RResourceCloudRouterconnectionOracle = `resource "packetfabric_cloud_router_connection_oracle" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  circuit_id  = %s.id
-  region      = "%s"
-  vc_ocid     = "%s"
-  pop         = "%s"
+const RResourceCloudRouterConnectionOracle = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider1" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect1" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect1"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = "%s"
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider1.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cloud_router_connection_oracle" "%s" {
+  provider     = packetfabric
+  circuit_id   = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vc_ocid      = oci_core_virtual_circuit.fast_connect1.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_connection_port
@@ -284,17 +344,9 @@ const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_con
   account_uuid    = "%s"
   description     = "%s"
   pop             = "%s"
+  zone            = "%s"
   speed           = "%s"
   vlan            = %v
-}`
-
-// Resource: packetfabric_cs_aws_hosted_marketplace_connection
-const RResourceCSAwsHostedMarketplaceConnection = `resource "packetfabric_cs_aws_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  routing_id  = %s.id
-  market      = "%s"
-  speed       = "%s"
-  pop         = "%s"
 }`
 
 // Resource: packetfabric_cs_azure_dedicated_connection
@@ -362,15 +414,6 @@ resource "packetfabric_cs_azure_hosted_connection" "%s" {
   vlan_private      = %v
 }`
 
-// Resource: packetfabric_cs_azure_hosted_marketplace_connection
-const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_azure_hosted_marketplace_connection" "%s" {
-  provider          = packetfabric
-  description       = "%s"
-  azure_service_key = "%s"
-  routing_id        = %s.id
-  speed             = "%s"
-}`
-
 // Resource: packetfabric_cs_google_dedicated_connection
 const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_dedicated_connection" "%s" {
   provider          = packetfabric
@@ -421,19 +464,6 @@ resource "packetfabric_cs_google_hosted_connection" "%s" {
   vlan            = %v
 }`
 
-// Resource: packetfabric_cs_google_hosted_marketplace_connection
-const RResourceCSGGoogleHostedMarketplaceConnection = `resource "packetfabric_cs_google_hosted_marketplace_connection" "%s" {
-  provider                    = packetfabric
-  description                 = "%s"
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
-  routing_id                  = %s.id
-  market                      = "%s"
-  speed                       = "%s"
-  pop                         = "%s"
-
-}`
-
 // Resource: packetfabric_cs_ibm_hosted_connection
 const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
   provider     = packetfabric
@@ -441,6 +471,7 @@ const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_con
   account_uuid = "%s"
   description  = "%s"
   pop          = "%s"
+  zone         = "%s"
   speed        = "%s"
   vlan         = %v
   ibm_bgp_asn  = %v
@@ -481,26 +512,72 @@ resource "ibm_dl_gateway_action" "confirmation2" {
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_connection
-const RResourceCSOracleHostedConnection = `resource "packetfabric_cs_oracle_hosted_connection" "%s" {
-  provider    = packetfabric
-  port        = %s.id
-  description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
-  pop         = "%s"
-  zone        = "%s"
-  vlan        = %v
-}`
-
-// Resource: packetfabric_cs_oracle_hosted_marketplace_connection
-const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_oracle_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
-  routing_id  = %s.id
-  market      = "%s"
-  pop         = "%s"
+const RResourceCSOracleHostedConnection = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider2" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect2" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect2"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = "%s"
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider2.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cs_oracle_hosted_connection" "%s" {
+  provider     = packetfabric
+  port         = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vlan         = %v
+  vc_ocid      = oci_core_virtual_circuit.fast_connect2.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_ix_virtual_circuit_marketplace
@@ -593,6 +670,7 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   description       = "%s"
   media             = "%s"
   pop               = "%s"
+  zone              = "%s"
   speed             = "%s"
   subscription_term = %v
   enabled           = %t

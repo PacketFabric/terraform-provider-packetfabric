@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -15,6 +16,12 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 		ReadContext:   resourceCustomerOwnedPortConnRead,
 		UpdateContext: resourceCustomerOwnedPortConnUpdate,
 		DeleteContext: resourceCustomerOwnedPortConnDelete,
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
+		},
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -173,9 +180,8 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
+
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
 		} else {
