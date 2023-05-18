@@ -57,7 +57,8 @@ const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const subscriptionTerm = 1
 
 var labPopsPort = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
-var labPopsCloud = []string{"DEV1", "LAB1", "LAB2", "LAB6", "LAB8"}
+var labPopsHostedCloud = []string{"DEV1", "LAB1", "LAB4", "LAB6"}
+var labPopsDedicatedCloud = []string{"DEV1", "LAB1", "LAB4", "LAB5"}
 
 // packetfabric_port
 // packetfabric_point_to_point

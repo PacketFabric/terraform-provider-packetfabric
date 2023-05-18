@@ -188,7 +188,7 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone string) {
 			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
 			continue
 		} else {
-			if len(zones) > 1 && (!testingInLab || _contains(labPopsCloud, popAvailable)) {
+			if len(zones) > 1 && (!testingInLab || _contains(labPopsHostedCloud, popAvailable)) {
 				pop = popAvailable
 				zone = zones[0] // always take the first zone available
 				log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s\n", pop, zone)
@@ -227,7 +227,7 @@ func (details PortDetails) FindAvailableCloudPopZoneDedicated() (pop, zone, regi
 			log.Printf("PoP %s is in popsToSkip, skipping...\n", popAvailable)
 			continue
 		} else {
-			if len(zones) > 1 && (!testingInLab || _contains(labPopsCloud, popAvailable)) {
+			if len(zones) > 1 && (!testingInLab || _contains(labPopsDedicatedCloud, popAvailable)) {
 				portAvailability, err := c.GetLocationPortAvailability(popAvailable)
 				if err != nil {
 					log.Println("Error getting location port availability for ", popAvailable, ": ", err)
