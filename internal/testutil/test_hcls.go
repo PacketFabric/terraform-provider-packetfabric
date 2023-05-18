@@ -1128,8 +1128,6 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 // packetfabric_cloud_router_connection_oracle
 func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 
-	var edgeAvailabilityDomain string
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
