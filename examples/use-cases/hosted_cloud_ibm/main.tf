@@ -88,15 +88,11 @@ resource "packetfabric_cs_ibm_hosted_connection" "pf_cs_conn1" {
   pop         = var.pf_cs_pop1
   vlan        = var.pf_cs_vlan1
   zone        = var.pf_cs_zone1
-
-  depends_on = [
-    ibm_resource_group.resource_group_1
-  ]
 }
 
 # From the IBM side: Accept the connection
 resource "time_sleep" "wait_ibm_connection" {
-  create_duration = "1m"
+  create_duration = "5m"
 }
 # Retrieve the Direct Connect connections in IBM
 data "ibm_dl_gateway" "current" {
@@ -108,17 +104,20 @@ data "ibm_dl_gateway" "current" {
 # Used in case you are using an existing resource group and you don't create a new one
 # data "ibm_resource_group" "existing_rg" {
 #   provider   = ibm
-#   name       = "Packet Fabric"
+#   name       = var.ibm_resource_group
 # }
 
 resource "ibm_dl_gateway_action" "confirmation" {
   provider = ibm
   gateway  = data.ibm_dl_gateway.current.id
   # resource_group = data.ibm_resource_group.existing_rg.id # used for existing resource group
-  resource_group = ibm_resource_group.resource_group_1.id # used for new resource group
-  action         = "create_gateway_approve"
-  global         = true
-  metered        = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  resource_group              = ibm_resource_group.resource_group_1.id # used for new resource group
+  action                      = "create_gateway_approve"
+  global                      = true
+  metered                     = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps                  = var.pf_cs_speed_ibm # must match PacketFabric speed
 
   provisioner "local-exec" {
     when    = destroy

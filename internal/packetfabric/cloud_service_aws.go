@@ -222,17 +222,17 @@ type AwsGateway struct {
 }
 
 type DedicatedAwsConn struct {
-	AwsRegion        string      `json:"aws_region"`
-	AccountUUID      string      `json:"account_uuid"`
-	Description      string      `json:"description"`
-	Zone             string      `json:"zone"`
-	Pop              string      `json:"pop"`
-	SubscriptionTerm int         `json:"subscription_term"`
-	ServiceClass     string      `json:"service_class"`
-	AutoNeg          bool        `json:"autoneg"`
-	Speed            string      `json:"speed"`
-	ShouldCreateLag  bool        `json:"should_create_lag"`
-	Loa              interface{} `json:"load"`
+	AwsRegion        string      `json:"aws_region,omitempty"`
+	AccountUUID      string      `json:"account_uuid,omitempty"`
+	Description      string      `json:"description,omitempty"`
+	Zone             string      `json:"zone,omitempty"`
+	Pop              string      `json:"pop,omitempty"`
+	SubscriptionTerm int         `json:"subscription_term,omitempty"`
+	ServiceClass     string      `json:"service_class,omitempty"`
+	AutoNeg          bool        `json:"autoneg,omitempty"`
+	Speed            string      `json:"speed,omitempty"`
+	ShouldCreateLag  bool        `json:"should_create_lag,omitempty"`
+	Loa              interface{} `json:"loa,omitempty"`
 	PONumber         string      `json:"po_number,omitempty"`
 }
 

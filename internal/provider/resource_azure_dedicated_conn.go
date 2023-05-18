@@ -194,12 +194,8 @@ func resourceAzureReqExpressDedicatedConnRead(ctx context.Context, d *schema.Res
 		return diag.FromErr(err2)
 	}
 	if resp2 != nil {
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp2.Zone)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp2.PONumber)
-		}
+		_ = d.Set("zone", resp2.Zone)
+		_ = d.Set("po_number", resp2.PONumber)
 	}
 	// unsetFields: loa
 

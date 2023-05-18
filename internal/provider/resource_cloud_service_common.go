@@ -186,12 +186,12 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 			return diag.FromErr(err3)
 		}
 		if resp.PortType == "dedicated" {
-			if resp.ServiceProvider == "aws" || resp.ServiceProvider == "azure" { // LAG is not enabled in the ACC in dev environment for AWS
+			if resp.ServiceProvider == "azure" { // LAG is not enabled in the ACC in dev environment for AWS
 				if toggleErr := _togglePortStatus(c, false, cloudCID.(string)); toggleErr != nil {
 					return diag.FromErr(toggleErr)
 				}
 			}
-			if resp.ServiceProvider == "google" {
+			if resp.ServiceProvider == "aws" || resp.ServiceProvider == "google" {
 				if _, toggleErr := c.DisableLinkAggregationGroup(cloudCID.(string)); toggleErr != nil {
 					return diag.FromErr(toggleErr)
 				}
