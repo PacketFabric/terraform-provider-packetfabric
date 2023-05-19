@@ -596,7 +596,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	if details.DesiredMedia != nil {
 		DesiredMedia = details.DesiredMedia
 	}
-	pop, zone, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia)
+	pop, zone, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia, false)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
@@ -852,14 +852,14 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 func RHclPointToPoint() RHclPointToPointResult {
 
 	var speed = portSpeed
-	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil, nil)
+	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil, nil, false)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
 
-	pop2, zone2, _, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1, &media)
+	pop2, zone2, _, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1, &media, false)
 	if err2 != nil {
 		log.Println("Error getting pop and zone with available port: ", err2)
 		log.Panic(err2)
@@ -1248,8 +1248,10 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 // packetfabric_cloud_router_connection_ipsec
 func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil)
+
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil, true)
 	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 
@@ -1814,7 +1816,11 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 // data.packetfabric_locations_port_availability
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
@@ -1850,7 +1856,11 @@ func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 // data.packetfabric_locations_pop_zones
 func DHclDataSourceZones() DHclLocationsZonesResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsZones)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsZones, hclName)
