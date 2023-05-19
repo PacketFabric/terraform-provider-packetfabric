@@ -11,7 +11,9 @@ import (
 
 func TestAccDataSourceLocationsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	datasourceLocationsResult := testutil.DHclDataSourceLocations()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -30,13 +32,10 @@ func TestAccDataSourceLocationsComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.status"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.latitude"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.longitude"),
-					// resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.timezone"), // always null
-					// resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.notes"), // always null
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.pcode"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.lead_time"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.single_armed"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.address1"),
-					// resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.address2"), // always null
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.city"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.state"),
 					resource.TestCheckResourceAttrSet(datasourceLocationsResult.ResourceName, "locations.0.postal"),

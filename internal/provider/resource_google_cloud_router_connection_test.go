@@ -13,8 +13,10 @@ import (
 
 func TestAccCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"GOOGLE_CREDENTIALS", "TF_VAR_gcp_project_id"})
+
 	crConnGoogleResult := testutil.RHclCloudRouterConnectionGoogle()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

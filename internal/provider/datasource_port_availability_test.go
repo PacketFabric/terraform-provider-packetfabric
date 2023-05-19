@@ -11,7 +11,9 @@ import (
 
 func TestAccDataSourceLocationsPortAvailabilityComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	locationsPortAvailabilityResult := testutil.DHclDataSourceLocationsPortAvailability()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

@@ -13,7 +13,9 @@ import (
 
 func TestAccAwsHostedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
+
 	awsHostedConnectionResult := testutil.RHclCsAwsHostedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

@@ -12,7 +12,9 @@ import (
 
 func TestAccAwsDedicatedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	csAwsDedicatedConnectionResult := testutil.RHclCsAwsDedicatedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
