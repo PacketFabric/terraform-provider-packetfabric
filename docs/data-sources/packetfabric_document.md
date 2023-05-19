@@ -26,25 +26,25 @@ output "my-documents" {
 
 ### Read-Only
 
-- `documents` (Block List) Documents list (see [below for nested schema](#nestedblock--documents))
+- `documents` (List of Object) Documents list (see [below for nested schema](#nestedatt--documents))
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--documents"></a>
+<a id="nestedatt--documents"></a>
 ### Nested Schema for `documents`
 
 Read-Only:
 
-- `_links` (Set of Object) (see [below for nested schema](#nestedatt--documents--_links))
-- `description` (String) Document description
-- `mime_type` (String) Mime type of the document
-- `name` (String) Document name
-- `size` (Number) Document size
-- `time_created` (String) Document creation time
-- `time_updated` (String) Document's last update time
-- `type` (String) Document type. One of ["loa", "msa"]
-- `uuid` (String) ID of the document
+- `_links` (Set of Object) (see [below for nested schema](#nestedobjatt--documents--_links))
+- `description` (String)
+- `mime_type` (String)
+- `name` (String)
+- `size` (Number)
+- `time_created` (String)
+- `time_updated` (String)
+- `type` (String)
+- `uuid` (String)
 
-<a id="nestedatt--documents--_links"></a>
+<a id="nestedobjatt--documents--_links"></a>
 ### Nested Schema for `documents._links`
 
 Read-Only:

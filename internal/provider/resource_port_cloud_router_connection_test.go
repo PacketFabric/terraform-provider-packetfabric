@@ -14,8 +14,10 @@ import (
 
 func TestAccCloudRouterConnectionPortRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	cloudRouterConnectionPortResult := testutil.RHclCloudRouterConnectionPort()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		ExternalProviders: testAccExternalProviders,
 		Providers:         testAccProviders,

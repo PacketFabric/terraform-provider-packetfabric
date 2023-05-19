@@ -11,7 +11,9 @@ import (
 
 func TestAccDataSourceActivityLogComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	datasourceActivityLogResult := testutil.DHclDataSourceActivityLog()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

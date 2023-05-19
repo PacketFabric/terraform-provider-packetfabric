@@ -12,7 +12,9 @@ import (
 
 func TestAccAzureDedicatedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	csAzureDedicatedConnectionResult := testutil.RHclCsAzureDedicatedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

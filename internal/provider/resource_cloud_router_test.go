@@ -12,6 +12,7 @@ import (
 
 func TestAccCloudRouterRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	defaultInput := testutil.DefaultRHclCloudRouterInput()
 	cloudRouterResult1 := testutil.RHclCloudRouter(defaultInput)
 	cloudRouterResult2 := testutil.RHclCloudRouter(testutil.RHclCloudRouterInput{
@@ -20,6 +21,7 @@ func TestAccCloudRouterRequiredFields(t *testing.T) {
 		Capacity:     testutil.CloudRouterCapacityChange,
 	})
 	cloudRouterResult2.ResourceName = cloudRouterResult1.ResourceName
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

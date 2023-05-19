@@ -12,8 +12,10 @@ import (
 
 func TestAccPortRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	portDetails := testutil.CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

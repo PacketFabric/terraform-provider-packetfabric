@@ -19,6 +19,7 @@ const pfDocument = "packetfabric_document"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
+const pfAddSpeedBurst = "packetfabric_backbone_virtual_circuit_speed_burst"
 const pfPoinToPoint = "packetfabric_point_to_point"
 const pfCloudRouter = "packetfabric_cloud_router"
 const pfCloudRouterConnAws = "packetfabric_cloud_router_connection_aws"
@@ -46,9 +47,10 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfDataPort = "data.packetfabric_ports"
+const pfDataPorts = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
@@ -58,9 +60,9 @@ const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 // common
 const subscriptionTerm = 1
 
-var labPopsPort = []string{"LAB1", "LAB2", "LAB4", "LAB6", "LAB8"}
-var labPopsHostedCloud = []string{"DEV1", "LAB1", "LAB4", "LAB6"}
-var labPopsDedicatedCloud = []string{"DEV1", "LAB4", "LAB5"} // removed LAB1
+var labPopsPort = []string{"LAB1", "LAB4", "LAB5", "LAB6"}
+var labPopsHostedCloud = []string{"LAB1", "LAB4", "LAB6"}
+var labPopsDedicatedCloud = []string{"DEV1", "LAB4", "LAB5"}
 
 // packetfabric_port
 // packetfabric_point_to_point
@@ -81,6 +83,9 @@ const backboneVCepl = false
 const backboneVCvlan1Value = 103
 const backboneVCvlan2Value = 104
 const backboneVClonghaulType = "dedicated"
+
+// packetfabric_backbone_virtual_circuit_speed_burst
+const BackboneVcSpeedBurst = "100Mbps"
 
 // packetfabric_cloud_router
 const DefaultCloudRouterCapacity = "5Gbps"
@@ -283,6 +288,12 @@ type BandwidthBackbone struct {
 	LonghaulType     string
 	Speed            string
 	SubscriptionTerm int
+}
+
+// packetfabric_backbone_virtual_circuit_speed_burst
+type RHclBackboneVirtualCircuitSpeedBurstResult struct {
+	HclResultBase
+	Speed string
 }
 
 // packetfabric_point_to_point
@@ -511,7 +522,7 @@ type RHclCsAzureDedicatedConnectionResult struct {
 // ###### Data-sources
 
 // data packetfabric_locations_cloud
-type DHclDatasourceLocationsCloudResult struct {
+type DHclLocationsCloudResult struct {
 	HclResultBase
 }
 
@@ -521,7 +532,7 @@ type DHclLocationsPortAvailabilityResult struct {
 }
 
 // data packetfabric_locations
-type DHclDatasourceLocationsResult struct {
+type DHclLocationsResult struct {
 	HclResultBase
 }
 
@@ -546,17 +557,22 @@ type DHclLocationsMarketsResult struct {
 }
 
 // data packetfabric_port
-type DHclPortResult struct {
+type DHclPortsResult struct {
 	HclResultBase
 }
 
 // data packetfabric_billing
-type DHclDatasourceBillingResult struct {
+type DHclBillingResult struct {
 	HclResultBase
 }
 
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
+	HclResultBase
+}
+
+// data packetfabric_cs_dedicated_connections
+type DHclDedicatedConnectionsResult struct {
 	HclResultBase
 }
 
@@ -586,7 +602,7 @@ func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
 	if details.DesiredMedia != nil {
 		DesiredMedia = details.DesiredMedia
 	}
-	pop, zone, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia)
+	pop, zone, media, market, err = GetPopAndZoneWithAvailablePort(details.DesiredSpeed, SkipDesiredMarket, DesiredMedia, false)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
@@ -838,18 +854,36 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 	}
 }
 
+// packetfabric_backbone_virtual_circuit_speed_burst
+func RHclBackboneVirtualCircuitSpeedBurst() RHclBackboneVirtualCircuitSpeedBurstResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfAddSpeedBurst)
+	log.Printf("Resource: %s, Resource name: %s\n", pfAddSpeedBurst, hclName)
+
+	backboneVirtualCircuitResult := RHclBackboneVirtualCircuitVlan()
+	speedBurstHcl := fmt.Sprintf(RResourceBackboneVirtualCircuitSpeedBurst, hclName, backboneVirtualCircuitResult.ResourceName, BackboneVcSpeedBurst)
+
+	return RHclBackboneVirtualCircuitSpeedBurstResult{
+		HclResultBase: HclResultBase{
+			Hcl:          fmt.Sprintf("%s\n%s", speedBurstHcl, backboneVirtualCircuitResult.Hcl),
+			Resource:     pfAddSpeedBurst,
+			ResourceName: resourceName,
+		},
+		Speed: BackboneVcSpeedBurst,
+	}
+}
+
 // packetfabric_point_to_point
 func RHclPointToPoint() RHclPointToPointResult {
 
 	var speed = portSpeed
-	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil, nil)
+	pop1, zone1, media, market1, err := GetPopAndZoneWithAvailablePort(speed, nil, nil, false)
 	if err != nil {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 	log.Println("Pop1, media, and speed set to: ", pop1, zone1, media, market1, speed)
 
-	pop2, zone2, _, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1, &media)
+	pop2, zone2, _, market2, err2 := GetPopAndZoneWithAvailablePort(speed, &market1, &media, false)
 	if err2 != nil {
 		log.Println("Error getting pop and zone with available port: ", err2)
 		log.Panic(err2)
@@ -1238,8 +1272,10 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 
 // packetfabric_cloud_router_connection_ipsec
 func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil)
+
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(CloudRouterConnIpsecSpeed, nil, nil, true)
 	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}
 
@@ -1390,7 +1426,6 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
-
 	var edgeAvailabilityDomain string
 
 	c, err := _createPFClient()
@@ -1770,13 +1805,13 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 // ###### Data-sources
 
 // data.packetfabric_locations_cloud
-func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
+func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
 	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
 
-	return DHclDatasourceLocationsCloudResult{
+	return DHclLocationsCloudResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocationsCloud,
@@ -1788,7 +1823,11 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 // data.packetfabric_locations_port_availability
 func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
@@ -1805,14 +1844,14 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 }
 
 // data.packetfabric_locations
-func DHclDataSourceLocations() DHclDatasourceLocationsResult {
+func DHclDataSourceLocations() DHclLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocations, hclName)
 
 	hcl := fmt.Sprintf(DDatasourceLocations, hclName)
 
-	return DHclDatasourceLocationsResult{
+	return DHclLocationsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocations,
@@ -1824,7 +1863,11 @@ func DHclDataSourceLocations() DHclDatasourceLocationsResult {
 // data.packetfabric_locations_pop_zones
 func DHclDataSourceZones() DHclLocationsZonesResult {
 
-	pop, _, _, _, _ := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil)
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsZones)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsZones, hclName)
@@ -1892,7 +1935,7 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 }
 
 // data.packetfabric_ports
-func DHclDataSourcePorts() DHclPortResult {
+func DHclDataSourcePorts() DHclPortsResult {
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1902,24 +1945,24 @@ func DHclDataSourcePorts() DHclPortResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPort, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
 	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
 
-	return DHclPortResult{
+	return DHclPortsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataPort,
+			Resource:     pfDataPorts,
 			ResourceName: resourceName,
 		},
 	}
 }
 
 // data.packetfabric_billing
-func DHclDatasourceBilling() DHclDatasourceBillingResult {
+func DHclDatasourceBilling() DHclBillingResult {
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
@@ -1932,7 +1975,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, billingHcl)
 
-	return DHclDatasourceBillingResult{
+	return DHclBillingResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
@@ -1959,6 +2002,27 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCsAwsHostedConn,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cs_dedicated_connections
+func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
+
+	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCsDedicatedConns)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
+
+	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
+
+	return DHclDedicatedConnectionsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCsDedicatedConns,
 			ResourceName: resourceName,
 		},
 	}
