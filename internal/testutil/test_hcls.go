@@ -52,6 +52,7 @@ const pfDataSourcePortVlans = "data.packetfabric_port_vlans"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -251,7 +252,7 @@ type RHclLinkAggregationGroupResult struct {
 }
 
 // packetfabric_link_aggregation_group
-type DHclDatasourceLinkAggregationGroupsResult struct {
+type DHclLinkAggregationGroupsResult struct {
 	HclResultBase
 }
 
@@ -567,7 +568,7 @@ type DHclPortsResult struct {
 }
 
 // data packetfabric_port_vlans
-type DHclDatasourcePortVlansResult struct {
+type DHclPortVlansResult struct {
 	HclResultBase
 }
 
@@ -1810,7 +1811,7 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 // ###### Data-sources
 
 // data.packetfabric_locations_cloud
-func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
+func DHclLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
@@ -1826,7 +1827,7 @@ func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHc
 }
 
 // data.packetfabric_locations_port_availability
-func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
+func DHclLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 
 	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
 	if err != nil {
@@ -1849,7 +1850,7 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 }
 
 // data.packetfabric_locations
-func DHclDataSourceLocations() DHclLocationsResult {
+func DHclLocations() DHclLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocations, hclName)
@@ -1866,7 +1867,7 @@ func DHclDataSourceLocations() DHclLocationsResult {
 }
 
 // data.packetfabric_locations_pop_zones
-func DHclDataSourceZones() DHclLocationsZonesResult {
+func DHclZones() DHclLocationsZonesResult {
 
 	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
 	if err != nil {
@@ -1889,7 +1890,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 }
 
 // data.packetfabric_locations_regions
-func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
+func DHclLocationsRegions() DHclLocationsRegionsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsRegions)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsRegions, hclName)
@@ -1906,7 +1907,7 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 }
 
 // data.packetfabric_activitylog
-func DHclDataSourceActivityLog() DHclActivityLogResult {
+func DHclActivityLog() DHclActivityLogResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
@@ -1923,7 +1924,7 @@ func DHclDataSourceActivityLog() DHclActivityLogResult {
 }
 
 // data.packetfabric_locations_markets
-func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
+func DHclLocationsMarkets() DHclLocationsMarketsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsMarkets)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsMarkets, hclName)
@@ -1940,7 +1941,7 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 }
 
 // data.packetfabric_billing
-func DHclDatasourceBilling() DHclBillingResult {
+func DHclBilling() DHclBillingResult {
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
@@ -1963,7 +1964,7 @@ func DHclDatasourceBilling() DHclBillingResult {
 }
 
 // data.packetfabric_ports
-func DHclDataSourcePorts() DHclPortsResult {
+func DHclPorts() DHclPortsResult {
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1990,7 +1991,7 @@ func DHclDataSourcePorts() DHclPortsResult {
 }
 
 // data.packetfabric_port_vlans
-func DHclDataSourcePortVlans() DHclDatasourcePortVlansResult {
+func DHclPortVlans() DHclPortVlansResult {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -2011,7 +2012,7 @@ func DHclDataSourcePortVlans() DHclDatasourcePortVlansResult {
 
 	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, portVlansHcl)
 
-	return DHclDatasourcePortVlansResult{
+	return DHclPortVlansResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataSourcePortVlans,
@@ -2021,7 +2022,7 @@ func DHclDataSourcePortVlans() DHclDatasourcePortVlansResult {
 }
 
 // data.packetfabric_link_aggregation_group
-func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
+func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
 	linkAggregationGroupResult := RHclLinkAggregationGroup()
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLinkAggregationGroups, hclName)
@@ -2033,7 +2034,7 @@ func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsRe
 
 	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
 
-	return DHclDatasourceLinkAggregationGroupsResult{
+	return DHclLinkAggregationGroupsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLinkAggregationGroups,
@@ -2043,7 +2044,7 @@ func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsRe
 }
 
 // data.packetfabric_cs_aws_hosted_connection
-func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
+func DHclHostedAwsConn() DHclCsAwsHostedConnectionResult {
 
 	csAwsHostedConnectionResult := RHclCsAwsHostedConnection()
 
@@ -2066,7 +2067,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 }
 
 // data.packetfabric_cs_dedicated_connections
-func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
+func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 
 	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
 
