@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceCloudRouterConnectionComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
 
-	datasourceCloudConnResult := testutil.DHclCloudConnection()
+	datasourceCloudConnResult := testutil.DHclCloudRouterConn()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
@@ -37,9 +37,9 @@ func TestAccDataSourceCloudRouterConnectionComputedRequiredFields(t *testing.T) 
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "description"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "uuid"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_provider_connection_id"),
-					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_connections.0.cloud_settings.0.vlan_id_pf"),
-					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_connections.0.cloud_settings.0.vlan_id_cust"),
-					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_connections.0.cloud_settings.0.svlan_id_cust"),
+					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_settings.0.vlan_id_pf"),
+					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_settings.0.vlan_id_cust"),
+					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "cloud_settings.0.svlan_id_cust"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "user_uuid"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "customer_uuid"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnResult.ResourceName, "time_created"),
