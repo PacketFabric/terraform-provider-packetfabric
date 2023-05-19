@@ -50,7 +50,7 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
-const pfDataDedicatedConns = "data.packetfabric_dedicated_connections"
+const pfDataCsDedicatedConns = "data.packetfabric_dedicated_connections"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
@@ -185,11 +185,6 @@ const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudEncap = "dot1q"     // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
-
-const CSAwsDedicatedConnectionSubscriptionTerm = 1
-const CSAwsDedicatedConnectionServiceClass = "longhaul"
-const CSAwsDedicatedConnectionAutoneg = false
-const CSAwsDedicatedConnectionSpeed = "1Gbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -2017,17 +2012,17 @@ func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
 
 	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataDedicatedConns)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCsDedicatedConns)
 
 	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataDedicatedConns, hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
 
 	return DHclDedicatedConnectionsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataDedicatedConns,
+			Resource:     pfDataCsDedicatedConns,
 			ResourceName: resourceName,
 		},
 	}
