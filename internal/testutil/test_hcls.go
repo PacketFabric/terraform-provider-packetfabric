@@ -953,9 +953,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 		false,
 		pop2,
 		zone2,
-		false,
-		hclName,
-		resourceName)
+		false)
 
 	return RHclPointToPointResult{
 		HclResultBase: HclResultBase{
@@ -2020,6 +2018,7 @@ func DHclPorts() DHclPortsResult {
 	if err != nil {
 		log.Panic(err)
 	}
+
 	portDetails := PortDetails{
 		PFClient:     c,
 		DesiredSpeed: portSpeed,
@@ -2028,9 +2027,13 @@ func DHclPorts() DHclPortsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
-	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
+	portResult := portDetails.RHclPort(false)
+	dataPortHcl := fmt.Sprintf(
+		DDataSourcePorts,
+		hclName,
+		portResult.ResourceName)
 
-	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataPortHcl)
 
 	return DHclPortsResult{
 		HclResultBase: HclResultBase{
@@ -2174,14 +2177,17 @@ func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
 // data.packetfabric_point_to_points
 func DHclPointToPoints() DHclPointToPointsResult {
 
-	pointToPointResult := RHclPointToPoint()
+	pointToPointsResult := RHclPointToPoint()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPoinToPoints)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPoinToPoints, hclName)
 
-	dataPointToPointHcl := fmt.Sprintf(DDatasourcePointToPoints, hclName)
+	dataPointToPointsHcl := fmt.Sprintf(
+		DDatasourcePointToPoints,
+		hclName,
+		pointToPointsResult.ResourceName)
 
-	hcl := fmt.Sprintf("%s\n%s", pointToPointResult.Hcl, dataPointToPointHcl)
+	hcl := fmt.Sprintf("%s\n%s", pointToPointsResult.Hcl, dataPointToPointsHcl)
 
 	return DHclPointToPointsResult{
 		HclResultBase: HclResultBase{
@@ -2223,7 +2229,10 @@ func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataCsDedicatedConns)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
 
-	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
+	dedicatedConnHCL := fmt.Sprintf(
+		DDatasourceDedicatedConns,
+		hclName,
+		csAwsDedicatedConnectionResult.ResourceName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
 
@@ -2296,7 +2305,8 @@ func DHclCloudRouterConns() DHclCloudRouterConnsResult {
 	dataCloudRouterConnsHcl := fmt.Sprintf(
 		DDatasourceCloudRouterConnections,
 		hclName,
-		cloudRouterConnectionsResult.AdditionalResourceName) // Cloud Router resource name
+		cloudRouterConnectionsResult.AdditionalResourceName, // Cloud Router resource name
+		cloudRouterConnectionsResult.ResourceName)           // Cloud Router Connection resource name (for the depend_on)
 
 	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionsResult.Hcl, dataCloudRouterConnsHcl)
 

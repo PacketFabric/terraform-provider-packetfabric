@@ -607,7 +607,6 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   members     = [%s.id]
   pop         = "%s"
 }
-
 resource "time_sleep" "wait_for_lag" {
   depends_on = [%s]
   destroy_duration = "3m"
@@ -658,10 +657,6 @@ const RResourcePointToPoint = `resource "packetfabric_point_to_point" "%s" {
     zone    = "%s"
     autoneg = %t
   }
-}
-resource "time_sleep" "wait_30_seconds_%s" {
-  depends_on = [%s]
-  create_duration = "30s"
 }`
 
 // Resource: packetfabric_port
@@ -723,19 +718,25 @@ const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" 
   provider = packetfabric
 }`
 
-// Datasource: packetfabric_activitylog
-const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
-  provider = packetfabric
-}`
-
 // Datasource: packetfabric_locations_markets
 const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
   provider = packetfabric
 }`
 
+// Datasource: packetfabric_activitylog
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+// Datasource: packetfabric_billing
+const DDatasourceBilling = `data "packetfabric_billing" "%s" {
+  circuit_id        = %s.id
+}`
+
 // Datasource: packetfabric_ports
 const DDataSourcePorts = `data "packetfabric_ports" "%s" {
-  provider          = packetfabric
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_port_vlans
@@ -752,7 +753,7 @@ const DDataSourcePortDeviceInfo = `data "packetfabric_port_device_info" "%s" {
 
 // Datasource: packetfabric_port_router_logs
 const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {
-  provider          = packetfabric
+  provider        = packetfabric
   port_circuit_id = %s.id
   time_from       = "%s"
   time_to         = "%s"
@@ -767,11 +768,7 @@ const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_gr
 // Datasource: packetfabric_point_to_points
 const DDatasourcePointToPoints = `data "packetfabric_point_to_points" "%s" {
   provider = packetfabric
-}`
-
-// Datasource: packetfabric_billing
-const DDatasourceBilling = `data "packetfabric_billing" "%s" {
-  circuit_id        = %s.id
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_cs_aws_hosted_connection
@@ -782,7 +779,8 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
 
 // Datasource: packetfabric_cs_dedicated_connections
 const DDatasourceDedicatedConns = `data "packetfabric_cs_dedicated_connections" "%s" {
-  provider          = packetfabric
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_cloud_router_connection_ipsec
@@ -799,5 +797,6 @@ const DDatasourceCloudRouterConnection = `data "packetfabric_cloud_router_connec
 
 // Datasource: packetfabric_cloud_router_connections
 const DDatasourceCloudRouterConnections = `data "packetfabric_cloud_router_connections" "%s" {
-  circuit_id        = %s.id
+  circuit_id = %s.id
+  depends_on = [%s]
 }`
