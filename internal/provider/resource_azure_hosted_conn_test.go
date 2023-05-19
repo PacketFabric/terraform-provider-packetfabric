@@ -12,7 +12,9 @@ import (
 
 func TestAccAzureHostedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
+
 	azureHostedConnectionResult := testutil.RHclCsAzureHostedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

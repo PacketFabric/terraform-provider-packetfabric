@@ -12,7 +12,9 @@ import (
 
 func TestAccGoogleHostedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"GOOGLE_CREDENTIALS", "TF_VAR_gcp_project_id"})
+
 	googleHostedConnectionResult := testutil.RHclCsGoogleHostedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

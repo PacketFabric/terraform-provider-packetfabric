@@ -12,7 +12,9 @@ import (
 
 func TestAccVcBackboneVlanRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	backboneVirtualCircuitResult := testutil.RHclBackboneVirtualCircuitVlan()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

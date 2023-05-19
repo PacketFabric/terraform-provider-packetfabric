@@ -11,7 +11,9 @@ import (
 
 func TestAccDatasourceHostedConnComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
+
 	datasourceHostedAwsConnResult := testutil.DHclDatasourceHostedAwsConn()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

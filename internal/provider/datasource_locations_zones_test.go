@@ -11,7 +11,9 @@ import (
 
 func TestAccDataSourceLocationsZonesComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	datasourceZonesResult := testutil.DHclDataSourceZones()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
