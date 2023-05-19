@@ -48,10 +48,11 @@ const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPorts = "data.packetfabric_ports"
+const pfDataSourcePortVlans = "data.packetfabric_port_vlans"
+const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
-const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -251,7 +252,7 @@ type RHclLinkAggregationGroupResult struct {
 }
 
 // packetfabric_link_aggregation_group
-type DHclDatasourceLinkAggregationGroupsResult struct {
+type DHclLinkAggregationGroupsResult struct {
 	HclResultBase
 }
 
@@ -546,13 +547,18 @@ type DHclLocationsRegionsResult struct {
 	HclResultBase
 }
 
+// data packetfabric_locations_markets
+type DHclLocationsMarketsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_activitylog
 type DHclActivityLogResult struct {
 	HclResultBase
 }
 
-// data packetfabric_locations_markets
-type DHclLocationsMarketsResult struct {
+// data packetfabric_billing
+type DHclBillingResult struct {
 	HclResultBase
 }
 
@@ -561,8 +567,8 @@ type DHclPortsResult struct {
 	HclResultBase
 }
 
-// data packetfabric_billing
-type DHclBillingResult struct {
+// data packetfabric_port_vlans
+type DHclPortVlansResult struct {
 	HclResultBase
 }
 
@@ -1804,47 +1810,8 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 
 // ###### Data-sources
 
-// data.packetfabric_locations_cloud
-func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
-	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
-
-	return DHclLocationsCloudResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataLocationsCloud,
-			ResourceName: resourceName,
-		},
-	}
-}
-
-// data.packetfabric_locations_port_availability
-func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
-
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
-	if err != nil {
-		log.Println("Error getting pop and zone with available port: ", err)
-		log.Panic(err)
-	}
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
-
-	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
-
-	return DHclLocationsPortAvailabilityResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataLocationsPortAvailability,
-			ResourceName: resourceName,
-		},
-	}
-}
-
 // data.packetfabric_locations
-func DHclDataSourceLocations() DHclLocationsResult {
+func DHclLocations() DHclLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocations, hclName)
@@ -1860,8 +1827,24 @@ func DHclDataSourceLocations() DHclLocationsResult {
 	}
 }
 
+// data.packetfabric_locations_cloud
+func DHclLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
+	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
+
+	return DHclLocationsCloudResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsCloud,
+			ResourceName: resourceName,
+		},
+	}
+}
+
 // data.packetfabric_locations_pop_zones
-func DHclDataSourceZones() DHclLocationsZonesResult {
+func DHclZones() DHclLocationsZonesResult {
 
 	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
 	if err != nil {
@@ -1884,7 +1867,7 @@ func DHclDataSourceZones() DHclLocationsZonesResult {
 }
 
 // data.packetfabric_locations_regions
-func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
+func DHclLocationsRegions() DHclLocationsRegionsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsRegions)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsRegions, hclName)
@@ -1900,25 +1883,8 @@ func DHclDataSourceLocationsRegions() DHclLocationsRegionsResult {
 	}
 }
 
-// data.packetfabric_activitylog
-func DHclDataSourceActivityLog() DHclActivityLogResult {
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
-
-	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
-
-	return DHclActivityLogResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataActivityLog,
-			ResourceName: resourceName,
-		},
-	}
-}
-
 // data.packetfabric_locations_markets
-func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
+func DHclLocationsMarkets() DHclLocationsMarketsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsMarkets)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsMarkets, hclName)
@@ -1934,8 +1900,71 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 	}
 }
 
+// data.packetfabric_locations_port_availability
+func DHclLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
+
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
+
+	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
+
+	return DHclLocationsPortAvailabilityResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsPortAvailability,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_activitylog
+func DHclActivityLog() DHclActivityLogResult {
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
+
+	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
+
+	return DHclActivityLogResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataActivityLog,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_billing
+func DHclBilling() DHclBillingResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataBilling)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataBilling, hclName)
+
+	billingHcl := fmt.Sprintf(DDatasourceBilling,
+		hclName,
+		hclCloudRouterRes.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, billingHcl)
+
+	return DHclBillingResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
 // data.packetfabric_ports
-func DHclDataSourcePorts() DHclPortsResult {
+func DHclPorts() DHclPortsResult {
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1961,31 +1990,61 @@ func DHclDataSourcePorts() DHclPortsResult {
 	}
 }
 
-// data.packetfabric_billing
-func DHclDatasourceBilling() DHclBillingResult {
+// data.packetfabric_port_vlans
+func DHclPortVlans() DHclPortVlansResult {
 
-	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataBilling)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataBilling, hclName)
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
 
-	billingHcl := fmt.Sprintf(DDatasourceBilling,
+	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortVlans)
+	portResult := portDetails.RHclPort(false)
+	portVlansHcl := fmt.Sprintf(
+		DDataSourcePortVlans,
 		hclName,
-		hclCloudRouterRes.ResourceName)
+		portResult.ResourceName)
 
-	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, billingHcl)
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, portVlansHcl)
 
-	return DHclBillingResult{
+	return DHclPortVlansResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataBilling,
+			Resource:     pfDataSourcePortVlans,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_link_aggregation_group
+func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
+	linkAggregationGroupResult := RHclLinkAggregationGroup()
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLinkAggregationGroups, hclName)
+
+	linkAggregationGroupsHcl := fmt.Sprintf(
+		DDatasourceLinkAggregationGroups,
+		hclName,
+		linkAggregationGroupResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
+
+	return DHclLinkAggregationGroupsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLinkAggregationGroups,
 			ResourceName: resourceName,
 		},
 	}
 }
 
 // data.packetfabric_cs_aws_hosted_connection
-func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
+func DHclHostedAwsConn() DHclCsAwsHostedConnectionResult {
 
 	csAwsHostedConnectionResult := RHclCsAwsHostedConnection()
 
@@ -2008,7 +2067,7 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 }
 
 // data.packetfabric_cs_dedicated_connections
-func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
+func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 
 	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
 
@@ -2023,28 +2082,6 @@ func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCsDedicatedConns,
-			ResourceName: resourceName,
-		},
-	}
-}
-
-// data.packetfabric_link_aggregation_group
-func DHclDatasourceLinkAggregationGroups() DHclDatasourceLinkAggregationGroupsResult {
-	linkAggregationGroupResult := RHclLinkAggregationGroup()
-	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLinkAggregationGroups, hclName)
-
-	linkAggregationGroupsHcl := fmt.Sprintf(
-		DDatasourceLinkAggregationGroups,
-		hclName,
-		linkAggregationGroupResult.ResourceName)
-
-	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
-
-	return DHclDatasourceLinkAggregationGroupsResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataLinkAggregationGroups,
 			ResourceName: resourceName,
 		},
 	}
