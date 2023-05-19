@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func datasourceDedicatedConn() *schema.Resource {
+func datasourceDedicatedCloudConnections() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDedicatedConRead,
 		Schema: map[string]*schema.Schema{

@@ -694,11 +694,6 @@ const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
 
 // End of resources templates for required fields only
 
-<<<<<<< HEAD
-const DDatasourceAwsDedicatedConn = `data "packetfabric_cs_dedicated_connections" "%s" {
-  provider          = packetfabric
-}`
-=======
 // Datasource: packetfabric_locations_cloud
 const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
   provider              = packetfabric
@@ -754,9 +749,13 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   cloud_circuit_id  = %s.id
 }`
 
+// Datasource: packetfabric_dedicated_connections
+const DDatasourceDedicatedConns = `data "packetfabric_dedicated_connections" "%s" {
+  provider          = packetfabric
+}`
+
 // Datasource: packetfabric_link_aggregation_group
 const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
   provider       = packetfabric
   lag_circuit_id = %s.id
 }`
->>>>>>> main

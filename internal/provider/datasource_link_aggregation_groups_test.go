@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceLinkAggregationGroupsComputedRequiredFields(t *testing.T) {
+func TestAccDataSourceLinkAggregationGroupsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
 	datasourceLinkAggregationGroupsResult := testutil.DHclDatasourceLinkAggregationGroups()

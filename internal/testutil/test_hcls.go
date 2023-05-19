@@ -31,10 +31,6 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-<<<<<<< HEAD
-const pfDataAwsDedicatedConn = "data.packetfabric_cs_dedicated_connections."
-const pfCSAwsDedicatedConnection = "packetfabric_cs_aws_dedicated_connection"
-=======
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
 const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
@@ -54,8 +50,8 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
+const pfDataDedicatedConns = "data.packetfabric_dedicated_connections"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
->>>>>>> main
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -531,7 +527,7 @@ type RHclCsAzureDedicatedConnectionResult struct {
 // ###### Data-sources
 
 // data packetfabric_locations_cloud
-type DHclDatasourceLocationsCloudResult struct {
+type DHclLocationsCloudResult struct {
 	HclResultBase
 }
 
@@ -541,7 +537,7 @@ type DHclLocationsPortAvailabilityResult struct {
 }
 
 // data packetfabric_locations
-type DHclDatasourceLocationsResult struct {
+type DHclLocationsResult struct {
 	HclResultBase
 }
 
@@ -571,7 +567,7 @@ type DHclPortResult struct {
 }
 
 // data packetfabric_billing
-type DHclDatasourceBillingResult struct {
+type DHclBillingResult struct {
 	HclResultBase
 }
 
@@ -581,20 +577,8 @@ type DHclCsAwsHostedConnectionResult struct {
 }
 
 // data packetfabric_cs_dedicated_connections
-type DHclAwsDedicatedConnResult struct {
+type DHclDedicatedConnectionsResult struct {
 	HclResultBase
-}
-
-// packetfabric_cs_aws_dedicated_connection
-type RHclCsAwsDedicatedConnectionResult struct {
-	HclResultBase
-	AwsRegion        string
-	Description      string
-	Pop              string
-	SubscriptionTerm int
-	ServiceClass     string
-	Autoneg          bool
-	Speed            string
 }
 
 // Patterns:
@@ -1445,96 +1429,9 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 	}
 }
 
-<<<<<<< HEAD
-// packetfabric_cs_aws_dedicated_connection
-func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	resourceName, hclName := _generateResourceName(pfCSAwsDedicatedConnection)
-	uniqueDesc := _generateUniqueNameOrDesc(pfCSAwsDedicatedConnection)
-	cloudLocations, err := c.GetCloudLocations("aws", "dedicated", false, true, false, "", "", "", "", "")
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	location := cloudLocations[0]
-
-	hcl := fmt.Sprintf(
-		RResourceCSAwsDedicatedConnection,
-		hclName,
-		location.CloudConnectionDetails.Region,
-		uniqueDesc,
-		location.Pop,
-		CSAwsDedicatedConnectionSubscriptionTerm,
-		CSAwsDedicatedConnectionServiceClass,
-		CSAwsDedicatedConnectionAutoneg,
-		CSAwsDedicatedConnectionSpeed,
-	)
-
-	return RHclCsAwsDedicatedConnectionResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfCSAwsDedicatedConnection,
-			ResourceName: resourceName,
-		},
-		AwsRegion:        location.Region,
-		Description:      uniqueDesc,
-		Pop:              location.Pop,
-		SubscriptionTerm: CSAwsDedicatedConnectionSubscriptionTerm,
-		ServiceClass:     CSAwsDedicatedConnectionServiceClass,
-		Autoneg:          CSAwsDedicatedConnectionAutoneg,
-		Speed:            CSAwsDedicatedConnectionSpeed,
-	}
-}
-
-// packetfabric_cs_aws_dedicated_connection
-func DHclAwsDedicatedConnection() DHclAwsDedicatedConnResult {
-
-	resourceName, hclName := _generateResourceName(pfDataAwsDedicatedConn)
-	dedicatedConnHCL := fmt.Sprintf(DDatasourceAwsDedicatedConn, hclName)
-
-	hcl := fmt.Sprintf("%s\n%s", RHclCsAwsDedicatedConnection().Hcl, dedicatedConnHCL)
-
-	return DHclAwsDedicatedConnResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataAwsDedicatedConn,
-			ResourceName: resourceName,
-		},
-	}
-}
-
-func (details PortDetails) _findAvailableCloudPopZoneAndMedia() (pop, zone, media string) {
-	popsAvailable, _ := details.FetchCloudPops()
-	popsToSkip := make([]string, 0)
-	for _, popAvailable := range popsAvailable {
-		if len(popsToSkip) == len(popsAvailable) {
-			log.Fatal(errors.New("there's no port available on any pop"))
-		}
-		if _contains(popsToSkip, pop) {
-			continue
-		}
-		if zoneAvailable, mediaAvailable, availabilityErr := details.GetAvailableCloudPort(popAvailable); availabilityErr != nil {
-			popsToSkip = append(popsToSkip, popAvailable)
-			continue
-		} else {
-			pop = popAvailable
-			media = mediaAvailable
-			zone = zoneAvailable
-			return
-		}
-	}
-	return
-}
-=======
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
 	var edgeAvailabilityDomain string
->>>>>>> main
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -1913,13 +1810,13 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 // ###### Data-sources
 
 // data.packetfabric_locations_cloud
-func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclDatasourceLocationsCloudResult {
+func DHclDataSourceLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
 	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
 
-	return DHclDatasourceLocationsCloudResult{
+	return DHclLocationsCloudResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocationsCloud,
@@ -1952,14 +1849,14 @@ func DHclDataSourceLocationsPortAvailability() DHclLocationsPortAvailabilityResu
 }
 
 // data.packetfabric_locations
-func DHclDataSourceLocations() DHclDatasourceLocationsResult {
+func DHclDataSourceLocations() DHclLocationsResult {
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLocations)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocations, hclName)
 
 	hcl := fmt.Sprintf(DDatasourceLocations, hclName)
 
-	return DHclDatasourceLocationsResult{
+	return DHclLocationsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocations,
@@ -2070,7 +1967,7 @@ func DHclDataSourcePorts() DHclPortResult {
 }
 
 // data.packetfabric_billing
-func DHclDatasourceBilling() DHclDatasourceBillingResult {
+func DHclDatasourceBilling() DHclBillingResult {
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 
@@ -2083,7 +1980,7 @@ func DHclDatasourceBilling() DHclDatasourceBillingResult {
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, billingHcl)
 
-	return DHclDatasourceBillingResult{
+	return DHclBillingResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
@@ -2110,6 +2007,26 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCsAwsHostedConn,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cs_dedicated_connections
+func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
+
+	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
+
+	resourceName, hclName := _generateResourceName(pfDataDedicatedConns)
+	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataDedicatedConns, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
+
+	return DHclAwsDedicatedConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataDedicatedConns,
 			ResourceName: resourceName,
 		},
 	}
