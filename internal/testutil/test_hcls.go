@@ -58,6 +58,8 @@ const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataCloudRouterConnIpsec = "data.packetfabric_cloud_router_connection_ipsec"
+const pfDataCloudRouterConn = "data.packetfabric_cloud_router_connection"
+const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -607,6 +609,16 @@ type DHclCloudRouterConnIpsecResult struct {
 	HclResultBase
 }
 
+// data packetfabric_cloud_router_connection
+type DHclCloudRouterConnResult struct {
+	HclResultBase
+}
+
+// data packetfabric_cloud_router_connections
+type DHclCloudRouterConnsResult struct {
+	HclResultBase
+}
+
 // Patterns:
 // Resource schema for required fields only
 // - func RHcl...
@@ -941,9 +953,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 		false,
 		pop2,
 		zone2,
-		false,
-		hclName,
-		resourceName)
+		false)
 
 	return RHclPointToPointResult{
 		HclResultBase: HclResultBase{
@@ -2008,6 +2018,7 @@ func DHclPorts() DHclPortsResult {
 	if err != nil {
 		log.Panic(err)
 	}
+
 	portDetails := PortDetails{
 		PFClient:     c,
 		DesiredSpeed: portSpeed,
@@ -2016,9 +2027,13 @@ func DHclPorts() DHclPortsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
-	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
+	portResult := portDetails.RHclPort(false)
+	dataPortHcl := fmt.Sprintf(
+		DDataSourcePorts,
+		hclName,
+		portResult.ResourceName)
 
-	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataPortHcl)
 
 	return DHclPortsResult{
 		HclResultBase: HclResultBase{
@@ -2162,14 +2177,17 @@ func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
 // data.packetfabric_point_to_points
 func DHclPointToPoints() DHclPointToPointsResult {
 
-	pointToPointResult := RHclPointToPoint()
+	pointToPointsResult := RHclPointToPoint()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataPoinToPoints)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPoinToPoints, hclName)
 
-	dataPointToPointHcl := fmt.Sprintf(DDatasourcePointToPoints, hclName)
+	dataPointToPointsHcl := fmt.Sprintf(
+		DDatasourcePointToPoints,
+		hclName,
+		pointToPointsResult.ResourceName)
 
-	hcl := fmt.Sprintf("%s\n%s", pointToPointResult.Hcl, dataPointToPointHcl)
+	hcl := fmt.Sprintf("%s\n%s", pointToPointsResult.Hcl, dataPointToPointsHcl)
 
 	return DHclPointToPointsResult{
 		HclResultBase: HclResultBase{
@@ -2211,7 +2229,10 @@ func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 	resourceName, hclName := GenerateUniqueResourceName(pfDataCsDedicatedConns)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
 
-	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
+	dedicatedConnHCL := fmt.Sprintf(
+		DDatasourceDedicatedConns,
+		hclName,
+		csAwsDedicatedConnectionResult.ResourceName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
 
@@ -2230,7 +2251,7 @@ func DHclCloudRouterConnIpsec() DHclCloudRouterConnIpsecResult {
 	cloudRouterConnectionIpsecResult := RHclCloudRouterConnectionIpsec()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudRouterConnIpsec)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCloudRouterConnIpsec, hclName)
 
 	dataCloudRouterIpsecHcl := fmt.Sprintf(
 		DDatasourceCloudRouterConnectionIpsec,
@@ -2243,6 +2264,56 @@ func DHclCloudRouterConnIpsec() DHclCloudRouterConnIpsecResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCloudRouterConnIpsec,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_router_connection
+func DHclCloudRouterConn() DHclCloudRouterConnResult {
+
+	cloudRouterConnectionResult := RHclCloudRouterConnectionAws()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudRouterConn)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCloudRouterConn, hclName)
+
+	dataCloudRouterConnHcl := fmt.Sprintf(
+		DDatasourceCloudRouterConnection,
+		hclName,
+		cloudRouterConnectionResult.AdditionalResourceName, // Cloud Router resource name
+		cloudRouterConnectionResult.ResourceName)           // Cloud Router Connection resource name
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionResult.Hcl, dataCloudRouterConnHcl)
+
+	return DHclCloudRouterConnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCloudRouterConn,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_router_connections
+func DHclCloudRouterConns() DHclCloudRouterConnsResult {
+
+	cloudRouterConnectionsResult := RHclCloudRouterConnectionAws()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudRouterConns)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCloudRouterConns, hclName)
+
+	dataCloudRouterConnsHcl := fmt.Sprintf(
+		DDatasourceCloudRouterConnections,
+		hclName,
+		cloudRouterConnectionsResult.AdditionalResourceName, // Cloud Router resource name
+		cloudRouterConnectionsResult.ResourceName)           // Cloud Router Connection resource name (for the depend_on)
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionsResult.Hcl, dataCloudRouterConnsHcl)
+
+	return DHclCloudRouterConnsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCloudRouterConns,
 			ResourceName: resourceName,
 		},
 	}

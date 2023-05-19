@@ -16,8 +16,7 @@ func TestAccPointToPointRequiredFields(t *testing.T) {
 	pointToPointResult := testutil.RHclPointToPoint()
 
 	resource.ParallelTest(t, resource.TestCase{
-		Providers:         testAccProviders,
-		ExternalProviders: testAccExternalProviders,
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: pointToPointResult.Hcl,
