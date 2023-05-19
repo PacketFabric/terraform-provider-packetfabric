@@ -40,7 +40,7 @@ resource "packetfabric_point_to_point" "ptp1" {
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
-- `endpoints` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--endpoints))
+- `endpoints` (Block List, Min: 1) (see [below for nested schema](#nestedblock--endpoints))
 - `media` (String) Optic media type.
 
 	Enum: ["LX" "EX" "ZX" "LR" "ER" "ER DWDM" "ZR" "ZR DWDM" "LR4" "ER4" "CWDM4" "LR4" "ER4 Lite"]
@@ -53,15 +53,16 @@ resource "packetfabric_point_to_point" "ptp1" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
-- `ptp_circuit_id` (String) The point-to-point connection ID.
+- `ptp_uuid` (String) The point-to-point connection UUID.
 
 <a id="nestedblock--endpoints"></a>
 ### Nested Schema for `endpoints`
@@ -76,6 +77,10 @@ Optional:
 
 - `customer_site_code` (String) Unique site code of the customer's equipment.
 - `loa` (String) A base64 encoded string of a PDF of a LOA.
+
+Read-Only:
+
+- `port_circuit_id` (String) The circuit ID for the port. This starts with "PF-AP-"
 
 
 <a id="nestedblock--timeouts"></a>

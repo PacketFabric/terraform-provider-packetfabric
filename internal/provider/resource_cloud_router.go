@@ -71,12 +71,17 @@ func resourceCloudRouter() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -132,9 +137,7 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			regions = append(regions, region.Code)
 		}
 		_ = d.Set("regions", regions)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 	}
 
 	if _, ok := d.GetOk("labels"); ok {
@@ -143,6 +146,14 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }
@@ -189,9 +200,16 @@ func resourceCloudRouterDelete(ctx context.Context, d *schema.ResourceData, m in
 	var diags diag.Diagnostics
 
 	cID := d.Get("id").(string)
-	_, err := c.DeleteCloudRouter(cID)
+
+	etlDiags, err := addETLWarning(c, cID)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+	diags = append(diags, etlDiags...)
+
+	_, err2 := c.DeleteCloudRouter(cID)
+	if err2 != nil {
+		return diag.FromErr(err2)
 	}
 
 	d.SetId("")

@@ -9,18 +9,16 @@ package testutil
 // Begin of resources templates for required fields only
 
 // Resource: packetfabric_backbone_virtual_circuit
-const RResourceBackboneVirtulalCircuit = `resource "packetfabric_backbone_virtual_circuit" "%s" {
+const RResourceBackboneVirtualCircuitVlan = `resource "packetfabric_backbone_virtual_circuit" "%s" {
   provider    = packetfabric
   description = "%s"
   epl         = %t
   interface_a {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   interface_z {
     port_circuit_id = %s.id
-    untagged        = %t
     vlan            = %v
   }
   bandwidth {
@@ -52,14 +50,6 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
   speed         = "%s"
 }`
 
-// Resource: packetfabric_billing_modify_order
-const RResourceBillingModifyOrder = `resource "packetfabric_billing_modify_order" "%s" {
-  provider             = packetfabric
-  circuit_id           = %s.id
-  subscription_term    = %v
-  speed                = "%s"
-}`
-
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
 	provider      = packetfabric
@@ -68,20 +58,27 @@ const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "
   asn           = %v
 	capacity      = "%s"
   regions       = ["%s", "%s"]
-  }
-  
-  resource "time_sleep" "wait_10_seconds" {
-    depends_on = [%s]
-    destroy_duration = "10s"
-  }
-  `
+  }`
+
+// Resource: packetfabric_cloud_router_connection_aws
+const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
+  provider        = packetfabric
+  circuit_id      = %s.id
+  aws_account_id  = "%s"
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  zone            = "%s"
+  speed           = "%s"
+}`
 
 // Resource: packetfabric_cloud_router_bgp_session
 const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_session" "%s" {
 	provider       = packetfabric
 	circuit_id     = %s.id
 	connection_id  = %s.id
-	address_family = "%s"
+  remote_address = "%s"
+  l3_address     = "%s"
 	remote_asn     = %v
 	prefixes {
 		prefix = "%s"
@@ -93,46 +90,138 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	}
 }`
 
-// Resource: packetfabric_cloud_router_connection_aws
-const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
-  provider        = packetfabric
-  circuit_id      = %s.id
-  aws_account_id  = "%s"
-  account_uuid    = "%s"
-  description     = "%s"
-  pop             = "%s"
-  speed           = "%s"
-}`
-
 // Resource: packetfabric_cloud_router_connection_azure
-const RResourceCloudRouterConnectionAzure = `resource "packetfabric_cloud_router_connection_azure" "%s" {
+const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+resource "azurerm_resource_group" "resource_group1" {
+  name     = "terraform-test-acc-azure-rg1"
+  location = "%s"
+}
+resource "azurerm_virtual_network" "virtual_network1" {
+  name                = "terraform-test-acc-azure-vnet1"
+  location            = "%s"
+  resource_group_name = azurerm_resource_group.resource_group1.name
+  address_space       = ["%s"]
+  tags = {
+    environment = "terraform-test-acc-azure1"
+  }
+}
+resource "azurerm_subnet" "subnet1" {
+  name                 = "terraform-test-acc-azure-subnet1"
+  address_prefixes     = ["%s"]
+  resource_group_name  = azurerm_resource_group.resource_group1.name
+  virtual_network_name = azurerm_virtual_network.virtual_network1.name
+}
+resource "azurerm_express_route_circuit" "azure_express_route1" {
+  name                  = "terraform-test-acc-azure-express-route1"
+  resource_group_name   = azurerm_resource_group.resource_group1.name
+  location              = "%s"
+  peering_location      = "%s"
+  service_provider_name = "%s"
+  bandwidth_in_mbps     = %v
+  sku {
+    tier   = "%s"
+    family = "%s"
+  }
+  tags = {
+    environment = "terraform-test-acc-azure1"
+  }
+}
+resource "packetfabric_cloud_router_connection_azure" "%s" {
   provider          = packetfabric
-  description       = "%s"
-  account_uuid      = "%s"
   circuit_id        = %s.id
-  azure_service_key = "%s"
+  account_uuid      = "%s"
+  description       = "%s"
   speed             = "%s"
+  azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
-const RResourceCloudRouterConnectionGoogle = `resource "packetfabric_cloud_router_connection_google" "%s" {
+const RResourceCloudRouterConnectionGoogle = `variable "gcp_project_id" {
+  type = string
+}
+resource "google_compute_router" "google_router1" {
+  provider = google
+  project  = var.gcp_project_id # set in Env
+  region   = "%s"
+  name     = "terraform-test-acc-google-router1"
+  network  = "%s"
+  bgp {
+    asn               = 16550
+    advertise_mode    = "DEFAULT"
+  }
+}
+resource "google_compute_interconnect_attachment" "google_interconnect1" {
+  provider                 = google
+  project                  = var.gcp_project_id # set in Env
+  name                     = "terraform-test-acc-google-interconnect1"
+  region                   = "%s"
+  description              = "terraform Test ACC Interconnect to PacketFabric Network"
+  type                     = "PARTNER"
+  edge_availability_domain = "%s"
+  admin_enabled            = true
+  router                   = google_compute_router.google_router1.id
+}
+resource "packetfabric_cloud_router_connection_google" "%s" {
   provider                    = packetfabric
-  description                 = "%s"
   circuit_id                  = %s.id
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
+  account_uuid                = "%s"
+  description                 = "%s"
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect1.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect1.name
   pop                         = "%s"
   speed                       = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_connection_ibm
-const RResourceCloudRouterConnectionIBM = `resource "packetfabric_cloud_router_connection_ibm" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  circuit_id  = %s.id
-  ibm_bgp_asn = %v
-  pop         = "%s"
-  speed       = "%s"
+const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_connection_ibm" "%s" {
+  provider     = packetfabric
+  circuit_id   = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone          = "%s"
+  speed        = "%s"
+  ibm_bgp_asn  = %v
+}
+resource "time_sleep" "wait_ibm_connection1" {
+  create_duration = "3m"
+}
+provider "ibm" {
+  region = "%s"
+}
+data "ibm_dl_gateway" "current1" {
+  provider   = ibm
+  name       = "%s"
+  depends_on = [time_sleep.wait_ibm_connection1]
+}
+variable "ibm_resource_group" {
+  type        = string
+}
+data "ibm_resource_group" "existing_rg1" {
+  provider   = ibm
+  name       = var.ibm_resource_group # set in Env
+}
+resource "ibm_dl_gateway_action" "confirmation1" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current1.id
+  resource_group = data.ibm_resource_group.existing_rg1.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true
+  bgp_asn        = %v
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps     = %v
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }`
 
 // Resource: packetfabric_cloud_router_connection_ipsec
@@ -157,13 +246,71 @@ const RResourceCloudRouterConnectionIpsec = `resource "packetfabric_cloud_router
 }`
 
 // Resource: packetfabric_cloud_router_connection_oracle
-const RResourceCloudRouterconnectionOracle = `resource "packetfabric_cloud_router_connection_oracle" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  circuit_id  = %s.id
-  region      = "%s"
-  vc_ocid     = "%s"
-  pop         = "%s"
+const RResourceCloudRouterConnectionOracle = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider1" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect1" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect1"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = "%s"
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider1.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cloud_router_connection_oracle" "%s" {
+  provider     = packetfabric
+  circuit_id   = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vc_ocid      = oci_core_virtual_circuit.fast_connect1.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_connection_port
@@ -171,8 +318,9 @@ const RResourceCloudRouterConnectionPort = `resource "packetfabric_cloud_router_
   provider        = packetfabric
   description     = "%s"
   circuit_id      = %s.id
-  port_circuit_id = "%s"
+  port_circuit_id = %s.id
   speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_aws_dedicated_connection
@@ -181,6 +329,7 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
   aws_region        = "%s"
   description       = "%s"
   pop               = "%s"
+  zone              = "%s"
   subscription_term = %v
   service_class     = "%s"
   autoneg           = %t
@@ -190,21 +339,14 @@ const RResourceCSAwsDedicatedConnection = `resource "packetfabric_cs_aws_dedicat
 // Resource: packetfabric_cs_aws_hosted_connection
 const RResourceCSAwsHostedConnection = `resource "packetfabric_cs_aws_hosted_connection" "%s" {
   provider       = packetfabric
-  description    = "%s"
-  aws_account_id = "%s"
-  port           = %s.id
-  speed          = "%s"
-  pop            = "%s"
-  vlan           = %v
-}`
-
-// Resource: packetfabric_cs_aws_hosted_marketplace_connection
-const RResourceCSAwsHostedMarketplaceConnection = `resource "packetfabric_cs_aws_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  routing_id  = %s.id
-  market      = "%s"
-  speed       = "%s"
-  pop         = "%s"
+  port            = %s.id
+  aws_account_id  = "%s"
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  zone            = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_azure_dedicated_connection
@@ -212,6 +354,7 @@ const RResourceCSAzureDedicatedConnection = `resource "packetfabric_cs_azure_ded
   provider          = packetfabric
   description       = "%s"
   pop               = "%s"
+  zone              = "%s"
   subscription_term = %v
   service_class     = "%s"
   encapsulation     = "%s"
@@ -220,32 +363,63 @@ const RResourceCSAzureDedicatedConnection = `resource "packetfabric_cs_azure_ded
 }`
 
 // Resource: packetfabric_cs_azure_hosted_connection
-const RResourceCSAzureHostedConnection = `resource "packetfabric_cs_azure_hosted_connection" "%s" {
+const RResourceCSAzureHostedConnection = `provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+resource "azurerm_resource_group" "resource_group2" {
+  name     = "terraform-test-acc-azure-rg2"
+  location = "%s"
+}
+resource "azurerm_virtual_network" "virtual_network2" {
+  name                = "terraform-test-acc-azure-vnet2"
+  location            = "%s"
+  resource_group_name = azurerm_resource_group.resource_group2.name
+  address_space       = ["%s"]
+  tags = {
+    environment = "terraform-test-acc-azure2"
+  }
+}
+resource "azurerm_subnet" "subnet" {
+  name                 = "terraform-test-acc-azure-subnet2"
+  address_prefixes     = ["%s"]
+  resource_group_name  = azurerm_resource_group.resource_group2.name
+  virtual_network_name = azurerm_virtual_network.virtual_network2.name
+}
+resource "azurerm_express_route_circuit" "azure_express_route2" {
+  name                  = "terraform-test-acc-azure-express-route2"
+  resource_group_name   = azurerm_resource_group.resource_group2.name
+  location              = "%s"
+  peering_location      = "%s"
+  service_provider_name = "%s"
+  bandwidth_in_mbps     = %v
+  sku {
+    tier   = "%s"
+    family = "%s"
+  }
+  tags = {
+    environment = "terraform-test-acc-azure2"
+  }
+}
+resource "packetfabric_cs_azure_hosted_connection" "%s" {
   provider          = packetfabric
-  description       = "%s"
-  azure_service_key = "%s"
   port              = %s.id
+  account_uuid      = "%s"
+  description       = "%s"
+  azure_service_key = azurerm_express_route_circuit.azure_express_route2.service_key
   speed             = "%s"
   vlan_private      = %v
-  vlan_microsoft    = %v
-}`
-
-// Resource: packetfabric_cs_azure_hosted_marketplace_connection
-const RResourceCSAzureHostedMarketplaceConnection = `resource "packetfabric_cs_azure_hosted_marketplace_connection" "%s" {
-  provider          = packetfabric
-  description       = "%s"
-  azure_service_key = "%s"
-  routing_id        = %s.id
-  market            = "%s"
-  speed             = "%s"
 }`
 
 // Resource: packetfabric_cs_google_dedicated_connection
 const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_dedicated_connection" "%s" {
   provider          = packetfabric
   description       = "%s"
-  zone              = "%s"
   pop               = "%s"
+  zone              = "%s"
   subscription_term = %v
   service_class     = "%s"
   autoneg           = %t
@@ -253,62 +427,157 @@ const RResourceCSGoogleDedicatedConnection = `resource "packetfabric_cs_google_d
 }`
 
 // Resource: packetfabric_cs_google_hosted_connection
-const RResourceCSGoogleHostedConnection = `resource "packetfabric_cs_google_hosted_connection" "%s" {
+const RResourceCSGoogleHostedConnection = `variable "gcp_project_id" {
+  type = string
+}
+resource "google_compute_router" "google_router2" {
+  provider = google
+  project  = var.gcp_project_id # set in Env
+  region   = "%s"
+  name     = "terraform-test-acc-google-router2"
+  network  = "%s"
+  bgp {
+    asn               = 16550
+    advertise_mode    = "DEFAULT"
+  }
+}
+resource "google_compute_interconnect_attachment" "google_interconnect2" {
+  provider                 = google
+  project                  = var.gcp_project_id # set in Env
+  name                     = "terraform-test-acc-google-interconnect2"
+  region                   = "%s"
+  description              = "terraform Test ACC Interconnect to PacketFabric Network"
+  type                     = "PARTNER"
+  edge_availability_domain = "%s"
+  admin_enabled            = true
+  router                   = google_compute_router.google_router2.id
+}
+resource "packetfabric_cs_google_hosted_connection" "%s" {
   provider                    = packetfabric
-  description                 = "%s"
   port                        = %s.id
-  speed                       = "%s"
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
-  pop                         = "%s"
-  vlan                        = %v
-}`
-
-// Resource: packetfabric_cs_google_hosted_marketplace_connection
-const RResourceCSGGoogleHostedMarketplaceConnection = `resource "packetfabric_cs_google_hosted_marketplace_connection" "%s" {
-  provider                    = packetfabric
-  description                 = "%s"
-  google_pairing_key          = "%s"
-  google_vlan_attachment_name = "%s"
-  routing_id                  = %s.id
-  market                      = "%s"
-  speed                       = "%s"
-  pop                         = "%s"
-
+  google_pairing_key          = google_compute_interconnect_attachment.google_interconnect2.pairing_key
+  google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect2.name
+  account_uuid    = "%s"
+  description     = "%s"
+  pop             = "%s"
+  speed           = "%s"
+  vlan            = %v
 }`
 
 // Resource: packetfabric_cs_ibm_hosted_connection
-const RResourceCSIBMHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
-  provider    = packetfabric
-  ibm_bgp_asn = %v
-  description = "%s"
-  pop         = "%s"
-  port        = %s.id
-  vlan        = %v
-  speed       = "%s"
+const RResourceCSIbmHostedConnection = `resource "packetfabric_cs_ibm_hosted_connection" "%s" {
+  provider     = packetfabric
+  port         = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  speed        = "%s"
+  vlan         = %v
+  ibm_bgp_asn  = %v
+}
+resource "time_sleep" "wait_ibm_connection2" {
+  create_duration = "5m"
+}
+provider "ibm" {
+  region = "%s"
+}
+data "ibm_dl_gateway" "current2" {
+  provider   = ibm
+  name       = "%s"
+  depends_on = [time_sleep.wait_ibm_connection2]
+}
+variable "ibm_resource_group" {
+  type        = string
+}
+data "ibm_resource_group" "existing_rg2" {
+  provider   = ibm
+  name       = var.ibm_resource_group # set in Env
+}
+resource "ibm_dl_gateway_action" "confirmation2" {
+  provider       = ibm
+  gateway        = data.ibm_dl_gateway.current2.id
+  resource_group = data.ibm_resource_group.existing_rg2.id
+  action         = "create_gateway_approve"
+  global         = true
+  metered        = true
+  bgp_asn        = %v
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps     = %v
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }`
 
 // Resource: packetfabric_cs_oracle_hosted_connection
-const RResourceCSOracleHostedConnection = `resource "packetfabric_cs_oracle_hosted_connection" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
-  port        = %s.id
-  pop         = "%s"
-  zone        = "%s"
-  vlan        = %v
-}`
-
-// Resource: packetfabric_cs_oracle_hosted_marketplace_connection
-const RResourceCSOracleHostedMarketplaceConnection = `resource "packetfabric_cs_oracle_hosted_marketplace_connection" "%s" {
-  provider    = packetfabric
-  description = "%s"
-  vc_ocid     = "%s"
-  region      = "%s"
-  routing_id  = %s.id
-  market      = "%s"
-  pop         = "%s"
+const RResourceCSOracleHostedConnection = `variable "parent_compartment_id" {
+  type        = string
+}
+variable "fingerprint" {
+  type        = string
+  sensitive   = true
+}
+variable "private_key" {
+  type        = string
+  sensitive   = true
+}
+variable "tenancy_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "user_ocid" {
+  type        = string
+  sensitive   = true
+}
+variable "pf_cs_oracle_drg_ocid" {
+  type        = string
+}
+provider "oci" {
+  region       = "%s"
+  auth         = "APIKey"
+  tenancy_ocid = var.tenancy_ocid
+  user_ocid    = var.user_ocid
+  private_key  = replace("${var.private_key}", "\\n", "\n")
+  fingerprint  = var.fingerprint
+}
+data "oci_core_fast_connect_provider_services" "packetfabric_provider2" {
+  provider = oci
+  compartment_id = var.parent_compartment_id
+  filter {
+    name   = "provider_name"
+    values = ["%s"]
+  }
+}
+resource "oci_core_virtual_circuit" "fast_connect2" {
+  provider = oci
+  compartment_id       = var.parent_compartment_id
+  display_name         = "terraform-test-acc-oracle-fastconnect2"
+  region               = "%s"
+  type                 = "PRIVATE"
+  gateway_id           = var.pf_cs_oracle_drg_ocid
+  bandwidth_shape_name = "%s"
+  customer_asn         = %v
+  ip_mtu               = "MTU_1500"
+  is_bfd_enabled       = false
+  cross_connect_mappings {
+    bgp_md5auth_key         = "%s"
+    customer_bgp_peering_ip = "%s"
+    oracle_bgp_peering_ip   = "%s"
+  }
+  provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider2.fast_connect_provider_services.0.id
+}
+resource "packetfabric_cs_oracle_hosted_connection" "%s" {
+  provider     = packetfabric
+  port         = %s.id
+  account_uuid = "%s"
+  description  = "%s"
+  pop          = "%s"
+  zone         = "%s"
+  vlan         = %v
+  vc_ocid      = oci_core_virtual_circuit.fast_connect2.id
+  region       = "%s"
 }`
 
 // Resource: packetfabric_ix_virtual_circuit_marketplace
@@ -335,9 +604,15 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   provider    = packetfabric
   description = "%s"
   interval    = "%s"
-  members     = ["%s", "%s"]
+  members     = [%s.id]
   pop         = "%s"
-}`
+}
+
+resource "time_sleep" "wait_for_lag" {
+  depends_on = [%s]
+  destroy_duration = "3m"
+}
+`
 
 // Resource: packetfabric_marketplace_service_port_accept_request
 const RResourceMarketplaceServicePortAcceptRequest = `resource "packetfabric_marketplace_service_port_accept_request" "%s" {
@@ -361,7 +636,7 @@ const RResourceMarketplaceServicePortRejectRequest = `resource "packetfabric_mar
 const RResourceOutboundCrossConnect = `resource "packetfabric_outbound_cross_connect" "%s" {
   provider      = packetfabric
   description   = "%s"
-  document_uuid = "%s"
+  document_uuid = %s.id
   port          = %s.id
   site          = "%s"
 }`
@@ -383,6 +658,10 @@ const RResourcePointToPoint = `resource "packetfabric_point_to_point" "%s" {
     zone    = "%s"
     autoneg = %t
   }
+}
+resource "time_sleep" "wait_30_seconds_%s" {
+  depends_on = [%s]
+  destroy_duration = "30s"
 }`
 
 // Resource: packetfabric_port
@@ -391,9 +670,10 @@ const RResourcePort = `resource "packetfabric_port" "%s" {
   description       = "%s"
   media             = "%s"
   pop               = "%s"
+  zone              = "%s"
   speed             = "%s"
   subscription_term = %v
-  enabled          = %t
+  enabled           = %t
 }`
 
 // Resource: packetfabric_port_loa
@@ -404,8 +684,79 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
+// Resource: packetfabric_outbound_cross_connect
+const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
+  provider        = packetfabric
+  document        = "%s"
+  type            = "msa"
+  description     = "%s"
+}`
+
 // End of resources templates for required fields only
 
+<<<<<<< HEAD
 const DDatasourceAwsDedicatedConn = `data "packetfabric_cs_dedicated_connections" "%s" {
   provider          = packetfabric
 }`
+=======
+// Datasource: packetfabric_locations_cloud
+const DDataSourceLocationsCloud = `data "packetfabric_locations_cloud" "%s" {
+  provider              = packetfabric
+  cloud_provider        = "%s"
+  cloud_connection_type = "%s"
+}`
+
+// Datasource: packetfabric_locations_port_availability
+const DDataSourceLocationsPortAvailability = `data "packetfabric_locations_port_availability" "%s" {
+  provider  = packetfabric
+  pop       = "%s"
+}`
+
+// Datasource: packetfabric_locations
+const DDatasourceLocations = `data "packetfabric_locations" "%s" {
+  provider  = packetfabric
+}`
+
+// Datasource: packetfabric_locations_pop_zones
+const DDatasourceLocationsPopZones = `data "packetfabric_locations_pop_zones" "%s" {
+  provider = packetfabric
+  pop      = "%s"
+}`
+
+// Datasource: packetfabric_locations_regions
+const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" {
+  provider = packetfabric
+}`
+
+// Datasource: packetfabric_activitylog
+const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+  provider = packetfabric
+}`
+
+// Datasource: packetfabric_locations_markets
+const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
+  provider = packetfabric
+}`
+
+// Datasource: packetfabric_ports
+const DDataSourcePorts = `data "packetfabric_ports" "%s" {
+  provider          = packetfabric
+}`
+
+// Datasource: packetfabric_billing
+const DDatasourceBilling = `data "packetfabric_billing" "%s" {
+  circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_cs_aws_hosted_connection
+const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection" "%s" {
+  provider          = packetfabric
+  cloud_circuit_id  = %s.id
+}`
+
+// Datasource: packetfabric_link_aggregation_group
+const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+  provider       = packetfabric
+  lag_circuit_id = %s.id
+}`
+>>>>>>> main

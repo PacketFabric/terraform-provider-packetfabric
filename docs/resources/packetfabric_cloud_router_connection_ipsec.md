@@ -22,7 +22,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -91,7 +91,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. 
 
 	Enum: "hmac-md5-96" "hmac-sha-256-128" "hmac-sha1-96"
@@ -101,6 +101,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

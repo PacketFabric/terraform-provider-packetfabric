@@ -14,11 +14,11 @@ variable "pf_labels" {
 # Port
 variable "pf_port_pop1" {
   type    = string
-  default = "PDX1"
+  default = "WDC1"
 }
 variable "pf_port_avzone1" {
   type    = string
-  default = "A"
+  default = "E"
 }
 variable "pf_port_media" {
   type    = string
@@ -44,15 +44,19 @@ variable "pf_port_nni" {
 # IBM Hosted Connection
 variable "pf_cs_pop1" {
   type    = string
-  default = "LAB1" # SFO1
+  default = "WDC1" # WDC1, SFO1, DAL2
 }
 variable "pf_cs_zone1" {
   type    = string
-  default = "B" # C
+  default = "E" # login to the portal https://portal.packetfabric.com and start a workflow to create a connection (but don't create it, just note the pop/zone info to use in Terraform)
 }
 variable "pf_cs_speed" {
   type    = string
   default = "50Mbps"
+}
+variable "pf_cs_speed_ibm" {
+  type    = number
+  default = 50
 }
 variable "pf_cs_vlan1" {
   type    = number
@@ -78,4 +82,14 @@ variable "ibm_region1_zone1" {
   type        = string
   description = "IBM Availability Zone"
   default     = "us-east-1" # "us-south-1"
+}
+variable "ibm_vpc_cidr1" {
+  type        = string
+  description = "CIDR for the VPC"
+  default     = "10.8.0.0/16"
+}
+variable "ibm_subnet_cidr1" {
+  type        = string
+  description = "CIDR for the subnet"
+  default     = "10.8.1.0/24"
 }

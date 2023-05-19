@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -65,12 +64,6 @@ func dataSourceBgpSession() *schema.Resource {
 							Computed:    true,
 							Optional:    true,
 							Description: "The preference for this instance. Deprecated.",
-						},
-						"community": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: "The BGP community for this instance. Deprecated.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
@@ -282,7 +275,7 @@ func dataSourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	d.SetId(connCID.(string) + "-data")
 	return diags
 }
 
@@ -298,7 +291,6 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["remote_asn"] = session.RemoteAsn
 			flatten["multihop_ttl"] = session.MultihopTTL
 			flatten["local_preference"] = session.LocalPreference
-			flatten["community"] = session.Community
 			flatten["as_prepend"] = session.AsPrepend
 			flatten["l3_address"] = session.L3Address
 			flatten["med"] = session.Med
@@ -330,7 +322,6 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["med"] = prefix.Med
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
-			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens

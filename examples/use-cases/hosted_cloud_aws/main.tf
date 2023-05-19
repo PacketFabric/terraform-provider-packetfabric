@@ -2,7 +2,7 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.4.0"
+      version = ">= 1.5.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -89,7 +89,6 @@ resource "aws_route_table_association" "route_association_1" {
   route_table_id = aws_route_table.route_table_1.id
 }
 
-
 # Create Direct Connect Gateway
 resource "aws_dx_gateway" "direct_connect_gw_1" {
   provider        = aws
@@ -102,9 +101,7 @@ resource "aws_dx_gateway_association" "virtual_private_gw_to_direct_connect_1" {
   provider              = aws
   dx_gateway_id         = aws_dx_gateway.direct_connect_gw_1.id
   associated_gateway_id = aws_vpn_gateway.vpn_gw_1.id
-  allowed_prefixes = [
-    var.aws_vpc_cidr1
-  ]
+  # allowed_prefixes managed via BGP prefixes in configured in packetfabric_cs_aws_hosted_connection
   depends_on = [
     aws_vpn_gateway_attachment.vpn_attachment_1
   ]
@@ -166,7 +163,7 @@ resource "packetfabric_cs_aws_hosted_connection" "pf_cs_conn1" {
     }
   }
   depends_on = [
-    aws_dx_gateway.direct_connect_gw_1
+    aws_dx_gateway_association.virtual_private_gw_to_direct_connect_1
   ]
 }
 # output "packetfabric_cs_aws_hosted_connection" {
