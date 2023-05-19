@@ -30,62 +30,138 @@ output "packetfabric_cs_ibm_hosted_connection" {
 - `cloud_circuit_id` (String) The unique PF circuit ID for this connection
 		Example: PF-AP-LAX1-1002
 
-### Optional
+### Read-Only
 
-- `account_id` (String)
-- `account_uuid` (String) The account UUID.
-- `bgp_asn` (Number)
-- `bgp_cer_cidr` (String)
-- `bgp_ibm_cidr` (String)
-- `cloud_provider` (Block Set) (see [below for nested schema](#nestedblock--cloud_provider))
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
-- `customer_site_code` (String) The customer site code
-- `customer_site_name` (String) The customer site name
+- `cloud_provider_region` (String) Region short name.
+		Example: us-west-1
+- `cloud_settings` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings))
 - `customer_uuid` (String) The UUID for the customer this connection belongs to.
-- `deleted` (Boolean) True if the service connection is deleted.
 - `description` (String) The description of this connection.
 		Example: AWS connection for Foo Corp.
-- `gateway_id` (String)
-- `is_awaiting_onramp` (Boolean) True if this connection is waiting on RAMP
-- `is_cloud_router_connection` (Boolean) True if this is a cloud router connection
-- `name` (String)
+- `id` (String) The ID of this resource.
+- `is_awaiting_onramp` (Boolean) Whether or not this connection is waiting for an onramp to be available before provisioning.
 - `pop` (String) Point of Presence for the connection.
 		Example: LAS1
-- `port_id` (String)
 - `port_type` (String) The port type for the given port.
 		Enum: [ "hosted", "dedicated" ]
 - `service_class` (String) The service class for the given port, either long haul or metro.
 		Enum: [ "longhaul", "metro" ]
 - `service_provider` (String) The service provider of the connection
 		Enum: [ "aws", "azure", "packet", "google", "ibm", "salesforce", "webex" ]
+- `settings` (List of Object) (see [below for nested schema](#nestedatt--settings))
 - `site` (String) Site name
 		Example: SwitchNAP Las Vegas 7
 - `speed` (String) The desired speed of the connection.
 		Enum: [ "50Mbps", "100Mbps", "200Mbps", "300Mbps", "400Mbps", "500Mbps", "1Gbps", "2Gbps", "5Gbps", "10Gbps" ]
 - `state` (String) The state of the connection.
 		Enum: [ "active", "deleting", "inactive", "pending", "requested" ]
-- `subscription_term` (Number) The subscription term in months.
-- `svlan_id_cust` (Number)
 - `time_created` (String) Date and time of connection creation
 - `time_updated` (String) Date and time connection was last updated
 - `user_uuid` (String) The UUID for the user this connection belongs to.
-- `uuid` (String) The connection UUID.
+
+<a id="nestedatt--cloud_settings"></a>
+### Nested Schema for `cloud_settings`
+
+Read-Only:
+
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_dx_aws_device` (String)
+- `aws_dx_aws_logical_device_id` (String)
+- `aws_dx_bandwidth` (String)
+- `aws_dx_encryption_mode` (String)
+- `aws_dx_has_logical_redundancy` (Boolean)
+- `aws_dx_jumbo_frame_capable` (Boolean)
+- `aws_dx_location` (String)
+- `aws_dx_mac_sec_capable` (Boolean)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `aws_vif_bgp_peer_id` (String)
+- `aws_vif_direct_connect_gw_id` (String)
+- `aws_vif_id` (String)
+- `aws_vif_type` (String)
+- `bgp_settings` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--bgp_settings))
+- `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--cloud_state))
+- `credentials_uuid` (String)
+- `google_cloud_router_name` (String)
+- `google_dataplane_version` (Number)
+- `google_edge_availability_domain` (Number)
+- `google_interface_name` (String)
+- `google_pairing_key` (String)
+- `google_project_id` (String)
+- `google_region` (String)
+- `google_vlan_attachment_name` (String)
+- `mtu` (Number)
+- `svlan_id_cust` (Number)
 - `vlan_id_cust` (Number)
 - `vlan_id_pf` (Number)
 
-### Read-Only
+<a id="nestedobjatt--cloud_settings--bgp_settings"></a>
+### Nested Schema for `cloud_settings.bgp_settings`
 
-- `id` (String) The ID of this resource.
+Read-Only:
 
-<a id="nestedblock--cloud_provider"></a>
-### Nested Schema for `cloud_provider`
+- `address_family` (String)
+- `advertised_prefixes` (List of String)
+- `customer_asn` (Number)
+- `customer_router_ip` (String)
+- `google_advertise_mode` (String)
+- `google_advertised_ip_ranges` (List of String)
+- `google_keepalive_interval` (Number)
+- `l3_address` (String)
+- `md5` (String)
+- `remote_address` (String)
+- `remote_asn` (Number)
+- `remote_router_ip` (String)
 
-Optional:
 
-- `pop` (String) Point of Presence for the cloud provider location
-		Example: LAX1
-- `site` (String) Region short name
-		Example: us-west-1
+<a id="nestedobjatt--cloud_settings--cloud_state"></a>
+### Nested Schema for `cloud_settings.cloud_state`
+
+Read-Only:
+
+- `aws_dx_connection_state` (String)
+- `aws_dx_port_encryption_status` (String)
+- `aws_vif_state` (String)
+- `bgp_state` (String)
+- `google_interconnect_admin_enabled` (Boolean)
+- `google_interconnect_state` (String)
+
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `account_id` (String)
+- `aws_account_id` (String)
+- `aws_connection_id` (String)
+- `aws_hosted_type` (String)
+- `aws_region` (String)
+- `azure_connection_type` (String)
+- `azure_service_key` (String)
+- `azure_service_tag` (Number)
+- `bgp_asn` (Number)
+- `bgp_cer_cidr` (String)
+- `bgp_ibm_cidr` (String)
+- `gateway_id` (String)
+- `google_pairing_key` (String)
+- `google_vlan_attachment_name` (String)
+- `name` (String)
+- `oracle_region` (String)
+- `port_compartment_ocid` (String)
+- `port_cross_connect_ocid` (String)
+- `port_id` (String)
+- `svlan_id_cust` (Number)
+- `vc_ocid` (String)
+- `vlan_id_cust` (Number)
+- `vlan_id_microsoft` (Number)
+- `vlan_id_pf` (Number)
+- `vlan_id_private` (Number)
 
 

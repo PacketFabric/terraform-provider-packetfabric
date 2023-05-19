@@ -41,7 +41,7 @@ func resourceGoogleHostedMktConn() *schema.Resource {
 			},
 			"description": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "A brief description of this connection.",

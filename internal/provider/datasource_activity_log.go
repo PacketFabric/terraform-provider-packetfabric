@@ -16,56 +16,47 @@ func datasourceActivityLog() *schema.Resource {
 			"activity_logs": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Optional:    true,
 				Description: "The active logs.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"log_uuid": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log UUID.",
 						},
 						"user": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log User.",
 						},
 						"level": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log level.",
 						},
 						"category": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log Category.",
 						},
 						"event": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log Event.",
 						},
 						"message": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log Message.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log time created.",
 						},
 						"log_level_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The log level name.",
 						},
 					},

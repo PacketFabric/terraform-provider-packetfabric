@@ -26,49 +26,41 @@ func dataSourceBilling() *schema.Resource {
 						"order_id": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "PacketFabric Order Number computed for this request.",
 						},
 						"account_id": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "PacketFabric account UUID. The contact that will be billed.",
 						},
 						"order_type": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "PacketFabric product name",
 						},
 						"term": {
 							Type:     schema.TypeSet,
 							Computed: true,
-							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"start_date": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Billing date-time start",
 									},
 									"months": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "Contract term in months",
 									},
 									"termination_date": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Date-time for service/order pre-mature termination",
 									},
 									"commitment_end_date": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Date-time for service/order contracted/planned termination",
 									},
 								},
@@ -77,49 +69,41 @@ func dataSourceBilling() *schema.Resource {
 						"billables": {
 							Type:     schema.TypeList,
 							Computed: true,
-							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"account_id": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric account UUID. The contact that will be billed.",
 									},
 									"billable_id": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric billing item tracking ID",
 									},
 									"order_id": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric Order Number computed for this request.",
 									},
 									"price_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Pricing interval\n\t\tEnum: [\"monthly\"]",
 									},
 									"currency_code": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Currency short name.\n\t\tEnum [\"USD\"]",
 									},
 									"price": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "Catalog currency unit quantity",
 									},
 									"adjusted_price": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "Contractual currency unit quantity",
 									},
 								},
@@ -128,55 +112,46 @@ func dataSourceBilling() *schema.Resource {
 						"product_details": {
 							Type:     schema.TypeSet,
 							Computed: true,
-							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"product_id": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric product catalog product code",
 									},
 									"name": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric product name",
 									},
 									"vc_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric connectivity type",
 									},
 									"vc_service_class": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "The service class for the given port, either long haul or metro.\n\t\tEnum: [\"longhaul\",\"metro\"]",
 									},
 									"bundle_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "PacketFabric product package name",
 									},
 									"active_date": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Service date-time start",
 									},
 									"end_date": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Service date-time planned end",
 									},
 									"translation_id": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "Internal translation identifier",
 									},
 								},
@@ -185,7 +160,6 @@ func dataSourceBilling() *schema.Resource {
 						"parent_order": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "Service order number dependancy.",
 						},
 					},

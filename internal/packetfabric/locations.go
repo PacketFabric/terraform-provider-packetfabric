@@ -5,6 +5,8 @@ import (
 )
 
 const locationsURI = "/v2/locations"
+const locationsIpsecURI = "/v2/locations?ipsec_capable=true"
+
 const portAvailabilityURI = "/v2/locations/%s/port-availability"
 const locationsZonesURI = "/v2/locations/%s/zones"
 
@@ -48,6 +50,18 @@ type PortAvailability struct {
 func (c *PFClient) ListLocations() ([]Location, error) {
 	resp := make([]Location, 0)
 	_, err := c.sendRequest(locationsURI, getMethod, nil, &resp)
+	if len(resp) == 0 {
+		return resp, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *PFClient) ListLocationsIpsecCapable() ([]Location, error) {
+	resp := make([]Location, 0)
+	_, err := c.sendRequest(locationsIpsecURI, getMethod, nil, &resp)
 	if len(resp) == 0 {
 		return resp, nil
 	}

@@ -20,7 +20,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -34,6 +34,37 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
   maybe_nat   = false
   speed       = "1Gbps"
   labels      = ["terraform", "dev"]
+}
+
+resource "time_sleep" "wait_ibm_connection" {
+  create_duration = "3m"
+}
+data "ibm_dl_gateway" "current" {
+  provider   = ibm
+  name       = "hello world" # same as the PacketFabric IBM Cloud Router Connection description
+  depends_on = [time_sleep.wait_ibm_connection]
+}
+data "ibm_resource_group" "existing_rg" {
+  provider = ibm
+  name     = "My Resource Group"
+}
+
+resource "ibm_dl_gateway_action" "confirmation" {
+  provider                    = ibm
+  gateway                     = data.ibm_dl_gateway.current.id
+  resource_group              = data.ibm_resource_group.existing_rg.id
+  action                      = "create_gateway_approve"
+  global                      = true
+  metered                     = true # If set true gateway usage is billed per GB. Otherwise, flat rate is charged for the gateway
+  bgp_asn                     = packetfabric_cloud_router.cr1.asn
+  default_export_route_filter = "permit"
+  default_import_route_filter = "permit"
+  speed_mbps                  = 1000 # must match PacketFabric speed
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "sleep 30"
+  }
 }
 ```
 
@@ -52,21 +83,25 @@ resource "packetfabric_cloud_router_connection_ibm" "crc5" {
 - `speed` (String) The speed of the new connection.
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps"]
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.
 - `ibm_bgp_ibm_cidr` (String) The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired availability zone of the connection.
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
+- `gateway_id` (String) The IBM Gateway ID.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

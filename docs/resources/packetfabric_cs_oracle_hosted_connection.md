@@ -39,18 +39,21 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 - `region` (String) The region in which you created the FastConnect virtual circuit.
 - `vc_ocid` (String) OCID of the FastConnect virtual circuit that you created from the Oracle side.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired availability zone of the connection.
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

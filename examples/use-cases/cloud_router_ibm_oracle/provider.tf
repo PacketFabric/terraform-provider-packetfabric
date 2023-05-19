@@ -2,15 +2,15 @@ terraform {
   required_providers {
     packetfabric = {
       source  = "PacketFabric/packetfabric"
-      version = ">= 1.4.0"
+      version = ">= 1.5.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = ">= 1.52.0"
+      version = ">= 1.53.0"
     }
     oci = {
       source  = "oracle/oci"
-      version = ">= 4.111.0"
+      version = ">= 4.121.0"
     }
   }
 }

@@ -29,15 +29,19 @@ output "packetfabric_cs_google_hosted_connection_data" {
 - `cloud_circuit_id` (String) The unique PF circuit ID for this connection
 		Example: PF-AP-LAX1-1002
 
-### Optional
+### Read-Only
 
+- `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
+		Example: dxcon-fgadaaa1
 - `cloud_provider_pop` (String) Point of Presence for the cloud provider location.
 		Example: DAL1
 - `cloud_provider_region` (String) Region short name.
 		Example: us-west-1
+- `cloud_settings` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings))
 - `customer_uuid` (String) The UUID for the customer this connection belongs to.
 - `description` (String) The description of this connection.
 		Example: AWS connection for Foo Corp.
+- `id` (String) The ID of this resource.
 - `is_awaiting_onramp` (Boolean) Whether or not this connection is waiting for an onramp to be available before provisioning.
 - `pop` (String) Point of Presence for the connection.
 		Example: LAS1
@@ -47,6 +51,7 @@ output "packetfabric_cs_google_hosted_connection_data" {
 		Enum: [ "longhaul", "metro" ]
 - `service_provider` (String) The service provider of the connection
 		Enum: [ "aws", "azure", "packet", "google", "ibm", "salesforce", "webex" ]
+- `settings` (List of Object) (see [below for nested schema](#nestedatt--settings))
 - `site` (String) Site name
 		Example: SwitchNAP Las Vegas 7
 - `speed` (String) The desired speed of the connection.
@@ -56,12 +61,6 @@ output "packetfabric_cs_google_hosted_connection_data" {
 - `time_created` (String) Date and time of connection creation
 - `time_updated` (String) Date and time connection was last updated
 - `user_uuid` (String) The UUID for the user this connection belongs to.
-
-### Read-Only
-
-- `cloud_settings` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings))
-- `id` (String) The ID of this resource.
-- `settings` (List of Object) (see [below for nested schema](#nestedatt--settings))
 
 <a id="nestedatt--cloud_settings"></a>
 ### Nested Schema for `cloud_settings`

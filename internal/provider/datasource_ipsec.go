@@ -121,7 +121,7 @@ func datasourceIPSecRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("pre_shared_key", ipsec.PreSharedKey)
 		_ = d.Set("time_created", ipsec.TimeCreated)
 		_ = d.Set("time_updated", ipsec.TimeUpdated)
-		d.SetId(ipsec.CircuitID)
+		d.SetId(cID.(string) + "-data")
 	}
 	return diags
 }
