@@ -20,7 +20,7 @@ resource "packetfabric_cloud_router" "cr1" {
   asn      = 4556
   name     = "hello world"
   capacity = "10Gbps"
-  regions  = ["US", "UK"]
+  regions  = ["US"]
   labels   = ["terraform", "dev"]
 }
 
@@ -48,19 +48,22 @@ resource "packetfabric_cloud_router_connection_oracle" "crc6" {
 - `pop` (String) The POP in which you want to provision the connection.
 - `region` (String) The region in which you created the FastConnect virtual circuit.
 - `vc_ocid` (String) OCID of the FastConnect virtual circuit that you created from the Oracle side.
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired availability zone of the new connection.
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

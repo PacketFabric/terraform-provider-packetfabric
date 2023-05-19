@@ -23,7 +23,6 @@ func dataSourceVcRequests() *schema.Resource {
 			"vc_requests": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Optional:    true,
 				Description: "List of VC Requests.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -39,76 +38,75 @@ func dataSourceVcRequests() *schema.Resource {
 						},
 						"from_customer": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_uuid": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The UUID for the customer associated with this Virtual Circuit",
 									},
 									"name": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer Name",
 									},
 									"market": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The market that the VC will be requested in.\n\t\tExample: ATL",
 									},
 									"market_description": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The description of the AWS Marketplace Cloud connection.\n\t\tExample: My AWS Marketplace Cloud connection",
 									},
 									"contact_first_name": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer contact first name",
 									},
 									"contact_last_name": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer contact last name",
 									},
 									"contact_email": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer contact email",
 									},
 									"contact_phone": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer contact phone",
 									},
 								},
 							},
 						},
 						"to_customer": {
-							Type: schema.TypeSet,
-
-							Optional: true,
+							Type:     schema.TypeSet,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"customer_uuid": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The UUID for the customer this connection belongs to",
 									},
 									"name": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Customer Name",
 									},
 									"market": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The market that the VC will be requested in",
 									},
 									"market_description": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The description of the AWS Marketplace Cloud connection.\n\t\tExample: My AWS Marketplace Cloud connection",
 									},
 								},
@@ -130,29 +128,28 @@ func dataSourceVcRequests() *schema.Resource {
 							Description: "The vc request text.",
 						},
 						"bandwidth": {
-							Type:        schema.TypeSet,
-							Optional:    true,
-							Description: "",
+							Type:     schema.TypeSet,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"account_uuid": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
 									},
 									"longhaul_type": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum: [\"dedicated\" \"usage\" \"hourly\"]",
 									},
 									"subscription_term": {
 										Type:        schema.TypeInt,
-										Optional:    true,
+										Computed:    true,
 										Description: "Subscription term in months. Not applicable for hourly billing.\n\t\tEnum: [\"1\" \"12\" \"24\" \"36\"]",
 									},
 									"speed": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The desired speed of the new connection.\n\t\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
 									},
 								},
@@ -185,12 +182,12 @@ func dataSourceVcRequests() *schema.Resource {
 						},
 						"time_created": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time of connection creation",
 						},
 						"time_updated": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time connection was last updated",
 						},
 					},

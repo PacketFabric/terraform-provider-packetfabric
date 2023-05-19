@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -27,101 +26,80 @@ func dataSourceBgpSession() *schema.Resource {
 			"bgp_sessions": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bgp_settings_uuid": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The UUID of the instance.\n\t\tExample: 3d78949f-1396-4163-b0ca-3eba3592abcd",
 						},
 						"address_family": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "Whether this instance is IPv4 or IPv6.\n\t\tEnum: \"v4\" \"v6\"",
 						},
 						"remote_address": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The cloud-side address of the instance.",
 						},
 						"remote_asn": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The cloud-side ASN of the instance.",
 						},
 						"multihop_ttl": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The TTL of this session.\n\t\tDefaults to 1.",
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The preference for this instance. Deprecated.",
-						},
-						"community": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
-							Description: "The BGP community for this instance. Deprecated.",
 						},
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The BGP prepend value for this instance. Deprecated.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The Multi-Exit Discriminator of this instance. Deprecated.",
 						},
 						"l3_address": {
 							Type:        schema.TypeString,
-							Optional:    true,
 							Computed:    true,
 							Description: "The L3 address of this instance.",
 						},
 						"orlonger": {
 							Type:        schema.TypeBool,
 							Computed:    true,
-							Optional:    true,
 							Description: "Whether to use exact match or longer for all prefixes.",
 						},
 						"bfd_interval": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "Minimum interval, in microseconds, for transmitting BFD Control packets.\n\t\tAvailable range is 3 through 30000.",
 						},
 						"bfd_multiplier": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The number of BFD Control packets not received by a neighbor that causes the session to be declared down.\n\t\tAvailable range is 2 through 16.",
 						},
 						"disabled": {
 							Type:        schema.TypeBool,
 							Computed:    true,
-							Optional:    true,
 							Description: "Whether this BGP session is disabled.\n\t\tDefault \"false\"",
 						},
 						"nat": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"pre_nat_sources": {
 										Type:        schema.TypeList,
-										Optional:    true,
 										Computed:    true,
 										Description: "The source IP address + mask of the host before NAT translation.",
 										Elem: &schema.Schema{
@@ -131,7 +109,6 @@ func dataSourceBgpSession() *schema.Resource {
 									},
 									"pool_prefixes": {
 										Type:        schema.TypeList,
-										Optional:    true,
 										Computed:    true,
 										Description: "The source IP address + mask of the NAT pool prefix.",
 										Elem: &schema.Schema{
@@ -141,20 +118,17 @@ func dataSourceBgpSession() *schema.Resource {
 									},
 									"direction": {
 										Type:        schema.TypeString,
-										Optional:    true,
 										Computed:    true,
 										Description: "The direction of the NAT connection. Output is the default.\n\t\tEnum: output, input",
 									},
 									"nat_type": {
 										Type:        schema.TypeString,
-										Optional:    true,
 										Computed:    true,
 										Description: "The NAT type of the NAT connection. \n\t\tEnum: overload, inline_dnat",
 									},
 									"dnat_mappings": {
 										Type:     schema.TypeSet,
 										Computed: true,
-										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"private_prefix": {
@@ -181,74 +155,62 @@ func dataSourceBgpSession() *schema.Resource {
 						"bgp_state": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The status of the BGP session\n\t\tEnum: established, configuring, fetching, etc.",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "Time the instance was created.",
 						},
 						"time_updated": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "Time the instance was last updated.",
 						},
 						"prefixes": {
 							Type:        schema.TypeSet,
 							Computed:    true,
-							Optional:    true,
 							Description: "A list of prefixes attached to the bgp session.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"bgp_prefix_uuid": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "TThe UUID of the bgp prefix.",
 									},
 									"prefix": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "The actual IP Prefix of the bgp prefix.",
 									},
 									"match_type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "The prefix match type.",
 									},
 									"as_prepend": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "The BGP prepend value of the bgp prefix. It is used when type = out.",
 									},
 									"med": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "The med of the bgp prefix. It is used when type = out.",
 									},
 									"local_preference": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "The local_preference of the bgp prefix. It is used when type = in.",
 									},
 									"type": {
 										Type:        schema.TypeString,
 										Computed:    true,
-										Optional:    true,
 										Description: "Indicates whether the prefix is in or out.",
 									},
 									"order": {
 										Type:        schema.TypeInt,
 										Computed:    true,
-										Optional:    true,
 										Description: "The order of the bgp prefix against the others.",
 										Deprecated:  "This field is deprecated and will be removed in a future release.",
 									},
@@ -282,7 +244,7 @@ func dataSourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+	d.SetId(connCID.(string) + "-data")
 	return diags
 }
 
@@ -298,7 +260,6 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["remote_asn"] = session.RemoteAsn
 			flatten["multihop_ttl"] = session.MultihopTTL
 			flatten["local_preference"] = session.LocalPreference
-			flatten["community"] = session.Community
 			flatten["as_prepend"] = session.AsPrepend
 			flatten["l3_address"] = session.L3Address
 			flatten["med"] = session.Med
@@ -330,7 +291,6 @@ func flattenBgpSessionsPrefixes(prefixes *[]packetfabric.BgpPrefix) []interface{
 			flatten["med"] = prefix.Med
 			flatten["local_preference"] = prefix.LocalPreference
 			flatten["type"] = prefix.Type
-			flatten["order"] = prefix.Order
 			flattens[i] = flatten
 		}
 		return flattens

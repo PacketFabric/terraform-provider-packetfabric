@@ -2,6 +2,9 @@ package provider
 
 import (
 	"context"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -174,6 +177,37 @@ func resourceCloudSourceDelete(ctx context.Context, d *schema.ResourceData, m in
 		})
 		return diags
 	}
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		resp, err3 := c.GetCloudConnInfo(d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		if resp.PortType == "dedicated" {
+			if resp.ServiceProvider == "azure" { // LAG is not enabled in the ACC in dev environment for AWS
+				if toggleErr := _togglePortStatus(c, false, cloudCID.(string)); toggleErr != nil {
+					return diag.FromErr(toggleErr)
+				}
+			}
+			if resp.ServiceProvider == "aws" || resp.ServiceProvider == "google" {
+				if _, toggleErr := c.DisableLinkAggregationGroup(cloudCID.(string)); toggleErr != nil {
+					return diag.FromErr(toggleErr)
+				}
+			}
+			time.Sleep(time.Duration(180) * time.Second)
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "In the dev environment, ports are disabled prior to deletion.",
+			})
+		}
+	}
+	etlDiags, err2 := addETLWarning(c, cloudCID.(string))
+	if err2 != nil {
+		return diag.FromErr(err2)
+	}
+	diags = append(diags, etlDiags...)
 	err := c.DeleteCloudService(cloudCID.(string))
 	if err != nil {
 		return diag.FromErr(err)

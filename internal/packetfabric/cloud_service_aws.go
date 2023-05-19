@@ -119,57 +119,60 @@ type HostedAwsConnection struct {
 
 // used for both Hosted Cloud and Cloud Router Connections
 type CloudSettings struct {
-	AccountID                    string       `json:"account_id,omitempty"`
-	AwsAccountID                 string       `json:"aws_account_id,omitempty"`
-	AwsConnectionID              string       `json:"aws_connection_id,omitempty"`
-	AwsDxAWSDevice               string       `json:"aws_dx_aws_device,omitempty"`
-	AwsDxAWSLogicalDeviceID      string       `json:"aws_dx_aws_logical_device_id,omitempty"`
-	AwsDxBandwidth               string       `json:"aws_dx_bandwidth,omitempty"`
-	AwsDxEncryptionMode          string       `json:"aws_dx_encryption_mode,omitempty"`
-	AwsDxHasLogicalRedundancy    bool         `json:"aws_dx_has_logical_redundancy,omitempty"`
-	AwsDxJumboFrameCapable       bool         `json:"aws_dx_jumbo_frame_capable,omitempty"`
-	AwsDxLocation                string       `json:"aws_dx_location,omitempty"`
-	AwsDxMacSecCapable           bool         `json:"aws_dx_mac_sec_capable,omitempty"`
-	AwsGateways                  []AwsGateway `json:"aws_gateways,omitempty"`
-	AwsHostedType                string       `json:"aws_hosted_type,omitempty"`
-	AwsRegion                    string       `json:"aws_region,omitempty"`
-	AwsVifBGPPeerID              string       `json:"aws_vif_bgp_peer_id,omitempty"`
-	AwsVifDirectConnectGwID      string       `json:"aws_vif_direct_connect_gw_id,omitempty"`
-	AwsVifID                     string       `json:"aws_vif_id,omitempty"`
-	AwsVifType                   string       `json:"aws_vif_type,omitempty"`
-	AzureConnectionType          string       `json:"azure_connection_type,omitempty"`
-	AzureServiceKey              string       `json:"azure_service_key,omitempty"`
-	AzureServiceTag              int          `json:"azure_service_tag,omitempty"`
-	BgpAsn                       int          `json:"bgp_asn,omitempty"`
-	BgpCerCidr                   string       `json:"bgp_cer_cidr,omitempty"`
-	BgpIbmCidr                   string       `json:"bgp_ibm_cidr,omitempty"`
-	BgpSettings                  *BgpSettings `json:"bgp_settings,omitempty"`
-	CloudState                   *CloudState  `json:"cloud_state,omitempty"`
-	CredentialsUUID              string       `json:"credentials_uuid,omitempty"`
-	GatewayID                    string       `json:"gateway_id,omitempty"`
-	GoogleCloudRouterName        string       `json:"google_cloud_router_name,omitempty"`
-	GoogleDataplaneVersion       int          `json:"google_dataplane_version,omitempty"`
-	GoogleEdgeAvailabilityDomain int          `json:"google_edge_availability_domain,omitempty"`
-	GoogleInterfaceName          string       `json:"google_interface_name,omitempty"`
-	GooglePairingKey             string       `json:"google_pairing_key,omitempty"`
-	GoogleProjectID              string       `json:"google_project_id,omitempty"`
-	GoogleRegion                 string       `json:"google_region,omitempty"`
-	GoogleVPCName                string       `json:"google_vpc_name,omitempty"`
-	GoogleVlanAttachmentName     string       `json:"google_vlan_attachment_name,omitempty"`
-	Mtu                          int          `json:"mtu,omitempty"`
-	Name                         string       `json:"name,omitempty"`
-	NatPublicIP                  string       `json:"nat_public_ip,omitempty"`
-	OracleRegion                 string       `json:"oracle_region,omitempty"`
-	PortCompartmentOcid          string       `json:"port_compartment_ocid,omitempty"`
-	PortCrossConnectOcid         string       `json:"port_cross_connect_ocid,omitempty"`
-	PortID                       string       `json:"port_id,omitempty"`
-	PublicIP                     string       `json:"public_ip,omitempty"`
-	SvlanIDCust                  int          `json:"svlan_id_cust,omitempty"`
-	VcOcid                       string       `json:"vc_ocid,omitempty"`
-	VlanIDCust                   int          `json:"vlan_id_cust,omitempty"`
-	VlanIDMicrosoft              int          `json:"vlan_id_microsoft,omitempty"`
-	VlanIDPf                     int          `json:"vlan_id_pf,omitempty"`
-	VlanPrivate                  int          `json:"vlan_id_private,omitempty"`
+	AccountID                      string       `json:"account_id,omitempty"`
+	AwsAccountID                   string       `json:"aws_account_id,omitempty"`
+	AwsConnectionID                string       `json:"aws_connection_id,omitempty"`
+	AwsDxAWSDevice                 string       `json:"aws_dx_aws_device,omitempty"`
+	AwsDxAWSLogicalDeviceID        string       `json:"aws_dx_aws_logical_device_id,omitempty"`
+	AwsDxBandwidth                 string       `json:"aws_dx_bandwidth,omitempty"`
+	AwsDxEncryptionMode            string       `json:"aws_dx_encryption_mode,omitempty"`
+	AwsDxHasLogicalRedundancy      bool         `json:"aws_dx_has_logical_redundancy,omitempty"`
+	AwsDxJumboFrameCapable         bool         `json:"aws_dx_jumbo_frame_capable,omitempty"`
+	AwsDxLocation                  string       `json:"aws_dx_location,omitempty"`
+	AwsDxMacSecCapable             bool         `json:"aws_dx_mac_sec_capable,omitempty"`
+	AwsGateways                    []AwsGateway `json:"aws_gateways,omitempty"`
+	AwsHostedType                  string       `json:"aws_hosted_type,omitempty"`
+	AwsRegion                      string       `json:"aws_region,omitempty"`
+	AwsVifBGPPeerID                string       `json:"aws_vif_bgp_peer_id,omitempty"`
+	AwsVifDirectConnectGwID        string       `json:"aws_vif_direct_connect_gw_id,omitempty"`
+	AwsVifID                       string       `json:"aws_vif_id,omitempty"`
+	AwsVifType                     string       `json:"aws_vif_type,omitempty"`
+	AzureConnectionType            string       `json:"azure_connection_type,omitempty"`
+	AzureServiceKey                string       `json:"azure_service_key,omitempty"`
+	AzureServiceTag                int          `json:"azure_service_tag,omitempty"`
+	BgpAsn                         int          `json:"bgp_asn,omitempty"`
+	BgpCerCidr                     string       `json:"bgp_cer_cidr,omitempty"`
+	BgpIbmCidr                     string       `json:"bgp_ibm_cidr,omitempty"`
+	BgpSettings                    *BgpSettings `json:"bgp_settings,omitempty"`
+	CloudState                     *CloudState  `json:"cloud_state,omitempty"`
+	CredentialsUUID                string       `json:"credentials_uuid,omitempty"`
+	GatewayID                      string       `json:"gateway_id,omitempty"`
+	GoogleCloudRouterName          string       `json:"google_cloud_router_name,omitempty"`
+	GoogleDataplaneVersion         int          `json:"google_dataplane_version,omitempty"`
+	GoogleEdgeAvailabilityDomain   int          `json:"google_edge_availability_domain,omitempty"`
+	GoogleInterconnectState        string       `json:"google_interconnect_state,omitempty"`
+	GoogleInterfaceName            string       `json:"google_interface_name,omitempty"`
+	GoogleInterconnectAdminEnabled bool         `json:"google_interconnect_admin_enabled,omitempty"`
+	GooglePairingKey               string       `json:"google_pairing_key,omitempty"`
+	GoogleProjectID                string       `json:"google_project_id,omitempty"`
+	GoogleRegion                   string       `json:"google_region,omitempty"`
+	GoogleVPCName                  string       `json:"google_vpc_name,omitempty"`
+	GoogleVlanAttachmentName       string       `json:"google_vlan_attachment_name,omitempty"`
+	GoogleAdvertiseMode            string       `json:"google_advertise_mode,omitempty"`
+	Mtu                            int          `json:"mtu,omitempty"`
+	Name                           string       `json:"name,omitempty"`
+	NatPublicIP                    string       `json:"nat_public_ip,omitempty"`
+	OracleRegion                   string       `json:"oracle_region,omitempty"`
+	PortCompartmentOcid            string       `json:"port_compartment_ocid,omitempty"`
+	PortCrossConnectOcid           string       `json:"port_cross_connect_ocid,omitempty"`
+	PortID                         string       `json:"port_id,omitempty"`
+	PublicIP                       string       `json:"public_ip,omitempty"`
+	SvlanIDCust                    int          `json:"svlan_id_cust,omitempty"`
+	VcOcid                         string       `json:"vc_ocid,omitempty"`
+	VlanIDCust                     int          `json:"vlan_id_cust,omitempty"`
+	VlanMicrosoft                  int          `json:"vlan_id_microsoft,omitempty"`
+	VlanIDPf                       int          `json:"vlan_id_pf,omitempty"`
+	VlanPrivate                    int          `json:"vlan_id_private,omitempty"`
 }
 
 type CloudState struct {
@@ -182,18 +185,30 @@ type CloudState struct {
 }
 
 type BgpSettings struct {
-	CustomerAsn              int      `json:"customer_asn,omitempty"`
-	RemoteAsn                int      `json:"remote_asn,omitempty"`
-	L3Address                string   `json:"l3_address,omitempty"`
-	RemoteAddress            string   `json:"remote_address,omitempty"`
-	AddressFamily            string   `json:"address_family,omitempty"`
-	Md5                      string   `json:"md5,omitempty"`
-	AdvertisedPrefixes       []string `json:"advertised_prefixes,omitempty"`
-	CustomerRouterIp         string   `json:"customer_router_ip,omitempty"`
-	RemoteRouterIp           string   `json:"remote_router_ip,omitempty"`
-	GoogleAdvertiseMode      string   `json:"google_advertise_mode,omitempty"`
-	GoogleKeepaliveInterval  int      `json:"google_keepalive_interval,omitempty"`
-	GoogleAdvertisedIPRanges []string `json:"google_advertised_ip_ranges,omitempty"`
+	AddressFamily            string      `json:"address_family,omitempty"`
+	AdvertisedPrefixes       []string    `json:"advertised_prefixes,omitempty"`
+	AsPrepend                int         `json:"as_prepend,omitempty"`
+	BfdInterval              int         `json:"bfd_interval,omitempty"`
+	BfdMultiplier            int         `json:"bfd_multiplier,omitempty"`
+	CustomerAsn              int         `json:"customer_asn,omitempty"`
+	CustomerRouterIp         string      `json:"customer_router_ip,omitempty"`
+	Disabled                 bool        `json:"disabled,omitempty"`
+	GoogleAdvertiseMode      string      `json:"google_advertise_mode,omitempty"`
+	GoogleAdvertisedIPRanges []string    `json:"google_advertised_ip_ranges,omitempty"`
+	GoogleKeepaliveInterval  int         `json:"google_keepalive_interval,omitempty"`
+	L3Address                string      `json:"l3_address,omitempty"`
+	LocalPreference          int         `json:"local_preference,omitempty"`
+	Md5                      string      `json:"md5,omitempty"`
+	Med                      int         `json:"med,omitempty"`
+	MultihopTTL              int         `json:"multihop_ttl,omitempty"`
+	Nat                      *BgpNat     `json:"nat,omitempty"`
+	Orlonger                 bool        `json:"orlonger,omitempty"`
+	Prefixes                 []BgpPrefix `json:"prefixes,omitempty"`
+	PrimarySubnet            string      `json:"primary_subnet,omitempty"`
+	RemoteAddress            string      `json:"remote_address,omitempty"`
+	RemoteAsn                int         `json:"remote_asn,omitempty"`
+	RemoteRouterIp           string      `json:"remote_router_ip,omitempty"`
+	SecondarySubnet          string      `json:"secondary_subnet,omitempty"`
 }
 
 type AwsGateway struct {
@@ -207,17 +222,17 @@ type AwsGateway struct {
 }
 
 type DedicatedAwsConn struct {
-	AwsRegion        string      `json:"aws_region"`
-	AccountUUID      string      `json:"account_uuid"`
-	Description      string      `json:"description"`
-	Zone             string      `json:"zone"`
-	Pop              string      `json:"pop"`
-	SubscriptionTerm int         `json:"subscription_term"`
-	ServiceClass     string      `json:"service_class"`
-	AutoNeg          bool        `json:"autoneg"`
-	Speed            string      `json:"speed"`
-	ShouldCreateLag  bool        `json:"should_create_lag"`
-	Loa              interface{} `json:"load"`
+	AwsRegion        string      `json:"aws_region,omitempty"`
+	AccountUUID      string      `json:"account_uuid,omitempty"`
+	Description      string      `json:"description,omitempty"`
+	Zone             string      `json:"zone,omitempty"`
+	Pop              string      `json:"pop,omitempty"`
+	SubscriptionTerm int         `json:"subscription_term,omitempty"`
+	ServiceClass     string      `json:"service_class,omitempty"`
+	AutoNeg          bool        `json:"autoneg,omitempty"`
+	Speed            string      `json:"speed,omitempty"`
+	ShouldCreateLag  bool        `json:"should_create_lag,omitempty"`
+	Loa              interface{} `json:"loa,omitempty"`
 	PONumber         string      `json:"po_number,omitempty"`
 }
 
@@ -247,8 +262,8 @@ type Settings struct {
 	VlanIDPf                 int         `json:"vlan_id_pf,omitempty"`
 	VlanIDCust               int         `json:"vlan_id_cust,omitempty"`
 	SvlanIDCust              interface{} `json:"svlan_id_cust,omitempty"`
-	VlanIDPrivate            int         `json:"vlan_id_private,omitempty"`
-	VlanIDMicrosoft          int         `json:"vlan_id_microsoft,omitempty"`
+	VlanPrivate              int         `json:"vlan_id_private,omitempty"`
+	VlanMicrosoft            int         `json:"vlan_id_microsoft,omitempty"`
 	VcIDPrivate              int         `json:"vc_id_private,omitempty"`
 	SvlanIDCustomer          interface{} `json:"svlan_id_customer,omitempty"`
 	AzureServiceKey          string      `json:"azure_service_key,omitempty"`
@@ -392,32 +407,33 @@ type RouterConfig struct {
 }
 
 type CloudConnInfo struct {
-	UUID                    string         `json:"uuid,omitempty"`
-	CloudCircuitID          string         `json:"cloud_circuit_id,omitempty"`
-	CustomerUUID            string         `json:"customer_uuid,omitempty"`
-	AccountUUID             string         `json:"account_uuid,omitempty"`
-	UserUUID                string         `json:"user_uuid,omitempty"`
-	State                   string         `json:"state,omitempty"`
-	ServiceProvider         string         `json:"service_provider,omitempty"`
-	ServiceClass            string         `json:"service_class,omitempty"`
-	PortType                string         `json:"port_type,omitempty"`
-	Speed                   string         `json:"speed,omitempty"`
-	Deleted                 bool           `json:"deleted,omitempty"`
-	Description             string         `json:"description,omitempty"`
-	CloudProvider           CloudProvider  `json:"cloud_provider,omitempty"`
-	Settings                *Settings      `json:"settings,omitempty"`
-	CloudSettings           *CloudSettings `json:"cloud_settings,omitempty"`
-	SubscriptionTerm        int            `json:"subscription_term,omitempty"`
-	TimeCreated             string         `json:"time_created,omitempty"`
-	TimeUpdated             string         `json:"time_updated,omitempty"`
-	Pop                     string         `json:"pop,omitempty"`
-	Site                    string         `json:"site,omitempty"`
-	CustomerSiteName        string         `json:"customer_site_name,omitempty"`
-	CustomerSiteCode        string         `json:"customer_site_code,omitempty"`
-	IsAwaitingOnramp        bool           `json:"is_awaiting_onramp,omitempty"`
-	IsCloudRouterConnection bool           `json:"is_cloud_router_connection,omitempty"`
-	AzurePortCategory       string         `json:"azure_port_category,omitempty"`
-	PONumber                string         `json:"po_number,omitempty"`
+	UUID                      string         `json:"uuid,omitempty"`
+	CloudCircuitID            string         `json:"cloud_circuit_id,omitempty"`
+	CustomerUUID              string         `json:"customer_uuid,omitempty"`
+	AccountUUID               string         `json:"account_uuid,omitempty"`
+	UserUUID                  string         `json:"user_uuid,omitempty"`
+	State                     string         `json:"state,omitempty"`
+	ServiceProvider           string         `json:"service_provider,omitempty"`
+	ServiceClass              string         `json:"service_class,omitempty"`
+	PortType                  string         `json:"port_type,omitempty"`
+	Speed                     string         `json:"speed,omitempty"`
+	Deleted                   bool           `json:"deleted,omitempty"`
+	Description               string         `json:"description,omitempty"`
+	CloudProvider             CloudProvider  `json:"cloud_provider,omitempty"`
+	CloudProviderConnectionID string         `json:"cloud_provider_connection_id,omitempty"`
+	Settings                  *Settings      `json:"settings,omitempty"`
+	CloudSettings             *CloudSettings `json:"cloud_settings,omitempty"`
+	SubscriptionTerm          int            `json:"subscription_term,omitempty"`
+	TimeCreated               string         `json:"time_created,omitempty"`
+	TimeUpdated               string         `json:"time_updated,omitempty"`
+	Pop                       string         `json:"pop,omitempty"`
+	Site                      string         `json:"site,omitempty"`
+	CustomerSiteName          string         `json:"customer_site_name,omitempty"`
+	CustomerSiteCode          string         `json:"customer_site_code,omitempty"`
+	IsAwaitingOnramp          bool           `json:"is_awaiting_onramp,omitempty"`
+	IsCloudRouterConnection   bool           `json:"is_cloud_router_connection,omitempty"`
+	AzurePortCategory         string         `json:"azure_port_category,omitempty"`
+	PONumber                  string         `json:"po_number,omitempty"`
 }
 
 type UpdateServiceConn struct {

@@ -1,5 +1,5 @@
 # From the PacketFabric side: Create a Cloud Router connection.
-resource "packetfabric_cloud_router_connection_port" "crc_3" {
+resource "packetfabric_cloud_router_connection_port" "crc_port" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-${var.pf_port_pop1}"
   labels      = var.pf_labels
@@ -12,12 +12,11 @@ resource "packetfabric_cloud_router_connection_port" "crc_3" {
 }
 
 # From the PacketFabric side: Configure BGP
-resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
+resource "packetfabric_cloud_router_bgp_session" "crbs_port" {
   provider       = packetfabric
   circuit_id     = packetfabric_cloud_router.cr.id
-  connection_id  = packetfabric_cloud_router_connection_port.crc_3.id
+  connection_id  = packetfabric_cloud_router_connection_port.crc_port.id
   address_family = var.pf_crbs_af
-  multihop_ttl   = var.pf_crbs_mhttl
   remote_asn     = var.oracle_peer_asn
   orlonger       = var.pf_crbs_orlonger
   remote_address = var.on_premise_bgp_peering_prefix # Customer On-premise Router Peer IP side
@@ -35,6 +34,6 @@ resource "packetfabric_cloud_router_bgp_session" "crbs_3" {
     type   = "in" # Allowed Prefixes from Cloud
   }
 }
-# output "packetfabric_cloud_router_bgp_session_crbs_3" {
-#   value = packetfabric_cloud_router_bgp_session.crbs_3
+# output "packetfabric_cloud_router_bgp_session_crbs_port" {
+#   value = packetfabric_cloud_router_bgp_session.crbs_port
 # }

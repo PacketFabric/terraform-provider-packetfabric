@@ -1,9 +1,13 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const billingURI = "/v2/billing/services/%s"
 const billingModifyURI = "/v2/billing/services/%s/modify"
+const etlURI = "/v2/billing/services/early-termination-liability/%s"
 
 type BillingUpgrade struct {
 	SubscriptionTerm   int    `json:"subscription_term,omitempty"`
@@ -73,4 +77,16 @@ func (c *PFClient) ModifyBilling(cID string, billing BillingUpgrade) (*BillingUp
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) GetEarlyTerminationLiability(circuitID string) (float64, error) {
+	formattedURI := fmt.Sprintf(etlURI, circuitID)
+	var resp float64
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
+	_, err := c.sendRequest(formattedURI, getMethod, nil, &resp)
+	if err != nil {
+		return 0, err
+	}
+	return resp, nil
 }

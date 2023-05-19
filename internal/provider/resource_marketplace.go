@@ -36,7 +36,7 @@ func resourceMarketplaceService() *schema.Resource {
 			},
 			"description": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "Brief description of what the service does.",
 			},

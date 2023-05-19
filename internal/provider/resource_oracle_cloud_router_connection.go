@@ -84,10 +84,10 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired availability zone of the new connection.",
+				Description:  "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
@@ -103,12 +103,17 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -128,13 +133,7 @@ func resourceOracleCloudRouteConnCreate(ctx context.Context, d *schema.ResourceD
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		createOkCh := make(chan bool)
-		defer close(createOkCh)
-		fn := func() (*packetfabric.ServiceState, error) {
-			return c.GetCloudConnectionStatus(cid.(string), resp.CloudCircuitID)
-		}
-		go c.CheckServiceStatus(createOkCh, fn)
-		if !<-createOkCh {
+		if err := checkCloudRouterConnectionStatus(c, cid.(string), resp.CloudCircuitID); err != nil {
 			return diag.FromErr(err)
 		}
 		if resp != nil {
@@ -175,12 +174,8 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("region", resp.CloudSettings.OracleRegion)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
-		if _, ok := d.GetOk("zone"); ok {
-			_ = d.Set("zone", resp.Zone)
-		}
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("zone", resp.Zone)
+		_ = d.Set("po_number", resp.PONumber)
 		// unsetFields: published_quote_line_uuid
 	}
 
@@ -190,6 +185,14 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 			return diag.FromErr(err2)
 		}
 		_ = d.Set("labels", labels)
+	}
+
+	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
+	if err3 != nil {
+		return diag.FromErr(err3)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
 	}
 	return diags
 }

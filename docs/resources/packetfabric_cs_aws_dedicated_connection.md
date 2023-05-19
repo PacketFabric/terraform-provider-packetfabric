@@ -53,22 +53,23 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
 - `subscription_term` (Number) The billing term, in months, for this connection.
 
 	Enum: ["1", "12", "24", "36"]
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
-- `labels` (List of String) Label value linked to an object.
+- `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
 	Example: SSBhbSBhIFBERg==
 - `po_number` (String) Purchase order number or identifier of a service.
 - `should_create_lag` (Boolean) Create the dedicated connection as a LAG interface. Defaults: true
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired AWS availability zone of the new connection.
-
-	Example: "A"
 
 ### Read-Only
 
+- `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--timeouts"></a>

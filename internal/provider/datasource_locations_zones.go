@@ -21,13 +21,13 @@ func dataSourceLocationsZones() *schema.Resource {
 				Description:  "The location pop.",
 			},
 			"locations_zones": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "The list of zones in the given POP.",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringIsNotEmpty,
 				},
-				Description: "The list of zones in the given POP.",
 			},
 		},
 	}

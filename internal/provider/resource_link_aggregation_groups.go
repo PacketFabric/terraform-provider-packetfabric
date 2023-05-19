@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"errors"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -18,10 +20,10 @@ func resourceLinkAggregationGroups() *schema.Resource {
 		UpdateContext: resourceLinkAggregationGroupsUpdate,
 		DeleteContext: resourceLinkAggregationGroupsDelete,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -64,12 +66,18 @@ func resourceLinkAggregationGroups() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"enabled": {
+				Type:        schema.TypeBool,
+				Default:     true,
+				Optional:    true,
+				Description: "Change LAG Admin Status. Set it to true when LAG is enabled, false when LAG is disabled. ",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -95,6 +103,14 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
 			return diagnostics
+		}
+	}
+
+	enabled := d.Get("enabled").(bool)
+	if !enabled {
+		_, err := c.DisableLinkAggregationGroup(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
@@ -128,6 +144,22 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 			return diagnostics
 		}
 	}
+
+	if d.HasChange("enabled") {
+		enabled := d.Get("enabled").(bool)
+		if !enabled {
+			_, err := c.DisableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		} else {
+			_, err := c.EnableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	}
+
 	return diags
 }
 
@@ -166,6 +198,12 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("interval", lag.LagInterval)
 	_ = d.Set("po_number", lag.PONumber)
 
+	if lag.Disabled {
+		_ = d.Set("enabled", false)
+	} else {
+		_ = d.Set("enabled", true)
+	}
+
 	interfaces, err := c.GetLAGInterfaces(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
@@ -191,17 +229,31 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
+
+	host := os.Getenv("PF_HOST")
+	testingInLab := strings.Contains(host, "api.dev")
+
+	if testingInLab {
+		enabled := d.Get("enabled")
+		if enabled.(bool) {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "In the dev environment, LAGs are disabled prior to deletion.",
+			})
+			_, err := c.DisableLinkAggregationGroup(d.Id())
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
+		// allow time for LAG to be disabled
+		time.Sleep(time.Duration(90) * time.Second)
+	}
 	time.Sleep(45 * time.Second)
-	resp, err := c.DeleteLinkAggregationGroup(d.Id())
+	_, err := c.DeleteLinkAggregationGroup(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	time.Sleep(45 * time.Second)
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Warning,
-		Summary:  "Link Aggregation Group delete workflow",
-		Detail:   resp.WorkflowName,
-	})
 	return diags
 }
 

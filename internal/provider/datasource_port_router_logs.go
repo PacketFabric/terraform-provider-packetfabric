@@ -33,7 +33,7 @@ func datasourcePortRouterLogs() *schema.Resource {
 			},
 			"port_router_logs": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"device_name": {
@@ -93,6 +93,7 @@ func datasourcePortRouterLogsRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	d.SetId(portCID.(string) + "-data")
 	return diags
 }
 

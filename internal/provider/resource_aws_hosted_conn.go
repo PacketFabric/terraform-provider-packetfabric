@@ -2,10 +2,13 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -15,7 +18,7 @@ func resourceAwsRequestHostConn() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(60 * time.Minute),
 			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(60 * time.Minute),
 		},
 		CreateContext: resourceAwsReqHostConnCreate,
@@ -81,10 +84,10 @@ func resourceAwsRequestHostConn() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired zone of the new connection.",
+				Description:  "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"speed": {
 				Type:         schema.TypeString,
@@ -99,12 +102,22 @@ func resourceAwsRequestHostConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"cloud_provider_connection_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
+			},
+			"vlan_id_pf": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "PacketFabric VLAN ID.",
 			},
 			"cloud_settings": {
 				Type:        schema.TypeList,
@@ -237,7 +250,36 @@ func resourceAwsRequestHostConn() *schema.Resource {
 					},
 				},
 			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
+			},
 		},
+		CustomizeDiff: customdiff.Sequence(
+			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
+				if d.Id() == "" {
+					return nil
+				}
+				if _, ok := d.GetOk("cloud_settings"); !ok {
+					return nil
+				}
+
+				attributes := []string{
+					"cloud_settings.0.aws_region",
+					"cloud_settings.0.aws_vif_type",
+					"cloud_settings.0.aws_gateways",
+				}
+
+				for _, attribute := range attributes {
+					oldRaw, newRaw := d.GetChange(attribute)
+					if oldRaw != nil && !reflect.DeepEqual(oldRaw, newRaw) {
+						return fmt.Errorf("updating %s in-place is not supported, delete and recreate the resource with the updated values", attribute)
+					}
+				}
+				return nil
+			},
+		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -248,7 +290,7 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	reqConn := extractReqConn(d)
+	reqConn := extractAwsReqConn(d)
 	expectedResp, err := c.CreateAwsHostedConn(reqConn)
 	if err != nil {
 		return diag.FromErr(err)
@@ -286,6 +328,25 @@ func resourceAwsReqHostConnCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 	d.SetId(expectedResp.CloudCircuitID)
 
+	if _, ok := d.GetOk("cloud_settings"); !ok {
+		time.Sleep(90 * time.Second) // wait for the connection to show on AWS
+		resp, err := c.GetCloudConnInfo(d.Id())
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Incomplete Cloud Information",
+				Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+			})
+			return diags
+		} else {
+			_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+			_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+		}
+	}
+
 	if labels, ok := d.GetOk("labels"); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
@@ -304,16 +365,13 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("vlan", resp.Settings.VlanIDCust)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("aws_account_id", resp.Settings.AwsAccountID)
-		if _, ok := d.GetOk("po_number"); ok {
-			_ = d.Set("po_number", resp.PONumber)
-		}
+		_ = d.Set("po_number", resp.PONumber)
 
 		if _, ok := d.GetOk("cloud_settings"); ok {
 			cloudSettings := make(map[string]interface{})
@@ -341,6 +399,18 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 			}
 			cloudSettings["aws_gateways"] = awsGateways
 			_ = d.Set("cloud_settings", cloudSettings)
+		} else {
+			if resp.CloudProviderConnectionID == "" || resp.Settings.VlanIDPf == 0 {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Warning,
+					Summary:  "Incomplete Cloud Information",
+					Detail:   "The cloud_provider_connection_id and/or vlan_id_pf are currently unavailable.",
+				})
+				return diags
+			} else {
+				_ = d.Set("cloud_provider_connection_id", resp.CloudProviderConnectionID)
+				_ = d.Set("vlan_id_pf", resp.Settings.VlanIDPf)
+			}
 		}
 	}
 	resp2, err2 := c.GetBackboneByVcCID(d.Id())
@@ -349,17 +419,30 @@ func resourceAwsReqHostConnRead(ctx context.Context, d *schema.ResourceData, m i
 	}
 	if resp2 != nil {
 		_ = d.Set("port", resp2.Interfaces[0].PortCircuitID) // Port A
-		if resp2.Interfaces[0].Svlan != 0 {
-			_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+		if _, ok := d.GetOk("src_svlan"); ok {
+			if resp2.Interfaces[0].Svlan != 0 {
+				_ = d.Set("src_svlan", resp2.Interfaces[0].Svlan) // Port A if ENNI
+			}
 		}
 		_ = d.Set("zone", resp2.Interfaces[1].Zone) // Port Z
 	}
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 
@@ -367,7 +450,7 @@ func resourceAwsReqHostConnUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceServicesHostedUpdate(ctx, d, m)
 }
 
-func extractReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
+func extractAwsReqConn(d *schema.ResourceData) packetfabric.HostedAwsConnection {
 	hostedAwsConn := packetfabric.HostedAwsConnection{}
 	if awsAccountID, ok := d.GetOk("aws_account_id"); ok {
 		hostedAwsConn.AwsAccountID = awsAccountID.(string)

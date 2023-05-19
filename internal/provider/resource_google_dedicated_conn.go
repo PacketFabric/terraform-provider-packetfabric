@@ -13,10 +13,10 @@ import (
 func resourceGoogleDedicatedConn() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(60 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
-			Read:   schema.DefaultTimeout(60 * time.Minute),
-			Delete: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		CreateContext: resourceGoogleDedicatedConnCreate,
 		ReadContext:   resourceGoogleDedicatedConnRead,
@@ -45,9 +45,9 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 			},
 			"zone": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				ForceNew:    true,
-				Description: "The desired zone of the new connection.",
+				Description: "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:         schema.TypeString,
@@ -103,12 +103,17 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 				Description:  "Purchase order number or identifier of a service.",
 			},
 			"labels": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Label value linked to an object.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"etl": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -171,7 +176,6 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("cloud_circuit_id", resp.CloudCircuitID)
 		_ = d.Set("account_uuid", resp.AccountUUID)
 		_ = d.Set("description", resp.Description)
 		_ = d.Set("pop", resp.Pop)
@@ -187,19 +191,25 @@ func resourceGoogleDedicatedConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("autoneg", resp2.Autoneg)
 		_ = d.Set("zone", resp2.Zone)
 		_ = d.Set("po_number", resp2.PONumber)
-		if resp2.IsLag {
-			_ = d.Set("should_create_lag", true)
-		} else {
-			_ = d.Set("should_create_lag", false)
-		}
 	}
 	// unsetFields: loa, published_quote_line_uuid
 
-	labels, err3 := getLabels(c, d.Id())
-	if err3 != nil {
-		return diag.FromErr(err3)
+	if _, ok := d.GetOk("labels"); ok {
+		labels, err3 := getLabels(c, d.Id())
+		if err3 != nil {
+			return diag.FromErr(err3)
+		}
+		_ = d.Set("labels", labels)
 	}
-	_ = d.Set("labels", labels)
+
+	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
+	if err4 != nil {
+		return diag.FromErr(err4)
+	}
+	if etl > 0 {
+		_ = d.Set("etl", etl)
+	}
+
 	return diags
 }
 
