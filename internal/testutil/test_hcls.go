@@ -30,7 +30,6 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
-<<<<<<< HEAD
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
 const pfCsIbmHostedConn = "packetfabric_cs_ibm_hosted_connection"
@@ -51,9 +50,7 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-=======
 const pfAddSpeedBurst = "packetfabric_backbone_virtual_circuit_speed_burst"
->>>>>>> faa686b (Acc test structure: Resource  packetfabric_backbone_virtual_circuit_speed_burst)
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -184,6 +181,9 @@ const DedicatedCloudServiceClass = "longhaul"
 const DedicatedCloudAutoneg = false
 const DedicatedCloudEncap = "dot1q"     // Azure only
 const DedicatedCloudPortCat = "primary" // Azure only
+
+// packetfabric_backbone_virtual_circuit_speed_burst
+const BackboneVcSpeedBurst = "100Mbps"
 
 type PortDetails struct {
 	PFClient              *packetfabric.PFClient
@@ -567,8 +567,7 @@ type DHclCsAwsHostedConnectionResult struct {
 // packetfabric_backbone_virtual_circuit_speed_burst
 type RHclBackboneVirtualCircuitSpeedBurstResult struct {
 	HclResultBase
-	VcCircuitId string
-	Speed       string
+	Speed string
 }
 
 // Patterns:
@@ -1401,18 +1400,18 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 // packetfabric_backbone_virtual_circuit_speed_burst
 func RHclBackboneVirtualCircuitSpeedBurst() RHclBackboneVirtualCircuitSpeedBurstResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfAddSpeedBurst)
 
-	var speed, vcCircuitId, hcl string
-	resourceName, _ := _generateResourceName(pfAddSpeedBurst)
+	backboneVirtualCircuitResult := RHclBackboneVirtualCircuitVlan()
+	speedBurstHcl := fmt.Sprintf(RResourceBackboneVirtualCircuitSpeedBurst, hclName, backboneVirtualCircuitResult.ResourceName, BackboneVcSpeedBurst)
 
 	return RHclBackboneVirtualCircuitSpeedBurstResult{
 		HclResultBase: HclResultBase{
-			Hcl:          hcl,
+			Hcl:          fmt.Sprintf("%s\n%s", speedBurstHcl, backboneVirtualCircuitResult.Hcl),
 			Resource:     pfAddSpeedBurst,
 			ResourceName: resourceName,
 		},
-		VcCircuitId: vcCircuitId,
-		Speed:       speed,
+		Speed: BackboneVcSpeedBurst,
 	}
 }
 

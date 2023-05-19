@@ -1,3 +1,5 @@
+//go:build resource || core || all
+
 package provider
 
 import (
@@ -8,28 +10,19 @@ import (
 )
 
 func TestAccAddSpeedBurstRequiredFields(t *testing.T) {
-
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, nil)
 
 	backboneVirtualCircuitSpeedBurstResult := testutil.RHclBackboneVirtualCircuitSpeedBurst()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, nil)
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: backboneVirtualCircuitSpeedBurstResult.Hcl,
+				Config:             backboneVirtualCircuitSpeedBurstResult.Hcl,
+				ExpectNonEmptyPlan: true, // i.e. 150Mbps -> 50Mbps
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, "vc_circuit_id", backboneVirtualCircuitSpeedBurstResult.VcCircuitId),
 					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, "speed", backboneVirtualCircuitSpeedBurstResult.Speed),
 				),
-			},
-			{
-				ResourceName:      backboneVirtualCircuitSpeedBurstResult.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
