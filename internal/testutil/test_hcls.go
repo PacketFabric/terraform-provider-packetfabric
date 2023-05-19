@@ -584,13 +584,13 @@ type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
 }
 
-// data packetfabric_cloud_router_connection_ipsec
-type DHclDatasourceIpsecResult struct {
+// data packetfabric_cs_dedicated_connections
+type DHclDedicatedConnectionsResult struct {
 	HclResultBase
 }
 
-// data packetfabric_cs_dedicated_connections
-type DHclDedicatedConnectionsResult struct {
+// data packetfabric_cloud_router_connection_ipsec
+type DHclCloudRouterConnIpsecResult struct {
 	HclResultBase
 }
 
