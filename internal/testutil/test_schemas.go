@@ -749,8 +749,8 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   cloud_circuit_id  = %s.id
 }`
 
-// Datasource: packetfabric_dedicated_connections
-const DDatasourceDedicatedConns = `data "packetfabric_dedicated_connections" "%s" {
+// Datasource: packetfabric_cs_dedicated_connections
+const DDatasourceDedicatedConns = `data "packetfabric_cs_dedicated_connections" "%s" {
   provider          = packetfabric
 }`
 

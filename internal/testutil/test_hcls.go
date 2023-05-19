@@ -2013,17 +2013,18 @@ func DHclDatasourceHostedAwsConn() DHclCsAwsHostedConnectionResult {
 }
 
 // data.packetfabric_cs_dedicated_connections
-func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
+func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
 
 	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
 
-	resourceName, hclName := _generateResourceName(pfDataDedicatedConns)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataDedicatedConns)
+
 	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataDedicatedConns, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
 
-	return DHclAwsDedicatedConnResult{
+	return DHclDedicatedConnectionsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataDedicatedConns,
