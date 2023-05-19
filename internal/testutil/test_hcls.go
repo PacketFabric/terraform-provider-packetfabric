@@ -2299,7 +2299,7 @@ func DHclCloudRouterConns() DHclCloudRouterConnsResult {
 		cloudRouterConnectionsResult.AdditionalResourceName) // Cloud Router resource name
 
 	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionsResult.Hcl, dataCloudRouterConnsHcl)
-	fmt.Printf("\n[DEBUG RJ] %v\n", hcl)
+
 	return DHclCloudRouterConnsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
