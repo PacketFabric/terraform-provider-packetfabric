@@ -56,6 +56,7 @@ const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
+const pfDataCloudRouterConnIpsec = "data.packetfabric_cloud_router_connection_ipsec"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -592,6 +593,11 @@ type DHclCsAwsHostedConnectionResult struct {
 
 // data packetfabric_cs_dedicated_connections
 type DHclDedicatedConnectionsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_cloud_router_connection_ipsec
+type DHclCloudRouterConnIpsecResult struct {
 	HclResultBase
 }
 
@@ -2168,6 +2174,30 @@ func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCsDedicatedConns,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_router_connection_ipsec
+func DHclCloudRouterConnIpsec() DHclCloudRouterConnIpsecResult {
+
+	cloudRouterConnectionIpsecResult := RHclCloudRouterConnectionIpsec()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudRouterConnIpsec)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
+
+	dataCloudRouterIpsecHcl := fmt.Sprintf(
+		DDatasourceCloudRouterConnectionIpsec,
+		hclName,
+		cloudRouterConnectionIpsecResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", cloudRouterConnectionIpsecResult.Hcl, dataCloudRouterIpsecHcl)
+
+	return DHclCloudRouterConnIpsecResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCloudRouterConnIpsec,
 			ResourceName: resourceName,
 		},
 	}
