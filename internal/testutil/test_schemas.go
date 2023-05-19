@@ -764,6 +764,11 @@ const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_gr
   lag_circuit_id = %s.id
 }`
 
+// Datasource: packetfabric_point_to_points
+const DDatasourcePointToPoints = `data "packetfabric_point_to_points" "%s" {
+  provider = packetfabric
+}`
+
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id

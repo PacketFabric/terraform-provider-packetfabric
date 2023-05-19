@@ -49,9 +49,10 @@ const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPorts = "data.packetfabric_ports"
-const pfDataSourcePortVlans = "data.packetfabric_port_vlans"
-const pfDataSourcePortDeviceInfo = "data.packetfabric_port_device_info"
-const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs"
+const pfDataPortVlans = "data.packetfabric_port_vlans"
+const pfDataPortDeviceInfo = "data.packetfabric_port_device_info"
+const pfDataPortRouterLogs = "data.packetfabric_port_router_logs"
+const pfDataPoinToPoints = "data.packetfabric_point_to_points"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
@@ -586,6 +587,11 @@ type DHclPortRouterLogsResult struct {
 	HclResultBase
 }
 
+// data packetfabric_point_to_points
+type DHclPointToPointsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_cs_aws_hosted_connection
 type DHclCsAwsHostedConnectionResult struct {
 	HclResultBase
@@ -615,6 +621,7 @@ type DHclCloudRouterConnIpsecResult struct {
 
 // packetfabric_port
 func (details PortDetails) RHclPort(portEnabled bool) RHclPortResult {
+
 	var pop, zone, media, speed, market string
 	var err error
 
@@ -726,6 +733,7 @@ func RHclDocumentMSA() RHclDocumentResult {
 
 // packetfabric_outbound_cross_connect
 func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -779,6 +787,7 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -881,10 +890,12 @@ func RHclBackboneVirtualCircuitVlan() RHclBackboneVirtualCircuitResult {
 
 // packetfabric_backbone_virtual_circuit_speed_burst
 func RHclBackboneVirtualCircuitSpeedBurst() RHclBackboneVirtualCircuitSpeedBurstResult {
+
+	backboneVirtualCircuitResult := RHclBackboneVirtualCircuitVlan()
+
 	resourceName, hclName := GenerateUniqueResourceName(pfAddSpeedBurst)
 	log.Printf("Resource: %s, Resource name: %s\n", pfAddSpeedBurst, hclName)
 
-	backboneVirtualCircuitResult := RHclBackboneVirtualCircuitVlan()
 	speedBurstHcl := fmt.Sprintf(RResourceBackboneVirtualCircuitSpeedBurst, hclName, backboneVirtualCircuitResult.ResourceName, BackboneVcSpeedBurst)
 
 	return RHclBackboneVirtualCircuitSpeedBurstResult{
@@ -955,6 +966,7 @@ func RHclPointToPoint() RHclPointToPointResult {
 
 // packetfabric_cloud_router
 func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
+
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouter)
 	return RHclCloudRouterInput{
 		ResourceName: resourceName,
@@ -962,7 +974,9 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 		Capacity:     DefaultCloudRouterCapacity,
 	}
 }
+
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
+
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouter, input.HclName, uniqueDesc)
 
@@ -1451,6 +1465,7 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
+
 	var edgeAvailabilityDomain string
 
 	c, err := _createPFClient()
@@ -1559,6 +1574,7 @@ func RHclCsAzureHostedConnection() RHclCsHostedCloudAzureResult {
 
 // packetfabric_cs_ibm_hosted_connection
 func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1673,6 +1689,7 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 
 // packetfabric_cs_aws_dedicated_connection
 func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1725,6 +1742,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 
 // packetfabric_cs_google_dedicated_connection
 func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1776,6 +1794,7 @@ func RHclCsGoogleDedicatedConnection() RHclCsGoogleDedicatedConnectionResult {
 
 // packetfabric_cs_azure_dedicated_connection
 func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1984,6 +2003,7 @@ func DHclBilling() DHclBillingResult {
 
 // data.packetfabric_ports
 func DHclPorts() DHclPortsResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2022,8 +2042,8 @@ func DHclPortVlans() DHclPortVlansResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortVlans)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortVlans, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPortVlans)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPortVlans, hclName)
 
 	portResult := portDetails.RHclPort(false)
 	portVlansHcl := fmt.Sprintf(
@@ -2036,7 +2056,7 @@ func DHclPortVlans() DHclPortVlansResult {
 	return DHclPortVlansResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataSourcePortVlans,
+			Resource:     pfDataPortVlans,
 			ResourceName: resourceName,
 		},
 	}
@@ -2044,6 +2064,7 @@ func DHclPortVlans() DHclPortVlansResult {
 
 // data packetfabric_port_device_info
 func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2055,8 +2076,8 @@ func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
 	}
 
 	portResult := portDetails.RHclPort(false)
-	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortDeviceInfo)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortDeviceInfo, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPortDeviceInfo)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPortDeviceInfo, hclName)
 
 	portDeviceInfoHcl := fmt.Sprintf(
 		DDataSourcePortDeviceInfo,
@@ -2068,7 +2089,7 @@ func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
 	return DHclPortDeviceInfoResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataSourcePortDeviceInfo,
+			Resource:     pfDataPortDeviceInfo,
 			ResourceName: resourceName,
 		},
 	}
@@ -2076,6 +2097,7 @@ func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
 
 // data packetfabric_port_router_logs
 func DHclPortRouterLogs() DHclPortRouterLogsResult {
+
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2090,8 +2112,8 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 	timeTo := now.Format("2006-01-02 15:04:05")
 	timeFrom := now.Add(-time.Hour).Format("2006-01-02 15:04:05")
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortRouterLogs)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortDeviceInfo, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPortRouterLogs)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPortDeviceInfo, hclName)
 
 	portResult := portDetails.RHclPort(true)
 	dataSourcePortRouterLogsHcl := fmt.Sprintf(
@@ -2107,7 +2129,7 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 	return DHclPortRouterLogsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataSourcePortRouterLogs,
+			Resource:     pfDataPortRouterLogs,
 			ResourceName: resourceName,
 		},
 	}
@@ -2115,7 +2137,9 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 
 // data.packetfabric_link_aggregation_group
 func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
+
 	linkAggregationGroupResult := RHclLinkAggregationGroup()
+
 	resourceName, hclName := GenerateUniqueResourceName(pfDataLinkAggregationGroups)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLinkAggregationGroups, hclName)
 
@@ -2130,6 +2154,27 @@ func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLinkAggregationGroups,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_point_to_points
+func DHclPointToPoints() DHclPointToPointsResult {
+
+	pointToPointResult := RHclPointToPoint()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPoinToPoints)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPoinToPoints, hclName)
+
+	dataPointToPointHcl := fmt.Sprintf(DDatasourcePointToPoints, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", pointToPointResult.Hcl, dataPointToPointHcl)
+
+	return DHclPointToPointsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataPoinToPoints,
 			ResourceName: resourceName,
 		},
 	}
