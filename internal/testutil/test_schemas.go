@@ -772,7 +772,8 @@ const DDatasourceDedicatedConns = `data "packetfabric_cs_dedicated_connections" 
   provider          = packetfabric
 }`
 
-const DDatasourceIpsec = `data "packetfabric_cloud_router_connection_ipsec" "%s" {
+// Datasource: packetfabric_cloud_router_connection_ipsec
+const DDatasourceCloudRouterConnectionIpsec = `data "packetfabric_cloud_router_connection_ipsec" "%s" {
   provider   = packetfabric
   circuit_id = %s.id
 }`

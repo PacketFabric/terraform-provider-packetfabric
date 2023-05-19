@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceIpsecComputedRequiredFields(t *testing.T) {
+func TestAccDataSourceCloudRouterConnectionIpsecComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourceIpsecResult := testutil.DHclDatasourceIpsec()
+	datasourceIpsecResult := testutil.DHclCloudRouterConnIpsec()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

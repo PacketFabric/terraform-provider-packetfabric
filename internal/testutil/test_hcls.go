@@ -2133,7 +2133,7 @@ func DHclDedicatedConnections() DHclDedicatedConnectionsResult {
 	}
 }
 
-// packetfabric_cloud_router_connection_ipsec
+// data.packetfabric_cloud_router_connection_ipsec
 func DHclCloudRouterConnIpsec() DHclCloudRouterConnIpsecResult {
 
 	cloudRouterConnectionIpsecResult := RHclCloudRouterConnectionIpsec()
@@ -2156,4 +2156,3 @@ func DHclCloudRouterConnIpsec() DHclCloudRouterConnIpsecResult {
 		},
 	}
 }
-
