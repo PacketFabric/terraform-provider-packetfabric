@@ -51,7 +51,6 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-const pfDataSourcePortDeviceInfo = "data.packetfabric_port_device_info."
 const pfDataSourcePortDeviceInfo = "data.packetfabric_port_device_info"
 
 // ########################################
@@ -1501,13 +1500,7 @@ func DHclDataSourcePortDeviceInfo() DHclDatasourcePortDeviceInfoResult {
 	portDeviceInfoHcl := fmt.Sprintf(
 		DDataSourcePortDeviceInfo,
 		hclName,
-		portDetails.RHclPort(false).ResourceName)
-	portResult := portDetails.RHclPort()
-	resourceName, hclName := _generateResourceName(pfDataSourcePortDeviceInfo)
-	portDeviceInfoHcl := fmt.Sprintf(
-		DDataSourcePortDeviceInfo,
-		hclName,
-		portResult.ResourceReference)
+		portResult.ResourceName)
 
 	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, portDeviceInfoHcl)
 

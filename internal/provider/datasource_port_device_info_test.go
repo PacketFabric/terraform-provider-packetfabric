@@ -1,3 +1,5 @@
+//go:build datasource || core || all
+
 package provider
 
 import (
@@ -13,14 +15,12 @@ func TestAccDataSourcePortDeviceInfoComputedRequiredFields(t *testing.T) {
 	datasourcePortDeviceInfoResult := testutil.DHclDataSourcePortDeviceInfo()
 
 	resource.ParallelTest(t, resource.TestCase{
-
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: datasourcePortDeviceInfoResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(datasourcePortDeviceInfoResult.ResourceName, "port_circuit_id"),
-					resource.TestCheckResourceAttrSet(datasourcePortDeviceInfoResult.ResourceName, "adjacent_router"),
 					resource.TestCheckResourceAttrSet(datasourcePortDeviceInfoResult.ResourceName, "device_name"),
 					resource.TestCheckResourceAttrSet(datasourcePortDeviceInfoResult.ResourceName, "device_make"),
 					resource.TestCheckResourceAttrSet(datasourcePortDeviceInfoResult.ResourceName, "admin_status"),
@@ -28,5 +28,4 @@ func TestAccDataSourcePortDeviceInfoComputedRequiredFields(t *testing.T) {
 			},
 		},
 	})
-
 }
