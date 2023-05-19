@@ -2168,6 +2168,7 @@ func DHclPointToPoints() DHclPointToPointsResult {
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPoinToPoints, hclName)
 
 	dataPointToPointHcl := fmt.Sprintf(DDatasourcePointToPoints, hclName)
+
 	hcl := fmt.Sprintf("%s\n%s", pointToPointResult.Hcl, dataPointToPointHcl)
 
 	return DHclPointToPointsResult{
