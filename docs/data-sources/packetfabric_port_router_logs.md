@@ -36,19 +36,19 @@ output "packetfabric_port_router_logs" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `port_router_logs` (Block List) (see [below for nested schema](#nestedblock--port_router_logs))
+- `port_router_logs` (List of Object) (see [below for nested schema](#nestedatt--port_router_logs))
 
-<a id="nestedblock--port_router_logs"></a>
+<a id="nestedatt--port_router_logs"></a>
 ### Nested Schema for `port_router_logs`
 
 Read-Only:
 
-- `device_name` (String) The device name.
-- `iface_name` (String) The interface name.
-- `message` (String) The log message.
-- `severity` (Number) The log severity level.
-- `severity_name` (String) The log severity name.
-- `timestamp` (String) The log timestamp.
+- `device_name` (String)
+- `iface_name` (String)
+- `message` (String)
+- `severity` (Number)
+- `severity_name` (String)
+- `timestamp` (String)
 
 
 

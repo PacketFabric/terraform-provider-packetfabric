@@ -24,82 +24,82 @@ func dataSourceCloudConnections() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"port_type": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The port type for the given port\n\t\t Enum: hosted, dedicated ",
 						},
 						"connection_type": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The type of the connection.\n\t\t Enum: cloud_hosted, cloud_dedicated, ipsec, packetfabric",
 						},
 						"port_circuit_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The circuit ID of the port to connect to the cloud router.\n\t\t Exampl \"PF-AE-1234\"",
 						},
 						"pending_delete": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Whether or not the connection is currently deleting.",
 						},
 						"deleted": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Whether or not the connection has been fully deleted.",
 						},
 						"speed": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The speed of the connection.\n\t\tEnum: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps",
 						},
 						"state": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The state of the connection\n\t\tEnum: Requested, Active, Inactive, PendingDelete",
 						},
 						"cloud_circuit_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The unique PF circuit ID for this connection.\n\t\tExample: \"PF-AP-LAX1-1002\"",
 						},
 						"account_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
 						},
 						"service_class": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The service class of the connection.\n\t\tEnum: metro, longhaul",
 						},
 						"service_provider": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The service provider of the connection.\n\t\tEnum: aws, azure, packet, google, ibm, salesforce, webex",
 						},
 						"service_type": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The type of connection, this will currently always be cr_connection.\n\t\tEnum: cr_connection",
 						},
 						"description": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The description of this connection.",
 						},
 						"uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID of the connection.",
 						},
 						"cloud_provider_connection_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.\n\t\tExample: dxcon-fgadaaa1",
 						},
 						"cloud_settings": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"vlan_id_pf": {
@@ -248,37 +248,37 @@ func dataSourceCloudConnections() *schema.Resource {
 						},
 						"user_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID for the user this connection belongs to",
 						},
 						"customer_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID for the customer this connection belongs to",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time of connection creation",
 						},
 						"time_updated": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time connection was last updated",
 						},
 						"cloud_provider": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"pop": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Point of Presence for the cloud provider location\n\t\tExample: LAX1",
 									},
 									"site": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Region short name\n\t\tExample: us-west-1",
 									},
 								},
@@ -287,18 +287,17 @@ func dataSourceCloudConnections() *schema.Resource {
 
 						"pop": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Point of Presence for the cloud provider location\n\t\tExample: LAX1",
 						},
 						"site": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Region short name\n\t\tExample: us-west-1",
 						},
 						"bgp_state_list": {
 							Type:        schema.TypeSet,
 							Computed:    true,
-							Optional:    true,
 							Description: "A list of bgp sessions attached to the connection and their states.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -317,42 +316,42 @@ func dataSourceCloudConnections() *schema.Resource {
 						},
 						"cloud_router_name": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The name of the cloud router this connection is associated with.\n\t\tExample: Sample CR",
 						},
 						"cloud_router_asn": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Computed:    true,
 							Description: "The asn of the cloud router this connection is associated with.\n\t\tExample: 4556",
 						},
 						"cloud_router_circuit_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The circuit ID of the cloud router this connection is associated with.\n\t\tExample: PF-L3-CUST-2001",
 						},
 						"nat_capable": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Indicates whether this connection supports NAT",
 						},
 						"dnat_capable": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Indicates whether this connection supports DNAT",
 						},
 						"zone": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The cloud router connection zone",
 						},
 						"vlan": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Computed:    true,
 							Description: "The connection vlan for dedicated connections",
 						},
 						"desired_nat": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Indicates the user's choice of NAT type",
 						},
 					},

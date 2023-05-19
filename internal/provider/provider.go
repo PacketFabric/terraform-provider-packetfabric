@@ -132,7 +132,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cloud_router_bgp_session":           dataSourceBgpSession(),
 			"packetfabric_cs_aws_hosted_connection":           dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_ibm_hosted_connection":           dataSourceCloudServicesConnInfo(),
-			"packetfabric_cs_dedicated_connections":           datasourceDedicatedConn(),
+			"packetfabric_cs_dedicated_connections":           datasourceDedicatedCloudConnections(),
 			"packetfabric_billing":                            dataSourceBilling(),
 			"packetfabric_ports":                              datasourceInterfaces(),
 			"packetfabric_locations":                          dataSourceLocations(),
