@@ -31,13 +31,14 @@ output "packetfabric_cloud_router_connection_crc1" {
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `connection_id` (String) The circuit ID of the connection associated with the BGP session. This starts with "PF-L3-CON-".
 
-### Optional
+### Read-Only
 
 - `account_uuid` (String) The UUID of the PacketFabric contact that will be billed.
 		Example: a2115890-ed02-4795-a6dd-c485bec3529c
+- `bgp_state_list` (Set of Object) A list of bgp sessions attached to the connection and their states. (see [below for nested schema](#nestedatt--bgp_state_list))
 - `cloud_circuit_id` (String) The unique PF circuit ID for this connection.
 		Example: "PF-AP-LAX1-1002"
-- `cloud_provider` (Block Set) (see [below for nested schema](#nestedblock--cloud_provider))
+- `cloud_provider` (Set of Object) (see [below for nested schema](#nestedatt--cloud_provider))
 - `cloud_provider_connection_id` (String) The cloud provider specific connection ID, eg. the Amazon connection ID of the cloud router connection.
 		Example: dxcon-fgadaaa1
 - `cloud_router_asn` (Number) The asn of the cloud router this connection is associated with.
@@ -46,6 +47,7 @@ output "packetfabric_cloud_router_connection_crc1" {
 		Example: PF-L3-CUST-2001
 - `cloud_router_name` (String) The name of the cloud router this connection is associated with.
 		Example: Sample CR
+- `cloud_settings` (Set of Object) (see [below for nested schema](#nestedatt--cloud_settings))
 - `connection_type` (String) The type of the connection.
 		 Enum: cloud_hosted, cloud_dedicated, ipsec, packetfabric
 - `customer_uuid` (String) The UUID for the customer this connection belongs to
@@ -53,6 +55,7 @@ output "packetfabric_cloud_router_connection_crc1" {
 - `description` (String) The description of this connection.
 - `desired_nat` (String) Indicates the user's choice of NAT type
 - `dnat_capable` (Boolean) Indicates whether this connection supports DNAT
+- `id` (String) The ID of this resource.
 - `nat_capable` (Boolean) Indicates whether this connection supports NAT
 - `pending_delete` (Boolean) Whether or not the connection is currently deleting.
 - `pop` (String) Point of Presence for the cloud provider location
@@ -80,34 +83,25 @@ output "packetfabric_cloud_router_connection_crc1" {
 - `vlan` (Number) The connection vlan for dedicated connections
 - `zone` (String) The cloud router connection zone
 
-### Read-Only
-
-- `bgp_state_list` (Block Set) A list of bgp sessions attached to the connection and their states. (see [below for nested schema](#nestedblock--bgp_state_list))
-- `cloud_settings` (Block Set) (see [below for nested schema](#nestedblock--cloud_settings))
-- `id` (String) The ID of this resource.
-
-<a id="nestedblock--cloud_provider"></a>
-### Nested Schema for `cloud_provider`
-
-Optional:
-
-- `pop` (String) Point of Presence for the cloud provider location
-		Example: LAX1
-- `site` (String) Region short name
-		Example: us-west-1
-
-
-<a id="nestedblock--bgp_state_list"></a>
+<a id="nestedatt--bgp_state_list"></a>
 ### Nested Schema for `bgp_state_list`
 
 Read-Only:
 
-- `bgp_settings_uuid` (String) The UUID of the BGP Session
-- `bgp_state` (String) The status of the BGP session
-		Enum: established, configuring, fetching, etc.
+- `bgp_settings_uuid` (String)
+- `bgp_state` (String)
 
 
-<a id="nestedblock--cloud_settings"></a>
+<a id="nestedatt--cloud_provider"></a>
+### Nested Schema for `cloud_provider`
+
+Read-Only:
+
+- `pop` (String)
+- `site` (String)
+
+
+<a id="nestedatt--cloud_settings"></a>
 ### Nested Schema for `cloud_settings`
 
 Read-Only:
@@ -123,7 +117,7 @@ Read-Only:
 - `bgp_asn` (Number)
 - `bgp_cer_cidr` (String)
 - `bgp_ibm_cidr` (String)
-- `cloud_state` (List of Object) (see [below for nested schema](#nestedatt--cloud_settings--cloud_state))
+- `cloud_state` (List of Object) (see [below for nested schema](#nestedobjatt--cloud_settings--cloud_state))
 - `gateway_id` (String)
 - `google_pairing_key` (String)
 - `google_vlan_attachment_name` (String)
@@ -141,7 +135,7 @@ Read-Only:
 - `vlan_id_pf` (Number)
 - `vlan_id_private` (Number)
 
-<a id="nestedatt--cloud_settings--cloud_state"></a>
+<a id="nestedobjatt--cloud_settings--cloud_state"></a>
 ### Nested Schema for `cloud_settings.cloud_state`
 
 Read-Only:

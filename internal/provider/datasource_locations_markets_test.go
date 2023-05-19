@@ -1,4 +1,4 @@
-//go:build datasource || all
+//go:build datasource || location || all
 
 package provider
 
@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceLocationsMarketsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	locationsMarketsResult := testutil.DHclDataSourceLocationsMarkets()
+	locationsMarketsResult := testutil.DHclLocationsMarkets()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

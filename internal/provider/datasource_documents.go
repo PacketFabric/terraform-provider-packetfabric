@@ -21,7 +21,7 @@ func datasourceDocuments() *schema.Resource {
 			"documents": {
 				Type:        schema.TypeList,
 				Description: "Documents list",
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"uuid": {

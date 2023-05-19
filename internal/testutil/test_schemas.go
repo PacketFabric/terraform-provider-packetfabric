@@ -738,6 +738,24 @@ const DDataSourcePorts = `data "packetfabric_ports" "%s" {
   provider          = packetfabric
 }`
 
+// Datasource: packetfabric_port_vlans
+const DDataSourcePortVlans = `data "packetfabric_port_vlans" "%s" {
+  provider        = packetfabric
+  port_circuit_id = %s.id
+}`
+
+// Datasource: packetfabric_port_device_info
+const DDataSourcePortDeviceInfo = `data "packetfabric_port_device_info" "%s" {
+  provider          = packetfabric
+  port_circuit_id   = %s.id
+}`
+
+// Datasource: packetfabric_link_aggregation_group
+const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+  provider       = packetfabric
+  lag_circuit_id = %s.id
+}`
+
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
@@ -749,10 +767,9 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   cloud_circuit_id  = %s.id
 }`
 
-// Datasource: packetfabric_link_aggregation_group
-const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
-  provider       = packetfabric
-  lag_circuit_id = %s.id
+// Datasource: packetfabric_cs_dedicated_connections
+const DDatasourceDedicatedConns = `data "packetfabric_cs_dedicated_connections" "%s" {
+  provider          = packetfabric
 }`
 
 const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {

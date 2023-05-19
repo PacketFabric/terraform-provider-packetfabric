@@ -42,7 +42,7 @@ output "packetfabric_locations_cloud" {
 
 ### Read-Only
 
-- `cloud_locations` (List of Object) (see [below for nested schema](#nestedatt--cloud_locations))
+- `cloud_locations` (List of Object) The list of list of physical locations optionally filtered by provided parameters. (see [below for nested schema](#nestedatt--cloud_locations))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--cloud_locations"></a>
