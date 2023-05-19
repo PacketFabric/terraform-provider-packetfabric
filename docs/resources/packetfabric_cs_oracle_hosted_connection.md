@@ -39,6 +39,7 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 - `region` (String) The region in which you created the FastConnect virtual circuit.
 - `vc_ocid` (String) OCID of the FastConnect virtual circuit that you created from the Oracle side.
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
+- `zone` (String) The desired availability zone of the connection.
 
 ### Optional
 
@@ -47,7 +48,6 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 - `published_quote_line_uuid` (String) UUID of the published quote line with this connection should be associated.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired availability zone of the connection.
 
 ### Read-Only
 

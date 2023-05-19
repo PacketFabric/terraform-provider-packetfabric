@@ -83,6 +83,7 @@ resource "ibm_dl_gateway_action" "confirmation" {
 - `speed` (String) The speed of the new connection.
 
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps"]
+- `zone` (String) The desired availability zone of the connection.
 
 ### Optional
 
@@ -94,7 +95,6 @@ resource "ibm_dl_gateway_action" "confirmation" {
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired availability zone of the connection.
 
 ### Read-Only
 

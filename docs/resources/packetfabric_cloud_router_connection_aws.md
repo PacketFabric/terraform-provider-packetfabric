@@ -100,6 +100,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
 - `speed` (String) The desired speed of the new connection.
 
 	 Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
+- `zone` (String) The desired AWS availability zone of the new connection.
 
 ### Optional
 
@@ -112,7 +113,6 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired AWS availability zone of the new connection.
 
 ### Read-Only
 

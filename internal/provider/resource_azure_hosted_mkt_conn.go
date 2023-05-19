@@ -41,14 +41,14 @@ func resourceAzureHostedMktConn() *schema.Resource {
 			},
 			"description": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "A brief description of this connection.",
 			},
 			"azure_service_key": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.",

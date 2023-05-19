@@ -45,6 +45,7 @@ resource "packetfabric_port" "port_1" {
 - `subscription_term` (Number) Duration of the subscription in months
 
 	Enum ["1" "12" "24" "36"]
+- `zone` (String) Availability zone of the port.
 
 ### Optional
 
@@ -56,7 +57,6 @@ resource "packetfabric_port" "port_1" {
 	By default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) Availability zone of the port.
 
 ### Read-Only
 

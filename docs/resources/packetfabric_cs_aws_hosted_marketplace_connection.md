@@ -33,6 +33,7 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketpla
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
+- `description` (String) A brief description of this connection.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
 
 	If the marketplace provider has services published in the marketplace, you can use the PacketFabric portal to see which POPs they are in. Simply remove the number from the POP to get the market code (e.g. if they offer services in "DAL5", enter "DAL" for the market).
@@ -43,12 +44,11 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketpla
 - `speed` (String) The speed of the new connection.
 
 	Enum: ["50Mbps", "100Mbps", "200Mbps", "300Mbps", "400Mbps", "500Mbps", "1Gbps", "2Gbps", "5Gbps", "10Gbps"]
+- `zone` (String) The desired zone of the new connection
 
 ### Optional
 
-- `description` (String) A brief description of this connection.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired zone of the new connection
 
 ### Read-Only
 
