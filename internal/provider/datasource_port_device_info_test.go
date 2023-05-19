@@ -12,7 +12,7 @@ import (
 func TestAccDataSourcePortDeviceInfoComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourcePortDeviceInfoResult := testutil.DHclDataSourcePortDeviceInfo()
+	datasourcePortDeviceInfoResult := testutil.DHclPortDeviceInfo()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

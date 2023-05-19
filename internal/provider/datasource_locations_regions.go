@@ -15,17 +15,17 @@ func datasourceLocationsRegions() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"locations_regions": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The location region name.",
 						},
 						"code": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The location region code.",
 						},
 					},

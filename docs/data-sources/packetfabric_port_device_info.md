@@ -29,7 +29,7 @@ output "packetfabric_port_device_info" {
 
 - `port_circuit_id` (String) The port circuit ID.
 
-### Optional
+### Read-Only
 
 - `adjacent_router` (String) The adjcent router.
 - `admin_status` (String) The current admin status.
@@ -37,6 +37,7 @@ output "packetfabric_port_device_info" {
 - `device_can_lag` (Boolean) True if device can lag.
 - `device_make` (String) The device make name.
 - `device_name` (String) The device name.
+- `id` (String) The ID of this resource.
 - `iface_name` (String) The interface name.
 - `lag_speed` (Number) The port lag speed.
 - `oper_status` (String) The current oerational status.
@@ -69,8 +70,4 @@ output "packetfabric_port_device_info" {
 - `wiring_position` (String) The port wiring position.
 - `wiring_reach` (String) The port wiring reach.
 - `wiring_type` (String) The port wiring type.
-
-### Read-Only
-
-- `id` (String) The ID of this resource.
 
