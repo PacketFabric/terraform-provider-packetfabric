@@ -11,7 +11,7 @@ import (
 
 func datasourcePointToPoints() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: datasourcePointToPointRead,
+		ReadContext: datasourcePointToPointsRead,
 		Schema: map[string]*schema.Schema{
 			"point_to_points": {
 				Type:     schema.TypeList,
@@ -216,7 +216,7 @@ func datasourcePointToPoints() *schema.Resource {
 	}
 }
 
-func datasourcePointToPointRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func datasourcePointToPointsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

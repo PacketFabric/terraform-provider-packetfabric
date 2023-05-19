@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudRouter() *schema.Resource {
+func dataSourceCloudRouters() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCloudRouterRead,
+		ReadContext: dataSourceCloudRoutersRead,
 		Schema: map[string]*schema.Schema{
 			"cloud_routers": {
 				Type:     schema.TypeList,
@@ -67,7 +67,7 @@ func dataSourceCloudRouter() *schema.Resource {
 	}
 }
 
-func dataSourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCloudRoutersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

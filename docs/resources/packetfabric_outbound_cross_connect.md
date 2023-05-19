@@ -55,6 +55,7 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 
 ### Required
 
+- `description` (String) PacketFabric outbound cross connect description.
 - `document_uuid` (String) Document UUID for the LOA. When you order a cross connect, you must provide an LOA/CFA authorizing PacketFabric access to your equipment.
 - `port` (String) The circuit ID of the PacketFabric port to which your are building the cross connect. This starts with "PF-AP-".
 - `site` (String) The site code for the port location.
@@ -62,7 +63,6 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 ### Optional
 
 - `data_center_cross_connect_id` (String) Display ID for the outbound cross connect.
-- `description` (String) PacketFabric outbound cross connect description.
 - `destination_circuit_id` (String) Z-side circuit id for the far side of the cross connect.
 - `destination_name` (String) Z-side company name for the far side of the cross connect.
 - `module` (String) Z-side fiber module info.

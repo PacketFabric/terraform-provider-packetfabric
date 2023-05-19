@@ -56,6 +56,7 @@ resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
 
 - `asn` (Number) Your ASN.
 - `bandwidth` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--bandwidth))
+- `description` (String) A brief description of this connection.
 - `interface` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface))
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the IX provider to provision their side of the connection.
 - `routing_id` (String) The routing ID of the IX provider that will be receiving this request.
@@ -64,7 +65,6 @@ resource "packetfabric_ix_virtual_circuit_marketplace" "ix_marketplace_conn1" {
 
 ### Optional
 
-- `description` (String) A brief description of this connection.
 - `flex_bandwidth_id` (String) ID of the flex bandwidth container from which to subtract this VC's speed.
 - `rate_limit_in` (Number) The upper bound, in Mbps, to limit incoming data by.
 - `rate_limit_out` (Number) The upper bound, in Mbps, to limit outgoing data by.

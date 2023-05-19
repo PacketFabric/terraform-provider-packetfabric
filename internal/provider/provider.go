@@ -126,7 +126,7 @@ func Provider() *schema.Provider {
 		// packetfabric_billing - https://docs.packetfabric.com/api/v2/redoc/#operation/get_order
 		// packetfabric_locations - https://docs.packetfabric.com/api/v2/redoc/#operation/get_location_list
 		DataSourcesMap: map[string]*schema.Resource{
-			"packetfabric_cloud_router":                       dataSourceCloudRouter(),
+			"packetfabric_cloud_routers":                      dataSourceCloudRouters(),
 			"packetfabric_cloud_router_connection":            dataSourceCloudConnection(),
 			"packetfabric_cloud_router_connections":           dataSourceCloudConnections(),
 			"packetfabric_cloud_router_bgp_session":           dataSourceBgpSession(),

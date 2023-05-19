@@ -72,6 +72,7 @@ resource "packetfabric_marketplace_service" "marketplace_port" {
 
 ### Required
 
+- `description` (String) Brief description of what the service does.
 - `name` (String) Name of the service.
 - `published` (Boolean) If published, the service appears in your marketplace listing.
 
@@ -82,7 +83,6 @@ resource "packetfabric_marketplace_service" "marketplace_port" {
 	Enum: `"cloud-computing"`, `"content-delivery-network"`, `"edge-computing"`, `"sd-wan"`, `"data-storage"`, `"developer-platform"`, `"internet-service-provider"`, `"security"`, `"video-conferencing"`, `"voice-and-messaging"`, `"web-hosting"`, `"internet-of-things"`, `"private-connectivity"`, `"bare-metal-hosting"`
 - `cloud_router_circuit_id` (String) The circuit ID of the Cloud Router this service is associated with (Quick Connect service only).
 - `connection_circuit_ids` (List of String) The circuit IDs of the Cloud Router connections that will be included in this service. (Quick Connect service only).
-- `description` (String) Brief description of what the service does.
 - `locations` (List of String) Locations in which the service will operate (port service only). The location should be a POP, e.g. `NYC5`.
 - `route_set` (Block Set) The Cloud Router route set to export (Quick Connect service only). (see [below for nested schema](#nestedblock--route_set))
 - `service_type` (String) The service type of this service. Enum: `"port-service"`, `"quick-connect-service"`

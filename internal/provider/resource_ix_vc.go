@@ -39,7 +39,7 @@ func resourceIxVC() *schema.Resource {
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				ForceNew:    true,
 				Description: "A brief description of this connection.",
 			},
