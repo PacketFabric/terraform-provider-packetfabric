@@ -29,80 +29,67 @@ output "packetfabric_marketplace_service_port_requests" {
 
 - `type` (String) The VC request type. (sent/received)
 
-### Optional
-
-- `vc_requests` (Block List) List of VC Requests. (see [below for nested schema](#nestedblock--vc_requests))
-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `vc_requests` (List of Object) List of VC Requests. (see [below for nested schema](#nestedatt--vc_requests))
 
-<a id="nestedblock--vc_requests"></a>
+<a id="nestedatt--vc_requests"></a>
 ### Nested Schema for `vc_requests`
-
-Optional:
-
-- `bandwidth` (Block Set) (see [below for nested schema](#nestedblock--vc_requests--bandwidth))
-- `from_customer` (Block Set) (see [below for nested schema](#nestedblock--vc_requests--from_customer))
-- `time_created` (String) Date and time of connection creation
-- `time_updated` (String) Date and time connection was last updated
-- `to_customer` (Block Set) (see [below for nested schema](#nestedblock--vc_requests--to_customer))
 
 Read-Only:
 
-- `allow_untagged_z` (Boolean) If true, the accepting customer can choose to make this VC untagged. This will only be False if there is only one logical interface on the requesting customer's port and that single logical interface is untagged.
-- `flex_bandwidth_id` (String) The flex bandwidth ID.
-- `rate_limit_in` (Number) The rate limit in.
-- `rate_limit_out` (Number) The rate limit out.
-- `request_type` (String) The request type.
-- `service_name` (String) The VC Request service name.
-- `status` (String) The request status.
-- `text` (String) The vc request text.
-- `vc_circuit_id` (String) The VC Circuit ID.
-- `vc_request_uuid` (String) The VC Request UUID.
+- `allow_untagged_z` (Boolean)
+- `bandwidth` (Set of Object) (see [below for nested schema](#nestedobjatt--vc_requests--bandwidth))
+- `flex_bandwidth_id` (String)
+- `from_customer` (Set of Object) (see [below for nested schema](#nestedobjatt--vc_requests--from_customer))
+- `rate_limit_in` (Number)
+- `rate_limit_out` (Number)
+- `request_type` (String)
+- `service_name` (String)
+- `status` (String)
+- `text` (String)
+- `time_created` (String)
+- `time_updated` (String)
+- `to_customer` (Set of Object) (see [below for nested schema](#nestedobjatt--vc_requests--to_customer))
+- `vc_circuit_id` (String)
+- `vc_request_uuid` (String)
 
-<a id="nestedblock--vc_requests--bandwidth"></a>
+<a id="nestedobjatt--vc_requests--bandwidth"></a>
 ### Nested Schema for `vc_requests.bandwidth`
 
-Optional:
+Read-Only:
 
-- `account_uuid` (String) The UUID of the PacketFabric contact that will be billed.
-		Example: a2115890-ed02-4795-a6dd-c485bec3529c
-- `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing
-		Enum: ["dedicated" "usage" "hourly"]
-- `speed` (String) The desired speed of the new connection.
-		Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps"]
-- `subscription_term` (Number) Subscription term in months. Not applicable for hourly billing.
-		Enum: ["1" "12" "24" "36"]
+- `account_uuid` (String)
+- `longhaul_type` (String)
+- `speed` (String)
+- `subscription_term` (Number)
 
 
-<a id="nestedblock--vc_requests--from_customer"></a>
+<a id="nestedobjatt--vc_requests--from_customer"></a>
 ### Nested Schema for `vc_requests.from_customer`
 
-Optional:
+Read-Only:
 
-- `contact_email` (String) Customer contact email
-- `contact_first_name` (String) Customer contact first name
-- `contact_last_name` (String) Customer contact last name
-- `contact_phone` (String) Customer contact phone
-- `customer_uuid` (String) The UUID for the customer associated with this Virtual Circuit
-- `market` (String) The market that the VC will be requested in.
-		Example: ATL
-- `market_description` (String) The description of the AWS Marketplace Cloud connection.
-		Example: My AWS Marketplace Cloud connection
-- `name` (String) Customer Name
+- `contact_email` (String)
+- `contact_first_name` (String)
+- `contact_last_name` (String)
+- `contact_phone` (String)
+- `customer_uuid` (String)
+- `market` (String)
+- `market_description` (String)
+- `name` (String)
 
 
-<a id="nestedblock--vc_requests--to_customer"></a>
+<a id="nestedobjatt--vc_requests--to_customer"></a>
 ### Nested Schema for `vc_requests.to_customer`
 
-Optional:
+Read-Only:
 
-- `customer_uuid` (String) The UUID for the customer this connection belongs to
-- `market` (String) The market that the VC will be requested in
-- `market_description` (String) The description of the AWS Marketplace Cloud connection.
-		Example: My AWS Marketplace Cloud connection
-- `name` (String) Customer Name
+- `customer_uuid` (String)
+- `market` (String)
+- `market_description` (String)
+- `name` (String)
 
 
 

@@ -27,32 +27,32 @@ func dataSourcePortAvailability() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"zone": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The pop zone.",
 						},
 						"speed": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
 						},
 						"media": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The port media type.",
 						},
 						"count": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Computed:    true,
 							Description: "The port count.",
 						},
 						"partial": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "True if port is partial.",
 						},
 						"enni": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "True if port is enni.",
 						},
 					},
