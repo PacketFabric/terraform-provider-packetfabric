@@ -122,8 +122,8 @@ func _contains(s []string, str string) bool {
 	return false
 }
 
-// Used for Port and Point-to-Point
-func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *string, DesiredMedia *string) (pop, zone, media, market string, availabilityErr error) {
+// Used for Port, Point-to-Point, Cloud Router IPsec
+func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *string, DesiredMedia *string, IsIpsecCapable bool) (pop, zone, media, market string, availabilityErr error) {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -131,10 +131,19 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *stri
 		return "", "", "", "", err
 	}
 
-	locations, err := c.ListLocations()
-	if err != nil {
-		log.Println("Error getting locations list: ", err)
-		return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
+	var locations []packetfabric.Location
+	if IsIpsecCapable {
+		locations, err = c.ListLocationsIpsecCapable()
+		if err != nil {
+			log.Println("Error getting locations list: ", err)
+			return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
+		}
+	} else {
+		locations, err = c.ListLocations()
+		if err != nil {
+			log.Println("Error getting locations list: ", err)
+			return "", "", "", "", fmt.Errorf("error getting locations list: %w", err)
+		}
 	}
 
 	// We need to shuffle the list of locations. Otherwise, we may try to run
