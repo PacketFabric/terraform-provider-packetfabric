@@ -20,52 +20,52 @@ func datasourcePointToPoints() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"ptp_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "PTP UUID",
 						},
 						"ptp_circuit_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP Circuit ID.",
 						},
 						"description": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP description",
 						},
 						"speed": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP speed.",
 						},
 						"media": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP media type.",
 						},
 						"state": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP state.",
 						},
 						"billing": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"account_uuid": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The billing account UUID.",
 									},
 									"subscription_term": {
 										Type:        schema.TypeInt,
-										Optional:    true,
+										Computed:    true,
 										Description: "The subscription term.",
 									},
 									"contracted_speed": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The contracted speed.",
 									},
 								},
@@ -73,22 +73,22 @@ func datasourcePointToPoints() *schema.Resource {
 						},
 						"time_created": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP time created.",
 						},
 						"time_updated": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The PTP time updated.",
 						},
 						"deleted": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Is PTP deleted.",
 						},
 						"service_class": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The service class for the associated VC of this PTP.",
 						},
 						"interfaces": {
