@@ -208,7 +208,7 @@ func datasourceInterfacesRead(ctx context.Context, d *schema.ResourceData, m int
 
 func flattenInterfaces(interfs *[]packetfabric.InterfaceReadResp) []interface{} {
 	if interfs != nil {
-		flattens := make([]interface{}, len(*interfs), len(*interfs))
+		flattens := make([]interface{}, len(*interfs))
 		for i, interf := range *interfs {
 			flatten := make(map[string]interface{})
 			flatten["autoneg"] = interf.Autoneg

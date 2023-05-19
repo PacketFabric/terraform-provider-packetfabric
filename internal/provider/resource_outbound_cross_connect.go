@@ -51,7 +51,7 @@ func resourceOutboundCrossConnect() *schema.Resource {
 			},
 			"description": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "PacketFabric outbound cross connect description.",

@@ -43,6 +43,9 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
 - `subscription_term` (Number) The billing term, in months, for this connection.
 
 	Enum: ["1", "12", "24", "36"]
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
@@ -52,7 +55,6 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired zone of the new connection.
 
 ### Read-Only
 

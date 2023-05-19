@@ -341,8 +341,9 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 			}
 		}
 	}
-
-	_ = d.Set("md5", bgp.Md5)
+	if bgp.Md5 != "" {
+		_ = d.Set("md5", bgp.Md5)
+	}
 	_ = d.Set("med", bgp.Med)
 	_ = d.Set("as_prepend", bgp.AsPrepend)
 	_ = d.Set("local_preference", bgp.LocalPreference)
