@@ -49,6 +49,7 @@ const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataSourcePortVlans = "data.packetfabric_port_vlans"
+const pfDataSourcePortDeviceInfo = "data.packetfabric_port_device_info"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
@@ -569,6 +570,11 @@ type DHclPortsResult struct {
 
 // data packetfabric_port_vlans
 type DHclPortVlansResult struct {
+	HclResultBase
+}
+
+// data packetfabric_port_device_info
+type DHclPortDeviceInfoResult struct {
 	HclResultBase
 }
 
@@ -2004,6 +2010,8 @@ func DHclPortVlans() DHclPortVlansResult {
 	}
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortVlans)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortVlans, hclName)
+
 	portResult := portDetails.RHclPort(false)
 	portVlansHcl := fmt.Sprintf(
 		DDataSourcePortVlans,
@@ -2016,6 +2024,38 @@ func DHclPortVlans() DHclPortVlansResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataSourcePortVlans,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data packetfabric_port_device_info
+func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
+	c, err := _createPFClient()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	portDetails := PortDetails{
+		PFClient:     c,
+		DesiredSpeed: portSpeed,
+	}
+
+	portResult := portDetails.RHclPort(false)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortDeviceInfo)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortDeviceInfo, hclName)
+
+	portDeviceInfoHcl := fmt.Sprintf(
+		DDataSourcePortDeviceInfo,
+		hclName,
+		portResult.ResourceName)
+
+	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, portDeviceInfoHcl)
+
+	return DHclPortDeviceInfoResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataSourcePortDeviceInfo,
 			ResourceName: resourceName,
 		},
 	}
