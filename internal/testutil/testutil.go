@@ -133,6 +133,7 @@ func GetPopAndZoneWithAvailablePort(desiredSpeed string, SkipDesiredMarket *stri
 
 	var locations []packetfabric.Location
 	if IsIpsecCapable {
+		log.Println("IPsec capable set to true")
 		locations, err = c.ListLocationsIpsecCapable()
 		if err != nil {
 			log.Println("Error getting locations list: ", err)
