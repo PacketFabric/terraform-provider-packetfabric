@@ -1,4 +1,4 @@
-//go:build datasource || all
+//go:build datasource || location || all || smoke
 
 package provider
 
@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceLocationsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourceLocationsResult := testutil.DHclDataSourceLocations()
+	datasourceLocationsResult := testutil.DHclLocations()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

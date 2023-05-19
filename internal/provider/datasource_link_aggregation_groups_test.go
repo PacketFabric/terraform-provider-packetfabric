@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceLinkAggregationGroupsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourceLinkAggregationGroupsResult := testutil.DHclDatasourceLinkAggregationGroups()
+	datasourceLinkAggregationGroupsResult := testutil.DHclLinkAggregationGroups()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
