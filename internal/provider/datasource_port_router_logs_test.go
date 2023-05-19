@@ -12,7 +12,7 @@ import (
 func TestAccDataSourcePortRouterLogsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{})
 
-	datasourcePortRouterLogsResult := testutil.DHclRouterLogs()
+	datasourcePortRouterLogsResult := testutil.DHclPortRouterLogs()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

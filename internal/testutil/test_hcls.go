@@ -2068,7 +2068,6 @@ func DHclPortDeviceInfo() DHclPortDeviceInfoResult {
 	}
 }
 
-
 // data packetfabric_port_router_logs
 func DHclPortRouterLogs() DHclPortRouterLogsResult {
 	c, err := _createPFClient()
@@ -2086,8 +2085,8 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 	timeFrom := now.Add(-time.Hour).Format("2006-01-02 15:04:05")
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortRouterLogs)
-  log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortDeviceInfo, hclName)
-  
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataSourcePortDeviceInfo, hclName)
+
 	portResult := portDetails.RHclPort(true)
 	dataSourcePortRouterLogsHcl := fmt.Sprintf(
 		DDataSourcePortRouterLogs,
