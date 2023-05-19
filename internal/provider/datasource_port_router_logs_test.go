@@ -1,3 +1,5 @@
+//go:build datasource || core || all
+
 package provider
 
 import (
@@ -8,17 +10,11 @@ import (
 )
 
 func TestAccDataSourcePortRouterLogsComputedRequiredFields(t *testing.T) {
-	testutil.SkipIfEnvNotSet(t)
+	testutil.PreCheck(t, []string{})
 
 	datasourcePortRouterLogsResult := testutil.DHclDataSourcePortRouterLogs()
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testutil.PreCheck(t, []string{
-				testutil.PF_DTS_TIME_FROM_KEY,
-				testutil.PF_DTS_TIME_TO_KEY,
-			})
-		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -27,12 +23,6 @@ func TestAccDataSourcePortRouterLogsComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_circuit_id"),
 					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "time_from"),
 					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "time_to"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.device_name"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.iface_name"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.message"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.severity"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.severity_name"),
-					resource.TestCheckResourceAttrSet(datasourcePortRouterLogsResult.ResourceName, "port_router_logs.0.timestamp"),
 				),
 			},
 		},

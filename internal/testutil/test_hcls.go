@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 )
@@ -51,7 +52,6 @@ const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
-const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs."
 const pfDataSourcePortRouterLogs = "data.packetfabric_port_router_logs"
 
 // ########################################
@@ -1435,14 +1435,18 @@ func DHclDataSourcePortRouterLogs() DHclDatasourcePortRouterLogsResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	resourceName, hclName := _generateResourceName(pfDataSourcePortRouterLogs)
-	portResult := portDetails.RHclPort()
+	now := time.Now()
+	timeTo := now.Format("2006-01-02 15:04:05")
+	timeFrom := now.Add(-time.Hour).Format("2006-01-02 15:04:05")
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataSourcePortRouterLogs)
+	portResult := portDetails.RHclPort(true)
 	dataSourcePortRouterLogsHcl := fmt.Sprintf(
 		DDataSourcePortRouterLogs,
 		hclName,
-		portResult.ResourceReference,
-		os.Getenv(PF_DTS_TIME_FROM_KEY),
-		os.Getenv(PF_DTS_TIME_TO_KEY),
+		portResult.ResourceName,
+		timeFrom,
+		timeTo,
 	)
 
 	hcl := fmt.Sprintf("%s\n%s", portResult.Hcl, dataSourcePortRouterLogsHcl)
