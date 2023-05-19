@@ -21,19 +21,16 @@ func dataSourceCloudRouter() *schema.Resource {
 						"asn": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Optional:    true,
 							Description: "The configured ASN of the instance.",
 						},
 						"name": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The name of this particular CloudRouter.",
 						},
 						"regions": {
 							Type:        schema.TypeSet,
 							Computed:    true,
-							Optional:    true,
 							Description: "List of PacketFabric Reigions for the Cloud Router.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -53,18 +50,15 @@ func dataSourceCloudRouter() *schema.Resource {
 						"capacity": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "The total configured capacity of this particular Cloud Router.",
 						},
 						"time_created": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Optional: true,
 						},
 						"time_updated": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},

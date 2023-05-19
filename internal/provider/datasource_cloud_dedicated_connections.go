@@ -20,68 +20,67 @@ func datasourceDedicatedCloudConnections() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The unique PF circuit ID for this connection",
 						},
 						"customer_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID for the customer this connection belongs to",
 						},
 						"user_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The UUID for the user this connection belongs to",
 						},
 						"service_provider": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The service provider of the connection\n\t\tEnum: [\"aws\" \"azure\" \"packet\" \"google\" \"ibm\" \"salesforce\" \"webex\"]",
 						},
 						"port_type": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The port type for the given port\n\t\tEnum: [\"hosted\" \"dedicated\"]",
 						},
 						"deleted": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Is connection deleted?",
 						},
 						"time_updated": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time connection was last updated",
 						},
 						"time_created": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Date and time of connection creation",
 						},
 						"cloud_circuit_id": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The unique PF circuit ID for this connection",
 						},
 						"account_uuid": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "PacketFabric account UUID. The contact that will be billed.",
 						},
 						"cloud_provider": {
-							Type:        schema.TypeSet,
-							Optional:    true,
-							Description: "",
+							Type:     schema.TypeSet,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"pop": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The desired location for the new AWS Hosted Connection.\n\t\tExample: DAL1",
 									},
 									"site": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "Site name",
 									},
 								},
@@ -89,53 +88,52 @@ func datasourceDedicatedCloudConnections() *schema.Resource {
 						},
 						"pop": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The desired location for the new AWS Hosted Connection.\n\t\tExample: DAL1",
 						},
 						"site": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Site name",
 						},
 						"service_class": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The service class for the given port, either long haul or metro.\n\t\tEnum: [\"longhaul\",\"metro\"]",
 						},
 						"description": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The description of this connection.\n\t\tExample: AWS Hosted connection for Foo Corp",
 						},
 						"state": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The state of the connection\n\t\tEnum: [\"active\" \"deleting\" \"inactive\" \"pending\" \"requested\"]",
 						},
 						"settings_aws_region": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "Region short name",
 						},
 						"settings": {
-							Type:        schema.TypeSet,
-							Optional:    true,
-							Description: "",
+							Type:     schema.TypeSet,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"aws_region": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The region that the new connection will connect to.\n\t\tExample: us-west-1",
 									},
 									"zone_dest": {
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 										Description: "The desired AWS Availability zone of the new connection.\n\t\tExample: \"A\"",
 									},
 									"autoneg": {
 										Type:        schema.TypeBool,
-										Optional:    true,
+										Computed:    true,
 										Description: "Whether the port auto-negotiates or not, this is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.",
 									},
 								},
@@ -143,12 +141,12 @@ func datasourceDedicatedCloudConnections() *schema.Resource {
 						},
 						"is_cloud_router_connection": {
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 							Description: "Whether or not this is a Cloud Router hosted connection.",
 						},
 						"speed": {
 							Type:        schema.TypeString,
-							Optional:    true,
+							Computed:    true,
 							Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
 						},
 					},

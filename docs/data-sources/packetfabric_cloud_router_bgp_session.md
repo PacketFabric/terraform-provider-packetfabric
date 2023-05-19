@@ -32,85 +32,70 @@ output "packetfabric_cloud_router_bgp_session_crbs" {
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `connection_id` (String) The circuit ID of the connection associated with the BGP session. This starts with "PF-L3-CON-".
 
-### Optional
-
-- `bgp_sessions` (Block List) (see [below for nested schema](#nestedblock--bgp_sessions))
-
 ### Read-Only
 
+- `bgp_sessions` (List of Object) (see [below for nested schema](#nestedatt--bgp_sessions))
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--bgp_sessions"></a>
+<a id="nestedatt--bgp_sessions"></a>
 ### Nested Schema for `bgp_sessions`
-
-Optional:
-
-- `address_family` (String) Whether this instance is IPv4 or IPv6.
-		Enum: "v4" "v6"
-- `as_prepend` (Number) The BGP prepend value for this instance. Deprecated.
-- `bfd_interval` (Number) Minimum interval, in microseconds, for transmitting BFD Control packets.
-		Available range is 3 through 30000.
-- `bfd_multiplier` (Number) The number of BFD Control packets not received by a neighbor that causes the session to be declared down.
-		Available range is 2 through 16.
-- `bgp_settings_uuid` (String) The UUID of the instance.
-		Example: 3d78949f-1396-4163-b0ca-3eba3592abcd
-- `bgp_state` (String) The status of the BGP session
-		Enum: established, configuring, fetching, etc.
-- `disabled` (Boolean) Whether this BGP session is disabled.
-		Default "false"
-- `l3_address` (String) The L3 address of this instance.
-- `local_preference` (Number) The preference for this instance. Deprecated.
-- `med` (Number) The Multi-Exit Discriminator of this instance. Deprecated.
-- `multihop_ttl` (Number) The TTL of this session.
-		Defaults to 1.
-- `nat` (Block Set) (see [below for nested schema](#nestedblock--bgp_sessions--nat))
-- `orlonger` (Boolean) Whether to use exact match or longer for all prefixes.
-- `prefixes` (Block Set) A list of prefixes attached to the bgp session. (see [below for nested schema](#nestedblock--bgp_sessions--prefixes))
-- `remote_address` (String) The cloud-side address of the instance.
-- `remote_asn` (Number) The cloud-side ASN of the instance.
-- `time_created` (String) Time the instance was created.
-- `time_updated` (String) Time the instance was last updated.
-
-<a id="nestedblock--bgp_sessions--nat"></a>
-### Nested Schema for `bgp_sessions.nat`
-
-Optional:
-
-- `direction` (String) The direction of the NAT connection. Output is the default.
-		Enum: output, input
-- `nat_type` (String) The NAT type of the NAT connection. 
-		Enum: overload, inline_dnat
-- `pool_prefixes` (List of String) The source IP address + mask of the NAT pool prefix.
-- `pre_nat_sources` (List of String) The source IP address + mask of the host before NAT translation.
 
 Read-Only:
 
-- `dnat_mappings` (Block Set) (see [below for nested schema](#nestedblock--bgp_sessions--nat--dnat_mappings))
+- `address_family` (String)
+- `as_prepend` (Number)
+- `bfd_interval` (Number)
+- `bfd_multiplier` (Number)
+- `bgp_settings_uuid` (String)
+- `bgp_state` (String)
+- `disabled` (Boolean)
+- `l3_address` (String)
+- `local_preference` (Number)
+- `med` (Number)
+- `multihop_ttl` (Number)
+- `nat` (Set of Object) (see [below for nested schema](#nestedobjatt--bgp_sessions--nat))
+- `orlonger` (Boolean)
+- `prefixes` (Set of Object) (see [below for nested schema](#nestedobjatt--bgp_sessions--prefixes))
+- `remote_address` (String)
+- `remote_asn` (Number)
+- `time_created` (String)
+- `time_updated` (String)
 
-<a id="nestedblock--bgp_sessions--nat--dnat_mappings"></a>
+<a id="nestedobjatt--bgp_sessions--nat"></a>
+### Nested Schema for `bgp_sessions.nat`
+
+Read-Only:
+
+- `direction` (String)
+- `dnat_mappings` (Set of Object) (see [below for nested schema](#nestedobjatt--bgp_sessions--nat--dnat_mappings))
+- `nat_type` (String)
+- `pool_prefixes` (List of String)
+- `pre_nat_sources` (List of String)
+
+<a id="nestedobjatt--bgp_sessions--nat--dnat_mappings"></a>
 ### Nested Schema for `bgp_sessions.nat.dnat_mappings`
 
 Read-Only:
 
-- `conditional_prefix` (String) The conditional prefix prefix of this DNAT mapping.
-- `private_prefix` (String) The private prefix of this DNAT mapping.
-- `public_prefix` (String) The public prefix of this DNAT mapping.
+- `conditional_prefix` (String)
+- `private_prefix` (String)
+- `public_prefix` (String)
 
 
 
-<a id="nestedblock--bgp_sessions--prefixes"></a>
+<a id="nestedobjatt--bgp_sessions--prefixes"></a>
 ### Nested Schema for `bgp_sessions.prefixes`
 
-Optional:
+Read-Only:
 
-- `as_prepend` (Number) The BGP prepend value of the bgp prefix. It is used when type = out.
-- `bgp_prefix_uuid` (String) TThe UUID of the bgp prefix.
-- `local_preference` (Number) The local_preference of the bgp prefix. It is used when type = in.
-- `match_type` (String) The prefix match type.
-- `med` (Number) The med of the bgp prefix. It is used when type = out.
-- `order` (Number, Deprecated) The order of the bgp prefix against the others.
-- `prefix` (String) The actual IP Prefix of the bgp prefix.
-- `type` (String) Indicates whether the prefix is in or out.
+- `as_prepend` (Number)
+- `bgp_prefix_uuid` (String)
+- `local_preference` (Number)
+- `match_type` (String)
+- `med` (Number)
+- `order` (Number)
+- `prefix` (String)
+- `type` (String)
 
 
 

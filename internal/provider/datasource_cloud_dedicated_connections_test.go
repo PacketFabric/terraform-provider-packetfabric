@@ -20,7 +20,6 @@ func TestAccDataSourceDedicatedConnsComputedRequiredFields(t *testing.T) {
 			{
 				Config: dedicatedConnectionsResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.uuid"),
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.customer_uuid"),
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.user_uuid"),
@@ -31,6 +30,14 @@ func TestAccDataSourceDedicatedConnsComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.time_created"),
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.cloud_circuit_id"),
 					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.account_uuid"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.cloud_provider"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.pop"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.site"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.service_class"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.description"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.state"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.settings"),
+					resource.TestCheckResourceAttrSet(dedicatedConnectionsResult.ResourceName, "dedicated_connections.0.speed"),
 				),
 			},
 		},

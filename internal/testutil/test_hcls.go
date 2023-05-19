@@ -47,7 +47,7 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLog = "data.packetfabric_activitylog"
-const pfDataPort = "data.packetfabric_ports"
+const pfDataPorts = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
 const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
@@ -557,7 +557,7 @@ type DHclLocationsMarketsResult struct {
 }
 
 // data packetfabric_port
-type DHclPortResult struct {
+type DHclPortsResult struct {
 	HclResultBase
 }
 
@@ -1935,7 +1935,7 @@ func DHclDataSourceLocationsMarkets() DHclLocationsMarketsResult {
 }
 
 // data.packetfabric_ports
-func DHclDataSourcePorts() DHclPortResult {
+func DHclDataSourcePorts() DHclPortsResult {
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1945,17 +1945,17 @@ func DHclDataSourcePorts() DHclPortResult {
 		DesiredSpeed: portSpeed,
 	}
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataPort)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPort, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataPorts)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
 
 	dataPortHcl := fmt.Sprintf(DDataSourcePorts, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", portDetails.RHclPort(false).Hcl, dataPortHcl)
 
-	return DHclPortResult{
+	return DHclPortsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataPort,
+			Resource:     pfDataPorts,
 			ResourceName: resourceName,
 		},
 	}
@@ -2013,9 +2013,9 @@ func DHclDatasourceDedicatedConnections() DHclDedicatedConnectionsResult {
 	csAwsDedicatedConnectionResult := RHclCsAwsDedicatedConnection()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataCsDedicatedConns)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
 
 	dedicatedConnHCL := fmt.Sprintf(DDatasourceDedicatedConns, hclName)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCsDedicatedConns, hclName)
 
 	hcl := fmt.Sprintf("%s\n%s", csAwsDedicatedConnectionResult.Hcl, dedicatedConnHCL)
 
