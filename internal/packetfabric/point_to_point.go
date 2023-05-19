@@ -38,7 +38,7 @@ type PointToPointResp struct {
 	Deleted      bool         `json:"deleted,omitempty"`
 	ServiceClass string       `json:"service_class,omitempty"`
 	Interfaces   []Interfaces `json:"interfaces,omitempty"`
-	PONumber     string       `json:"po_number"`
+	PONumber     string       `json:"po_number,omitempty"`
 }
 
 type UpdatePointToPointData struct {
@@ -55,12 +55,12 @@ func (c *PFClient) CreatePointToPointService(ptp PointToPoint) (*PointToPointRes
 	return expectedResp, nil
 }
 
-func (c *PFClient) GetPointToPointInfos() ([]PointToPointResp, error) {
+func (c *PFClient) ListPointToPoints() (*[]PointToPointResp, error) {
 	expectedResp := make([]PointToPointResp, 0)
-	if _, err := c.sendRequest(pointToPointURI, getMethod, nil, expectedResp); err != nil {
+	if _, err := c.sendRequest(pointToPointURI, getMethod, nil, &expectedResp); err != nil {
 		return nil, err
 	}
-	return expectedResp, nil
+	return &expectedResp, nil
 }
 
 func (c *PFClient) GetPointToPointStatus(ptpCircuitID string) (*ServiceState, error) {

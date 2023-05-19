@@ -236,6 +236,13 @@ resource "random_pet" "name" {}
 #   value = packetfabric_point_to_point.ptp1
 # }
 
+# data "packetfabric_point_to_points" "all_ptps" {
+#   provider = packetfabric
+# }
+# output "packetfabric_point_to_points" {
+#   value = data.packetfabric_point_to_points.all_ptps
+# }
+
 # #######################################
 # ##### Cross Connect
 # #######################################

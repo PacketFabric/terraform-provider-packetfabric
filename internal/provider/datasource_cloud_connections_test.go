@@ -20,8 +20,7 @@ func TestAccDataSourceCloudRouterConnectionsComputedRequiredFields(t *testing.T)
 			{
 				Config: datasourceCloudConnsResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.circuit_id"),
-					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.connection_id"),
+					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.cloud_circuit_id"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.port_type"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.connection_type"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.port_circuit_id"),

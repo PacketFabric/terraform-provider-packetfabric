@@ -220,11 +220,11 @@ func datasourcePointToPointsRead(ctx context.Context, d *schema.ResourceData, m 
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	ptps, err := c.GetPointToPointInfos()
+	ptps, err := c.ListPointToPoints()
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("point_to_points", flattenPointToPoints(&ptps)); err != nil {
+	if err := d.Set("point_to_points", flattenPointToPoints(ptps)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
@@ -233,7 +233,7 @@ func datasourcePointToPointsRead(ctx context.Context, d *schema.ResourceData, m 
 
 func flattenPointToPoints(ptps *[]packetfabric.PointToPointResp) []interface{} {
 	if ptps != nil {
-		flattens := make([]interface{}, len(*ptps), len(*ptps))
+		flattens := make([]interface{}, len(*ptps))
 		for i, ptp := range *ptps {
 			flatten := make(map[string]interface{})
 			flatten["ptp_uuid"] = ptp.PtpUUID
