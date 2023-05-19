@@ -44,7 +44,9 @@ resource "packetfabric_cs_aws_hosted_marketplace_connection" "cs_conn1_marketpla
 - `speed` (String) The speed of the new connection.
 
 	Enum: ["50Mbps", "100Mbps", "200Mbps", "300Mbps", "400Mbps", "500Mbps", "1Gbps", "2Gbps", "5Gbps", "10Gbps"]
-- `zone` (String) The desired zone of the new connection
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 

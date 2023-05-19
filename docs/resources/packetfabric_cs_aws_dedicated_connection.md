@@ -53,7 +53,7 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
 - `subscription_term` (Number) The billing term, in months, for this connection.
 
 	Enum: ["1", "12", "24", "36"]
-- `zone` (String) The desired AWS availability zone of the new connection.
+- `zone` (String) The desired availability zone of the connection.
 
 	Example: "A"
 

@@ -71,7 +71,9 @@ Required:
 
 - `autoneg` (Boolean) Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). The request will fail if specified with ports greater than 1Gbps.
 - `pop` (String) Point of presence in which the port should be located.
-- `zone` (String) Availability zone of the port.
+- `zone` (String) The desired availability zone of the port.
+
+	Example: "A"
 
 Optional:
 

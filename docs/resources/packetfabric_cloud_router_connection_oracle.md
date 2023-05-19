@@ -48,7 +48,9 @@ resource "packetfabric_cloud_router_connection_oracle" "crc6" {
 - `pop` (String) The POP in which you want to provision the connection.
 - `region` (String) The region in which you created the FastConnect virtual circuit.
 - `vc_ocid` (String) OCID of the FastConnect virtual circuit that you created from the Oracle side.
-- `zone` (String) The desired availability zone of the new connection.
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 

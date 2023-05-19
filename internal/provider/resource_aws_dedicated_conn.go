@@ -54,7 +54,7 @@ func resourceAwsReqDedicatedConn() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The desired AWS availability zone of the new connection.\n\n\tExample: \"A\"",
+				Description: "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:        schema.TypeString,

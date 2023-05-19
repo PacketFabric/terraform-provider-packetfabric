@@ -45,7 +45,9 @@ resource "packetfabric_port" "port_1" {
 - `subscription_term` (Number) Duration of the subscription in months
 
 	Enum ["1" "12" "24" "36"]
-- `zone` (String) Availability zone of the port.
+- `zone` (String) The desired availability zone of the port.
+
+	Example: "A"
 
 ### Optional
 

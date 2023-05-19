@@ -75,6 +75,8 @@ resource "ibm_dl_gateway_action" "confirmation" {
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 - `zone` (String) The desired availability zone of the connection.
 
+	Example: "A"
+
 ### Optional
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.

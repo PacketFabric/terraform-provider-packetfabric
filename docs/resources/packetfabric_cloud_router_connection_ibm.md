@@ -85,6 +85,8 @@ resource "ibm_dl_gateway_action" "confirmation" {
 	Enum: ["50Mbps" "100Mbps" "200Mbps" "300Mbps" "400Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps"]
 - `zone` (String) The desired availability zone of the connection.
 
+	Example: "A"
+
 ### Optional
 
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.

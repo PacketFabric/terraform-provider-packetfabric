@@ -87,7 +87,7 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The desired AWS availability zone of the new connection.",
+				Description: "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"is_public": {
 				Type:        schema.TypeBool,

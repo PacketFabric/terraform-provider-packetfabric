@@ -47,7 +47,7 @@ func resourceGoogleDedicatedConn() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The desired zone of the new connection.",
+				Description: "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:         schema.TypeString,

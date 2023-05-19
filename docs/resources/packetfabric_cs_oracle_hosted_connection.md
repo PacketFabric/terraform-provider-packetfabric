@@ -41,6 +41,8 @@ resource "packetfabric_cs_oracle_hosted_connection" "cs_conn1_hosted_oracle" {
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
 - `zone` (String) The desired availability zone of the connection.
 
+	Example: "A"
+
 ### Optional
 
 - `labels` (Set of String) Label value linked to an object.
