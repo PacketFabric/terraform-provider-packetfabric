@@ -1810,45 +1810,6 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 
 // ###### Data-sources
 
-// data.packetfabric_locations_cloud
-func DHclLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
-	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
-
-	return DHclLocationsCloudResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataLocationsCloud,
-			ResourceName: resourceName,
-		},
-	}
-}
-
-// data.packetfabric_locations_port_availability
-func DHclLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
-
-	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
-	if err != nil {
-		log.Println("Error getting pop and zone with available port: ", err)
-		log.Panic(err)
-	}
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
-
-	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
-
-	return DHclLocationsPortAvailabilityResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataLocationsPortAvailability,
-			ResourceName: resourceName,
-		},
-	}
-}
-
 // data.packetfabric_locations
 func DHclLocations() DHclLocationsResult {
 
@@ -1861,6 +1822,22 @@ func DHclLocations() DHclLocationsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocations,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_locations_cloud
+func DHclLocationsCloud(cloudProvider, cloudConnectionType string) DHclLocationsCloudResult {
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsCloud)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsCloud, hclName)
+	hcl := fmt.Sprintf(DDataSourceLocationsCloud, hclName, cloudProvider, cloudConnectionType)
+
+	return DHclLocationsCloudResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsCloud,
 			ResourceName: resourceName,
 		},
 	}
@@ -1906,23 +1883,6 @@ func DHclLocationsRegions() DHclLocationsRegionsResult {
 	}
 }
 
-// data.packetfabric_activitylog
-func DHclActivityLog() DHclActivityLogResult {
-
-	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
-
-	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
-
-	return DHclActivityLogResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfDataActivityLog,
-			ResourceName: resourceName,
-		},
-	}
-}
-
 // data.packetfabric_locations_markets
 func DHclLocationsMarkets() DHclLocationsMarketsResult {
 
@@ -1935,6 +1895,46 @@ func DHclLocationsMarkets() DHclLocationsMarketsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataLocationsMarkets,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_locations_port_availability
+func DHclLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
+
+	pop, _, _, _, err := GetPopAndZoneWithAvailablePort(portSpeed, nil, nil, false)
+	if err != nil {
+		log.Println("Error getting pop and zone with available port: ", err)
+		log.Panic(err)
+	}
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataLocationsPortAvailability)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataLocationsPortAvailability, hclName)
+
+	hcl := fmt.Sprintf(DDataSourceLocationsPortAvailability, hclName, pop)
+
+	return DHclLocationsPortAvailabilityResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataLocationsPortAvailability,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_activitylog
+func DHclActivityLog() DHclActivityLogResult {
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
+
+	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
+
+	return DHclActivityLogResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataActivityLog,
 			ResourceName: resourceName,
 		},
 	}

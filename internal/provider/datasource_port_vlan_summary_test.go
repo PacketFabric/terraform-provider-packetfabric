@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccPortVlansComputedRequiredFields(t *testing.T) {
+func TestAccDataSourcePortVlansComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourcePortVlansResult := testutil.DHclDataSourcePortVlans()
+	datasourcePortVlansResult := testutil.DHclPortVlans()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

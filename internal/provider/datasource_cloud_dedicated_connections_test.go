@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceDedicatedConnsComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	dedicatedConnectionsResult := testutil.DHclDatasourceDedicatedConnections()
+	dedicatedConnectionsResult := testutil.DHclDedicatedConnections()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
