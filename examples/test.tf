@@ -288,11 +288,11 @@ resource "random_pet" "name" {}
 #   port_circuit_id = "PF-AP-LAB8-3339359"
 # }
 
-# data "packetfabric_document" "current" {
+# data "packetfabric_documents" "current" {
 #   provider = packetfabric
 # }
 # output "my-documents" {
-#   value = data.packetfabric_document.current
+#   value = data.packetfabric_documents.current
 # }
 
 # # Create Cross Connect

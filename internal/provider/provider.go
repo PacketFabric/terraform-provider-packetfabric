@@ -156,7 +156,7 @@ func Provider() *schema.Provider {
 			"packetfabric_locations_cloud":                    datasourceCloudLocations(),
 			"packetfabric_quick_connect_requests":             datasourceQuickConnectRequests(),
 			"packetfabric_cs_hosted_connection_router_config": datasourceHostedCloudRouterConfig(),
-			"packetfabric_document":                           datasourceDocuments(),
+			"packetfabric_documents":                          datasourceDocuments(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
