@@ -50,7 +50,7 @@ const pfDataActivityLog = "data.packetfabric_activitylog"
 const pfDataPort = "data.packetfabric_ports"
 const pfDataBilling = "data.packetfabric_billing"
 const pfDataCsAwsHostedConn = "data.packetfabric_cs_aws_hosted_connection"
-const pfDataCsDedicatedConns = "data.packetfabric_dedicated_connections"
+const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 
 // ########################################
