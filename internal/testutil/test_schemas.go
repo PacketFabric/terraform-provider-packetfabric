@@ -750,6 +750,14 @@ const DDataSourcePortDeviceInfo = `data "packetfabric_port_device_info" "%s" {
   port_circuit_id   = %s.id
 }`
 
+// Datasource: packetfabric_port_router_logs
+const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {
+  provider          = packetfabric
+  port_circuit_id = %s.id
+  time_from       = "%s"
+  time_to         = "%s"
+}`
+
 // Datasource: packetfabric_link_aggregation_group
 const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
   provider       = packetfabric
