@@ -44,64 +44,68 @@ resource "packetfabric_port" "port_2" {
 #   value = packetfabric_port.port_2
 # }
 
-# # Get billing information related to the interface created
-# data "packetfabric_billing" "port_1" {
-#   provider   = packetfabric
-#   circuit_id = packetfabric_port.port_1.id
+# OPTION 1
+# Generate a LOA for both ports (outbound cross connect)
+resource "packetfabric_document" "loa1_outbound" {
+  provider        = packetfabric
+  document        = "demo_port_loa.pdf" # LOA port 1
+  type            = "loa"
+  description     = "${var.resource_name}-${random_pet.name.id}-port1"
+  port_circuit_id = packetfabric_port.port_1.id
+}
+resource "packetfabric_document" "loa2_outbound" {
+  provider        = packetfabric
+  document        = "demo_port_loa.pdf" # LOA port 2
+  type            = "loa"
+  description     = "${var.resource_name}-${random_pet.name.id}-port2"
+  port_circuit_id = packetfabric_port.port_2.id
+}
+
+# # OPTION 2
+# # Generate a LOA for a port (inbound cross connect)
+# resource "packetfabric_port_loa" "loa1_inbound" {
+#   provider          = packetfabric
+#   port_circuit_id   = packetfabric_port.port_1.id
+#   loa_customer_name = "My Awesome Company"
+#   destination_email = "email@mydomain.com"
 # }
-# output "packetfabric_billing_port_1" {
-#   value = data.packetfabric_billing.port_1
-# }
-# data "packetfabric_billing" "port_2" {
-#   provider   = packetfabric
-#   circuit_id = packetfabric_port.port_2.id
-# }
-# output "packetfabric_billing_port_2" {
-#   value = data.packetfabric_billing.port_2
+# resource "packetfabric_port_loa" "loa2_inbound" {
+#   provider          = packetfabric
+#   port_circuit_id   = packetfabric_port.port_2.id
+#   loa_customer_name = "My Awesome Company"
+#   destination_email = "email@mydomain.com"
 # }
 
 ### Get the site filtering on the pop using packetfabric_locations
+data "packetfabric_locations" "locations_all" {
+  provider = packetfabric
+}
+locals {
+  all_locations = data.packetfabric_locations.locations_all.locations[*]
+  helper_map = { for val in local.all_locations :
+  val["pop"] => val }
+  pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
+  pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
+}
 
-# # List PacketFabric locations
-# data "packetfabric_locations" "locations_all" {
-#   provider = packetfabric
-# }
-# # output "packetfabric_locations" {
-# #   value = data.packetfabric_locations.locations_all
-# # }
-
-# locals {
-#   all_locations = data.packetfabric_locations.locations_all.locations[*]
-#   helper_map = { for val in local.all_locations :
-#   val["pop"] => val }
-#   pf_port_site1 = local.helper_map["${var.pf_port_pop1}"]["site_code"]
-#   pf_port_site2 = local.helper_map["${var.pf_port_pop2}"]["site_code"]
-# }
-# output "pf_port_site1" {
-#   value = local.pf_port_site1
-# }
-# output "pf_port_site2" {
-#   value = local.pf_port_site2
-# }
-
-# # Create Cross Connect
-# resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
-#   provider      = packetfabric
-#   description   = "${var.resource_name}-${random_pet.name.id}"
-#   document_uuid = var.pf_document_uuid1
-#   port          = packetfabric_port.port_1.id
-#   site          = local.pf_port_site1
-# }
+# Create Cross Connect
+resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
+  provider      = packetfabric
+  description   = "${var.resource_name}-${random_pet.name.id}-port1"
+  document_uuid = packetfabric_document.loa1_outbound.id
+  port          = packetfabric_port.port_1.id
+  site          = local.pf_port_site1
+}
 # output "packetfabric_outbound_cross_connect1" {
 #   value = packetfabric_outbound_cross_connect.crossconnect_1
 # }
-# resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
-#   provider      = packetfabric
-#   description   = "${var.resource_name}-${random_pet.name.id}"
-#   document_uuid = var.pf_document_uuid2
-#   port          = packetfabric_port.port_2.id
-#   site          = local.pf_port_site2
-# }
+resource "packetfabric_outbound_cross_connect" "crossconnect_2" {
+  provider      = packetfabric
+  description   = "${var.resource_name}-${random_pet.name.id}-port2"
+  document_uuid = packetfabric_document.loa2_outbound.id
+  port          = packetfabric_port.port_2.id
+  site          = local.pf_port_site2
+}
 # output "packetfabric_outbound_cross_connect2" {
 #   value = packetfabric_outbound_cross_connect.crossconnect_2
 # }

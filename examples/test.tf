@@ -287,6 +287,7 @@ resource "random_pet" "name" {}
 #   value = packetfabric_port_loa.inbound_crossconnect_1
 # }
 
+# # Generate a LOA for a port (outbound cross connect)
 # resource "packetfabric_document" "loa1" {
 #   provider        = packetfabric
 #   document        = "letter-of-authorization-PF-AP-LAB8-3339359.pdf"
