@@ -4,7 +4,7 @@
 
 Use Cases | Description
 --- | --- 
-[backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit
+[backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit along with 2 Ports with cross-connect
 [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between Virtual Circuits
 [flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
 [cloud_router_module](./cloud_router_module) | Create a Cloud Router Terraform Module with AWS and Google

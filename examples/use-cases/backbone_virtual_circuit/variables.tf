@@ -50,16 +50,6 @@ variable "pf_port_nni" {
   default = false
 }
 
-# Cross connect
-variable "pf_document_uuid1" {
-  type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e" # use API /v2/documents to get UUID
-}
-variable "pf_document_uuid2" {
-  type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
-}
-
 # Virtual Circuit
 variable "pf_vc_vlan1" {
   type    = number
