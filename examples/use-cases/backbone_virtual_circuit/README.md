@@ -1,7 +1,7 @@
 # Use Case: 
 
 This use case shows an example on how to use the PacketFabric Terraform provider 
-to automate the creation of 2 ports in PacketFabric, a Backbone Virtual Circuit between the 2 ports and 
+to automate the creation of 2 ports in PacketFabric (including the cross-connect), a Backbone Virtual Circuit between the 2 ports and 
 the outbound Cross connect for those 2 ports.
 
 ## Useful links
@@ -17,6 +17,9 @@ the outbound Cross connect for those 2 ports.
 
 - "random_pet"
 - "packetfabric_port"
+- "packetfabric_locations"
+- "packetfabric_document"
+- "packetfabric_outbound_cross_connect"
 - "packetfabric_backbone_virtual_circuit"
 
 ## Before you begin
