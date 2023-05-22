@@ -69,7 +69,7 @@ const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
 // common
 const subscriptionTerm = 1
 
-var labPopsPort = []string{"LAB1", "LAB4", "LAB5"}
+var labPopsPort = []string{"LAB1", "LAB4", "LAB5", "LAB6"}
 var labPopsHostedCloud = []string{"LAB1", "LAB4", "LAB6"}
 var labPopsDedicatedCloud = []string{"DEV1", "LAB4", "LAB5"}
 
