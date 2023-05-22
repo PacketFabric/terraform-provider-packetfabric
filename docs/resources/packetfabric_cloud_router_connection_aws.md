@@ -48,8 +48,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider       = packetfabric
   description    = "AWS Staging Environement"
-  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
-  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+  aws_access_key = var.pf_aws_key    # or use env var AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var AWS_SECRET_ACCESS_KEY
 }
 
 resource "packetfabric_cloud_router_connection_aws" "crc1" {
@@ -95,7 +95,7 @@ resource "packetfabric_cloud_router_connection_aws" "crc1" {
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
+- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID or AWS_ACCOUNT_ID environment variables.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which you want to provision the connection.

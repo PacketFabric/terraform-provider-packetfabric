@@ -24,7 +24,7 @@ If you are using Terraform to create cloud connections, there are typically acti
 
 To do this, you will need appropriate access to that cloud environment. 
 
-You can handle these manually through the cloud service provider's console, or you can use their Terraform provider:
+You can use their Terraform provider:
 
 * https://registry.terraform.io/providers/hashicorp/aws/latest
 * https://registry.terraform.io/providers/hashicorp/google/latest
@@ -34,6 +34,8 @@ You can handle these manually through the cloud service provider's console, or y
 
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
+
+Additionally, you can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
 
 ## Example Usage
 

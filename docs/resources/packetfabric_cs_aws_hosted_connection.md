@@ -37,8 +37,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider       = packetfabric
   description    = "AWS Staging Environement"
-  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
-  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+  aws_access_key = var.pf_aws_key    # or use env var AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var AWS_SECRET_ACCESS_KEY
 }
 
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
@@ -88,7 +88,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
+- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID or AWS_ACCOUNT_ID environment variables.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you want to connect to AWS. This starts with "PF-AP-".

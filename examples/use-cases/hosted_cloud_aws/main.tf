@@ -131,7 +131,7 @@ resource "packetfabric_port" "port_1" {
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider    = packetfabric
   description = "${var.resource_name}-${random_pet.name.id}-aws"
-  # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+  # using env var AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 }
 
 # Create a AWS Hosted Connection + AWS VIF
