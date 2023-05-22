@@ -47,11 +47,12 @@ const pfDataLocationsPortAvailability = "data.packetfabric_locations_port_availa
 const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
-const pfDataActivityLog = "data.packetfabric_activitylog"
+const pfDataActivityLogs = "data.packetfabric_activitylogs"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataPortVlans = "data.packetfabric_port_vlans"
 const pfDataPortDeviceInfo = "data.packetfabric_port_device_info"
 const pfDataPortRouterLogs = "data.packetfabric_port_router_logs"
+const pfDataOutboundCrossConnects = "data.packetfabric_outbound_cross_connects"
 const pfDataPoinToPoints = "data.packetfabric_point_to_points"
 const pfDataLinkAggregationGroups = "data.packetfabric_link_aggregation_group"
 const pfDataBilling = "data.packetfabric_billing"
@@ -264,7 +265,7 @@ type DHclLinkAggregationGroupsResult struct {
 }
 
 // packetfabric_outbound_cross_connect
-type RHclOutboundCrossConnectResult struct {
+type RHcloutboundCrossConnectsResult struct {
 	HclResultBase
 	Desc string
 	Port RHclPortResult
@@ -559,8 +560,8 @@ type DHclLocationsMarketsResult struct {
 	HclResultBase
 }
 
-// data packetfabric_activitylog
-type DHclActivityLogResult struct {
+// data packetfabric_activitylogs
+type DHclActivityLogsResult struct {
 	HclResultBase
 }
 
@@ -616,6 +617,11 @@ type DHclCloudRouterConnResult struct {
 
 // data packetfabric_cloud_router_connections
 type DHclCloudRouterConnsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_outbound_cross_connect
+type DHclOutboundCrossConnectsResult struct {
 	HclResultBase
 }
 
@@ -744,7 +750,7 @@ func RHclDocumentMSA() RHclDocumentResult {
 }
 
 // packetfabric_outbound_cross_connect
-func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
+func RHclOutboundCrossConnect() RHcloutboundCrossConnectsResult {
 
 	c, err := _createPFClient()
 	if err != nil {
@@ -786,7 +792,7 @@ func RHclOutboundCrossConnect() RHclOutboundCrossConnectResult {
 
 	hcl := fmt.Sprintf("%s\n%s\n%s", hclPortResult.Hcl, documentResult.Hcl, outboundCrossHcl)
 
-	return RHclOutboundCrossConnectResult{
+	return RHcloutboundCrossConnectsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfOutboundCrossConnect,
@@ -1475,7 +1481,6 @@ func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
 // packetfabric_cs_google_hosted_connection
 func RHclCsGoogleHostedConnection() RHclCsHostedCloudGoogleResult {
-
 	var edgeAvailabilityDomain string
 
 	c, err := _createPFClient()
@@ -1971,18 +1976,18 @@ func DHclLocationsPortAvailability() DHclLocationsPortAvailabilityResult {
 	}
 }
 
-// data.packetfabric_activitylog
-func DHclActivityLog() DHclActivityLogResult {
+// data.packetfabric_activitylogs
+func DHclActivityLogs() DHclActivityLogsResult {
 
-	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLog)
-	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLog, hclName)
+	resourceName, hclName := GenerateUniqueResourceName(pfDataActivityLogs)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataActivityLogs, hclName)
 
-	hcl := fmt.Sprintf(DDatasourceActivityLog, hclName)
+	hcl := fmt.Sprintf(DDatasourceActivityLogs, hclName)
 
-	return DHclActivityLogResult{
+	return DHclActivityLogsResult{
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
-			Resource:     pfDataActivityLog,
+			Resource:     pfDataActivityLogs,
 			ResourceName: resourceName,
 		},
 	}
@@ -2013,7 +2018,6 @@ func DHclBilling() DHclBillingResult {
 
 // data.packetfabric_ports
 func DHclPorts() DHclPortsResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2046,7 +2050,6 @@ func DHclPorts() DHclPortsResult {
 
 // data.packetfabric_port_vlans
 func DHclPortVlans() DHclPortVlansResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -2145,6 +2148,25 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataPortRouterLogs,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_outbound_cross_connects
+func DHclDataSourceOutboundCrossConnects() DHclOutboundCrossConnectsResult {
+	outboundCrossConnectsResult := RHclOutboundCrossConnect()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataOutboundCrossConnects)
+	dataOutboundCrossConnectHcl := fmt.Sprintf(DDatasourceOutboundCrossConnects, hclName)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
+
+	hcl := fmt.Sprintf("%s\n%s", outboundCrossConnectsResult.Hcl, dataOutboundCrossConnectHcl)
+
+	return DHclOutboundCrossConnectsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataOutboundCrossConnects,
 			ResourceName: resourceName,
 		},
 	}
