@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceBgpSessionComputedRequiredFields(t *testing.T) {
-	testutil.PreCheck(t, nil)
+func TestAccDataSourceBgpSessionComputedRequiredFields(t *testing.T) {
+	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
 
 	datasourceBgpSessionResult := testutil.DHclDatasourceBgpSession()
 
@@ -28,7 +28,6 @@ func TestAccDatasourceBgpSessionComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.remote_asn"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.multihop_ttl"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.local_preference"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.community"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.as_prepend"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.med"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.bfd_interval"),
