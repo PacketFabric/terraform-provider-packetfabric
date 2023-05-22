@@ -14,8 +14,9 @@ func datasourcePointToPoints() *schema.Resource {
 		ReadContext: datasourcePointToPointsRead,
 		Schema: map[string]*schema.Schema{
 			"point_to_points": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "List of Point-to-Points.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"ptp_uuid": {

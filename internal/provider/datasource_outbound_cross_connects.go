@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceOutboundCrossConnect() *schema.Resource {
+func dataSourceOutboundCrossConnects() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceOutboundCrossConnectRead,
+		ReadContext: dataSourceOutboundCrossConnectsRead,
 		Schema: map[string]*schema.Schema{
 			"outbound_cross_connects": {
 				Type:        schema.TypeList,
@@ -116,11 +116,11 @@ func dataSourceOutboundCrossConnect() *schema.Resource {
 	}
 }
 
-func dataSourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceOutboundCrossConnectsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	crossConns, err := c.GetOutboundCrossConnects()
+	crossConns, err := c.ListOutboundCrossConnects()
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -133,7 +133,7 @@ func dataSourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceD
 
 func flattenOutboundCrossConnects(crossConns *[]packetfabric.OutboundCrossConnectResp) []interface{} {
 	if crossConns != nil {
-		flattens := make([]interface{}, len(*crossConns), len(*crossConns))
+		flattens := make([]interface{}, len(*crossConns))
 		for i, crossConn := range *crossConns {
 			flatten := make(map[string]interface{})
 			flatten["port"] = crossConn.Port

@@ -326,22 +326,22 @@ resource "random_pet" "name" {}
 #   value = packetfabric_outbound_cross_connect.crossconnect_2
 # }
 
-# data "packetfabric_outbound_cross_connect" "crossconnect_1" {
+# data "packetfabric_outbound_cross_connects" "crossconnects" {
 #   provider = packetfabric
 # }
-# output "packetfabric_outbound_cross_connect" {
-#   value = data.packetfabric_outbound_cross_connect.crossconnect_1
+# output "packetfabric_outbound_cross_connects" {
+#   value = data.packetfabric_outbound_cross_connects.crossconnects
 # }
 
 # #######################################
 # ##### ACTIVITY LOG
 # #######################################
 
-# data "packetfabric_activitylog" "current" {
+# data "packetfabric_activitylogs" "logs" {
 #   provider = packetfabric
 # }
-# output "my-activity-logs" {
-#   value = data.packetfabric_activitylog.current
+# output "my_activity_logs" {
+#   value = data.packetfabric_activitylogs.logs
 # }
 
 # #######################################

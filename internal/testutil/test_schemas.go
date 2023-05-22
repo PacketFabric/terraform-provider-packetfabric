@@ -723,8 +723,8 @@ const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" 
   provider = packetfabric
 }`
 
-// Datasource: packetfabric_activitylog
-const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
+// Datasource: packetfabric_activitylogs
+const DDatasourceActivityLogs = `data "packetfabric_activitylogs" "%s" {
   provider = packetfabric
 }`
 
@@ -757,6 +757,11 @@ const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {
   port_circuit_id = %s.id
   time_from       = "%s"
   time_to         = "%s"
+}`
+
+// Datasource: packetfabric_outbound_cross_connects
+const DDatasourceOutboundCrossConnects = `data "packetfabric_outbound_cross_connects" "%s" {
+  provider  = packetfabric
 }`
 
 // Datasource: packetfabric_link_aggregation_group
