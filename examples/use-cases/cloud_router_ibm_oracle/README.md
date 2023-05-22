@@ -58,7 +58,7 @@ Ensure you have the following items available:
 - [Oracle Credentials](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
-- [Create an SSH key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 
@@ -92,7 +92,7 @@ export PF_IBM_ACCOUNT_ID="123456789"
 export IC_API_KEY="ibmcloud_api_key"
 export IAAS_CLASSIC_USERNAME="iaas_classic_username"
 export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan" # see link Create an SSH key pair in the pre-req
+export TF_VAR_public_key="ssh-rsa AAAA..." # see link Create an SSH key pair in the pre-req
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.
