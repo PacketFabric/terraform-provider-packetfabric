@@ -761,7 +761,8 @@ const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {
 
 // Datasource: packetfabric_outbound_cross_connects
 const DDatasourceOutboundCrossConnects = `data "packetfabric_outbound_cross_connects" "%s" {
-  provider  = packetfabric
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_link_aggregation_group
@@ -803,5 +804,13 @@ const DDatasourceCloudRouterConnection = `data "packetfabric_cloud_router_connec
 // Datasource: packetfabric_cloud_router_connections
 const DDatasourceCloudRouterConnections = `data "packetfabric_cloud_router_connections" "%s" {
   circuit_id = %s.id
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_cloud_router_bgp_session
+const DDatasourceBgpSession = `data "packetfabric_cloud_router_bgp_session" "%s" {
+  provider       = packetfabric
+  circuit_id     = %s.id
+  connection_id  = %s.id
   depends_on = [%s]
 }`

@@ -61,6 +61,7 @@ const pfDataCsDedicatedConns = "data.packetfabric_cs_dedicated_connections"
 const pfDataCloudRouterConnIpsec = "data.packetfabric_cloud_router_connection_ipsec"
 const pfDataCloudRouterConn = "data.packetfabric_cloud_router_connection"
 const pfDataCloudRouterConns = "data.packetfabric_cloud_router_connections"
+const pfDataBgpSession = "data.packetfabric_cloud_router_bgp_session"
 
 // ########################################
 // ###### HARDCODED VALUES
@@ -590,6 +591,11 @@ type DHclPortRouterLogsResult struct {
 	HclResultBase
 }
 
+// data packetfabric_outbound_cross_connects
+type DHclOutboundCrossConnectsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_point_to_points
 type DHclPointToPointsResult struct {
 	HclResultBase
@@ -620,8 +626,8 @@ type DHclCloudRouterConnsResult struct {
 	HclResultBase
 }
 
-// data packetfabric_outbound_cross_connect
-type DHclOutboundCrossConnectsResult struct {
+// data packetfabric_cloud_router_bgp_session
+type DHclBgpSessionResult struct {
 	HclResultBase
 }
 
@@ -1020,7 +1026,6 @@ func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
 
 // packetfabric_cloud_router_connection_aws
 func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
-
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -1388,7 +1393,6 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
-
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
@@ -2155,11 +2159,16 @@ func DHclPortRouterLogs() DHclPortRouterLogsResult {
 
 // data.packetfabric_outbound_cross_connects
 func DHclDataSourceOutboundCrossConnects() DHclOutboundCrossConnectsResult {
+
 	outboundCrossConnectsResult := RHclOutboundCrossConnect()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfDataOutboundCrossConnects)
-	dataOutboundCrossConnectHcl := fmt.Sprintf(DDatasourceOutboundCrossConnects, hclName)
 	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataPorts, hclName)
+
+	dataOutboundCrossConnectHcl := fmt.Sprintf(
+		DDatasourceOutboundCrossConnects,
+		hclName,
+		outboundCrossConnectsResult.ResourceName) // OCC resource name (for the depend_on)
 
 	hcl := fmt.Sprintf("%s\n%s", outboundCrossConnectsResult.Hcl, dataOutboundCrossConnectHcl)
 
@@ -2183,7 +2192,7 @@ func DHclLinkAggregationGroups() DHclLinkAggregationGroupsResult {
 	linkAggregationGroupsHcl := fmt.Sprintf(
 		DDatasourceLinkAggregationGroups,
 		hclName,
-		linkAggregationGroupResult.ResourceName)
+		linkAggregationGroupResult.ResourceName) // LAG resource name (for the depend_on)
 
 	hcl := fmt.Sprintf("%s\n%s", linkAggregationGroupResult.Hcl, linkAggregationGroupsHcl)
 
@@ -2207,7 +2216,7 @@ func DHclPointToPoints() DHclPointToPointsResult {
 	dataPointToPointsHcl := fmt.Sprintf(
 		DDatasourcePointToPoints,
 		hclName,
-		pointToPointsResult.ResourceName)
+		pointToPointsResult.ResourceName) // PTP resource name (for the depend_on)
 
 	hcl := fmt.Sprintf("%s\n%s", pointToPointsResult.Hcl, dataPointToPointsHcl)
 
@@ -2336,6 +2345,32 @@ func DHclCloudRouterConns() DHclCloudRouterConnsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataCloudRouterConns,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_router_bgp_session
+func DHclDatasourceBgpSession() DHclBgpSessionResult {
+
+	bgpSessionHcl := RHclBgpSession()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataBgpSession)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataCloudRouterConns, hclName)
+
+	dataBgpSessionHcl := fmt.Sprintf(
+		DDatasourceBgpSession,
+		hclName,
+		bgpSessionHcl.CloudRouterConn.AdditionalResourceName, // Cloud Router resource name
+		bgpSessionHcl.CloudRouterConn.ResourceName,           // Cloud Router Connection resource name
+		bgpSessionHcl.ResourceName)                           // BGP Session resource name (for the depend_on)
+
+	hcl := fmt.Sprintf("%s\n%s", bgpSessionHcl.Hcl, dataBgpSessionHcl)
+
+	return DHclBgpSessionResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataBgpSession,
 			ResourceName: resourceName,
 		},
 	}
