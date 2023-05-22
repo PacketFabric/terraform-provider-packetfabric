@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func datasourceActivityLog() *schema.Resource {
+func datasourceActivityLogs() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: datasourceActivityLogRead,
+		ReadContext: datasourceActivityLogsRead,
 		Schema: map[string]*schema.Schema{
 			"activity_logs": {
 				Type:        schema.TypeList,
@@ -66,7 +66,7 @@ func datasourceActivityLog() *schema.Resource {
 	}
 }
 
-func datasourceActivityLogRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func datasourceActivityLogsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics

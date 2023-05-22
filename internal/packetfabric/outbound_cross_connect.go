@@ -63,9 +63,9 @@ func (c *PFClient) GetOutboundCrossConnect(outboundCrossConnID string) (*Outboun
 	return expectedResp, nil
 }
 
-func (c *PFClient) GetOutboundCrossConnects() (*[]OutboundCrossConnectResp, error) {
+func (c *PFClient) ListOutboundCrossConnects() (*[]OutboundCrossConnectResp, error) {
 	expectedResp := make([]OutboundCrossConnectResp, 0)
-	_, err := c.sendRequest(outboundCrossConnectURI, getMethod, nil, expectedResp)
+	_, err := c.sendRequest(outboundCrossConnectURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (c *PFClient) UpdateOutboundCrossConnect(outboundCrossConnID, userDesc stri
 }
 
 func (c *PFClient) DeleteOutboundCrossConnect(port string) error {
-	crossConns, err := c.GetOutboundCrossConnects()
+	crossConns, err := c.ListOutboundCrossConnects()
 	if err != nil {
 		return err
 	}

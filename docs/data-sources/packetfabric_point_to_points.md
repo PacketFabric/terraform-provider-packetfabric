@@ -27,7 +27,7 @@ output "packetfabric_point_to_points" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `point_to_points` (List of Object) (see [below for nested schema](#nestedatt--point_to_points))
+- `point_to_points` (List of Object) List of Point-to-Points. (see [below for nested schema](#nestedatt--point_to_points))
 
 <a id="nestedatt--point_to_points"></a>
 ### Nested Schema for `point_to_points`
