@@ -1,4 +1,4 @@
-//go:build datasource || cloud_router || all || smoke
+//go:build datasource || cloud_router || all
 
 package provider
 
