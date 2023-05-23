@@ -1,0 +1,74 @@
+## RUN TESTS USING TAGS
+
+# cd internal/provider
+# source .env
+
+# TF_ACC=1 go test -v -timeout 180m -parallel 3 -tags=all
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=smoke
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=resource 
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=datasource 
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=location
+# TF_ACC=1 go test -v -timeout 120m -parallel 1 -tags=cloud_router 
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=hosted_cloud
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=dedicated_cloud
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=core
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=marketplace
+# TF_ACC=1 go test -v -timeout 120m -parallel 3 -tags=other
+
+## RUN A SPECIFIC TEST
+
+# cd internal/provider
+# source .env
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccPortRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccPortLOARequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccOutboundCrossConnect
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccVcBackboneVlanRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAddSpeedBurstRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccPointToPointRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccLinkAggregGroupsRequiredFields
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionAwsRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionGoogleRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionAzureRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionIbmRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionOracleRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionPortRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterConnectionIpsecRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterBgpSessionRequiredFields
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudProviderCredentialAwsRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudProviderCredentialgoogleRequiredFields
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAwsHostedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccGoogleHostedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAzureHostedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccIbmHostedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccOracleHostedConnectionRequiredFields
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAwsDedicatedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccGoogleDedicatedConnectionRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAzureDedicatedConnectionRequiredFields
+
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsMarketsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsRegionsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsZonesComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsPortAvailabilityComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLocationsCloudComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceBillingComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceActivityLogsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourcePortsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourcePortVlansComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourcePortDeviceInfoComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourcePortRouterLogsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourcePointToPointsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceOutboundCrossConnectsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceLinkAggregationGroupsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceHostedConnComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceDedicatedConnsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceCloudRouterConnectionIpsecComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceCloudRouterConnectionComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceCloudRouterConnectionsComputedRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccDataSourceBgpSessionComputedRequiredFields
