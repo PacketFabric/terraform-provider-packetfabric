@@ -322,6 +322,7 @@ type DedicatedConnResp struct {
 	SubscriptionTerm        int                  `json:"subscription_term"`
 	IsCloudRouterConnection bool                 `json:"is_cloud_router_connection"`
 	Speed                   string               `json:"speed"`
+	IsLag                   bool                 `json:"is_lag,omitempty"`
 }
 
 type CloudServiceProvider struct {
