@@ -8,7 +8,7 @@ variable "azure_region1" {
 variable "azure_vnet_cidr1" {
   type        = string
   description = "CIDR for the VNET"
-  default     = "10.7.0.0/16"
+  default     = "10.7.0.0/16" # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
 }
 variable "azure_subnet_cidr1" {
   type        = string
