@@ -39,7 +39,7 @@
 # TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudRouterBgpSessionRequiredFields
 
 # TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudProviderCredentialAwsRequiredFields
-# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudProviderCredentialgoogleRequiredFields
+# TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccCloudProviderCredentialGoogleRequiredFields
 
 # TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccAwsHostedConnectionRequiredFields
 # TF_ACC=1 go test -v -tags=all -timeout 30m -run=TestAccGoogleHostedConnectionRequiredFields

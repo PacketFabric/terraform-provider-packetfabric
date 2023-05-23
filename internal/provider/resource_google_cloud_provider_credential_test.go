@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudProviderCredentialgoogleRequiredFields(t *testing.T) {
+func TestAccCloudProviderCredentialGoogleRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"GOOGLE_CREDENTIALS"})
 
 	googleProviderCredentialsResult := testutil.RHclCloudProviderCredentialGoogle()
