@@ -12,7 +12,7 @@ A hosted cloud connection to your Google Cloud environment. For more information
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning:** When using `cloud_settings`, the `advertised_ip_ranges` in Google Cloud Router can be managed via `google_advertised_ip_ranges` under `cloud_settings.bgp_settings` configured in `packetfabric_cs_google_hosted_connection`.
+-> **NOTE:** The Google Cloud Terraform provider has a Cloud Router resource where you can set an `advertised_ip_ranges` attribute. However, you can also configure these IP ranges from the PacketFabric side using `google_advertised_ip_ranges` under `cloud_settings.bgp_settings` (see below).
 
 ## Example Usage
 

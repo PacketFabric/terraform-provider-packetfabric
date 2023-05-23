@@ -141,7 +141,7 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 						"google_region": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "The Google region that should be used.\n\n\tEnum: Enum: [\"asia-east1\", \"asia-east2\", \"asia-northeast1\", \"asia-northeast2\", \"asia-northeast3\", \"asia-south1\", \"asia-southeast1\", \"asia-southeast2\", \"australia-southeast1\", \"europe-north1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west6\", \"northamerica-northeast1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-west1\", \"us-west2\", \"us-west3\", \"us-west4\"]",
+							Description: "The Google region that should be used.\n\n\tEnum: [\"asia-east1\", \"asia-east2\", \"asia-northeast1\", \"asia-northeast2\", \"asia-northeast3\", \"asia-south1\", \"asia-southeast1\", \"asia-southeast2\", \"australia-southeast1\", \"europe-north1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west6\", \"northamerica-northeast1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-west1\", \"us-west2\", \"us-west3\", \"us-west4\"]",
 							ValidateFunc: validation.StringInSlice([]string{
 								"asia-east1",
 								"asia-east2",
