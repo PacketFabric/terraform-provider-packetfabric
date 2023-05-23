@@ -41,6 +41,7 @@ Read-Only:
 - `deleted` (Boolean)
 - `description` (String)
 - `is_cloud_router_connection` (Boolean)
+- `is_lag` (Boolean)
 - `pop` (String)
 - `port_type` (String)
 - `service_class` (String)

@@ -149,6 +149,11 @@ func datasourceDedicatedCloudConnections() *schema.Resource {
 							Computed:    true,
 							Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
 						},
+						"is_lag": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is LAG.",
+						},
 					},
 				},
 			},
@@ -175,7 +180,7 @@ func dataSourceDedicatedConRead(ctx context.Context, d *schema.ResourceData, m i
 
 func flattenDedicatedConns(conns *[]packetfabric.DedicatedConnResp) []interface{} {
 	if conns != nil {
-		flattens := make([]interface{}, len(*conns), len(*conns))
+		flattens := make([]interface{}, len(*conns))
 		for i, conn := range *conns {
 			flatten := make(map[string]interface{})
 			flatten["uuid"] = conn.UUID
@@ -197,6 +202,7 @@ func flattenDedicatedConns(conns *[]packetfabric.DedicatedConnResp) []interface{
 			flatten["is_cloud_router_connection"] = conn.IsCloudRouterConnection
 			flatten["pop"] = conn.Pop
 			flatten["site"] = conn.Site
+			flatten["is_lag"] = conn.IsLag
 			flattens[i] = flatten
 		}
 		return flattens

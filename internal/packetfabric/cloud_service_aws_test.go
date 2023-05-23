@@ -318,6 +318,7 @@ func _buildFakeCreateDedicadedAWSConnResp() []byte {
 		"state": "requested",
 		"speed": "1Gbps",
 		"cloud_circuit_id": "%s",
+		"is_lag": true,
 		"time_created": "2019-08-24T14:15:22Z",
 		"time_updated": "2019-08-24T14:15:22Z"
 	  }`, _customerUUID, _userUUID, _cloudConnDesc, _cloudCircuitID))
