@@ -12,11 +12,16 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning 1:** Adding a redundant connection to an existing Google Cloud Router Connection may cause a momentary disruption and can result in the primary BGP session going down temporarily.
+adding a google cloud router connection using edge availability domain 2 connected to the same google cloud router/VPC
 
-!> **Warning 2:** When using `cloud_settings`, the `advertised_ip_ranges` in Google Cloud Router will be managed via BGP `in` prefixes configured `packetfabric_cloud_router_connection_google`. Also, the `advertise_mode` of the Google Cloud Router must be set to "CUSTOM".
+!> **WARNING:** Use caution when adding a redundant connection (i.e. a Google Interconnect connection using edge availability domain `2`) in which both the primary and secondary connections are connected to the same Google Cloud Router and/or VPC. This may result in the primary BGP session going down temporarily.
 
-->**Note:** It is recommended to ignore the `asn` attribute as it may be changed to a private ASN by PacketFabric in the event of multiple Google connections in the same Cloud Router.
+->**NOTE 1:** The Google Cloud Terraform provider has a Cloud Router resource where you can set an `asn` attribute. This ASN may be changed to a private ASN by PacketFabric in the event of multiple Google connections within the same PacketFabric Cloud Router.
+
+-> **NOTE 2:** The Google Cloud Terraform provider has a Cloud Router resource where you can set the `advertised_ip_ranges`.  However, you can also configure these IP ranges from the PacketFabric side using `cloud_settings.bgp_settings.prefixes` (with the `type` attribute set to `in` -- see below). Also note that the `advertise_mode` on the Google Cloud Router resource must be set to `CUSTOM`. If using an existing Google Cloud Router that is set to `DEFAULT`, we will reset it to `CUSTOM` on your behalf.  
+
+
+
 
 ## Example Usage
 
@@ -143,7 +148,7 @@ Required:
 - `google_cloud_router_name` (String) The Google Cloud Router Attachment name. No whitespace allowed.
 - `google_region` (String) The Google region that should be used.
 
-	Enum: Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
+	Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
 - `google_vlan_attachment_name` (String) The Google Interconnect Attachment name. No whitespace allowed.
 
 Optional:
@@ -262,7 +267,7 @@ Optional:
 
 ## Import
 
-->**Note:** Import is not supported if `cloud_settings` are used.
+->**NOTE:** Import is not supported if `cloud_settings` are used.
 
 Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
 

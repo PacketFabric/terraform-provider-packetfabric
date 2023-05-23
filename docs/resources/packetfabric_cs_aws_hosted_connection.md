@@ -12,7 +12,7 @@ A hosted cloud connection to your AWS environment. For more information, see [Cl
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning:** When using `cloud_settings`, the `allowed_prefixes` in Direct Connect Gateway Association can be managed via `allowed_prefixes` under `cloud_settings.aws_gateways` configured in `packetfabric_cs_aws_hosted_connection`.
+-> **NOTE:** The AWS Terraform provider has a Direct Connect Gateway Association resource where you can set an `allowed_prefixes` property. However, you can also configure these prefixes from the PacketFabric side using `allowed_prefixes` under `cloud_settings.aws_gateways` (see below).
 
 ## Example Usage
 

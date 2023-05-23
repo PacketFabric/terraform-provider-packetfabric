@@ -22,7 +22,7 @@ variable "aws_region2" {
 variable "aws_vpc_cidr1" { # used in PF BGP prefix
   type        = string
   description = "CIDR for the VPC in AWS Region 1"
-  default     = "10.1.0.0/16"  # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
+  default     = "10.1.0.0/16" # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
 }
 # Subnet Variables
 variable "aws_subnet_cidr1" {
@@ -33,7 +33,7 @@ variable "aws_subnet_cidr1" {
 variable "aws_vpc_cidr2" { # used in PF BGP prefix
   type        = string
   description = "CIDR for the VPC in AWS Region 2"
-  default     = "10.2.0.0/16"  # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
+  default     = "10.2.0.0/16" # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
 }
 # Subnet Variables
 variable "aws_subnet_cidr2" {
