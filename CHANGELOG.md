@@ -9,14 +9,14 @@ BREAKING CHANGES:
 * resources: [UPDATED] changed zone from optional to required (#517)
     * packetfabric_port
     * packetfabric_cloud_router_connection_aws
-	* packetfabric_cloud_router_connection_ibm
-	* packetfabric_cloud_router_connection_oracle
+    * packetfabric_cloud_router_connection_ibm
+    * packetfabric_cloud_router_connection_oracle
     * packetfabric_cs_aws_hosted_connection
     * packetfabric_cs_ibm_hosted_connection
     * packetfabric_cs_oracle_hosted_connection
-	* packetfabric_cs_aws_dedicated_connection
-	* packetfabric_cs_google_dedicated_connection
-	* packetfabric_cs_azure_dedicated_connection
+    * packetfabric_cs_aws_dedicated_connection
+    * packetfabric_cs_google_dedicated_connection
+    * packetfabric_cs_azure_dedicated_connection
 
 FEATURES:
 
