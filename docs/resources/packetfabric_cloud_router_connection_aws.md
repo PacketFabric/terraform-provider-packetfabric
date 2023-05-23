@@ -12,7 +12,7 @@ A connection from your cloud router to your AWS environment. For more informatio
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
-!> **Warning:** When using `cloud_settings`, the `allowed_prefixes` in Direct Connect Gateway Association will be managed via BGP `in` prefixes configured `packetfabric_cloud_router_connection_aws`.
+-> **NOTE:** The AWS Terraform provider has a Direct Connect Gateway Association resource where you can set an `allowed_prefixes` property. However, you can also configure these IP ranges from the PacketFabric side using `cloud_settings.bgp_settings.prefixes` (with the `type` attribute set to `in` -- see below).
 
 ## Example Usage
 
