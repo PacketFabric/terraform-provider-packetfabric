@@ -17,7 +17,7 @@ variable "ibm_region1_zone1" {
 variable "ibm_vpc_cidr1" {
   type        = string
   description = "CIDR for the VPC"
-  default     = "10.8.0.0/16"
+  default     = "10.8.0.0/16" # do not use 172.17.0.1/16, internal network used for docker containers used in the demo VMs
 }
 variable "ibm_subnet_cidr1" {
   type        = string

@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between IBM Cloud Platform and Oracle CLoud.
 Terraform providers used: PacketFabric, IBM and Oracle.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ## Useful links
 
 - [PacketFabric Terraform Docs](https://docs.packetfabric.com/api/terraform/)
@@ -56,6 +58,7 @@ Ensure you have the following items available:
 - [Oracle Credentials](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 
@@ -89,7 +92,7 @@ export PF_IBM_ACCOUNT_ID="123456789"
 export IC_API_KEY="ibmcloud_api_key"
 export IAAS_CLASSIC_USERNAME="iaas_classic_username"
 export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
+export TF_VAR_public_key="ssh-rsa AAAA..." # see link Create an SSH key pair in the pre-req
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.

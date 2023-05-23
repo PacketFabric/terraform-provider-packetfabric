@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between AWS, Oracle and a PacketFabric Port.
 Terraform providers used: PacketFabric, AWS and Oracle. This example uses AWS Transit VIF & Gateway.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws_oracle_port.png)
 
 ## Useful links
@@ -60,6 +62,7 @@ Ensure you have the following items available:
 - [Oracle Credentials](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 

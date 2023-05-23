@@ -3,6 +3,8 @@
 This use case builds a PacketFabric Cloud Router between Google Cloud Platform and Microsoft Azure Cloud.
 Terraform providers used: PacketFabric, Azure and Google.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_google_azure.png)
 
 ## Useful links
@@ -64,6 +66,7 @@ Ensure you have the following items available:
 - [Microsoft Azure Credentials](https://docs.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 
@@ -93,7 +96,7 @@ export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gcloud module
 export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-setting-1234", "private_key_id": "1234", "private_key": "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----\n", "client_email": "demoapi@demo-setting-1234.iam.gserviceaccount.com", "client_id": "102640829015169383380", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demoapi%40demo-setting-1234.iam.gserviceaccount.com" }'
 
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
+export TF_VAR_public_key="ssh-rsa AAAA..." # see link Create an SSH key pair in the pre-req
 ```
 
 **Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
