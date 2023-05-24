@@ -12,7 +12,9 @@ import (
 
 func TestAccGoogleDedicatedConnectionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	csGoogleDedicatedConnectionResult := testutil.RHclCsGoogleDedicatedConnection()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

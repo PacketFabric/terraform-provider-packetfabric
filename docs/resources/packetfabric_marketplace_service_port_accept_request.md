@@ -41,6 +41,7 @@ resource "packetfabric_marketplace_service_port_accept_request" "accept_marketpl
 
 ### Required
 
+- `description` (String) A brief description for the connection.
 - `interface` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--interface))
 - `type` (String) The service type: "backbone", "ix", or "cloud".
 
@@ -50,7 +51,6 @@ resource "packetfabric_marketplace_service_port_accept_request" "accept_marketpl
 ### Optional
 
 - `cloud_provider` (String) For cloud connections, this is the cloud provider: "aws", "google", "oracle", "azure"
-- `description` (String) A brief description for the connection.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

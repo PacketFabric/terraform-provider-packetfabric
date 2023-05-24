@@ -14,8 +14,10 @@ import (
 
 func TestAccCloudRouterConnectionIbmRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_IBM_ACCOUNT_ID", "IC_API_KEY", "IAAS_CLASSIC_USERNAME", "IAAS_CLASSIC_API_KEY", "TF_VAR_ibm_resource_group"})
+
 	cloudRouterConnectionIbmResult := testutil.RHclCloudRouterConnectionIbm()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

@@ -13,8 +13,10 @@ import (
 
 func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"TF_VAR_tenancy_ocid", "TF_VAR_user_ocid", "TF_VAR_fingerprint", "TF_VAR_private_key", "TF_VAR_parent_compartment_id", "TF_VAR_pf_cs_oracle_drg_ocid"})
+
 	cloudRouterConnectionOracleResult := testutil.RHclCloudRouterConnectionOracle()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 
 		Providers:         testAccProviders,

@@ -12,6 +12,8 @@ A hosted cloud connection to your AWS environment. For more information, see [Cl
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
+-> **NOTE:** The AWS Terraform provider has a Direct Connect Gateway Association resource where you can set an `allowed_prefixes` property. However, you can also configure these prefixes from the PacketFabric side using `allowed_prefixes` under `cloud_settings.aws_gateways` (see below).
+
 ## Example Usage
 
 ```terraform
@@ -35,8 +37,8 @@ resource "aws_dx_connection_confirmation" "confirmation" {
 resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
   provider       = packetfabric
   description    = "AWS Staging Environement"
-  aws_access_key = var.pf_aws_key    # or use env var PF_AWS_ACCESS_KEY_ID
-  aws_secret_key = var.pf_aws_secret # or use env var PF_AWS_SECRET_ACCESS_KEY
+  aws_access_key = var.pf_aws_key    # or use env var AWS_ACCESS_KEY_ID
+  aws_secret_key = var.pf_aws_secret # or use env var AWS_SECRET_ACCESS_KEY
 }
 
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
@@ -86,7 +88,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 ### Required
 
 - `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID environment variable.
+- `aws_account_id` (String) The AWS account ID to connect with. Must be 12 characters long. Can also be set with the PF_AWS_ACCOUNT_ID or AWS_ACCOUNT_ID environment variables.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the hosted connection should be provisioned (the cloud on-ramp).
 - `port` (String) The circuit ID of the PacketFabric port you want to connect to AWS. This starts with "PF-AP-".
@@ -94,6 +96,9 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 
 	Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps
 - `vlan` (Number) Valid VLAN range is from 4-4094, inclusive.
+- `zone` (String) The desired availability zone of the connection.
+
+	Example: "A"
 
 ### Optional
 
@@ -102,7 +107,6 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `zone` (String) The desired zone of the new connection.
 
 ### Read-Only
 

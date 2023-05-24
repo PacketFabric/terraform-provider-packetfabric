@@ -1,4 +1,4 @@
-# Create a PacketFabric interfaces
+# Create a PacketFabric interface
 resource "packetfabric_port" "port_1" {
   provider          = packetfabric
   autoneg           = true
@@ -12,7 +12,6 @@ resource "packetfabric_port" "port_1" {
 }
 
 ### Get the site filtering on the pop using packetfabric_locations
-
 # List PacketFabric locations
 data "packetfabric_locations" "main" {
   provider = packetfabric
@@ -25,11 +24,19 @@ locals {
   pf_port_site1 = local.helper_map["SEA2"]["site_code"]
 }
 
+resource "packetfabric_document" "loa1" {
+  provider        = packetfabric
+  document        = "letter-of-authorization-PF-AP-LAB8-3339359.pdf"
+  type            = "loa"
+  description     = "My LOA"
+  port_circuit_id = "PF-AP-LAB8-3339359"
+}
+
 # Create Cross Connect
 resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
   provider      = packetfabric
   description   = "hello world"
-  document_uuid = "55a7a654-4c3c-4c69-bcbe-755790f0417c" # Document uuid for the LOA
+  document_uuid = packetfabric_document.loa1.id
   port          = packetfabric_port.port_1.id
   site          = local.pf_port_site1
 }

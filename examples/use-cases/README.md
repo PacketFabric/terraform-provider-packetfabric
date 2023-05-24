@@ -1,13 +1,11 @@
 # List of PacketFabric Use Cases
 
-<p align="center"><a href="https://www.youtube.com/watch?v=1HTegktHuoM" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/1HTegktHuoM/2.jpg"></a></p>
-
 Use Cases | Description
 --- | --- 
-[backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit
+[backbone_virtual_circuit](./backbone_virtual_circuit) | Create Ports and Virtual Circuit along with 2 Ports with cross-connect
 [backbone_virtual_circuit_mesh](./backbone_virtual_circuit_mesh) | Create a mesh between Virtual Circuits
 [flex_bandwidth](./flex_bandwidth) | Purchase capacity at a bulk discount and use this capacity to provision virtual circuits
-[cloud_router_module](./cloud_router_module) | Create a Cloud Router Terraform Module with AWS and Google
+[cloud_router_module](./cloud_router_module) | Create a custom Cloud Router Terraform Module with AWS and Google
 [cloud_router_aws](./cloud_router_aws) | Connect 2 AWS regions using a Cloud Router (private VIF)
 [cloud_router_aws_google](./cloud_router_aws_google) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router - Cloud Side Provisioning
 [cloud_router_aws_google_no_cloud_side](./cloud_router_aws_google_no_cloud_side) | Connect AWS (transit VIF) and Google Clouds using a Cloud Router - No Cloud Side Provisioning
@@ -22,6 +20,10 @@ Use Cases | Description
 [hosted_cloud_azure](./hosted_cloud_azure) | Create a Port and an Azure Hosted Cloud Connection
 [hosted_cloud_aws](./hosted_cloud_ibms) | Create a Port and an IBM Hosted Cloud Connection
 [marketplace](./marketplace) | Create a Marketplace Request and Accept/Reject it
+
+Looking for practical examples of how to use the PacketFabric Terraform Provider? Check out our demo video that provides step-by-step guidance on utilizing the provider's use case examples.
+
+<p align="center"><a href="https://www.youtube.com/watch?v=1HTegktHuoM" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/1HTegktHuoM/2.jpg"></a></p>
 
 # List of known issues on other terraform providers, please up vote!
 

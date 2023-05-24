@@ -1,4 +1,7 @@
 ## General VARs
+# Must follow ^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$
+# Any lowercase ASCII letter or digit, and possibly hyphen, which should start with a letter and end with a letter or digit, 
+# and have at most 63 characters (1 for the starting letter + up to 61 characters in the middle + 1 for the ending letter/digit).
 variable "resource_name" {
   type        = string
   description = "Used to name all resources created in this example"
@@ -48,16 +51,6 @@ variable "pf_port_speed" {
 variable "pf_port_nni" {
   type    = bool
   default = false
-}
-
-# Cross connect
-variable "pf_document_uuid1" {
-  type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e" # use API /v2/documents to get UUID
-}
-variable "pf_document_uuid2" {
-  type    = string
-  default = "1d2fb159-b40e-4eda-8f63-1191a80a023e"
 }
 
 # Virtual Circuit

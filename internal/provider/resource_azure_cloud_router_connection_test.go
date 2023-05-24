@@ -13,8 +13,10 @@ import (
 
 func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
+
 	crConnAzureResult := testutil.RHclCloudRouterConnectionAzure()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

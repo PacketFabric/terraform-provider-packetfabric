@@ -45,10 +45,10 @@ func resourceAzureReqExpressDedicatedConn() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired zone of the new connection.",
+				Description:  "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"pop": {
 				Type:         schema.TypeString,

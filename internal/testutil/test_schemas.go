@@ -90,6 +90,20 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	}
 }`
 
+// Resource: packetfabric_cloud_provider_credential_aws
+const RResourceCloudProviderCredentialAws = `resource "packetfabric_cloud_provider_credential_aws" "%s" {
+  provider       = packetfabric
+  description    = "%s"
+  aws_access_key = "%s"
+  aws_secret_key = "%s"
+}`
+
+// Resource: packetfabric_cloud_provider_credential_google
+const RResourceCloudProviderCredentialGoogle = `resource "packetfabric_cloud_provider_credential_google" "%s" {
+  provider               = packetfabric
+  description            = "%s"
+}`
+
 // Resource: packetfabric_cloud_router_connection_azure
 const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
   features {
@@ -607,7 +621,6 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   members     = [%s.id]
   pop         = "%s"
 }
-
 resource "time_sleep" "wait_for_lag" {
   depends_on = [%s]
   destroy_duration = "3m"
@@ -658,10 +671,6 @@ const RResourcePointToPoint = `resource "packetfabric_point_to_point" "%s" {
     zone    = "%s"
     autoneg = %t
   }
-}
-resource "time_sleep" "wait_30_seconds_%s" {
-  depends_on = [%s]
-  destroy_duration = "30s"
 }`
 
 // Resource: packetfabric_port
@@ -723,24 +732,63 @@ const DDataSourceLocationsRegions = `data "packetfabric_locations_regions" "%s" 
   provider = packetfabric
 }`
 
-// Datasource: packetfabric_activitylog
-const DDatasourceActivityLog = `data "packetfabric_activitylog" "%s" {
-  provider = packetfabric
-}`
-
 // Datasource: packetfabric_locations_markets
 const DDataSourceLocationsMarkets = `data "packetfabric_locations_markets" "%s" {
   provider = packetfabric
 }`
 
-// Datasource: packetfabric_ports
-const DDataSourcePorts = `data "packetfabric_ports" "%s" {
-  provider          = packetfabric
+// Datasource: packetfabric_activitylogs
+const DDatasourceActivityLogs = `data "packetfabric_activitylogs" "%s" {
+  provider = packetfabric
 }`
 
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_ports
+const DDataSourcePorts = `data "packetfabric_ports" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_port_vlans
+const DDataSourcePortVlans = `data "packetfabric_port_vlans" "%s" {
+  provider        = packetfabric
+  port_circuit_id = %s.id
+}`
+
+// Datasource: packetfabric_port_device_info
+const DDataSourcePortDeviceInfo = `data "packetfabric_port_device_info" "%s" {
+  provider          = packetfabric
+  port_circuit_id   = %s.id
+}`
+
+// Datasource: packetfabric_port_router_logs
+const DDataSourcePortRouterLogs = `data "packetfabric_port_router_logs" "%s" {
+  provider        = packetfabric
+  port_circuit_id = %s.id
+  time_from       = "%s"
+  time_to         = "%s"
+}`
+
+// Datasource: packetfabric_outbound_cross_connects
+const DDatasourceOutboundCrossConnects = `data "packetfabric_outbound_cross_connects" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_link_aggregation_group
+const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+  provider       = packetfabric
+  lag_circuit_id = %s.id
+}`
+
+// Datasource: packetfabric_point_to_points
+const DDatasourcePointToPoints = `data "packetfabric_point_to_points" "%s" {
+  provider = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_cs_aws_hosted_connection
@@ -749,8 +797,34 @@ const DDatasourceCsAwsHostedConn = `data "packetfabric_cs_aws_hosted_connection"
   cloud_circuit_id  = %s.id
 }`
 
-// Datasource: packetfabric_link_aggregation_group
-const DDatasourceLinkAggregationGroups = `data "packetfabric_link_aggregation_group" "%s" {
+// Datasource: packetfabric_cs_dedicated_connections
+const DDatasourceDedicatedConns = `data "packetfabric_cs_dedicated_connections" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_cloud_router_connection_ipsec
+const DDatasourceCloudRouterConnectionIpsec = `data "packetfabric_cloud_router_connection_ipsec" "%s" {
+  provider   = packetfabric
+  circuit_id = %s.id
+}`
+
+// Datasource: packetfabric_cloud_router_connection
+const DDatasourceCloudRouterConnection = `data "packetfabric_cloud_router_connection" "%s" {
+  circuit_id     = %s.id
+  connection_id  = %s.id
+}`
+
+// Datasource: packetfabric_cloud_router_connections
+const DDatasourceCloudRouterConnections = `data "packetfabric_cloud_router_connections" "%s" {
+  circuit_id = %s.id
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_cloud_router_bgp_session
+const DDatasourceBgpSession = `data "packetfabric_cloud_router_bgp_session" "%s" {
   provider       = packetfabric
-  lag_circuit_id = %s.id
+  circuit_id     = %s.id
+  connection_id  = %s.id
+  depends_on = [%s]
 }`

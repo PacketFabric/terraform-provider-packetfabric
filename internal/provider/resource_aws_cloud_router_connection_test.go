@@ -14,8 +14,10 @@ import (
 
 func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
+
 	crConnAwsResult := testutil.RHclCloudRouterConnectionAws()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		ExternalProviders: testAccExternalProviders,
 		Providers:         testAccProviders,

@@ -84,10 +84,10 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired availability zone of the new connection.",
+				Description:  "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,

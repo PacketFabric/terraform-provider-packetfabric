@@ -140,7 +140,9 @@ resource "azurerm_virtual_machine" "vm_1" {
     }
   }
   depends_on = [
-    azurerm_network_interface.nic_1 # shouldn't be needed but it sounds like Azure TF doesn't track the dependency properly
+    # shouldn't be needed but it sounds like Azure TF doesn't track the dependency properly
+    azurerm_network_interface.nic_1,
+    azurerm_network_interface_security_group_association.association_1
   ]
   tags = {
     environment = "${var.resource_name}-${random_pet.name.id}"
@@ -152,7 +154,9 @@ data "azurerm_network_interface" "nic_1" {
   name                = "${var.resource_name}-${random_pet.name.id}-nic1"
   resource_group_name = azurerm_resource_group.resource_group_1.name
   depends_on = [
-    azurerm_virtual_machine.vm_1
+    azurerm_virtual_machine.vm_1,
+    azurerm_public_ip.public_ip_vm_1,
+    azurerm_network_interface_security_group_association.association_1
   ]
 }
 output "private_ip_vm_1" {

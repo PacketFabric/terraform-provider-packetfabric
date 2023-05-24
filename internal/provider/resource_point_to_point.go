@@ -73,7 +73,7 @@ func resourcePointToPoint() *schema.Resource {
 							Required:     true,
 							ForceNew:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
-							Description:  "Availability zone of the port.",
+							Description:  "The desired availability zone of the port.\n\n\tExample: \"A\"",
 						},
 						"customer_site_code": {
 							Type:         schema.TypeString,

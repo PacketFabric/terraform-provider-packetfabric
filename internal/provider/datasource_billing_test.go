@@ -1,4 +1,4 @@
-//go:build datasource || all
+//go:build datasource || other || all
 
 package provider
 
@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceBillingComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
-	datasourceBillingResult := testutil.DHclDatasourceBilling()
+	datasourceBillingResult := testutil.DHclBilling()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,

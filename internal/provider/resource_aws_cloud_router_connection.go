@@ -47,9 +47,9 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PF_AWS_ACCOUNT_ID", nil),
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"PF_AWS_ACCOUNT_ID", "AWS_ACCOUNT_ID"}, nil),
 				Description: "The AWS account ID to connect with. Must be 12 characters long. " +
-					"Can also be set with the PF_AWS_ACCOUNT_ID environment variable.",
+					"Can also be set with the PF_AWS_ACCOUNT_ID or AWS_ACCOUNT_ID environment variables.",
 			},
 			"account_uuid": {
 				Type:         schema.TypeString,
@@ -85,9 +85,9 @@ func resourceRouterConnectionAws() *schema.Resource {
 			},
 			"zone": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				ForceNew:    true,
-				Description: "The desired AWS availability zone of the new connection.",
+				Description: "The desired availability zone of the connection.\n\n\tExample: \"A\"",
 			},
 			"is_public": {
 				Type:        schema.TypeBool,

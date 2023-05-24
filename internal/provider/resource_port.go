@@ -85,10 +85,10 @@ func resourceInterfaces() *schema.Resource {
 			},
 			"zone": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Availability zone of the port.",
+				Description:  "The desired availability zone of the port.\n\n\tExample: \"A\"",
 			},
 			"enabled": {
 				Type:        schema.TypeBool,

@@ -1,4 +1,4 @@
-//go:build datasource || all || smoke
+//go:build datasource || all || location || smoke
 
 package provider
 
@@ -12,7 +12,9 @@ import (
 
 func TestAccDataSourceLocationsCloudComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
+
 	t.Parallel()
+
 	testCases := []struct {
 		cloudProvider       string
 		cloudConnectionType string
@@ -22,9 +24,10 @@ func TestAccDataSourceLocationsCloudComputedRequiredFields(t *testing.T) {
 		{"google", "hosted"},
 		{"google", "dedicated"},
 	}
+
 	for _, testCase := range testCases {
 
-		dataSourceLocationsCloudResult := testutil.DHclDataSourceLocationsCloud(testCase.cloudProvider, testCase.cloudConnectionType)
+		dataSourceLocationsCloudResult := testutil.DHclLocationsCloud(testCase.cloudProvider, testCase.cloudConnectionType)
 
 		resource.Test(t, resource.TestCase{
 			Providers: testAccProviders,

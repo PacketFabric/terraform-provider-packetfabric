@@ -12,181 +12,177 @@ import (
 func datasourceInterfaces() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceInterfacesRead,
-		Schema:      interfacesSchema(),
-	}
-}
-
-func interfacesSchema() map[string]*schema.Schema {
-	return map[string]*schema.Schema{
-		"interfaces": {
-			Type:     schema.TypeList,
-			Computed: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"autoneg": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Autoneg is enabled.",
-					},
-					"port_circuit_id": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Circuit ID.",
-					},
-					"state": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port State.",
-					},
-					"status": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Status.",
-					},
-					"speed": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Speed.",
-					},
-					"media": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Media type.",
-					},
-					"zone": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Zone.",
-					},
-					"region": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Region.",
-					},
-					"market": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Market.",
-					},
-					"market_description": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Market description.",
-					},
-					"pop": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port POP.",
-					},
-					"site": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Site.",
-					},
-					"site_code": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Site code.",
-					},
-					"operational_status": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Operational status.",
-					},
-					"admin_status": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Admin status.",
-					},
-					"mtu": {
-						Type:        schema.TypeInt,
-						Computed:    true,
-						Description: "Interface Port MTU.",
-					},
-					"description": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Description.",
-					},
-					"vc_mode": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port VC Mode.",
-					},
-					"is_lag": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is LAG.",
-					},
-					"is_lag_member": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is LAG member.",
-					},
-					"is_cloud": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is Cloud.",
-					},
-					"is_ptp": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is Point to Point.",
-					},
-					"is_nni": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is NNI.",
-					},
-					"lag_interval": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port LAG interval.",
-					},
-					"member_count": {
-						Type:        schema.TypeInt,
-						Computed:    true,
-						Description: "Interface Port Member Count.",
-					},
-					"parent_lag_circuit_id": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Parent LAG Circuit ID.",
-					},
-					"account_uuid": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Account UUID.",
-					},
-					"subscription_term": {
-						Type:        schema.TypeInt,
-						Computed:    true,
-						Description: "Interface Port Subscription term.",
-					},
-					"disabled": {
-						Type:        schema.TypeBool,
-						Computed:    true,
-						Description: "TRUE when Interface Port is diabled.",
-					},
-					"customer_name": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Customer name.",
-					},
-					"customer_uuid": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port Customer UUID.",
-					},
-					"time_created": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port time created.",
-					},
-					"time_updated": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Interface Port time updated.",
+		Schema: map[string]*schema.Schema{
+			"interfaces": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"autoneg": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Autoneg is enabled.",
+						},
+						"port_circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Circuit ID.",
+						},
+						"state": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port State.",
+						},
+						"status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Status.",
+						},
+						"speed": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Speed.",
+						},
+						"media": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Media type.",
+						},
+						"zone": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Zone.",
+						},
+						"region": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Region.",
+						},
+						"market": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Market.",
+						},
+						"market_description": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Market description.",
+						},
+						"pop": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port POP.",
+						},
+						"site": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Site.",
+						},
+						"site_code": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Site code.",
+						},
+						"operational_status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Operational status.",
+						},
+						"admin_status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Admin status.",
+						},
+						"mtu": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "Interface Port MTU.",
+						},
+						"description": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Description.",
+						},
+						"vc_mode": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port VC Mode.",
+						},
+						"is_lag": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is LAG.",
+						},
+						"is_lag_member": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is LAG member.",
+						},
+						"is_cloud": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is Cloud.",
+						},
+						"is_ptp": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is Point to Point.",
+						},
+						"is_nni": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is NNI.",
+						},
+						"lag_interval": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port LAG interval.",
+						},
+						"member_count": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "Interface Port Member Count.",
+						},
+						"parent_lag_circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Parent LAG Circuit ID.",
+						},
+						"account_uuid": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Account UUID.",
+						},
+						"subscription_term": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "Interface Port Subscription term.",
+						},
+						"disabled": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "TRUE when Interface Port is diabled.",
+						},
+						"customer_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Customer name.",
+						},
+						"customer_uuid": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port Customer UUID.",
+						},
+						"time_created": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port time created.",
+						},
+						"time_updated": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface Port time updated.",
+						},
 					},
 				},
 			},
@@ -212,7 +208,7 @@ func datasourceInterfacesRead(ctx context.Context, d *schema.ResourceData, m int
 
 func flattenInterfaces(interfs *[]packetfabric.InterfaceReadResp) []interface{} {
 	if interfs != nil {
-		flattens := make([]interface{}, len(*interfs), len(*interfs))
+		flattens := make([]interface{}, len(*interfs))
 		for i, interf := range *interfs {
 			flatten := make(map[string]interface{})
 			flatten["autoneg"] = interf.Autoneg

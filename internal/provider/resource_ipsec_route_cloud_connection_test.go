@@ -14,8 +14,10 @@ import (
 
 func TestAccCloudRouterConnectionIpsecRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{})
+
 	cloudRouterConnectionIpsecResult := testutil.RHclCloudRouterConnectionIpsec()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

@@ -9,9 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceHostedConnComputedRequiredFields(t *testing.T) {
+func TestAccDataSourceHostedConnComputedRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
-	datasourceHostedAwsConnResult := testutil.DHclDatasourceHostedAwsConn()
+
+	datasourceHostedAwsConnResult := testutil.DHclHostedAwsConn()
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

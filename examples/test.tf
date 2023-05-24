@@ -236,6 +236,13 @@ resource "random_pet" "name" {}
 #   value = packetfabric_point_to_point.ptp1
 # }
 
+# data "packetfabric_point_to_points" "all_ptps" {
+#   provider = packetfabric
+# }
+# output "packetfabric_point_to_points" {
+#   value = data.packetfabric_point_to_points.all_ptps
+# }
+
 # #######################################
 # ##### Cross Connect
 # #######################################
@@ -280,6 +287,7 @@ resource "random_pet" "name" {}
 #   value = packetfabric_port_loa.inbound_crossconnect_1
 # }
 
+# # Generate a LOA for a port (outbound cross connect)
 # resource "packetfabric_document" "loa1" {
 #   provider        = packetfabric
 #   document        = "letter-of-authorization-PF-AP-LAB8-3339359.pdf"
@@ -288,11 +296,11 @@ resource "random_pet" "name" {}
 #   port_circuit_id = "PF-AP-LAB8-3339359"
 # }
 
-# data "packetfabric_document" "current" {
+# data "packetfabric_documents" "current" {
 #   provider = packetfabric
 # }
 # output "my-documents" {
-#   value = data.packetfabric_document.current
+#   value = data.packetfabric_documents.current
 # }
 
 # # Create Cross Connect
@@ -318,22 +326,22 @@ resource "random_pet" "name" {}
 #   value = packetfabric_outbound_cross_connect.crossconnect_2
 # }
 
-# data "packetfabric_outbound_cross_connect" "crossconnect_1" {
+# data "packetfabric_outbound_cross_connects" "crossconnects" {
 #   provider = packetfabric
 # }
-# output "packetfabric_outbound_cross_connect" {
-#   value = data.packetfabric_outbound_cross_connect.crossconnect_1
+# output "packetfabric_outbound_cross_connects" {
+#   value = data.packetfabric_outbound_cross_connects.crossconnects
 # }
 
 # #######################################
 # ##### ACTIVITY LOG
 # #######################################
 
-# data "packetfabric_activitylog" "current" {
+# data "packetfabric_activitylogs" "logs" {
 #   provider = packetfabric
 # }
-# output "my-activity-logs" {
-#   value = data.packetfabric_activitylog.current
+# output "my_activity_logs" {
+#   value = data.packetfabric_activitylogs.logs
 # }
 
 # #######################################
@@ -1163,7 +1171,7 @@ resource "random_pet" "name" {}
 # resource "packetfabric_cloud_provider_credential_aws" "aws_creds1" {
 #   provider    = packetfabric
 #   description = "${var.resource_name}-${random_pet.name.id}-aws"
-#   # using env var PF_AWS_ACCESS_KEY_ID and PF_AWS_SECRET_ACCESS_KEY
+#   # using env var AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 # }
 # output "packetfabric_cloud_provider_credential_aws" {
 #   value     = packetfabric_cloud_provider_credential_aws.aws_creds1

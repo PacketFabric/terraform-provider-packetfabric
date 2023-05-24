@@ -14,8 +14,10 @@ import (
 
 func TestAccCloudRouterBgpSessionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
+
 	bgpSessionResult := testutil.RHclBgpSession()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId, bgpSessionUuid string
+
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

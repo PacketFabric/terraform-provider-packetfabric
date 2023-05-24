@@ -3,7 +3,7 @@
 set -e
 
 # Define the tags we want to count
-tags=("all" "smoke" "resource" "datasource" "cloud_router" "hosted_cloud" "dedicated_cloud" "core" "marketplace" "other")
+tags=("all" "resource" "datasource" "smoke" "cloud_router" "hosted_cloud" "dedicated_cloud" "core" "marketplace" "location" "other")
 
 # Initialize an array to store the counts
 declare -a counts
