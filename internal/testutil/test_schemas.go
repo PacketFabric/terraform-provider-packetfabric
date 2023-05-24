@@ -687,6 +687,22 @@ const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
   description     = "%s"
 }`
 
+// Resource: packetfabric_cloud_router_quick_connect
+const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_quick_connect" "%s" {
+  provider              = packetfabric
+  cr_circuit_id         = %s.id
+  connection_circuit_id = %s.id
+  service_uuid          = "%s"
+  return_filters {
+    prefix     = "185.56.153.165/32"
+    match_type = "orlonger"
+  }
+  return_filters {
+    prefix     = "185.56.153.166/32"
+    match_type = "orlonger"
+  }
+}`
+
 // End of resources templates for required fields only
 
 // Datasource: packetfabric_locations_cloud

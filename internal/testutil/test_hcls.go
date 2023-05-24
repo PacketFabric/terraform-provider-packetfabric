@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -31,6 +32,7 @@ const pfCloudRouterConnOracle = "packetfabric_cloud_router_connection_oracle"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
+const pfCloudRouterQuickConnect = "packetfabric_cloud_router_quick_connect"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
@@ -529,6 +531,11 @@ type RHclCsAzureDedicatedConnectionResult struct {
 	Speed            string
 }
 
+// packetfabric_cloud_router_quick_connect
+type RHclCloudRouterQuickConnectResult struct {
+	HclResultBase
+}
+
 // ###### Data-sources
 
 // data packetfabric_locations_cloud
@@ -998,7 +1005,6 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 }
 
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
-
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouter, input.HclName, uniqueDesc)
 
@@ -1862,6 +1868,33 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		Encapsulation:    DedicatedCloudEncap,
 		PortCategory:     DedicatedCloudPortCat,
 		Speed:            DedicatedCloudSpeed,
+	}
+}
+
+// packetfabric_cloud_router_quick_connect
+func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
+	connectionAwsResult := RHclCloudRouterConnectionAws()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
+	quickConnectHcl := fmt.Sprintf(
+		RResourceCloudRouterQuickConnect,
+		hclName,
+		connectionAwsResult.AdditionalResourceName,
+		connectionAwsResult.ResourceName,
+		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
+	)
+
+	hcl := strings.Join([]string{
+		connectionAwsResult.Hcl,
+		quickConnectHcl,
+	}, "\n")
+
+	return RHclCloudRouterQuickConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterQuickConnect,
+			ResourceName: resourceName,
+		},
 	}
 }
 
