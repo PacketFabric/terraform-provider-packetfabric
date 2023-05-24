@@ -1,9 +1,8 @@
-# Use Case: PacketFabric Cloud Router Terraform Module with AWS and Google
+# Use Case: Custom PacketFabric Cloud Router Terraform Module with AWS and Google
 
 This use case builds a PacketFabric Cloud Router between AWS and Google Cloud Platform using a custom Terraform module.
 
-Terraform providers used: PacketFabric.
-
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
 
 ## Useful links
 

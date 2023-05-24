@@ -3,6 +3,8 @@
 This use case builds a connection between two AWS regions using the PacketFabric Cloud Router.
 Terraform providers used: PacketFabric and AWS. This example uses AWS Private VIF & Gateway.
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws.png)
 
 ## Useful links
@@ -56,7 +58,7 @@ Ensure you have the following items available:
 - [AWS Access and Secret Keys](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
-- [SSH Public Key](https://www.ssh.com/academy/ssh/keygen)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 
@@ -80,7 +82,7 @@ export PF_AWS_ACCOUNT_ID="98765432"
 export AWS_ACCESS_KEY_ID="ABCDEFGH"
 export AWS_SECRET_ACCESS_KEY="secret"
 
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
+export TF_VAR_public_key="ssh-rsa AAAA..." # see link Create an SSH key pair in the pre-req
 ```
 
 2. Initialize Terraform, create an execution plan and execute the plan.

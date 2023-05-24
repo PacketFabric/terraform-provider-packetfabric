@@ -12,6 +12,17 @@ A connection from your cloud router to your Google Cloud Platform environment. F
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
+adding a google cloud router connection using edge availability domain 2 connected to the same google cloud router/VPC
+
+!> **WARNING:** Use caution when adding a redundant connection (i.e. a Google Interconnect connection using edge availability domain `2`) in which both the primary and secondary connections are connected to the same Google Cloud Router and/or VPC. This may result in the primary BGP session going down temporarily.
+
+->**NOTE 1:** The Google Cloud Terraform provider has a Cloud Router resource where you can set an `asn` attribute. This ASN may be changed to a private ASN by PacketFabric in the event of multiple Google connections within the same PacketFabric Cloud Router.
+
+-> **NOTE 2:** The Google Cloud Terraform provider has a Cloud Router resource where you can set the `advertised_ip_ranges`.  However, you can also configure these IP ranges from the PacketFabric side using `cloud_settings.bgp_settings.prefixes` (with the `type` attribute set to `in` -- see below). Also note that the `advertise_mode` on the Google Cloud Router resource must be set to `CUSTOM`. If using an existing Google Cloud Router that is set to `DEFAULT`, we will reset it to `CUSTOM` on your behalf.  
+
+
+
+
 ## Example Usage
 
 ```terraform
@@ -45,6 +56,27 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+# Google Cloud Router
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "CUSTOM"
+  }
+  lifecycle {
+    # advertised_ip_ranges managed via BGP prefixes in configured in packetfabric_cloud_router_connection_google
+    # asn could be change to a private ASN by PacketFabric in case of multiple google connection in the same cloud router
+    ignore_changes = [
+      bgp[0].advertised_ip_ranges,
+      bgp[0].asn
+    ]
+  }
+}
+
 resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider    = packetfabric
   description = "hello world"
@@ -56,7 +88,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {
@@ -116,12 +148,12 @@ Required:
 - `google_cloud_router_name` (String) The Google Cloud Router Attachment name. No whitespace allowed.
 - `google_region` (String) The Google region that should be used.
 
-	Enum: Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
+	Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
 - `google_vlan_attachment_name` (String) The Google Interconnect Attachment name. No whitespace allowed.
 
 Optional:
 
-- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 or 2.
+- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 (primary) or 2 (secondary).
 
 	Enum: ["1", "2"] Defaults: 1
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
@@ -235,7 +267,7 @@ Optional:
 
 ## Import
 
-->**Note:** Import is not supported if `cloud_settings` are used.
+->**NOTE:** Import is not supported if `cloud_settings` are used.
 
 Import a Cloud Router Connection using its corresponding circuit ID and the ID of the Cloud Router it is associated with, in the format `<cloud router ID>:<cloud router connection ID>`.
 

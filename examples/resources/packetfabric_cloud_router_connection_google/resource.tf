@@ -28,6 +28,27 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+# Google Cloud Router
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "CUSTOM"
+  }
+  lifecycle {
+    # advertised_ip_ranges managed via BGP prefixes in configured in packetfabric_cloud_router_connection_google
+    # asn could be change to a private ASN by PacketFabric in case of multiple google connection in the same cloud router
+    ignore_changes = [
+      bgp[0].advertised_ip_ranges,
+      bgp[0].asn
+    ]
+  }
+}
+
 resource "packetfabric_cloud_router_connection_google" "crc2" {
   provider    = packetfabric
   description = "hello world"
@@ -39,7 +60,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {

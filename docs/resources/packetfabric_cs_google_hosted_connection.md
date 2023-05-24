@@ -12,6 +12,8 @@ A hosted cloud connection to your Google Cloud environment. For more information
 
 For examples on how to use a cloud's Terraform provider alongside PacketFabric, see [examples/use-cases](https://github.com/PacketFabric/terraform-provider-packetfabric/tree/main/examples/use-cases).
 
+-> **NOTE:** The Google Cloud Terraform provider has a Cloud Router resource where you can set an `advertised_ip_ranges` attribute. However, you can also configure these IP ranges from the PacketFabric side using `google_advertised_ip_ranges` under `cloud_settings.bgp_settings` (see below).
+
 ## Example Usage
 
 ```terraform
@@ -35,6 +37,18 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds1" {
   google_service_account = var.google_service_account # or use env var GOOGLE_CREDENTIALS
 }
 
+resource "google_compute_router" "google_router" {
+  provider = google
+  name     = "myGoogleCloudRouter"
+  region   = "us-west1"
+  project  = "myGoogleProject"
+  network  = "myNetwork"
+  bgp {
+    asn            = 16550
+    advertise_mode = "DEFAULT"
+  }
+}
+
 resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side" {
   provider    = packetfabric
   description = "hello world"
@@ -47,7 +61,7 @@ resource "packetfabric_cs_aws_hosted_connection" "cs_conn1_hosted_aws_cloud_side
     credentials_uuid                = packetfabric_cloud_provider_credential_google.google_creds1.id
     google_region                   = "us-west1"
     google_vlan_attachment_name     = "my-google-vlan-attachment-primary"
-    google_cloud_router_name        = "my-google-cloud-router"
+    google_cloud_router_name        = google_compute_router.google_router.name
     google_vpc_name                 = "my-google-vpc"
     google_edge_availability_domain = 1 # primary
     bgp_settings {
@@ -99,12 +113,12 @@ Required:
 - `google_cloud_router_name` (String) The Google Cloud Router Attachment name. No whitespace allowed.
 - `google_region` (String) The Google region that should be used.
 
-	Enum: Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
+	Enum: ["asia-east1", "asia-east2", "asia-northeast1", "asia-northeast2", "asia-northeast3", "asia-south1", "asia-southeast1", "asia-southeast2", "australia-southeast1", "europe-north1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west6", "northamerica-northeast1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-west1", "us-west2", "us-west3", "us-west4"]
 - `google_vlan_attachment_name` (String) The Google Interconnect Attachment name. No whitespace allowed.
 
 Optional:
 
-- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 or 2.
+- `google_edge_availability_domain` (Number) The Google Edge Availability Domain. Must be 1 (primary) or 2 (secondary).
 
 	Enum: ["1", "2"] Defaults: 1
 - `google_project_id` (String) The Google Project Id to be used. If not present the project id of the credentials will be used.

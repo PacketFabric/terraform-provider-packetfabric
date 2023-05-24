@@ -7,6 +7,8 @@ Terraform providers used: PacketFabric, AWS and Google. This example uses AWS Tr
 
 If you are looking for an example that does not utilize the Cloud Side provisioning feature, please refer to our [alternate example](../cloud_router_aws_google_no_cloud_side).
 
+:rocket: You can simplify the configuration and management of PacketFabric Cloud Routers by utilizing the [PacketFabric Terraform Cloud Router Module](https://registry.terraform.io/modules/PacketFabric/cloud-router-module/connectivity/latest). This module provides pre-defined configurations and workflows for provisioning cloud routers on the PacketFabric platform.
+
 ![Deployment Diagram](./images/diagram_cloud_router_aws_google.png)
 
 ## Useful links
@@ -19,6 +21,8 @@ If you are looking for an example that does not utilize the Cloud Side provision
 - [HashiCorp Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
 
 ## Demo video
+
+Check out our demo video to see how the PacketFabric Terraform Provider can be used to automate the provisioning and management of PacketFabric resources.
 
 <p align="center"><a href="https://www.youtube.com/watch?v=EblOg0Uaf8Q" target=”_blank”><img width="60%" height="60%" src="https://img.youtube.com/vi/EblOg0Uaf8Q/1.jpg"></a></p>
 
@@ -70,6 +74,7 @@ Ensure you have the following items available:
 - [Google Service Account](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances)
 - [PacketFabric Billing Account](https://docs.packetfabric.com/api/examples/account_uuid/)
 - [PacketFabric API key](https://docs.packetfabric.com/admin/my_account/keys/)
+- Create an SSH key pair (Download [PuttyGen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) for Windows or use [ssh-keygen](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac) on Mac)
 
 ## Quick start
 
@@ -98,7 +103,7 @@ export AWS_SECRET_ACCESS_KEY="secret"
 export TF_VAR_gcp_project_id="my-project-id" # used for bash script used with gcloud module
 export GOOGLE_CREDENTIALS='{ "type": "service_account", "project_id": "demo-setting-1234", "private_key_id": "1234", "private_key": "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----\n", "client_email": "demoapi@demo-setting-1234.iam.gserviceaccount.com", "client_id": "102640829015169383380", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demoapi%40demo-setting-1234.iam.gserviceaccount.com" }'
 
-export TF_VAR_public_key="ssh-rsa AAAA...= user@mac.lan"
+export TF_VAR_public_key="ssh-rsa AAAA..." # see link Create an SSH key pair in the pre-req
 ```
 
 **Note**: To convert a pretty-printed JSON into a single line JSON string: `jq -c '.' google_credentials.json`.
