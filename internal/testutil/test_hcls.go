@@ -1456,8 +1456,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 
 // packetfabric_cloud_router_quick_connect
 func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
-
-	connectionAwsResult := RHclCloudRouterConnectionAws()
+	bgpSessionResult := RHclBgpSession()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
 	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
@@ -1465,13 +1464,13 @@ func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
 	quickConnectHcl := fmt.Sprintf(
 		RResourceCloudRouterQuickConnect,
 		hclName,
-		connectionAwsResult.AdditionalResourceName,
-		connectionAwsResult.ResourceName,
+		bgpSessionResult.CloudRouterConn.AdditionalResourceName,
+		bgpSessionResult.CloudRouterConn.ResourceName,
 		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
 	)
 
 	hcl := strings.Join([]string{
-		connectionAwsResult.Hcl,
+		bgpSessionResult.Hcl,
 		quickConnectHcl,
 	}, "\n")
 

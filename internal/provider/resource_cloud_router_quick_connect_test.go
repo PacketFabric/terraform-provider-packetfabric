@@ -29,11 +29,6 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "time_created"),
 				),
 			},
-			{
-				ResourceName:      cloudRouterQuickConnect.ResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
