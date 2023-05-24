@@ -1456,12 +1456,12 @@ func RHclBgpSession() RHclBgpSessionResult {
 
 // packetfabric_cloud_router_quick_connect
 func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
-  
+
 	connectionAwsResult := RHclCloudRouterConnectionAws()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
 	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
-  
+
 	quickConnectHcl := fmt.Sprintf(
 		RResourceCloudRouterQuickConnect,
 		hclName,

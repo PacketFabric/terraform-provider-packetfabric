@@ -1,3 +1,5 @@
+//go:build resource || cloud_router || marketplace || all
+
 package provider
 
 import (
