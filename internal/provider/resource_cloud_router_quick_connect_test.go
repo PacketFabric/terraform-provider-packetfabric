@@ -16,6 +16,7 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 	})
 
 	cloudRouterQuickConnect := testutil.RHclCloudRouterQuickConnect()
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId, importCircuitID string
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
@@ -26,8 +27,30 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "id"),
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "route_set_circuit_id"),
-					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "time_created"),
+					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "state"),
 				),
+			},
+			{
+				Config: cloudRouterQuickConnect.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[cloudRouterQuickConnect.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", cloudRouterQuickConnect.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["connection_id"]
+					importCircuitID = rs.Primary.Attributes["id"]
+					return nil
+				},
+			},
+			{
+				ResourceName:      cloudRouterQuickConnect.ResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					id := fmt.Sprintf("%s:%s:%s", cloudRouterCircuitId, cloudRouterConnectionCircuitId, importCircuitID)
+					return id, nil
+				},
 			},
 		},
 	})

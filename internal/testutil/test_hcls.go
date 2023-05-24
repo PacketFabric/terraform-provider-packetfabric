@@ -1459,7 +1459,7 @@ func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
 	bgpSessionResult := RHclBgpSession()
 
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
-	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
+	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterQuickConnect, hclName)
 
 	quickConnectHcl := fmt.Sprintf(
 		RResourceCloudRouterQuickConnect,

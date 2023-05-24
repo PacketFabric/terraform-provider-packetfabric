@@ -90,6 +90,22 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	}
 }`
 
+// Resource: packetfabric_cloud_router_quick_connect
+const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_quick_connect" "%s" {
+  provider              = packetfabric
+  cr_circuit_id         = %s.id
+  connection_circuit_id = %s.id
+  service_uuid          = "%s"
+  return_filters {
+    prefix     = "185.56.153.165/32"
+    match_type = "exact"
+  }
+  return_filters {
+    prefix     = "185.56.153.166/32"
+    match_type = "exact"
+  }
+}`
+
 // Resource: packetfabric_cloud_provider_credential_aws
 const RResourceCloudProviderCredentialAws = `resource "packetfabric_cloud_provider_credential_aws" "%s" {
   provider       = packetfabric
@@ -699,22 +715,6 @@ const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
   document        = "%s"
   type            = "msa"
   description     = "%s"
-}`
-
-// Resource: packetfabric_cloud_router_quick_connect
-const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_quick_connect" "%s" {
-  provider              = packetfabric
-  cr_circuit_id         = %s.id
-  connection_circuit_id = %s.id
-  service_uuid          = "%s"
-  return_filters {
-    prefix     = "185.56.153.165/32"
-    match_type = "orlonger"
-  }
-  return_filters {
-    prefix     = "185.56.153.166/32"
-    match_type = "orlonger"
-  }
 }`
 
 // End of resources templates for required fields only

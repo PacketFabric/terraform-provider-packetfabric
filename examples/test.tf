@@ -1123,15 +1123,14 @@ resource "random_pet" "name" {}
 #   connection_circuit_id = var.pf_connection_circuit_id
 #   service_uuid          = var.pf_service_uuid
 #   return_filters {
-#     prefix     = var.pf_return_filters_prefix1
-#     match_type = var.pf_return_filters_match_type1
+#     prefix     = "185.56.153.165/32"
+#     match_type = "exact"
 #   }
 #   return_filters {
-#     prefix     = var.pf_return_filters_prefix2
-#     match_type = var.pf_return_filters_match_type2
+#     prefix     = "185.56.153.165/32"
+#     match_type = "exact"
 #   }
 #   labels    = var.pf_labels
-#   po_number = var.pf_po_number
 # }
 # output "packetfabric_cloud_router_quick_connect" {
 #   value = packetfabric_cloud_router_quick_connect.cr_quick_connect

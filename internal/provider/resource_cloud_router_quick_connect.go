@@ -24,8 +24,14 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 		DeleteContext: resourceCloudRouterQuickConnectDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "The Circuit ID of this Cloud Router Import.",
+				Computed:    true,
+			},
+			"route_set_circuit_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Circuit ID of the Route Set selected for this Cloud Router Import.",
 			},
 			"cr_circuit_id": {
 				Type:         schema.TypeString,
@@ -49,8 +55,10 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Description:  "The service UUID associated with the service provider's Quick Connect.",
 			},
 			"import_filters": {
-				Type:     schema.TypeSet,
-				Optional: true,
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Computed:    true,
+				Description: "This is set by the service provider.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"prefix": {
@@ -68,6 +76,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						"local_preference": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     0,
 							Description: "The local preference to apply to the prefix.",
 						},
 					},
@@ -93,40 +102,32 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						"as_prepend": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     0,
 							Description: "The AS prepend to apply to the exported/returned prefix.",
 						},
 						"med": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     0,
 							Description: "The MED to apply to the exported/returned prefix.",
 						},
 					},
 				},
-			},
-			"import_circuit_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Circuit ID of this Cloud Router Import.",
-			},
-			"route_set_circuit_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Circuit ID of the Route Set selected for this Cloud Router Import.",
 			},
 			"is_defunct": {
 				Type:        schema.TypeBool,
 				Computed:    true,
 				Description: "Whether the Quick Connect is defunct. This typically happens when the provider removes the service.",
 			},
-			"time_created": {
+			"state": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The Quick Connect time created.",
+				Description: "Shows the state of this import.\n\n\tEnum: `\"pending\"` `\"rejected\"` `\"provisioning\"`  `\"active\"`  `\"deleting\"`  `\"inactive\"`",
 			},
-			"time_updated": {
+			"connection_speed": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The Quick Connect time updated.",
+				Description: "The speed of the target cloud router connection.",
 			},
 			"labels": {
 				Type:        schema.TypeSet,
@@ -138,7 +139,7 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: QuickConnectImportStatePassthroughContext,
 		},
 	}
 }
@@ -154,11 +155,11 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
 	}
-	_ = d.Set("import_circuit_id", resp.ImportCircuitID)
 	_ = d.Set("route_set_circuit_id", resp.RouteSetCircuitID)
 	_ = d.Set("is_defunct", resp.IsDefunct)
-	_ = d.Set("time_created", resp.TimeCreated)
-	_ = d.Set("time_updated", resp.TimeUpdated)
+	_ = d.Set("state", resp.State)
+	_ = d.Set("connection_speed", resp.ConnectionSpeed)
+
 	d.SetId(resp.ImportCircuitID)
 
 	if labels, ok := d.GetOk("labels"); ok {
@@ -172,6 +173,35 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 
 func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
+
+	var crCIDStr, connCIDStr string
+	if crCID, ok := d.GetOk("cr_circuit_id"); ok {
+		crCIDStr = crCID.(string)
+	}
+	if connCID, ok := d.GetOk("connection_circuit_id"); ok {
+		connCIDStr = connCID.(string)
+	}
+	resp, err := c.GetCloudRouterQuickConnect(crCIDStr, connCIDStr, d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if resp != nil {
+		_ = d.Set("route_set_circuit_id", resp.RouteSetCircuitID)
+		_ = d.Set("is_defunct", resp.IsDefunct)
+		_ = d.Set("state", resp.State)
+		_ = d.Set("connection_speed", resp.ConnectionSpeed)
+		returnFilters := flattenReturnFiltersConfiguration(resp.ReturnFilters)
+		if err := d.Set("return_filters", returnFilters); err != nil {
+			return diag.Errorf("error setting 'return_filters': %s", err)
+		}
+		if resp.ImportFilters != nil {
+			importFilters := flattenImportFiltersConfiguration(resp.ImportFilters)
+			if err := d.Set("import_filters", importFilters); err != nil {
+				return diag.Errorf("error setting 'import_filters': %s", err)
+			}
+		}
+	}
+
 	if _, ok := d.GetOk("labels"); ok {
 		labels, err := getLabels(c, d.Id())
 		if err != nil {
@@ -214,7 +244,7 @@ func resourceCloudRouterQuickConnectDelete(ctx context.Context, d *schema.Resour
 	if connCID, ok := d.GetOk("connection_circuit_id"); ok {
 		connCIDStr = connCID.(string)
 	}
-	warningMsg, err := c.DeleteCloudRouterQuickConnect(d.Id(), crCIDStr, connCIDStr, d.Id())
+	warningMsg, err := c.DeleteCloudRouterQuickConnect(crCIDStr, connCIDStr, d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -250,9 +280,9 @@ func extractImportFilters(d *schema.ResourceData) []packetfabric.QuickConnectImp
 		extractedFilters := make([]packetfabric.QuickConnectImportFilters, 0)
 		for _, filter := range importFilters.(*schema.Set).List() {
 			extractedFilters = append(extractedFilters, packetfabric.QuickConnectImportFilters{
-				Prefix:    filter.(map[string]interface{})["prefix"].(string),
-				MatchType: filter.(map[string]interface{})["match_type"].(string),
-				Localpref: filter.(map[string]interface{})["local_preference"].(int),
+				Prefix:          filter.(map[string]interface{})["prefix"].(string),
+				MatchType:       filter.(map[string]interface{})["match_type"].(string),
+				LocalPreference: filter.(map[string]interface{})["local_preference"].(int),
 			})
 		}
 		return extractedFilters
@@ -267,11 +297,36 @@ func extractReturnFilters(d *schema.ResourceData) []packetfabric.QuickConnectRet
 			extractedFilters = append(extractedFilters, packetfabric.QuickConnectReturnFilters{
 				Prefix:    filter.(map[string]interface{})["prefix"].(string),
 				MatchType: filter.(map[string]interface{})["match_type"].(string),
-				Asprepend: filter.(map[string]interface{})["as_prepend"].(int),
+				AsPrepend: filter.(map[string]interface{})["as_prepend"].(int),
 				Med:       filter.(map[string]interface{})["med"].(int),
 			})
 		}
 		return extractedFilters
 	}
 	return make([]packetfabric.QuickConnectReturnFilters, 0)
+}
+
+func flattenReturnFiltersConfiguration(prefixes []packetfabric.QuickConnectReturnFilters) []interface{} {
+	result := make([]interface{}, len(prefixes))
+	for i, prefix := range prefixes {
+		data := make(map[string]interface{})
+		data["prefix"] = prefix.Prefix
+		data["match_type"] = prefix.MatchType
+		data["as_prepend"] = prefix.AsPrepend
+		data["med"] = prefix.Med
+		result[i] = data
+	}
+	return result
+}
+
+func flattenImportFiltersConfiguration(prefixes []packetfabric.QuickConnectImportFilters) []interface{} {
+	result := make([]interface{}, len(prefixes))
+	for i, prefix := range prefixes {
+		data := make(map[string]interface{})
+		data["prefix"] = prefix.Prefix
+		data["match_type"] = prefix.MatchType
+		data["local_preference"] = prefix.LocalPreference
+		result[i] = data
+	}
+	return result
 }
