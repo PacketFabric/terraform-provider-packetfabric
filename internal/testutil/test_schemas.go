@@ -90,6 +90,20 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	}
 }`
 
+// Resource: packetfabric_cloud_provider_credential_aws
+const RResourceCloudProviderCredentialAws = `resource "packetfabric_cloud_provider_credential_aws" "%s" {
+  provider       = packetfabric
+  description    = "%s"
+  aws_access_key = "%s"
+  aws_secret_key = "%s"
+}`
+
+// Resource: packetfabric_cloud_provider_credential_google
+const RResourceCloudProviderCredentialGoogle = `resource "packetfabric_cloud_provider_credential_google" "%s" {
+  provider               = packetfabric
+  description            = "%s"
+}`
+
 // Resource: packetfabric_cloud_router_connection_azure
 const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
   features {
