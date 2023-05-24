@@ -1,4 +1,4 @@
-## 1.6.0  (May 24, 2023)
+## 1.6.0  (May 25, 2023)
 
 BREAKING CHANGES:
 
