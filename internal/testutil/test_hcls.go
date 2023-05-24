@@ -33,6 +33,8 @@ const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
 const pfCloudRouterQuickConnect = "packetfabric_cloud_router_quick_connect"
+const pfCloudProviderCredAws = "packetfabric_cloud_provider_credential_aws"
+const pfCloudProviderCredGoogle = "packetfabric_cloud_provider_credential_google"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
 const pfCsGoogleHostedConn = "packetfabric_cs_google_hosted_connection"
 const pfCsAzureHostedConn = "packetfabric_cs_azure_hosted_connection"
@@ -434,6 +436,22 @@ type RHclBgpSessionResult struct {
 	Type1           string
 	Prefix2         string
 	Type2           string
+}
+
+// packetfabric_cloud_provider_credential_aws
+type RHclCloudProviderCredAwsResult struct {
+	HclResultBase
+	PortResult   RHclPortResult
+	Desc         string
+	AwsAccessKey string
+	AwsSecretKey string
+}
+
+// packetfabric_cloud_provider_credential_google
+type RHclCloudProviderCredGoogleResult struct {
+	HclResultBase
+	PortResult RHclPortResult
+	Desc       string
 }
 
 // packetfabric_cs_aws_hosted_connection
@@ -1436,6 +1454,82 @@ func RHclBgpSession() RHclBgpSessionResult {
 	}
 }
 
+// packetfabric_cloud_router_quick_connect
+func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
+  
+	connectionAwsResult := RHclCloudRouterConnectionAws()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
+	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
+  
+	quickConnectHcl := fmt.Sprintf(
+		RResourceCloudRouterQuickConnect,
+		hclName,
+		connectionAwsResult.AdditionalResourceName,
+		connectionAwsResult.ResourceName,
+		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
+	)
+
+	hcl := strings.Join([]string{
+		connectionAwsResult.Hcl,
+		quickConnectHcl,
+	}, "\n")
+
+	return RHclCloudRouterQuickConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterQuickConnect,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// packetfabric_cloud_provider_credential_aws
+func RHclCloudProviderCredentialAws() RHclCloudProviderCredAwsResult {
+
+	uniqueDesc := GenerateUniqueName()
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudProviderCredAws)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudProviderCredAws, hclName, uniqueDesc)
+
+	hcl := fmt.Sprintf(RResourceCloudProviderCredentialAws,
+		hclName,
+		uniqueDesc,
+		os.Getenv("AWS_ACCESS_KEY_ID"),
+		os.Getenv("AWS_SECRET_ACCESS_KEY"))
+
+	return RHclCloudProviderCredAwsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudProviderCredAws,
+			ResourceName: resourceName,
+		},
+		Desc:         uniqueDesc,
+		AwsAccessKey: os.Getenv("AWS_ACCESS_KEY_ID"),
+		AwsSecretKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
+	}
+}
+
+// packetfabric_cloud_provider_credential_google
+func RHclCloudProviderCredentialGoogle() RHclCloudProviderCredGoogleResult {
+
+	uniqueDesc := GenerateUniqueName()
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudProviderCredGoogle)
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudProviderCredGoogle, hclName, uniqueDesc)
+
+	hcl := fmt.Sprintf(RResourceCloudProviderCredentialGoogle,
+		hclName,
+		uniqueDesc)
+
+	return RHclCloudProviderCredGoogleResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudProviderCredGoogle,
+			ResourceName: resourceName,
+		},
+		Desc: uniqueDesc,
+	}
+}
+
 // packetfabric_cs_aws_hosted_connection
 func RHclCsAwsHostedConnection() RHclCsHostedCloudAwsResult {
 
@@ -1868,33 +1962,6 @@ func RHclCsAzureDedicatedConnection() RHclCsAzureDedicatedConnectionResult {
 		Encapsulation:    DedicatedCloudEncap,
 		PortCategory:     DedicatedCloudPortCat,
 		Speed:            DedicatedCloudSpeed,
-	}
-}
-
-// packetfabric_cloud_router_quick_connect
-func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
-	connectionAwsResult := RHclCloudRouterConnectionAws()
-
-	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
-	quickConnectHcl := fmt.Sprintf(
-		RResourceCloudRouterQuickConnect,
-		hclName,
-		connectionAwsResult.AdditionalResourceName,
-		connectionAwsResult.ResourceName,
-		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
-	)
-
-	hcl := strings.Join([]string{
-		connectionAwsResult.Hcl,
-		quickConnectHcl,
-	}, "\n")
-
-	return RHclCloudRouterQuickConnectResult{
-		HclResultBase: HclResultBase{
-			Hcl:          hcl,
-			Resource:     pfCloudRouterQuickConnect,
-			ResourceName: resourceName,
-		},
 	}
 }
 
