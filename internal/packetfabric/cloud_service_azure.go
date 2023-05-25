@@ -1,6 +1,9 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
@@ -196,5 +199,7 @@ func (c *PFClient) CreateAzureExpressRouteDedicated(azureExpressDedicated AzureE
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
 	return expressRouteResp, nil
 }
