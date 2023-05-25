@@ -477,8 +477,8 @@ func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*Clou
 	if err != nil {
 		return nil, err
 	}
-	// Add a delay of 15 seconds to allow the billing system to catch up
-	time.Sleep(15 * time.Second)
+	// Add a delay of 60 seconds to allow the billing system to catch up
+	time.Sleep(60 * time.Second)
 	return expectedResp, err
 }
 
