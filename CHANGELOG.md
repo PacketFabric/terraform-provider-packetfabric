@@ -39,6 +39,7 @@ IMPROVEMENTS/ENHANCEMENTS:
 * Updates Optional/Computed fields in all data-sources (#440)
 * Add AWS_ACCOUNT_ID env var as an option to set AWS Account ID in AWS Cloud Router Connection & Hosted Cloud (#506)
 * Add is_lag to packetfabric_cs_dedicated_connections data-source (#524)
+* Add state, import_filters prefixes and terraform import support for packetfabric_cloud_router_quick_connect (#528)
 
 BUG FIXES:
 
@@ -75,6 +76,7 @@ ACCEPTANCE TESTING:
 * ACC Test for packetfabric_cloud_router_connection_port resource (#388)
 * ACC Test for packetfabric_cloud_router_connection_ipsec resource (#420)
 * ACC Test for packetfabric_cloud_router_bgp_session resource (#369)
+* ACC Test for packetfabric_cloud_router_quick_connect resource (#528)
 * ACC Test for packetfabric_cloud_provider_credential_google resource (#526)
 * ACC Test for packetfabric_cloud_provider_credential_aws resource (#526)
 * ACC Test for packetfabric_cs_aws_hosted_connection resource (#418)
