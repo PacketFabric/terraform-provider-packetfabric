@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -31,6 +32,7 @@ const pfCloudRouterConnOracle = "packetfabric_cloud_router_connection_oracle"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
+const pfCloudRouterQuickConnect = "packetfabric_cloud_router_quick_connect"
 const pfCloudProviderCredAws = "packetfabric_cloud_provider_credential_aws"
 const pfCloudProviderCredGoogle = "packetfabric_cloud_provider_credential_google"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
@@ -162,6 +164,10 @@ const CloudRouterBgpSessionPrefix3 = "192.168.2.0/24"
 const CloudRouterBgpSessionType3 = "out"
 const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
+
+const CloudRouterQCReturnFilterPrefix1 = "185.56.153.165/32"
+const CloudRouterQCReturnFilterPrefix2 = "185.56.153.166/32"
+const CloudRouterQCReturnFilterType = "exact"
 
 // packetfabric_cs_aws_hosted_connection
 // packetfabric_cs_azure_hosted_connection
@@ -434,6 +440,15 @@ type RHclBgpSessionResult struct {
 	Type1           string
 	Prefix2         string
 	Type2           string
+}
+
+// packetfabric_cloud_router_quick_connect
+type RHclCloudRouterQuickConnectResult struct {
+	HclResultBase
+	ReturnFilterPrefix1 string
+	ReturnFilterType1   string
+	ReturnFilterPrefix2 string
+	ReturnFilterType2   string
 }
 
 // packetfabric_cloud_provider_credential_aws
@@ -1016,7 +1031,6 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 }
 
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
-
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouter, input.HclName, uniqueDesc)
 
@@ -1445,6 +1459,43 @@ func RHclBgpSession() RHclBgpSessionResult {
 		Type1:           CloudRouterBgpSessionType1,
 		Prefix2:         CloudRouterBgpSessionPrefix2,
 		Type2:           CloudRouterBgpSessionType2,
+	}
+}
+
+// packetfabric_cloud_router_quick_connect
+func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
+	bgpSessionResult := RHclBgpSession()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
+	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterQuickConnect, hclName)
+
+	quickConnectHcl := fmt.Sprintf(
+		RResourceCloudRouterQuickConnect,
+		hclName,
+		bgpSessionResult.CloudRouterConn.AdditionalResourceName,
+		bgpSessionResult.CloudRouterConn.ResourceName,
+		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
+		CloudRouterQCReturnFilterPrefix1,
+		CloudRouterQCReturnFilterType,
+		CloudRouterQCReturnFilterPrefix2,
+		CloudRouterQCReturnFilterType,
+	)
+
+	hcl := strings.Join([]string{
+		bgpSessionResult.Hcl,
+		quickConnectHcl,
+	}, "\n")
+
+	return RHclCloudRouterQuickConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterQuickConnect,
+			ResourceName: resourceName,
+		},
+		ReturnFilterPrefix1: CloudRouterQCReturnFilterPrefix1,
+		ReturnFilterType1:   CloudRouterQCReturnFilterType,
+		ReturnFilterPrefix2: CloudRouterQCReturnFilterPrefix2,
+		ReturnFilterType2:   CloudRouterQCReturnFilterType,
 	}
 }
 

@@ -345,10 +345,10 @@ func extractRouteSet(d *schema.ResourceData) packetfabric.RouteSet {
 	return routeSet
 }
 
-func extractyRouteSetPrefixes(prefixes interface{}) []packetfabric.MktPrefix {
-	routePrefixes := make([]packetfabric.MktPrefix, 0)
+func extractyRouteSetPrefixes(prefixes interface{}) []packetfabric.QuickConnectImportFilters {
+	routePrefixes := make([]packetfabric.QuickConnectImportFilters, 0)
 	for _, prefix := range prefixes.(*schema.Set).List() {
-		routePrefix := packetfabric.MktPrefix{}
+		routePrefix := packetfabric.QuickConnectImportFilters{}
 		if p := prefix.(map[string]interface{})["prefix"]; p != nil {
 			routePrefix.Prefix = p.(string)
 		}

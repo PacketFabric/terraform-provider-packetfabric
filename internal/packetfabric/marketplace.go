@@ -9,6 +9,7 @@ import (
 const marketPlaceSeviceURI = "/v2/marketplace/services"
 const marketPlaceRouteSetsURI = "/v2/services/cloud-routers/%s/route-sets/%s/connections"
 const marketPlaceByUUIDURI = "/v2/marketplace/services/%s"
+const marketPlaceRouteSetByUUIDURI = "/v2/marketplace/services/%s/route-set"
 const marketPlaceUpdateURI = "/v2/services/cloud-routers/%s/route-sets/%s"
 
 type MarketplaceService struct {
@@ -28,14 +29,12 @@ type MarketplaceServiceRouteSet struct {
 	ConnectionCircuitIDs ConnectionCircuitIDs `json:",omitempty"`
 	RouteSetCircuitID    string               `json:",omitempty"`
 }
-type MktPrefix struct {
-	Prefix    string `json:"prefix,omitempty"`
-	MatchType string `json:"match_type,omitempty"`
-}
+
 type RouteSet struct {
-	Description string      `json:"description,omitempty"`
-	IsPrivate   bool        `json:"is_private"`
-	Prefixes    []MktPrefix `json:"prefixes,omitempty"`
+	CircuitID   string                      `json:"circuit_id,omitempty"`
+	Description string                      `json:"description,omitempty"`
+	IsPrivate   bool                        `json:"is_private"`
+	Prefixes    []QuickConnectImportFilters `json:"prefixes,omitempty"` // QuickConnectImportFilters defined in cloud_router_quick_connect.go
 }
 
 type MarketplaceServiceResp struct {
@@ -123,6 +122,15 @@ func (c *PFClient) GetMarketPlaceService(serviceUUID string) (*MarketplaceServic
 	return expectedResp, nil
 }
 
+func (c *PFClient) GetMarketPlaceServiceRouteSet(serviceUUID string) (*RouteSet, error) {
+	formatedURI := fmt.Sprintf(marketPlaceRouteSetByUUIDURI, serviceUUID)
+	expectedResp := &RouteSet{}
+	if _, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp); err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 func (c *PFClient) UpdateMarketPlaceConnection(crCircuitID, routeSetCircuitID string, circuitIDs ConnectionCircuitIDs) error {
 	formatedURI := fmt.Sprintf(marketPlaceRouteSetsURI, crCircuitID, routeSetCircuitID)
 	_, err := c.sendRequest(formatedURI, putMethod, circuitIDs, nil)
@@ -135,8 +143,8 @@ func (c *PFClient) UpdateMarketPlaceConnection(crCircuitID, routeSetCircuitID st
 func (c *PFClient) UpdateMarketPlaceServiceRouteSet(crCircuitID, routeSetCircuitID string, service MarketplaceServiceRouteSet) error {
 	formatedURI := fmt.Sprintf(marketPlaceUpdateURI, crCircuitID, routeSetCircuitID)
 	type MarketPlaceRouteSetUpdate struct {
-		Description string      `json:"description"`
-		Prefixes    []MktPrefix `json:"prefixes"`
+		Description string                      `json:"description"`
+		Prefixes    []QuickConnectImportFilters `json:"prefixes"`
 	}
 	mktUpdate := MarketPlaceRouteSetUpdate{
 		Description: service.RouteSet.Description,

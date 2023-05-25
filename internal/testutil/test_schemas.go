@@ -90,6 +90,22 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	}
 }`
 
+// Resource: packetfabric_cloud_router_quick_connect
+const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_quick_connect" "%s" {
+  provider              = packetfabric
+  cr_circuit_id         = %s.id
+  connection_circuit_id = %s.id
+  service_uuid          = "%s"
+  return_filters {
+    prefix     = "%s"
+    match_type = "%s"
+  }
+  return_filters {
+    prefix     = "%s"
+    match_type = "%s"
+  }
+}`
+
 // Resource: packetfabric_cloud_provider_credential_aws
 const RResourceCloudProviderCredentialAws = `resource "packetfabric_cloud_provider_credential_aws" "%s" {
   provider       = packetfabric
