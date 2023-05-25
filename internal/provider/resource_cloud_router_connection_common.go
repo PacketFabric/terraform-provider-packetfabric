@@ -311,8 +311,8 @@ func QuickConnectImportStatePassthroughContext(ctx context.Context, d *schema.Re
 	if err != nil {
 		return []*schema.ResourceData{}, err
 	}
-	_ = d.Set("circuit_id", CloudRouterCircuitQuickConnectIdData.cloudRouterCircuitId)
-	_ = d.Set("connection_id", CloudRouterCircuitQuickConnectIdData.cloudRouterConnectionCircuitId)
+	_ = d.Set("cr_circuit_id", CloudRouterCircuitQuickConnectIdData.cloudRouterCircuitId)
+	_ = d.Set("connection_circuit_id", CloudRouterCircuitQuickConnectIdData.cloudRouterConnectionCircuitId)
 	d.SetId(CloudRouterCircuitQuickConnectIdData.importCircuitID)
 
 	return []*schema.ResourceData{d}, nil

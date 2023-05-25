@@ -43,8 +43,8 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 					if !ok {
 						return fmt.Errorf("Not found: %s", cloudRouterQuickConnect.ResourceName)
 					}
-					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
-					cloudRouterConnectionCircuitId = rs.Primary.Attributes["connection_id"]
+					cloudRouterCircuitId = rs.Primary.Attributes["cr_circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["connection_circuit_id"]
 					importCircuitID = rs.Primary.Attributes["id"]
 					return nil
 				},
