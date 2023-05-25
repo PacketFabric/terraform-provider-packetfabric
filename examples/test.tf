@@ -1130,7 +1130,6 @@ resource "random_pet" "name" {}
 #     prefix     = "185.56.153.165/32"
 #     match_type = "exact"
 #   }
-#   labels    = var.pf_labels
 # }
 # output "packetfabric_cloud_router_quick_connect" {
 #   value = packetfabric_cloud_router_quick_connect.cr_quick_connect
