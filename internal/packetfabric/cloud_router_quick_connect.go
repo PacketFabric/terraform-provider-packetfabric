@@ -21,35 +21,45 @@ type CloudRouterQuickConnectUpdate struct {
 }
 
 type QuickConnectImportFilters struct {
-	Prefix    string `json:"prefix,omitempty"`
-	MatchType string `json:"match_type,omitempty"`
-	Localpref int    `json:"local_preference,omitempty"`
+	Prefix          string `json:"prefix,omitempty"`
+	MatchType       string `json:"match_type,omitempty"`
+	LocalPreference int    `json:"local_preference,omitempty"`
 }
 type QuickConnectReturnFilters struct {
 	Prefix          string `json:"prefix,omitempty"`
 	MatchType       string `json:"match_type,omitempty"`
-	Asprepend       int    `json:"as_prepend,omitempty"`
+	AsPrepend       int    `json:"as_prepend,omitempty"`
 	Med             int    `json:"med,omitempty"`
-	Localpref       int    `json:"local_preference,omitempty"`
+	LocalPreference int    `json:"local_preference,omitempty"`
 	PendingApproval bool   `json:"pending_approval,omitempty"`
 }
 
 type CloudRouterQuickConnectResp struct {
-	ImportCircuitID   string `json:"import_circuit_id,omitempty"`
-	RouteSetCircuitID string `json:"route_set_circuit_id,omitempty"`
-	ServiceUUID       string `json:"service_uuid,omitempty"`
-	Name              string `json:"name,omitempty"`
-	Description       string `json:"description,omitempty"`
-	IsDefunct         bool   `json:"is_defunct,omitempty"`
-	State             string `json:"state,omitempty"`
-	TimeCreated       string `json:"time_created,omitempty"`
-	TimeUpdated       string `json:"time_updated,omitempty"`
+	ImportCircuitID   string                      `json:"import_circuit_id,omitempty"`
+	RouteSetCircuitID string                      `json:"route_set_circuit_id,omitempty"`
+	ServiceUUID       string                      `json:"service_uuid,omitempty"`
+	Name              string                      `json:"name,omitempty"`
+	Description       string                      `json:"description,omitempty"`
+	IsDefunct         bool                        `json:"is_defunct,omitempty"`
+	State             string                      `json:"state,omitempty"`
+	ConnectionSpeed   string                      `json:"connection_speed,omitempty"`
+	ImportFilters     []QuickConnectImportFilters `json:"import_filters,omitempty"`
+	ReturnFilters     []QuickConnectReturnFilters `json:"return_filters,omitempty"`
 }
 
 func (c *PFClient) CreateCloudRouterQuickConnect(crCID, connCID string, quickConnect CloudRouterQuickConnect) (*CloudRouterQuickConnectResp, error) {
 	formatedURI := fmt.Sprintf(cloudRouterQuickConnectURI, crCID, connCID)
 	quickConnectResp := &CloudRouterQuickConnectResp{}
 	if _, err := c.sendRequest(formatedURI, postMethod, quickConnect, quickConnectResp); err != nil {
+		return nil, err
+	}
+	return quickConnectResp, nil
+}
+
+func (c *PFClient) GetCloudRouterQuickConnect(crCID, connCID, importCID string) (*CloudRouterQuickConnectResp, error) {
+	formatedURI := fmt.Sprintf(cloudRouterQuickConnectByImportCIDURI, crCID, connCID, importCID)
+	quickConnectResp := &CloudRouterQuickConnectResp{}
+	if _, err := c.sendRequest(formatedURI, getMethod, nil, &quickConnectResp); err != nil {
 		return nil, err
 	}
 	return quickConnectResp, nil
@@ -72,27 +82,27 @@ func (c *PFClient) UpdateCloudRouterQuickConnect(crCID, connCID, importCID strin
 	return
 }
 
-func (c *PFClient) DeleteCloudRouterQuickConnect(cID, crCID, connCID, importCID string) (warningMessage string, err error) {
-	state, err := c.GetCloudRouterQuickConnectState(cID)
+func (c *PFClient) DeleteCloudRouterQuickConnect(crCID, connCID, importCID string) (warningMessage string, err error) {
+	state, err := c.GetCloudRouterQuickConnectState(importCID)
 	if err != nil {
 		return "error", err
 	}
 	switch {
 	case state == "pending":
-		if cID == "" {
-			err = errors.New("circuit ID cannot be empty")
+		if importCID == "" {
+			err = errors.New("import circuit id cannot be empty")
 			return
 		}
-		err = c._deletePendingCloudRouterQuickConnect(cID)
+		err = c._deletePendingCloudRouterQuickConnect(importCID)
 	case state == "active":
 		if crCID == "" || connCID == "" || importCID == "" {
-			err = fmt.Errorf("cloud router circuit ID, connection circuit ID or import circuit ID cannot be empty, we got: CrID: %s; ConnCID: %s; ImportCID: %s", crCID, connCID, importCID)
+			err = fmt.Errorf("import circuit id, cloud router circuit id, cloud router connection circuit id cannot be empty: id: %s; cr_circuit_id: %s; connection_circuit_id: %s", importCID, crCID, connCID)
 			return
 		}
 		err = c._deleteActiveCloudRouterQuickConnect(crCID, connCID, importCID)
 	case state == "rejected":
 		warningMessage = "the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed"
-	case state == "innactive":
+	case state == "inactive":
 		warningMessage = "the cloud router quick connect is innactive and cannot be deleted"
 	}
 	return

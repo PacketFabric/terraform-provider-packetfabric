@@ -1,6 +1,9 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const serviceGoogleMktConnReqURI = "/v2/services/third-party/hosted/google"
 const serviceGoogleHostedConnURI = "/v2/services/cloud/hosted/google"
@@ -116,5 +119,7 @@ func (c *PFClient) CreateRequestDedicatedGoogleConn(googleConn GoogleReqDedicate
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
 	return expectedResp, nil
 }
