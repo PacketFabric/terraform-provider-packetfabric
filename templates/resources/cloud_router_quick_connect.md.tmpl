@@ -8,7 +8,7 @@ description: |-
 
 # packetfabric_cloud_router_quick_connect (Resource)
 
-Use Cloud Router Quick Connect to import a service provider's routes into one of your Cloud Router connections. 
+Use Cloud Router Quick Connect to import a service provider's routes into one of your Cloud Router connections. For more information, see [Quick Connect in the PacketFabric documentation](https://docs.packetfabric.com/cr/qc/).
 
 ## Example Usage
 
