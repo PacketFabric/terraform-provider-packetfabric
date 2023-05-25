@@ -214,8 +214,21 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string
 
 	testingInLab := strings.Contains(os.Getenv("PF_HOST"), "api.dev")
 
+	// First loop, prioritizing "us-" regions
 	for popAvailable, zones := range popsWithZones {
-		// log.Printf("Checking PoP: %s\n", popAvailable)
+		region = zones[len(zones)-1] // always take the last zone as region
+		if len(zones) > 1 && (!testingInLab || _contains(labPopsHostedCloud, popAvailable)) && strings.HasPrefix(region, "us-") {
+			pop = popAvailable
+			zone = zones[0] // always take the first zone available
+			log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
+			return
+		} else {
+			popsToSkip = append(popsToSkip, popAvailable)
+		}
+	}
+
+	// Second loop, if no "us-" region PoP is found
+	for popAvailable, zones := range popsWithZones {
 		if len(popsToSkip) == len(popsWithZones) {
 			log.Fatal(errors.New("there's no port available on any pop"))
 		}
