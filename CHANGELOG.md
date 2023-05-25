@@ -1,3 +1,114 @@
+## 1.6.0  (May 25, 2023)
+
+BREAKING CHANGES:
+
+* data-source: [RENAMED] packetfabric_point_to_points (was packetfabric_point_to_point) (#448)
+* data-source: [RENAMED] packetfabric_cloud_routers (was packetfabric_cloud_router) (#517)
+* data-source: [RENAMED] packetfabric_outbound_cross_connects (was packetfabric_outbound_cross_connect) (#469)
+* data-source: [RENAMED] packetfabric_activitylogs (was packetfabric_activitylog) (#469)
+* resources: [UPDATED] changed zone from optional to required (#517)
+    * packetfabric_port
+    * packetfabric_cloud_router_connection_aws
+    * packetfabric_cloud_router_connection_ibm
+    * packetfabric_cloud_router_connection_oracle
+    * packetfabric_cs_aws_hosted_connection
+    * packetfabric_cs_ibm_hosted_connection
+    * packetfabric_cs_oracle_hosted_connection
+    * packetfabric_cs_aws_dedicated_connection
+    * packetfabric_cs_google_dedicated_connection
+    * packetfabric_cs_azure_dedicated_connection
+
+FEATURES:
+
+* resource: packetfabric_document (#485)
+* data-source: packetfabric_documents (#485)
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Add Early Termination Liability (ETL) info to all applicable resources (#492)
+* Improve service status checks for Port and Backbone VC (#367)
+* Provide IBM Gateway ID in IBM Hosted Cloud and Cloud Router Connection resources (#490)
+* Provide Azure Private/Microsoft VLAN ID and connection type in Azure Cloud Router Connection resource (#489)
+* Handle cloud router deletion when billing is not created yet (#244)
+* Add port_circuit_id as computed field in packetfabric_point_to_point (#448)
+* Use ptp_circuit_id instead of UUID in packetfabric_point_to_point (#448)
+* Refactor status check for packetfabric_point_to_point (#448)
+* Add deprecate field to speed in Azure Hosted Cloud resource (#499)
+* packetfabric_link_aggregation_group enable/disable LAG interface (#330)
+* Add warning and more info to the Google Cloud Router Connection Resource (#506)
+* Updates Optional/Computed fields in all data-sources (#440)
+* Add AWS_ACCOUNT_ID env var as an option to set AWS Account ID in AWS Cloud Router Connection & Hosted Cloud (#506)
+* Add is_lag to packetfabric_cs_dedicated_connections data-source (#524)
+* Add state, import_filters prefixes and terraform import support for packetfabric_cloud_router_quick_connect (#528)
+
+BUG FIXES:
+
+* Correct read operation in packetfabric_cloud_router_bgp_session for Azure Connection (#489)
+* Fix errors when applying labels in packetfabric_point_to_point (#492)
+* Fix panic: Invalid address to set: []string{"cloud_circuit_id"} in all hosted and dedicated cloud resources (#418)
+* Fix panic: Invalid address to set: []string{"pop"} in Azure Hosted Cloud resource (#389)
+* Fix panic: Invalid address to set: []string{"speed"} in packetfabric_cs_oracle_hosted_connection (#426)
+* Fix error: updating cloud_settings for AWS and Google Hosted Cloud resources (#456)
+* Fix Terraform Import of BGP session when used with Azure Cloud Router Connection (#369)
+* Removed should_create_lag in read() function for Google and Azure Dedicated Cloud resources (#422)
+* Ignore Labels order in all resources supporting labels (#509)
+* Update IPsec Cloud Router Connection status check (#420)
+* Handling config diff due to endpoints order in packetfabric_point_to_point (#510)
+* Handling vlan creating config diff with terraform plan/import in packetfabric_cloud_router_connection_port (#388)
+* Handling zone, po_number creating config diff with terraform plan/import in all resources (#418, #426)
+* Fix packetfabric_point_to_points data-source not returning anything (#470)
+* Fix packetfabric_outbound_cross_connects data-source not returning anything (#469)
+
+ACCEPTANCE TESTING:
+
+* ACC Test for packetfabric_port resource (#356)
+* ACC Test for packetfabric_port_loa resource (#447)
+* ACC Test for packetfabric_outbound_cross_connect resource (#446)
+* ACC Test for packetfabric_link_aggregation_group resource (#451)
+* ACC Test for packetfabric_backbone_virtual_circuit resource (#454)
+* ACC Test for packetfabric_backbone_virtual_circuit_speed_burst resource (#452)
+* ACC Test for packetfabric_point_to_point resource (#448)
+* ACC Test for packetfabric_cloud_router_connection_aws resource (#424)
+* ACC Test for packetfabric_cloud_router_connection_google resource (#450)
+* ACC Test for packetfabric_cloud_router_connection_azure resource (#389)
+* ACC Test for packetfabric_cloud_router_connection_ibm resource (#419)
+* ACC Test for packetfabric_cloud_router_connection_oracle resource (#426)
+* ACC Test for packetfabric_cloud_router_connection_port resource (#388)
+* ACC Test for packetfabric_cloud_router_connection_ipsec resource (#420)
+* ACC Test for packetfabric_cloud_router_bgp_session resource (#369)
+* ACC Test for packetfabric_cloud_router_quick_connect resource (#528)
+* ACC Test for packetfabric_cloud_provider_credential_google resource (#526)
+* ACC Test for packetfabric_cloud_provider_credential_aws resource (#526)
+* ACC Test for packetfabric_cs_aws_hosted_connection resource (#418)
+* ACC Test for packetfabric_cs_google_hosted_connection resource (#456)
+* ACC Test for packetfabric_cs_azure_hosted_connection resource (#389)
+* ACC Test for packetfabric_cs_ibm_hosted_connection resource (#419)
+* ACC Test for packetfabric_cs_oracle_hosted_connection resource (#426)
+* ACC Test for packetfabric_cs_aws_dedicated_connection resource (#432)
+* ACC Test for packetfabric_cs_google_dedicated_connection resource (#422)
+* ACC Test for packetfabric_cs_azure_dedicated_connection resource (#425)
+* ACC Test for packetfabric_activitylogs data-source (#465)
+* ACC Test for packetfabric_locations_markets data-source (#464)
+* ACC Test for packetfabric_locations_regions data-source (#463)
+* ACC Test for packetfabric_locations_pop_zones data-source (#462)
+* ACC Test for packetfabric_locations data-source (#461)
+* ACC Test for packetfabric_locations_port_availability data-source (#460)
+* ACC Test for packetfabric_locations_cloud data-source (#453)
+* ACC Test for packetfabric_ports data-source (#441)
+* ACC Test for packetfabric_port_device_info data-source (#457)
+* ACC Test for packetfabric_port_vlans data-source (#458)
+* ACC Test for packetfabric_port_router_logs data-source (#459)
+* ACC Test for packetfabric_outbound_cross_connects data-source (#469)
+* ACC Test for packetfabric_link_aggregation_group data-source (#486)
+* ACC Test for packetfabric_point_to_point data-source (#467)
+* ACC Test for packetfabric_billing data-source (#439)
+* ACC Test for packetfabric_cs_aws_hosted_connection data-source (#439)
+* ACC Test for packetfabric_cs_dedicated_connections data-source (#440)
+* ACC Test for packetfabric_cloud_router_connection data-source (#470)
+* ACC Test for packetfabric_cloud_router_connections data-source (#470)
+* ACC Test for packetfabric_cloud_router_connection_ipsec data-source (#466)
+* ACC Test for packetfabric_cloud_router_bgp_session (#471)
+
 ## 1.5.0  (May 3, 2023)
 
 BREAKING CHANGES:
