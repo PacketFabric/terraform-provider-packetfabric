@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -63,13 +64,15 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"prefix": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 							Description:  "The route prefix that you will be importing from the Quick Connect. This is set by the service provider.",
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
 							Description:  "The match type for the imported prefix. This is set by the service provider.",
 						},
@@ -129,14 +132,6 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Computed:    true,
 				Description: "The speed of the target cloud router connection.",
 			},
-			"labels": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Label value linked to an object.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: QuickConnectImportStatePassthroughContext,
@@ -150,7 +145,18 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	crCID := d.Get("cr_circuit_id").(string)
 	connCID := d.Get("connection_circuit_id").(string)
 	var diags diag.Diagnostics
-	quickConnect := extractCloudRouterQuickConnect(d)
+	var importFilters []packetfabric.QuickConnectImportFilters
+	// if import_filters not set by the user, use the marketplace service route set
+	if _, ok := d.GetOk("import_filters"); !ok {
+		if serviceUUID, ok := d.GetOk("service_uuid"); ok {
+			resp2, err2 := c.GetMarketPlaceServiceRouteSet(serviceUUID.(string))
+			if err2 != nil {
+				return diag.FromErr(err2)
+			}
+			importFilters = mapToQuickConnectImportFilters(flattenImportFiltersConfiguration(resp2.Prefixes))
+		}
+	}
+	quickConnect := extractCloudRouterQuickConnect(d, importFilters)
 	resp, err := c.CreateCloudRouterQuickConnect(crCID, connCID, quickConnect)
 	if err != nil || resp == nil {
 		return diag.FromErr(err)
@@ -159,15 +165,11 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	_ = d.Set("is_defunct", resp.IsDefunct)
 	_ = d.Set("state", resp.State)
 	_ = d.Set("connection_speed", resp.ConnectionSpeed)
+	if importFilters != nil {
+		_ = d.Set("import_filters", importFilters)
+	}
 
 	d.SetId(resp.ImportCircuitID)
-
-	if labels, ok := d.GetOk("labels"); ok {
-		diagnostics, created := createLabels(c, d.Id(), labels)
-		if !created {
-			return diagnostics
-		}
-	}
 	return diags
 }
 
@@ -190,24 +192,16 @@ func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.Resource
 		_ = d.Set("is_defunct", resp.IsDefunct)
 		_ = d.Set("state", resp.State)
 		_ = d.Set("connection_speed", resp.ConnectionSpeed)
+		_ = d.Set("service_uuid", resp.ServiceUUID)
+
 		returnFilters := flattenReturnFiltersConfiguration(resp.ReturnFilters)
 		if err := d.Set("return_filters", returnFilters); err != nil {
 			return diag.Errorf("error setting 'return_filters': %s", err)
 		}
 		if resp.ImportFilters != nil {
 			importFilters := flattenImportFiltersConfiguration(resp.ImportFilters)
-			if err := d.Set("import_filters", importFilters); err != nil {
-				return diag.Errorf("error setting 'import_filters': %s", err)
-			}
+			_ = d.Set("import_filters", importFilters)
 		}
-	}
-
-	if _, ok := d.GetOk("labels"); ok {
-		labels, err := getLabels(c, d.Id())
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		_ = d.Set("labels", labels)
 	}
 	return diag.Diagnostics{}
 }
@@ -218,17 +212,50 @@ func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.Resour
 	c.Ctx = ctx
 	crCID := d.Get("cr_circuit_id").(string)
 	connCID := d.Get("connection_circuit_id").(string)
-	quickConn := extractCloudRouterQuickConnectUpdate(d)
-	if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, d.Id(), quickConn); err != nil {
+
+	// Get the current cloud router quick connect configuration from the provider
+	currentQuickConn, err := c.GetCloudRouterQuickConnect(crCID, connCID, d.Id())
+	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if _, ok := d.GetOk("labels"); ok {
-		labels := d.Get("labels")
-		diagnostics, updated := updateLabels(c, d.Id(), labels)
-		if !updated {
-			return diagnostics
+	// Extract the local configuration
+	localQuickConn := extractCloudRouterQuickConnectUpdate(d)
+	// Copy the local configuration for further modifications
+	updateQuickConn := localQuickConn
+
+	// Make a map from currentImportFilters for easy lookup
+	currentFiltersMap := make(map[string]packetfabric.QuickConnectImportFilters)
+	for _, filter := range currentQuickConn.ImportFilters {
+		currentFiltersMap[filter.Prefix] = filter
+	}
+
+	// Iterate over localQuickConn.ImportFilters, add new filters, and update localPreference for existing ones
+	for i, localFilter := range updateQuickConn.ImportFilters {
+		currentFilter, exists := currentFiltersMap[localFilter.Prefix]
+
+		if exists {
+			// If the filter exists, update its localPreference
+			updateQuickConn.ImportFilters[i].LocalPreference = currentFilter.LocalPreference
+		} else {
+			// If the filter doesn't exist, show a warning
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Ignored Import Filter",
+				Detail:   fmt.Sprintf("The import filter with prefix %s does not exist in the provider's configuration and will be ignored.", localFilter.Prefix),
+			})
 		}
+	}
+
+	// If return filters are updated by the user
+	if d.HasChange("return_filters") {
+		// The return filters are changed, set the new return filters from user
+		updateQuickConn.ReturnFilters = localQuickConn.ReturnFilters
+	}
+
+	// Update the cloud router quick connect with the new settings
+	if err := c.UpdateCloudRouterQuickConnect(crCID, connCID, d.Id(), updateQuickConn); err != nil {
+		return diag.FromErr(err)
 	}
 	return diags
 }
@@ -258,12 +285,16 @@ func resourceCloudRouterQuickConnectDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func extractCloudRouterQuickConnect(d *schema.ResourceData) packetfabric.CloudRouterQuickConnect {
+func extractCloudRouterQuickConnect(d *schema.ResourceData, importFilters []packetfabric.QuickConnectImportFilters) packetfabric.CloudRouterQuickConnect {
 	quickConnect := packetfabric.CloudRouterQuickConnect{}
 	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
 		quickConnect.ServiceUUID = serviceUUID.(string)
 	}
-	quickConnect.ImportFilters = extractImportFilters(d)
+	if len(importFilters) > 0 {
+		quickConnect.ImportFilters = importFilters
+	} else {
+		quickConnect.ImportFilters = extractImportFilters(d)
+	}
 	quickConnect.ReturnFilters = extractReturnFilters(d)
 	return quickConnect
 }
@@ -306,8 +337,8 @@ func extractReturnFilters(d *schema.ResourceData) []packetfabric.QuickConnectRet
 	return make([]packetfabric.QuickConnectReturnFilters, 0)
 }
 
-func flattenReturnFiltersConfiguration(prefixes []packetfabric.QuickConnectReturnFilters) []interface{} {
-	result := make([]interface{}, len(prefixes))
+func flattenReturnFiltersConfiguration(prefixes []packetfabric.QuickConnectReturnFilters) []map[string]interface{} {
+	result := make([]map[string]interface{}, len(prefixes))
 	for i, prefix := range prefixes {
 		data := make(map[string]interface{})
 		data["prefix"] = prefix.Prefix
@@ -319,14 +350,27 @@ func flattenReturnFiltersConfiguration(prefixes []packetfabric.QuickConnectRetur
 	return result
 }
 
-func flattenImportFiltersConfiguration(prefixes []packetfabric.QuickConnectImportFilters) []interface{} {
-	result := make([]interface{}, len(prefixes))
+func flattenImportFiltersConfiguration(prefixes []packetfabric.QuickConnectImportFilters) []map[string]interface{} {
+	result := make([]map[string]interface{}, len(prefixes))
 	for i, prefix := range prefixes {
-		data := make(map[string]interface{})
-		data["prefix"] = prefix.Prefix
-		data["match_type"] = prefix.MatchType
-		data["local_preference"] = prefix.LocalPreference
+		data := map[string]interface{}{
+			"prefix":           prefix.Prefix,
+			"match_type":       prefix.MatchType,
+			"local_preference": prefix.LocalPreference,
+		}
 		result[i] = data
+	}
+	return result
+}
+
+func mapToQuickConnectImportFilters(data []map[string]interface{}) []packetfabric.QuickConnectImportFilters {
+	result := make([]packetfabric.QuickConnectImportFilters, len(data))
+	for i, item := range data {
+		result[i] = packetfabric.QuickConnectImportFilters{
+			Prefix:          item["prefix"].(string),
+			MatchType:       item["match_type"].(string),
+			LocalPreference: item["local_preference"].(int),
+		}
 	}
 	return result
 }

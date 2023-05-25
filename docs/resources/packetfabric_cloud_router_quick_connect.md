@@ -42,7 +42,6 @@ resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
 ### Optional
 
 - `import_filters` (Block Set) This is set by the service provider. (see [below for nested schema](#nestedblock--import_filters))
-- `labels` (Set of String) Label value linked to an object.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
@@ -74,14 +73,11 @@ Optional:
 <a id="nestedblock--import_filters"></a>
 ### Nested Schema for `import_filters`
 
-Required:
-
-- `match_type` (String) The match type for the imported prefix. This is set by the service provider.
-- `prefix` (String) The route prefix that you will be importing from the Quick Connect. This is set by the service provider.
-
 Optional:
 
 - `local_preference` (Number) The local preference to apply to the prefix.Defaults: 0
+- `match_type` (String) The match type for the imported prefix. This is set by the service provider.
+- `prefix` (String) The route prefix that you will be importing from the Quick Connect. This is set by the service provider.
 
 
 <a id="nestedblock--timeouts"></a>
