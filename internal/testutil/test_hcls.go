@@ -165,6 +165,10 @@ const CloudRouterBgpSessionType3 = "out"
 const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
 
+const CloudRouterQCReturnFilterPrefix1 = "185.56.153.165/32"
+const CloudRouterQCReturnFilterPrefix2 = "185.56.153.166/32"
+const CloudRouterQCReturnFilterType = "exact"
+
 // packetfabric_cs_aws_hosted_connection
 // packetfabric_cs_azure_hosted_connection
 // packetfabric_cs_google_hosted_connection
@@ -438,6 +442,15 @@ type RHclBgpSessionResult struct {
 	Type2           string
 }
 
+// packetfabric_cloud_router_quick_connect
+type RHclCloudRouterQuickConnectResult struct {
+	HclResultBase
+	ReturnFilterPrefix1 string
+	ReturnFilterType1   string
+	ReturnFilterPrefix2 string
+	ReturnFilterType2   string
+}
+
 // packetfabric_cloud_provider_credential_aws
 type RHclCloudProviderCredAwsResult struct {
 	HclResultBase
@@ -547,11 +560,6 @@ type RHclCsAzureDedicatedConnectionResult struct {
 	Encapsulation    string
 	PortCategory     string
 	Speed            string
-}
-
-// packetfabric_cloud_router_quick_connect
-type RHclCloudRouterQuickConnectResult struct {
-	HclResultBase
 }
 
 // ###### Data-sources
@@ -1467,6 +1475,10 @@ func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
 		bgpSessionResult.CloudRouterConn.AdditionalResourceName,
 		bgpSessionResult.CloudRouterConn.ResourceName,
 		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
+		CloudRouterQCReturnFilterPrefix1,
+		CloudRouterQCReturnFilterType,
+		CloudRouterQCReturnFilterPrefix2,
+		CloudRouterQCReturnFilterType,
 	)
 
 	hcl := strings.Join([]string{
@@ -1480,6 +1492,10 @@ func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
 			Resource:     pfCloudRouterQuickConnect,
 			ResourceName: resourceName,
 		},
+		ReturnFilterPrefix1: CloudRouterQCReturnFilterPrefix1,
+		ReturnFilterType1:   CloudRouterQCReturnFilterType,
+		ReturnFilterPrefix2: CloudRouterQCReturnFilterPrefix2,
+		ReturnFilterType2:   CloudRouterQCReturnFilterType,
 	}
 }
 

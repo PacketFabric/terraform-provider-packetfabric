@@ -59,15 +59,19 @@ resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
 
 Required:
 
-- `match_type` (String) The match type of this prefix.
-
-	Enum: `"exact"` `"orlonger"` `"longer"`
 - `prefix` (String) The prefix to export to the service provider that they will use for return traffic.
 
 Optional:
 
-- `as_prepend` (Number) The AS prepend to apply to the exported/returned prefix.Defaults: 0
-- `med` (Number) The MED to apply to the exported/returned prefix.Defaults: 0
+- `as_prepend` (Number) The AS prepend to apply to the exported/returned prefix.
+
+	Available range is 1 through 5.
+- `match_type` (String) The match type of this prefix.
+
+	Enum: `"exact"` `"orlonger"` Defaults: exact
+- `med` (Number) The MED to apply to the exported/returned prefix.
+
+	Available range is 1 through 4294967295.
 
 
 <a id="nestedblock--import_filters"></a>
@@ -75,8 +79,12 @@ Optional:
 
 Optional:
 
-- `local_preference` (Number) The local preference to apply to the prefix.Defaults: 0
+- `local_preference` (Number) The local preference to apply to the prefix.
+
+	Available range is 1 through 4294967295.
 - `match_type` (String) The match type for the imported prefix. This is set by the service provider.
+
+	Enum: `"exact"` `"orlonger"`
 - `prefix` (String) The route prefix that you will be importing from the Quick Connect. This is set by the service provider.
 
 

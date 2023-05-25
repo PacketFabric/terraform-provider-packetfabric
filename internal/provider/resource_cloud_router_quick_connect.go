@@ -73,14 +73,14 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
-							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
-							Description:  "The match type for the imported prefix. This is set by the service provider.",
+							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
+							Description:  "The match type for the imported prefix. This is set by the service provider.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
 						},
 						"local_preference": {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Default:     0,
-							Description: "The local preference to apply to the prefix.",
+							Description: "The local preference to apply to the prefix.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 					},
 				},
@@ -98,21 +98,23 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 						},
 						"match_type": {
 							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger", "longer"}, true),
-							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` `\"longer\"`",
+							Optional:     true,
+							Default:      "exact",
+							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
+							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
 						},
 						"as_prepend": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     0,
-							Description: "The AS prepend to apply to the exported/returned prefix.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							Default:      0,
+							ValidateFunc: validation.IntBetween(1, 5),
+							Description:  "The AS prepend to apply to the exported/returned prefix.\n\n\tAvailable range is 1 through 5. ",
 						},
 						"med": {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Default:     0,
-							Description: "The MED to apply to the exported/returned prefix.",
+							Description: "The MED to apply to the exported/returned prefix.\n\n\tAvailable range is 1 through 4294967295. ",
 						},
 					},
 				},
@@ -166,6 +168,7 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	_ = d.Set("state", resp.State)
 	_ = d.Set("connection_speed", resp.ConnectionSpeed)
 	if importFilters != nil {
+		importFilters := flattenImportFiltersConfiguration(importFilters)
 		_ = d.Set("import_filters", importFilters)
 	}
 
@@ -230,13 +233,13 @@ func resourceCloudRouterQuickConnectUpdate(ctx context.Context, d *schema.Resour
 		currentFiltersMap[filter.Prefix] = filter
 	}
 
-	// Iterate over localQuickConn.ImportFilters, add new filters, and update localPreference for existing ones
+	// Iterate over localQuickConn.ImportFilters, and update localPreference for existing ones
 	for i, localFilter := range updateQuickConn.ImportFilters {
-		currentFilter, exists := currentFiltersMap[localFilter.Prefix]
+		_, exists := currentFiltersMap[localFilter.Prefix]
 
 		if exists {
 			// If the filter exists, update its localPreference
-			updateQuickConn.ImportFilters[i].LocalPreference = currentFilter.LocalPreference
+			updateQuickConn.ImportFilters[i].LocalPreference = localFilter.LocalPreference
 		} else {
 			// If the filter doesn't exist, show a warning
 			diags = append(diags, diag.Diagnostic{

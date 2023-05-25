@@ -3,10 +3,12 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
@@ -28,6 +30,10 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "id"),
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "route_set_circuit_id"),
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "state"),
+					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.0.prefix", cloudRouterQuickConnect.ReturnFilterPrefix1),
+					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.0.type", cloudRouterQuickConnect.ReturnFilterType1),
+					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.1.prefix", cloudRouterQuickConnect.ReturnFilterPrefix2),
+					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.1.type", cloudRouterQuickConnect.ReturnFilterType2),
 				),
 			},
 			{

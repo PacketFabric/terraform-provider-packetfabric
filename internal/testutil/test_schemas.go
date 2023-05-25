@@ -97,12 +97,12 @@ const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_qu
   connection_circuit_id = %s.id
   service_uuid          = "%s"
   return_filters {
-    prefix     = "185.56.153.165/32"
-    match_type = "exact"
+    prefix     = "%s"
+    match_type = "%s"
   }
   return_filters {
-    prefix     = "185.56.153.166/32"
-    match_type = "exact"
+    prefix     = "%s"
+    match_type = "%s"
   }
 }`
 
