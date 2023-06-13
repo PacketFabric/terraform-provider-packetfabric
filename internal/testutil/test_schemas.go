@@ -169,6 +169,10 @@ resource "packetfabric_cloud_router_connection_azure" "%s" {
   description       = "%s"
   speed             = "%s"
   azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
+  cloud_settings {
+    primary_public_ip   = "%s"
+    secondary_public_ip = "%s"
+  }
 }`
 
 // Resource: packetfabric_cloud_router_connection_google

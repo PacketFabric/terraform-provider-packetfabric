@@ -194,6 +194,8 @@ const AzureServiceProviderNameDev = "Packet Fabric Test"
 const AzureExpressRouteTier = "Standard"
 const AzureExpressRouteFamily = "MeteredData"
 const AzurePeeringBandwidth = 100 // must match const CloudRouterConnSpeed and HostedCloudSpeed
+const AzurePrimaryPublicIp = "10.7.1.0/28"
+const AzureSecondaryPublicIp = "10.8.1.0/28"
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
@@ -1194,7 +1196,57 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		hclCloudRouterRes.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
-		CloudRouterConnSpeed)
+		CloudRouterConnSpeed,
+		AzurePrimaryPublicIp,
+        AzureSecondaryPublicIp)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnAzure,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+	}
+}
+
+func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	primaryPublicIp := ""
+    secondaryPublicIp := ""
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzure,
+		AzureLocation,
+		AzureLocation,
+		AzureVnetCidr,
+		AzureSubnetCidr,
+		AzureLocation,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		CloudRouterConnSpeed,
+		primaryPublicIp,
+        secondaryPublicIp)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
