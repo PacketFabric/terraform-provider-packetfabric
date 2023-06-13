@@ -1198,7 +1198,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		uniqueDesc,
 		CloudRouterConnSpeed,
 		AzurePrimaryPublicIp,
-        AzureSecondaryPublicIp)
+		AzureSecondaryPublicIp)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1226,7 +1226,7 @@ func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureR
 	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
 
 	primaryPublicIp := ""
-    secondaryPublicIp := ""
+	secondaryPublicIp := ""
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionAzure,
@@ -1246,7 +1246,7 @@ func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureR
 		uniqueDesc,
 		CloudRouterConnSpeed,
 		primaryPublicIp,
-        secondaryPublicIp)
+		secondaryPublicIp)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 

@@ -45,8 +45,8 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 			},
 			{
 				Config: crConnAzureResult.Hcl,
-				Check: resource.TestCheckResourceAttr(crConnAzureResult.ResourceName,"is_public","true"),
-			},		
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
+			},
 			{
 				ResourceName:            crConnAzureResult.ResourceName,
 				ImportState:             true,
@@ -62,29 +62,29 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 }
 
 func TestAccCloudRouterConnectionAzureNoPublicIPs(t *testing.T) {
-    testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
+	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
 
-    crConnAzureResult := testutil.RHclCloudRouterConnectionAzureNoPublicIPs()
-    var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+	crConnAzureResult := testutil.RHclCloudRouterConnectionAzureNoPublicIPs()
+	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 
-    resource.ParallelTest(t, resource.TestCase{
-        Providers:         testAccProviders,
-        ExternalProviders: testAccExternalProviders,
-        Steps: []resource.TestStep{
-            {
-                Config: crConnAzureResult.Hcl,
-                Check: resource.ComposeTestCheckFunc(
-                    resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
-                    resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
-                    resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
-                    resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
-                    resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
-                ),
-            },
-            {
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
+		Steps: []resource.TestStep{
+			{
 				Config: crConnAzureResult.Hcl,
-				Check: resource.TestCheckResourceAttr(crConnAzureResult.ResourceName,"is_public","false"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
+				),
 			},
-        },
-    })
+			{
+				Config: crConnAzureResult.Hcl,
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "false"),
+			},
+		},
+	})
 }
