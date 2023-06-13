@@ -215,7 +215,7 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
 	_ = d.Set("po_number", resp.PONumber)
 
-	if resp.CloudSettings.PublicIP != "" {
+	if resp.CloudSettings.PublicIP != "" || resp.CloudSettings.PrimaryPublicIP != "" || resp.CloudSettings.SecondaryPublicIP != "" {
 		_ = d.Set("is_public", true)
 	} else {
 		_ = d.Set("is_public", false)
