@@ -163,7 +163,7 @@ resource "azurerm_express_route_circuit" "azure_express_route1" {
   }
 }
 resource "packetfabric_cloud_router_connection_azure" "%s" {
-  provider          = azure
+  provider          = packetfabric
   circuit_id        = %s.id
   account_uuid      = "%s"
   description       = "%s"

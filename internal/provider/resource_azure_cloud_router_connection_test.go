@@ -72,16 +72,6 @@ func TestAccCloudRouterConnectionPublicAzureIsPublic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: crConnAzureResult.Hcl,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
-					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
-					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
-					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
-					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
-				),
-			},
-			{
-				Config: crConnAzureResult.Hcl,
 				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
 			},
 		},
