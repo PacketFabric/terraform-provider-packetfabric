@@ -45,7 +45,7 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 			},
 			{
 				Config: crConnAzureResult.Hcl,
-				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "false"),
 			},
 			{
 				ResourceName:            crConnAzureResult.ResourceName,
@@ -61,11 +61,10 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 	})
 }
 
-func TestAccCloudRouterConnectionAzureNoPublicIPs(t *testing.T) {
+func TestAccCloudRouterConnectionPublicAzureIsPublic(t *testing.T) {
 	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
 
-	crConnAzureResult := testutil.RHclCloudRouterConnectionAzureNoPublicIPs()
-	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
+	crConnAzureResult := testutil.RHclCloudRouterConnectionAzurePublic()
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
@@ -83,7 +82,7 @@ func TestAccCloudRouterConnectionAzureNoPublicIPs(t *testing.T) {
 			},
 			{
 				Config: crConnAzureResult.Hcl,
-				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "false"),
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
 			},
 		},
 	})

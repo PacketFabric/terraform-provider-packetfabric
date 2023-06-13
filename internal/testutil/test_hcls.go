@@ -194,8 +194,6 @@ const AzureServiceProviderNameDev = "Packet Fabric Test"
 const AzureExpressRouteTier = "Standard"
 const AzureExpressRouteFamily = "MeteredData"
 const AzurePeeringBandwidth = 100 // must match const CloudRouterConnSpeed and HostedCloudSpeed
-const AzurePrimaryPublicIp = "10.7.1.0/28"
-const AzureSecondaryPublicIp = "10.8.1.0/28"
 
 // packetfabric_cs_aws_dedicated_connection
 // packetfabric_cs_google_dedicated_connection
@@ -1197,8 +1195,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		CloudRouterConnSpeed,
-		AzurePrimaryPublicIp,
-		AzureSecondaryPublicIp)
+		false)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1215,7 +1212,7 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 	}
 }
 
-func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureResult {
+func RHclCloudRouterConnectionAzurePublic() RHclCloudRouterConnectionAzureResult {
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
@@ -1224,9 +1221,6 @@ func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureR
 
 	host := os.Getenv("PF_HOST")
 	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
-
-	primaryPublicIp := ""
-	secondaryPublicIp := ""
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionAzure,
@@ -1245,8 +1239,7 @@ func RHclCloudRouterConnectionAzureNoPublicIPs() RHclCloudRouterConnectionAzureR
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		CloudRouterConnSpeed,
-		primaryPublicIp,
-		secondaryPublicIp)
+		true)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 

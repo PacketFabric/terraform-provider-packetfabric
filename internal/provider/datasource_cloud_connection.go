@@ -238,6 +238,14 @@ func dataSourceCloudConnection() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"primary_public_ip": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"secondary_public_ip": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"nat_public_ip": {
 							Type:     schema.TypeString,
 							Computed: true,

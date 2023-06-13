@@ -163,16 +163,13 @@ resource "azurerm_express_route_circuit" "azure_express_route1" {
   }
 }
 resource "packetfabric_cloud_router_connection_azure" "%s" {
-  provider          = packetfabric
+  provider          = azure
   circuit_id        = %s.id
   account_uuid      = "%s"
   description       = "%s"
   speed             = "%s"
   azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
-  cloud_settings {
-    primary_public_ip   = "%s"
-    secondary_public_ip = "%s"
-  }
+  is_public         = %v
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
