@@ -118,6 +118,14 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Computed:    true,
 				Description: "The microsoft peering vlan.",
 			},
+			"primary_public_ip": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"secondary_public_ip": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"etl": {
 				Type:        schema.TypeFloat,
 				Computed:    true,
@@ -215,8 +223,10 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
 	_ = d.Set("po_number", resp.PONumber)
 
-	if resp.CloudSettings.PublicIP != "" {
+	if resp.CloudSettings.PrimaryPublicIP != "" || resp.CloudSettings.SecondaryPublicIP != "" {
 		_ = d.Set("is_public", true)
+		_ = d.Set("primary_public_ip", resp.CloudSettings.PrimaryPublicIP)
+		_ = d.Set("secondary_public_ip", resp.CloudSettings.SecondaryPublicIP)
 	} else {
 		_ = d.Set("is_public", false)
 	}

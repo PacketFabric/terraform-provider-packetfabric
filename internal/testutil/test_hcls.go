@@ -1194,7 +1194,52 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		hclCloudRouterRes.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
-		CloudRouterConnSpeed)
+		CloudRouterConnSpeed,
+		false)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnAzure,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+	}
+}
+
+func RHclCloudRouterConnectionAzurePublic() RHclCloudRouterConnectionAzureResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzure,
+		AzureLocation,
+		AzureLocation,
+		AzureVnetCidr,
+		AzureSubnetCidr,
+		AzureLocation,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		CloudRouterConnSpeed,
+		true)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 

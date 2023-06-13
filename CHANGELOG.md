@@ -1,3 +1,9 @@
+## 1.6.1  (June 13, 2023)
+
+BUG FIXES:
+
+* Fix handling of Public IP for Azure Cloud Router Connections (#530)
+
 ## 1.6.0  (May 25, 2023)
 
 BREAKING CHANGES:

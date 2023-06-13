@@ -167,6 +167,8 @@ type CloudSettings struct {
 	PortCrossConnectOcid           string       `json:"port_cross_connect_ocid,omitempty"`
 	PortID                         string       `json:"port_id,omitempty"`
 	PublicIP                       string       `json:"public_ip,omitempty"`
+	PrimaryPublicIP                string       `json:"primary_public_ip,omitempty"`
+	SecondaryPublicIP              string       `json:"secondary_public_ip,omitempty"`
 	SvlanIDCust                    int          `json:"svlan_id_cust,omitempty"`
 	VcOcid                         string       `json:"vc_ocid,omitempty"`
 	VlanIDCust                     int          `json:"vlan_id_cust,omitempty"`

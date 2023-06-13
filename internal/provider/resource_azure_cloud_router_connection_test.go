@@ -44,6 +44,10 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 				},
 			},
 			{
+				Config: crConnAzureResult.Hcl,
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "false"),
+			},
+			{
 				ResourceName:            crConnAzureResult.ResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -55,5 +59,21 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 			},
 		},
 	})
+}
 
+func TestAccCloudRouterConnectionPublicAzureIsPublic(t *testing.T) {
+	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
+
+	crConnAzureResult := testutil.RHclCloudRouterConnectionAzurePublic()
+
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: crConnAzureResult.Hcl,
+				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
+			},
+		},
+	})
 }
