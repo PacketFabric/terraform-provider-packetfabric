@@ -81,6 +81,8 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 		Example: primary or seconday
 - `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
+- `primary_public_ip` (String)
+- `secondary_public_ip` (String)
 - `vlan_id_microsoft` (Number) The microsoft peering vlan.
 - `vlan_id_private` (Number) The private peering vlan.
 
