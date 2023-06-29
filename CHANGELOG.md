@@ -1,3 +1,9 @@
+## 1.6.2  (June 29, 2023)
+
+BUG FIXES:
+
+* Fix BGP Session Prefixes match_type defaulting to exact, they should not have default value (#533)
+
 ## 1.6.1  (June 13, 2023)
 
 BUG FIXES:
