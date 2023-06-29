@@ -220,7 +220,6 @@ func resourceBgpSession() *schema.Resource {
 						"match_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							Default:      "exact",
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
 							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
 						},
