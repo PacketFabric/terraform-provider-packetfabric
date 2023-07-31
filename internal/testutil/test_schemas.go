@@ -52,13 +52,13 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
 
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
-	provider      = packetfabric
-	name          = "%s"
+  provider      = packetfabric
+  name          = "%s"
   account_uuid  = "%s"
   asn           = %v
-	capacity      = "%s"
+  capacity      = "%s"
   regions       = ["%s", "%s"]
-  }`
+}`
 
 // Resource: packetfabric_cloud_router_connection_aws
 const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
@@ -77,8 +77,9 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	provider       = packetfabric
 	circuit_id     = %s.id
 	connection_id  = %s.id
-  remote_address = "%s"
-  l3_address     = "%s"
+	disabled       = %s
+	remote_address = "%s"
+	l3_address     = "%s"
 	remote_asn     = %v
 	prefixes {
 		prefix = "%s"
