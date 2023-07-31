@@ -2,7 +2,7 @@
 
 BUG FIXES:
 
-* Changed the BGP Session update method to check the "disabled" field for modification (#535)
+* Changed the BGP Session update method to check the "disabled" field for modification (#536)
 
 ## 1.6.2  (June 29, 2023)
 
