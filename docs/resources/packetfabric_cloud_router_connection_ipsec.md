@@ -54,7 +54,6 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `gateway_address` (String) The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you.
@@ -91,6 +90,7 @@ resource "packetfabric_cloud_router_connection_ipsec" "crc3" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `labels` (Set of String) Label value linked to an object.
 - `phase2_authentication_algo` (String) The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. 
 

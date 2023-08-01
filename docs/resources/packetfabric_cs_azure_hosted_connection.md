@@ -48,7 +48,6 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `description` (String) A brief description of this connection.
 - `port` (String) The circuit ID of the PacketFabric port you wish to connect to Azure. This starts with "PF-AP-".
@@ -58,6 +57,7 @@ resource "packetfabric_cs_azure_hosted_connection" "cs_conn1_hosted_azure" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `labels` (Set of String) Label value linked to an object.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `src_svlan` (Number) Valid S-VLAN range is from 4-4094, inclusive.

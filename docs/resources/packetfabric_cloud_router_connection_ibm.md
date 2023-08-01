@@ -74,10 +74,8 @@ resource "ibm_dl_gateway_action" "confirmation" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) The description of this connection. This will appear as the connection name from the IBM side.
-- `ibm_account_id` (String) Your IBM account ID. Can also be set with the PF_IBM_ACCOUNT_ID environment variable.
 - `ibm_bgp_asn` (Number) Enter an ASN to use with your BGP session. This should be the same ASN you used for your Cloud Router.
 - `pop` (String) The POP in which you want to provision the connection (the on-ramp).
 - `speed` (String) The speed of the new connection.
@@ -89,6 +87,8 @@ resource "ibm_dl_gateway_action" "confirmation" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
+- `ibm_account_id` (String) Your IBM account ID. Can also be set with the PF_IBM_ACCOUNT_ID environment variable.
 - `ibm_bgp_cer_cidr` (String) The IP address in CIDR format for the PacketFabric-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf.
 - `ibm_bgp_ibm_cidr` (String) The IP address in CIDR format for the IBM-side router in the BGP session. If you do not specify an address, IBM will assign one on your behalf. See the documentation for information on which IP ranges are allowed.
 - `labels` (Set of String) Label value linked to an object.

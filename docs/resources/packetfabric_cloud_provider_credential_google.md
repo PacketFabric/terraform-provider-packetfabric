@@ -33,6 +33,9 @@ resource "packetfabric_cloud_provider_credential_google" "google_creds_staged" {
 ### Required
 
 - `description` (String) Description of the Cloud Provider Credentials.
+
+### Optional
+
 - `google_service_account` (String, Sensitive) The Google service account JSON you want to save. Can also be set with the GOOGLE_CREDENTIALS environment variable.
 
 ### Read-Only

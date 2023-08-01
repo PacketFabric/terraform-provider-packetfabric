@@ -35,7 +35,6 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps.
 - `aws_region` (String) The region that the new connection will connect to.
 
@@ -59,6 +58,7 @@ resource "packetfabric_cs_aws_dedicated_connection" "pf_cs_conn1_dedicated_aws" 
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that AWS provided.
 
