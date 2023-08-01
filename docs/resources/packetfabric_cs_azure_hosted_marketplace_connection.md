@@ -30,7 +30,6 @@ resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketp
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `description` (String) A brief description of this connection.
 - `market` (String) The market code (e.g. "ATL" or "DAL") in which you would like the marketplace provider to provision their side of the connection.
@@ -45,6 +44,7 @@ resource "packetfabric_cs_azure_hosted_marketplace_connection" "cs_conn1_marketp
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `service_uuid` (String) UUID of the marketplace service being requested.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

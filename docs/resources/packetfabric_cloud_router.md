@@ -31,7 +31,6 @@ resource "packetfabric_cloud_router" "cr1" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `capacity` (String) The cloud router capacity.
 
 	Enum: "100Mbps" "500Mbps" "1Gbps" "2Gbps" "5Gbps" "10Gbps" "20Gbps" "30Gbps" "40Gbps" "50Gbps" "60Gbps" "80Gbps" "100Gbps" ">100Gbps"
@@ -41,6 +40,7 @@ resource "packetfabric_cloud_router" "cr1" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `asn` (Number) The ASN of the cloud router.
 
 	This can be the PacketFabric public ASN 4556 (default) or a private ASN from 64512 - 65534. Defaults: 4556
