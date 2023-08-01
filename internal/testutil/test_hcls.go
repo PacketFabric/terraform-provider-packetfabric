@@ -1475,10 +1475,10 @@ func RHclBgpSession() RHclBgpSessionResult {
 }
 
 // packetfabric_cloud_router_bgp_session
-func RHclBgpSessionEnabledAndDisabled() (RHclBgpSessionResult,RHclBgpSessionResult) {
+func RHclBgpSessionEnabledAndDisabled() (RHclBgpSessionResult, RHclBgpSessionResult) {
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
 	enabled := RHclBgpSessionDisabled(resourceName, hclName, false)
-	disabled := RHclBgpSessionDisabled(resourceName, hclName, true) 
+	disabled := RHclBgpSessionDisabled(resourceName, hclName, true)
 	return enabled, disabled
 }
 
@@ -1493,7 +1493,7 @@ func RHclBgpSessionDisabled(resourceName string, hclName string, disabled bool) 
 		hclName,
 		hclCloudConnRes.HclResultBase.AdditionalResourceName,
 		hclCloudConnRes.HclResultBase.ResourceName,
-		fmt.Sprintf( "%v", disabled ), 
+		fmt.Sprintf("%v", disabled),
 		CloudRouterBgpSessionRemoteAddress,
 		CloudRouterBgpSessionL3Address,
 		CloudRouterBgpSessionASN,
