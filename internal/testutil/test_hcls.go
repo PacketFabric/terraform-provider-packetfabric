@@ -1470,9 +1470,22 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
+	return RHclBgpSessionDisabled(resourceName, hclName, false)
+}
+
+// packetfabric_cloud_router_bgp_session
+func RHclBgpSessionEnabledAndDisabled() (RHclBgpSessionResult, RHclBgpSessionResult) {
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
+	enabled := RHclBgpSessionDisabled(resourceName, hclName, false)
+	disabled := RHclBgpSessionDisabled(resourceName, hclName, true)
+	return enabled, disabled
+}
+
+// packetfabric_cloud_router_bgp_session
+func RHclBgpSessionDisabled(resourceName string, hclName string, disabled bool) RHclBgpSessionResult {
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
-	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
 	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
 
 	bgpSessionHcl := fmt.Sprintf(
@@ -1480,6 +1493,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 		hclName,
 		hclCloudConnRes.HclResultBase.AdditionalResourceName,
 		hclCloudConnRes.HclResultBase.ResourceName,
+		fmt.Sprintf("%v", disabled),
 		CloudRouterBgpSessionRemoteAddress,
 		CloudRouterBgpSessionL3Address,
 		CloudRouterBgpSessionASN,

@@ -481,6 +481,11 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 			bgpSession.L3Address = secondarySubnet.(string)
 		}
 	}
+	if d.HasChange("disabled") {
+		if disabled, ok := d.GetOk("disabled"); ok {
+			bgpSession.Disabled = disabled.(bool)
+		}
+	}
 	if addressFamily, ok := d.GetOk("address_family"); ok {
 		bgpSession.AddressFamily = addressFamily.(string)
 	}
