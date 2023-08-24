@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -127,26 +128,42 @@ func resourceOutboundCrossConnectCreate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
-	time.Sleep(10 * time.Second)
-
-	crossConns, err := c.ListOutboundCrossConnects()
+	circuitID, err := getCrossConnectCircuitID(c, d.Get("port").(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	matchFound := false
-	for _, crossConn := range *crossConns {
-		if crossConn.Port == d.Get("port").(string) {
-			d.SetId(crossConn.CircuitID)
-			matchFound = true
-			break
-		}
-	}
-	if !matchFound {
+	if circuitID == "" {
 		return diag.Errorf("Failed to find the cross connect with port: %s", d.Get("port").(string))
 	}
 
+	d.SetId(circuitID)
+
 	return diags
+}
+
+func getCrossConnectCircuitID(c *packetfabric.PFClient, port string) (string, error) {
+	timeout := time.After(30 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			crossConns, err := c.ListOutboundCrossConnects()
+			if err != nil {
+				return "", err
+			}
+
+			for _, crossConn := range *crossConns {
+				if crossConn.Port == port {
+					return crossConn.CircuitID, nil
+				}
+			}
+		case <-timeout:
+			return "", fmt.Errorf("timed out waiting for cross connect with port: %s", port)
+		}
+	}
 }
 
 func resourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
