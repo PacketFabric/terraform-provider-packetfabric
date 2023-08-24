@@ -2,7 +2,7 @@
 
 BUG FIXES:
 
-* Fixed OBCCs by adding proper support for creating and importing Outbound Cross Connects (#538)
+* Fixed OBCCs by adding proper support for creating, deleting, and, importing Outbound Cross Connects (#538)
 
 ## 1.6.3  (July 31, 2023)
 
