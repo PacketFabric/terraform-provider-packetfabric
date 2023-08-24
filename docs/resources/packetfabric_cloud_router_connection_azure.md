@@ -57,6 +57,7 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Required
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
@@ -66,7 +67,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Optional
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). Defaults: false
 - `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
