@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -127,7 +126,26 @@ func resourceOutboundCrossConnectCreate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(uuid.New().String())
+
+	time.Sleep(10 * time.Second)
+
+	crossConns, err := c.ListOutboundCrossConnects()
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	matchFound := false
+	for _, crossConn := range *crossConns {
+		if crossConn.Port == d.Get("port").(string) {
+			d.SetId(crossConn.CircuitID)
+			matchFound = true
+			break
+		}
+	}
+	if !matchFound {
+		return diag.Errorf("Failed to find the cross connect with port: %s", d.Get("port").(string))
+	}
+
 	return diags
 }
 
@@ -135,17 +153,30 @@ func resourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceDat
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if crossConnID, ok := d.GetOk("data_center_cross_connect_id"); ok {
-		resp, err := c.GetOutboundCrossConnect(crossConnID.(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Existing outbound cross connect ID",
-			Detail:   resp.OutboundCrossConnectID,
-		})
+
+	resp, err := c.GetOutboundCrossConnect(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
 	}
+	_ = d.Set("port", resp.Port)
+	_ = d.Set("site", resp.Site)
+	_ = d.Set("document_uuid", resp.DocumentUUID)
+	_ = d.Set("outbound_cross_connect_id", resp.OutboundCrossConnectID)
+	_ = d.Set("obcc_status", resp.ObccStatus)
+	_ = d.Set("description", resp.Description)
+	_ = d.Set("user_description", resp.UserDescription)
+	_ = d.Set("destination_name", resp.DestinationName)
+	_ = d.Set("destination_circuit_id", resp.DestinationCircuitID)
+	_ = d.Set("panel", resp.Panel)
+	_ = d.Set("module", resp.Module)
+	_ = d.Set("position", resp.Position)
+	_ = d.Set("data_center_cross_connect_id", resp.DataCenterCrossConnectID)
+	_ = d.Set("progress", resp.Progress)
+	_ = d.Set("deleted", resp.Deleted)
+	_ = d.Set("z_loc_cfa", resp.ZLocCfa)
+	_ = d.Set("time_created", resp.TimeCreated)
+	_ = d.Set("time_updated", resp.TimeUpdated)
+
 	return diags
 }
 

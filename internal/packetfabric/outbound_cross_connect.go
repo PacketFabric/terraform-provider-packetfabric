@@ -36,6 +36,7 @@ type OutboundCrossConnectResp struct {
 	Progress                 int    `json:"progress,omitempty"`
 	Deleted                  bool   `json:"deleted,omitempty"`
 	ZLocCfa                  string `json:"z_loc_cfa,omitempty"`
+	CircuitID                string `json:"circuit_id,omitempty"`
 	TimeCreated              string `json:"time_created,omitempty"`
 	TimeUpdated              string `json:"time_updated,omitempty"`
 }
