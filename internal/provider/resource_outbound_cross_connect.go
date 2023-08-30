@@ -121,7 +121,7 @@ func resourceOutboundCrossConnect() *schema.Resource {
 				Computed:    true,
 				Description: "The Outbound Cross Connect OBCC Status.",
 			},
-			"prgress": {
+			"progress": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "The Outbound Cross Connect Progress.",
