@@ -32,6 +32,7 @@ func TestAccCloudRouterConnectionAwsRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(crConnAwsResult.ResourceName, "zone", crConnAwsResult.Zone),
 					resource.TestCheckResourceAttrSet(crConnAwsResult.ResourceName, "circuit_id"),
 					resource.TestCheckResourceAttrSet(crConnAwsResult.ResourceName, "id"),
+					resource.TestCheckResourceAttrSet(crConnAwsResult.ResourceName, "subscription_term" ), 
 				),
 			},
 			{

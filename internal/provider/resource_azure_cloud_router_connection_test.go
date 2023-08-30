@@ -28,6 +28,7 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
 					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
 					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
 				),
 			},

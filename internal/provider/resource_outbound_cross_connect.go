@@ -111,6 +111,41 @@ func resourceOutboundCrossConnect() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "The user description used for update.",
 			},
+			"outbound_cross_connect_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Outbound Cross Connect Outbound Cross Connect ID.",
+			},
+			"obcc_status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Outbound Cross Connect OBCC Status.",
+			},
+			"prgress": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "The Outbound Cross Connect Progress.",
+			},
+			"deleted": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "The Outbound Cross Connect delete state.",
+			},
+			"z_loc_cfa": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Outbound Cross Connect Panel/module/position.",
+			},
+			"time_created": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Outbound Cross Connect Time created.",
+			},
+			"time_updated": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Outbound Cross Connect Time updated.",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,

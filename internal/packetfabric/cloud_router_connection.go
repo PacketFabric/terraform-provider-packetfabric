@@ -3,7 +3,7 @@ package packetfabric
 import (
 	"errors"
 	"fmt"
-	"time"
+	"github.com/go-playground/validator/v10"
 )
 
 const awsConnectionURI = "/v2/services/cloud-routers/%s/connections/aws"
@@ -28,6 +28,7 @@ type AwsConnection struct {
 	PublishedQuoteLineUUID string         `json:"published_quote_line_uuid,omitempty"`
 	PONumber               string         `json:"po_number,omitempty"`
 	CloudSettings          *CloudSettings `json:"cloud_settings,omitempty"`
+	SubscriptionTerm       int            `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type AwsConnectionCreateResponse struct {
@@ -82,6 +83,7 @@ type CloudRouterConnectionReadResponse struct {
 	Vlan                      int           `json:"vlan,omitempty"`
 	DesiredNat                string        `json:"desired_nat,omitempty"`
 	PONumber                  string        `json:"po_number,omitempty"`
+	SubscriptionTerm          int           `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type BgpStateObj struct {
@@ -156,6 +158,7 @@ type IBMCloudRouterConn struct {
 	Speed                  string `json:"speed,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 	PONumber               string `json:"po_number,omitempty"`
+	SubscriptionTerm       int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type IPSecRouterConn struct {
@@ -177,6 +180,7 @@ type IPSecRouterConn struct {
 	SharedKey                  string `json:"shared_key,omitempty"`
 	PublishedQuoteLineUUID     string `json:"published_quote_line_uuid,omitempty"`
 	PONumber                   string `json:"po_number,omitempty"`
+	SubscriptionTerm           int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type OracleCloudRouterConn struct {
@@ -190,6 +194,7 @@ type OracleCloudRouterConn struct {
 	Zone                   string `json:"zone,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 	PONumber               string `json:"po_number,omitempty"`
+	SubscriptionTerm       int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type IPSecConnUpdate struct {
@@ -249,10 +254,15 @@ type IPSecCloudRouterCreateResp struct {
 	AccountUUID                string `json:"account_uuid,omitempty"`
 	Pop                        string `json:"pop,omitempty"`
 	Speed                      string `json:"speed,omitempty"`
+	SubscriptionTerm           int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId string) (*AwsConnectionCreateResponse, error) {
 	formatedURI := fmt.Sprintf(awsConnectionURI, circuitId)
+
+	if err := validator.New().Struct(connection); err != nil {
+		return nil, err
+	}
 
 	resp := &AwsConnectionCreateResponse{}
 	_, err := c.sendRequest(formatedURI, postMethod, connection, resp)
@@ -265,6 +275,10 @@ func (c *PFClient) CreateAwsConnection(connection AwsConnection, circuitId strin
 func (c *PFClient) CreateIBMCloudRouteConn(ibmRouter IBMCloudRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(ibmCloudRouterConnectionByCidURI, circuitID)
 
+	if err := validator.New().Struct(ibmRouter); err != nil {
+		return nil, err
+	}
+
 	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, postMethod, ibmRouter, resp)
 	if err != nil {
@@ -276,6 +290,10 @@ func (c *PFClient) CreateIBMCloudRouteConn(ibmRouter IBMCloudRouterConn, circuit
 func (c *PFClient) CreateIPSecCloudRouerConnection(iPSecRouter IPSecRouterConn, circuitID string) (*IPSecCloudRouterCreateResp, error) {
 	formatedURI := fmt.Sprintf(ipsecCloudRouterConnectionByCidURI, circuitID)
 
+	if err := validator.New().Struct(iPSecRouter); err != nil {
+		return nil, err
+	}
+
 	resp := &IPSecCloudRouterCreateResp{}
 	_, err := c.sendRequest(formatedURI, postMethod, iPSecRouter, resp)
 	if err != nil {
@@ -286,6 +304,10 @@ func (c *PFClient) CreateIPSecCloudRouerConnection(iPSecRouter IPSecRouterConn, 
 
 func (c *PFClient) CreateOracleCloudRouerConnection(oracleRouter OracleCloudRouterConn, circuitID string) (*CloudRouterConnectionReadResponse, error) {
 	formatedURI := fmt.Sprintf(oracleCloudRouterConnectionByCidURI, circuitID)
+
+	if err := validator.New().Struct(oracleRouter); err != nil {
+		return nil, err
+	}
 
 	resp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, postMethod, oracleRouter, resp)
@@ -344,8 +366,9 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 	if err != nil {
 		return nil, err
 	}
-	// Upon requested on issue #157
-	time.Sleep(30 * time.Second)
+
+	_, _ = c.WaitDeleteCloudRouterConnection(cID, connCid)
+
 	return expectedResp, nil
 }
 
@@ -357,7 +380,28 @@ func (c *PFClient) GetCloudConnectionStatus(cID, connCID string) (*ServiceState,
 		return nil, err
 	}
 	return expectedResp, nil
+}
 
+func (c *PFClient) WaitDeleteCloudRouterConnection(cID, connCid string) (state *ServiceState, err error) {
+	message := fmt.Sprintf("Deleting cloud router connection %s / %s", cID, connCid)
+
+	checkStatus := func() (interface{}, error) {
+		state, err = c.GetCloudConnectionStatus(cID, connCid)
+		if nil == err {
+			if !state.Status.Object.Deleted {
+				err = fmt.Errorf(message)
+			}
+		} else {
+			if c.Is404(err) {
+				err = nil
+			}
+		}
+		return state, err
+	}
+
+	_, _ = c.FunctionRetry(message, checkStatus, 1800, 30)
+
+	return state, err
 }
 
 func (c *PFClient) GetIpsecSpecificConn(cID string) (*IPSecConnUpdateResponse, error) {

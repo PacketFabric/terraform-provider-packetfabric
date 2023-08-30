@@ -42,6 +42,9 @@ resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
 ### Optional
 
 - `import_filters` (Block Set) This is set by the service provider. (see [below for nested schema](#nestedblock--import_filters))
+- `subscription_term` (Number) Subscription term of the Cloud Router Connection
+
+	Enum: ["1", "12", "24", "36"] Defaults: 1
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

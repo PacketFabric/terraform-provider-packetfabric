@@ -118,6 +118,13 @@ func resourceGoogleCloudRouterConn() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"cloud_settings": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -526,6 +533,7 @@ func resourceGoogleCloudRouterConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("google_vlan_attachment_name", resp.CloudSettings.GoogleVlanAttachmentName)
 	}
 	_ = d.Set("po_number", resp.PONumber)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 	if _, ok := d.GetOk("cloud_settings"); ok {
 		// Extract the BGP settings UUID
@@ -662,6 +670,9 @@ func extractGoogleRouterConn(d *schema.ResourceData) packetfabric.GoogleCloudRou
 	if cloudSettingsList, ok := d.GetOk("cloud_settings"); ok {
 		cs := cloudSettingsList.([]interface{})[0].(map[string]interface{})
 		googleRoute.CloudSettings = extractGoogleRouterCloudConnSettings(cs)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		googleRoute.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return googleRoute
 }

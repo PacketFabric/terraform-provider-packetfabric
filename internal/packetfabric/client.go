@@ -146,7 +146,7 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 			return nil, err
 		}
 	}
-	c._logDebug(formatedURL, method, payload, resp, body)
+	c._logDebug(formatedURL, method, payload, resp, res, body)
 	return res, nil
 }
 
@@ -205,12 +205,12 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 			return nil, err
 		}
 	}
-	c._logDebug(formatedURL, method, payload, resp, body)
+	c._logDebug(formatedURL, method, payload, resp, res, body)
 	return res, nil
 }
 
 // For debug use only.
-func (c *PFClient) _logDebug(url, method string, payload, resp interface{}, body []byte) {
+func (c *PFClient) _logDebug(url, method string, payload, resp interface{}, res *http.Response, body []byte) {
 	debug := make(map[string]interface{})
 	debug["url"] = url
 	if payload != nil {
@@ -222,5 +222,41 @@ func (c *PFClient) _logDebug(url, method string, payload, resp interface{}, body
 	if body != nil {
 		debug["body"] = string(body)
 	}
+	if res != nil {
+		debug["statusCode"] = res.StatusCode
+	}
+
 	tflog.Debug(c.Ctx, fmt.Sprintf("\n##[CLIENT | SEND_REQUEST]## SENDING %s REQUEST", method), debug)
+}
+
+func (c *PFClient) FunctionRetry(message string, fn func() (interface{}, error), totalWait int, retryWait int) (result interface{}, err error) {
+	timeout := time.After(time.Duration(totalWait) * time.Second)
+	ticker := time.NewTicker(time.Duration(retryWait) * time.Second)
+	defer ticker.Stop()
+
+	var errors []error
+	for {
+		select {
+		case <-ticker.C:
+			result, err = fn()
+			if err == nil {
+				return result, err
+			}
+			errors = append(errors, err)
+		case <-timeout:
+			return result, fmt.Errorf("%s timed out wais. Errors: %v", message, errors)
+		}
+	}
+}
+
+func (c *PFClient) Retry(message string, fn func() (interface{}, error)) (result interface{}, err error) {
+	return c.FunctionRetry(message, fn, 120, 5)
+}
+
+func (c *PFClient) IsCode(err error, code int) bool {
+	return nil != err && strings.Contains(err.Error(), fmt.Sprintf("Status: %d,", code))
+}
+
+func (c *PFClient) Is404(err error) bool {
+	return c.IsCode(err, 404)
 }

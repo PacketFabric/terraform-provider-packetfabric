@@ -100,12 +100,9 @@ resource "packetfabric_backbone_virtual_circuit" "vc1" {
 <a id="nestedblock--bandwidth"></a>
 ### Nested Schema for `bandwidth`
 
-Required:
-
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
-
 Optional:
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `longhaul_type` (String) Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.
 
 	Enum ["dedicated" "usage" "hourly"]

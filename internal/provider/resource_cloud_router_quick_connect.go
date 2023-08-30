@@ -134,6 +134,13 @@ func resourceCloudRouterQuickConnect() *schema.Resource {
 				Computed:    true,
 				Description: "The speed of the target cloud router connection.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: QuickConnectImportStatePassthroughContext,
@@ -167,6 +174,7 @@ func resourceCloudRouterQuickConnectCreate(ctx context.Context, d *schema.Resour
 	_ = d.Set("is_defunct", resp.IsDefunct)
 	_ = d.Set("state", resp.State)
 	_ = d.Set("connection_speed", resp.ConnectionSpeed)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 	if importFilters != nil {
 		importFilters := flattenImportFiltersConfiguration(importFilters)
 		_ = d.Set("import_filters", importFilters)
@@ -196,6 +204,7 @@ func resourceCloudRouterQuickConnectRead(ctx context.Context, d *schema.Resource
 		_ = d.Set("state", resp.State)
 		_ = d.Set("connection_speed", resp.ConnectionSpeed)
 		_ = d.Set("service_uuid", resp.ServiceUUID)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 		returnFilters := flattenReturnFiltersConfiguration(resp.ReturnFilters)
 		if err := d.Set("return_filters", returnFilters); err != nil {
@@ -293,6 +302,9 @@ func extractCloudRouterQuickConnect(d *schema.ResourceData, importFilters []pack
 	if serviceUUID, ok := d.GetOk("service_uuid"); ok {
 		quickConnect.ServiceUUID = serviceUUID.(string)
 	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		quickConnect.SubscriptionTerm = subscriptionTerm.(int)
+	}
 	if len(importFilters) > 0 {
 		quickConnect.ImportFilters = importFilters
 	} else {
@@ -306,6 +318,9 @@ func extractCloudRouterQuickConnectUpdate(d *schema.ResourceData) packetfabric.C
 	quickConnect := packetfabric.CloudRouterQuickConnectUpdate{}
 	quickConnect.ImportFilters = extractImportFilters(d)
 	quickConnect.ReturnFilters = extractReturnFilters(d)
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		quickConnect.SubscriptionTerm = subscriptionTerm.(int)
+	}
 	return quickConnect
 }
 

@@ -131,6 +131,13 @@ func resourceAzureExpressRouteConn() *schema.Resource {
 				Computed:    true,
 				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -154,6 +161,7 @@ func resourceAzureExpressRouteConnCreate(ctx context.Context, d *schema.Resource
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+			_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 			time.Sleep(90 * time.Second) // wait for the connection to show on AWS
 			resp, err := c.ReadCloudRouterConnection(cid.(string), resp.CloudCircuitID)
@@ -220,8 +228,10 @@ func resourceAzureExpressRouteConnRead(ctx context.Context, d *schema.ResourceDa
 	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 	_ = d.Set("azure_service_key", resp.CloudSettings.AzureServiceKey)
 	_ = d.Set("po_number", resp.PONumber)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 	if resp.CloudSettings.PrimaryPublicIP != "" || resp.CloudSettings.SecondaryPublicIP != "" {
 		_ = d.Set("is_public", true)
@@ -295,6 +305,9 @@ func extractAzureExpressRouteConn(d *schema.ResourceData) packetfabric.AzureExpr
 	}
 	if speed, ok := d.GetOk("speed"); ok {
 		expressRoute.Speed = speed.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		expressRoute.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	if isPublic, ok := d.GetOk("is_public"); ok {
 		expressRoute.IsPublic = isPublic.(bool)

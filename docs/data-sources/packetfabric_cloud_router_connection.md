@@ -76,6 +76,9 @@ output "packetfabric_cloud_router_connection_crc1" {
 		Enum: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps
 - `state` (String) The state of the connection
 		Enum: Requested, Active, Inactive, PendingDelete
+- `subscription_term` (Number) Subscription term of the Cloud Router Connection
+
+	Enum: ["1", "12", "24", "36"]
 - `time_created` (String) Date and time of connection creation
 - `time_updated` (String) Date and time connection was last updated
 - `user_uuid` (String) The UUID for the user this connection belongs to
