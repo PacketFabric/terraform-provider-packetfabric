@@ -351,6 +351,10 @@ func (c *PFClient) UpdateIPSecConnection(cID string, ipSecUpdate IPSecConnUpdate
 }
 
 func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*ConnectionDeleteResp, error) {
+	return c.DeleteCloudRouterConnectionWait(cID, connCid, true)
+}
+
+func (c *PFClient) DeleteCloudRouterConnectionWait(cID, connCid string, shouldWait bool) (*ConnectionDeleteResp, error) {
 	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
 	if cID == "" {
 		return nil, errors.New(errorMsg)
@@ -367,7 +371,9 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 		return nil, err
 	}
 
-	_, _ = c.WaitDeleteCloudRouterConnection(cID, connCid)
+	if shouldWait {
+		_, _ = c.WaitDeleteCloudRouterConnection(cID, connCid)
+	}
 
 	return expectedResp, nil
 }
