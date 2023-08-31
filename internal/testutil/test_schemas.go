@@ -258,7 +258,7 @@ resource "ibm_dl_gateway_action" "confirmation1" {
   speed_mbps     = %v
   provisioner "local-exec" {
     when    = destroy
-    command = "sleep 33"
+    command = "sleep 30"
   }
 }`
 
