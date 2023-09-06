@@ -63,7 +63,7 @@ func dataSourceCloudRouters() *schema.Resource {
 						"subscription_term": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Description: "Subscription term of the Cloud Router Connection",
+							Description: "Subscription term of the Cloud Router",
 						},
 					},
 				},
