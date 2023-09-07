@@ -29,6 +29,7 @@ func TestAccCloudRouterQuickConnectRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "id"),
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "route_set_circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(cloudRouterQuickConnect.ResourceName, "state"),
 					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.0.prefix", cloudRouterQuickConnect.ReturnFilterPrefix1),
 					resource.TestCheckResourceAttr(cloudRouterQuickConnect.ResourceName, "return_filters.0.match_type", cloudRouterQuickConnect.ReturnFilterType1),

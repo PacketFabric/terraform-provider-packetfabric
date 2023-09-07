@@ -109,6 +109,13 @@ func resourceCustomerOwnedPortConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"labels": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -181,6 +188,7 @@ func resourceCustomerOwnedPortConnRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("vlan", resp.Vlan)
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("po_number", resp.PONumber)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 		if resp.CloudSettings.PublicIP != "" {
 			_ = d.Set("is_public", true)
@@ -255,6 +263,9 @@ func extractOwnedPortConn(d *schema.ResourceData) packetfabric.CustomerOwnedPort
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		ownedPort.PONumber = poNumber.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		ownedPort.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return ownedPort
 }

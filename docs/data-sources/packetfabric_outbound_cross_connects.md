@@ -34,6 +34,7 @@ output "packetfabric_outbound_cross_connects" {
 
 Read-Only:
 
+- `circuit_id` (String)
 - `data_center_cross_connect_id` (String)
 - `deleted` (Boolean)
 - `description` (String)

@@ -29,6 +29,7 @@ func TestAccCloudRouterConnectionPortRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "speed", cloudRouterConnectionPortResult.Speed),
 					resource.TestCheckResourceAttr(cloudRouterConnectionPortResult.ResourceName, "vlan", strconv.Itoa(cloudRouterConnectionPortResult.Vlan)),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionPortResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionPortResult.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionPortResult.ResourceName, "id"),
 				),
 			},

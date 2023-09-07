@@ -84,6 +84,11 @@ func dataSourceOutboundCrossConnects() *schema.Resource {
 							Computed:    true,
 							Description: "The Outbound Cross Connect Data Center Cross Connect ID.",
 						},
+						"circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The Outbound Cross Connect Circuit ID.",
+						},
 						"progress": {
 							Type:        schema.TypeInt,
 							Computed:    true,

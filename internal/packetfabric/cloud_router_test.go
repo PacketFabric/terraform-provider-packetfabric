@@ -3,6 +3,8 @@ package packetfabric
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -36,14 +38,30 @@ var clrExpectedResp = CloudRouterResponse{
 func Test_CreateCloudRouter(t *testing.T) {
 
 	router := CloudRouter{
-		Asn:         4556,
-		Name:        "New Cloud Router",
-		AccountUUID: "3482182c-b483-45e0-b8f7-5562bba57e6b",
-		Regions:     []string{"UK", "US"},
-		Capacity:    "10Gbps",
+		Asn:              4556,
+		Name:             "New Cloud Router",
+		AccountUUID:      "3482182c-b483-45e0-b8f7-5562bba57e6b",
+		Regions:          []string{"UK", "US"},
+		Capacity:         "10Gbps",
+		SubscriptionTerm: 1,
 	}
 
 	cTest.runFakeHttpServer(_callCreateRouter, router, clrExpectedResp, _buildMockCloudRouterResp(), "cloud-router-test", t)
+}
+
+func Test_CreateCloudRouterInvalidSubscriptionTerm(t *testing.T) {
+
+	router := CloudRouter{
+		Asn:              4556,
+		Name:             "New Cloud Router",
+		AccountUUID:      "3482182c-b483-45e0-b8f7-5562bba57e6b",
+		Regions:          []string{"UK", "US"},
+		Capacity:         "10Gbps",
+		SubscriptionTerm: 2,
+	}
+
+	expectedError := validator.New().Struct(router)
+	cTest.runFakeHttpServerWithErr(_callCreateRouter, router, clrExpectedResp, &expectedError, _buildMockCloudRouterResp(), "cloud-router-test-invalid-subscription-term", t)
 }
 
 func Test_UpdateCloudRouter(t *testing.T) {
@@ -162,7 +180,7 @@ func _buildMockCloudRouterDeleteResp() []byte {
 	  }`)
 }
 
-func (cTest *PFClient) runFakeHttpServer(fn func(pl interface{}) (interface{}, error), payload interface{}, expectedResp interface{}, mockRespStr []byte, testName string, t *testing.T) {
+func (cTest *PFClient) runFakeHttpServerWithErr(fn func(pl interface{}) (interface{}, error), payload interface{}, expectedResp interface{}, expectedErr *error, mockRespStr []byte, testName string, t *testing.T) {
 	testServers := []struct {
 		name         string
 		server       *httptest.Server
@@ -189,6 +207,19 @@ func (cTest *PFClient) runFakeHttpServer(fn func(pl interface{}) (interface{}, e
 			resp, err := fn(payload)
 			respJSON, _ := json.Marshal(resp)
 			expectJSON, _ := json.Marshal(tes.expectedResp)
+
+			if nil != expectedErr {
+				if nil == err {
+					t.Errorf("Expected err did not occur: (%s)", *expectedErr)
+				} else {
+					err_str1 := fmt.Sprint(err)
+					err_str2 := fmt.Sprint(*expectedErr)
+					if err_str1 == err_str2 {
+						return
+					}
+				}
+			}
+
 			if !reflect.DeepEqual(respJSON, expectJSON) {
 				t.Errorf("Expected: (%v), but got (%v)", string(expectJSON), string(respJSON))
 			}
@@ -197,4 +228,8 @@ func (cTest *PFClient) runFakeHttpServer(fn func(pl interface{}) (interface{}, e
 			}
 		})
 	}
+}
+
+func (cTest *PFClient) runFakeHttpServer(fn func(pl interface{}) (interface{}, error), payload interface{}, expectedResp interface{}, mockRespStr []byte, testName string, t *testing.T) {
+	cTest.runFakeHttpServerWithErr(fn, payload, expectedResp, nil, mockRespStr, testName, t)
 }

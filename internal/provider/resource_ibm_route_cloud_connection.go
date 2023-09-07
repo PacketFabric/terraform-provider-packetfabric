@@ -123,6 +123,13 @@ func resourceIBMCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"labels": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -206,6 +213,7 @@ func resourceIBMCloudRouteConnRead(ctx context.Context, d *schema.ResourceData, 
 		_ = d.Set("speed", resp.Speed)
 		_ = d.Set("zone", resp.Zone)
 		_ = d.Set("po_number", resp.PONumber)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 		if resp.CloudSettings.GatewayID == "" {
 			diags = append(diags, diag.Diagnostic{
@@ -286,6 +294,9 @@ func extractIBMCloudRouterConn(d *schema.ResourceData) packetfabric.IBMCloudRout
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		ibmRouter.PONumber = poNumber.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		ibmRouter.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return ibmRouter
 }

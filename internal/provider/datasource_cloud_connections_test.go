@@ -52,6 +52,7 @@ func TestAccDataSourceCloudRouterConnectionsComputedRequiredFields(t *testing.T)
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.dnat_capable"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.zone"),
 					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.vlan"),
+					resource.TestCheckResourceAttrSet(datasourceCloudConnsResult.ResourceName, "cloud_connections.0.subscription_term"),
 				),
 			},
 		},

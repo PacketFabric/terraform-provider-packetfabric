@@ -65,6 +65,7 @@ Read-Only:
 - `site` (String)
 - `speed` (String)
 - `state` (String)
+- `subscription_term` (Number)
 - `time_created` (String)
 - `time_updated` (String)
 - `user_uuid` (String)

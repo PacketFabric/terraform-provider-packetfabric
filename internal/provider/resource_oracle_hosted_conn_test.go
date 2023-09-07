@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccOracleHostedConnectionRequiredFields(t *testing.T) {
-	testutil.PreCheck(t, []string{"TF_VAR_tenancy_ocid", "TF_VAR_user_ocid", "TF_VAR_fingerprint", "TF_VAR_private_key", "TF_VAR_parent_compartment_id", "TF_VAR_pf_cs_oracle_drg_ocid"})
+	testutil.PreCheck(t, []string{"TF_VAR_tenancy_ocid", "TF_VAR_user_ocid", "TF_VAR_fingerprint", "TF_VAR_private_key", "TF_VAR_parent_compartment_id", "TF_VAR_pf_cs_oracle_drg_ocid", "TF_VAR_pf_cs_oracle_region", })
 
 	csOracleHostedConnectionResult := testutil.RHclCsOracleHostedConnection()
 

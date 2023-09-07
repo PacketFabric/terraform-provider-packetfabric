@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 )
 
 const cloudRouterQuickConnectURI = "/v2/services/cloud-routers/%s/connections/%s/third-party"
@@ -10,14 +11,16 @@ const cloudRouterQuickConnectByCIDURI = "/v2/services/cloud-routers/requests/%s"
 const cloudRouterQuickConnectByImportCIDURI = "/v2/services/cloud-routers/%s/connections/%s/third-party/%s"
 
 type CloudRouterQuickConnect struct {
-	ServiceUUID   string                      `json:"service_uuid,omitempty"`
-	ImportFilters []QuickConnectImportFilters `json:"import_filters,omitempty"`
-	ReturnFilters []QuickConnectReturnFilters `json:"return_filters,omitempty"`
+	ServiceUUID      string                      `json:"service_uuid,omitempty"`
+	ImportFilters    []QuickConnectImportFilters `json:"import_filters,omitempty"`
+	ReturnFilters    []QuickConnectReturnFilters `json:"return_filters,omitempty"`
+	SubscriptionTerm int                         `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type CloudRouterQuickConnectUpdate struct {
-	ImportFilters []QuickConnectImportFilters `json:"import_filters,omitempty"`
-	ReturnFilters []QuickConnectReturnFilters `json:"return_filters,omitempty"`
+	ImportFilters    []QuickConnectImportFilters `json:"import_filters,omitempty"`
+	ReturnFilters    []QuickConnectReturnFilters `json:"return_filters,omitempty"`
+	SubscriptionTerm int                         `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type QuickConnectImportFilters struct {
@@ -45,10 +48,16 @@ type CloudRouterQuickConnectResp struct {
 	ConnectionSpeed   string                      `json:"connection_speed,omitempty"`
 	ImportFilters     []QuickConnectImportFilters `json:"import_filters,omitempty"`
 	ReturnFilters     []QuickConnectReturnFilters `json:"return_filters,omitempty"`
+	SubscriptionTerm  int                         `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 func (c *PFClient) CreateCloudRouterQuickConnect(crCID, connCID string, quickConnect CloudRouterQuickConnect) (*CloudRouterQuickConnectResp, error) {
 	formatedURI := fmt.Sprintf(cloudRouterQuickConnectURI, crCID, connCID)
+
+	if err := validator.New().Struct(quickConnect); err != nil {
+		return nil, err
+	}
+
 	quickConnectResp := &CloudRouterQuickConnectResp{}
 	if _, err := c.sendRequest(formatedURI, postMethod, quickConnect, quickConnectResp); err != nil {
 		return nil, err

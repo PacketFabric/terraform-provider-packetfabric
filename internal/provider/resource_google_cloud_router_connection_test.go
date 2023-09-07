@@ -29,6 +29,7 @@ func TestAccCloudRouterConnectionGoogleRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "pop", crConnGoogleResult.Pop),
 					resource.TestCheckResourceAttr(crConnGoogleResult.ResourceName, "speed", crConnGoogleResult.Speed),
 					resource.TestCheckResourceAttrSet(crConnGoogleResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnGoogleResult.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(crConnGoogleResult.ResourceName, "id"),
 				),
 			},

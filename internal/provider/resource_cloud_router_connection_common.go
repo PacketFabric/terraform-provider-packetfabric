@@ -78,17 +78,31 @@ func resourceCloudRouterConnUpdate(ctx context.Context, d *schema.ResourceData, 
 				},
 			},
 			{
-				condition: d.HasChange("speed"),
+				condition: d.HasChange("speed") || d.HasChange("subscription_term"),
 				action: func() diag.Diagnostics {
-					speed, _ := d.GetOk("speed")
-					billing := packetfabric.BillingUpgrade{Speed: speed.(string)}
+					billing := packetfabric.BillingUpgrade{}
+					speed := ""
+					subscriptionTerm := 0
+					if speedIf, ok := d.GetOk("speed"); ok {
+						billing.Speed = speedIf.(string)
+						speed = speedIf.(string)
+					}
+					if subscriptionTermIf, ok := d.GetOk("subscription_term"); ok {
+						billing.SubscriptionTerm = subscriptionTermIf.(int)
+						subscriptionTerm = subscriptionTermIf.(int)
+					}
 					if _, err := c.ModifyBilling(d.Id(), billing); err != nil {
 						return diag.FromErr(err)
 					}
 					if err := checkCloudRouterConnectionStatus(c, cid.(string), d.Id()); err != nil {
 						return diag.FromErr(err)
 					}
-					_ = d.Set("speed", speed.(string))
+					if "" != speed {
+						_ = d.Set("speed", speed)
+					}
+					if 0 != subscriptionTerm {
+						_ = d.Set("subscription_term", subscriptionTerm)
+					}
 					return nil
 				},
 			},

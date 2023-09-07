@@ -543,6 +543,26 @@ func (c *PFClient) GetCloudServiceStatus(cloudCID string) (*ServiceState, error)
 	return expectedResp, nil
 }
 
+func (c *PFClient) WaitDeleteCloudService(vcRequestUUID string) (state *ServiceState, err error) {
+	message := fmt.Sprintf("Deleting service %s", vcRequestUUID)
+
+	checkStatus := func() (interface{}, error) {
+		state, err = c.GetCloudServiceStatus(vcRequestUUID)
+		if nil == err {
+			if !state.Status.Object.Deleted {
+				err = fmt.Errorf(message)
+			}
+		} else {
+			if c.Is404(err) {
+				err = nil
+			}
+		}
+		return state, err
+	}
+	_, _ = c.FunctionRetry(message, checkStatus, 600, 10)
+	return state, err
+}
+
 func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
 	return c._deleteMktService(vcRequestUUID, hostedMktService)
 }
@@ -605,6 +625,7 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	if err != nil {
 		return err
 	}
+	_, _ = c.WaitDeleteCloudService(vcRequestUUID)
 	return nil
 }
 

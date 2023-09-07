@@ -67,10 +67,13 @@ var birdNames = []string{
 	"zebra",
 }
 
-func GenerateUniqueName() string {
+func GenerateBirdName() string {
 	rand.Seed(time.Now().UnixNano())
-	birdName := birdNames[rand.Intn(len(birdNames))]
-	return fmt.Sprintf("terraform_testacc_%s", birdName)
+	return birdNames[rand.Intn(len(birdNames))]
+}
+
+func GenerateUniqueName() string {
+	return fmt.Sprintf("terraform_testacc_%s", GenerateBirdName())
 }
 
 func GenerateUniqueResourceName(resource string) (resourceName, hclName string) {
@@ -217,7 +220,8 @@ func (details PortDetails) FindAvailableCloudPopZone() (pop, zone, region string
 	// First loop, prioritizing "us-" regions
 	for popAvailable, zones := range popsWithZones {
 		region = zones[len(zones)-1] // always take the last zone as region
-		if len(zones) > 1 && (!testingInLab || _contains(labPopsHostedCloud, popAvailable)) && strings.HasPrefix(region, "us-") {
+		usa := (strings.HasPrefix(region, "us-") || "US" == region)
+		if len(zones) > 1 && (!testingInLab || _contains(labPopsHostedCloud, popAvailable)) && usa {
 			pop = popAvailable
 			zone = zones[0] // always take the first zone available
 			log.Printf("Found available Hosted Cloud PoP: %s, Zone: %s, Region: %s\n", pop, zone, region)
@@ -326,8 +330,11 @@ func (details PortDetails) FetchCloudPopsAndZones() (popsWithZones map[string][]
 		return
 	} else {
 		for _, loc := range cloudLocations {
-			popsWithZones[loc.Pop] = append(loc.Zones, loc.CloudConnectionDetails.Region)
-
+			region := loc.CloudConnectionDetails.Region
+			if "" == region {
+				region = loc.Region
+			}
+			popsWithZones[loc.Pop] = append(loc.Zones, region)
 		}
 	}
 	return
