@@ -84,6 +84,11 @@ func dataSourceOutboundCrossConnects() *schema.Resource {
 							Computed:    true,
 							Description: "The Outbound Cross Connect Data Center Cross Connect ID.",
 						},
+						"circuit_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The Outbound Cross Connect Circuit ID.",
+						},
 						"progress": {
 							Type:        schema.TypeInt,
 							Computed:    true,
@@ -152,6 +157,7 @@ func flattenOutboundCrossConnects(crossConns *[]packetfabric.OutboundCrossConnec
 			flatten["progress"] = crossConn.Progress
 			flatten["deleted"] = crossConn.Deleted
 			flatten["z_loc_cfa"] = crossConn.ZLocCfa
+			flatten["circuit_id"] = crossConn.CircuitID
 			flatten["time_created"] = crossConn.TimeCreated
 			flatten["time_updated"] = crossConn.TimeUpdated
 			flattens[i] = flatten

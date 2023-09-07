@@ -1,6 +1,9 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/go-playground/validator/v10"
+)
 
 const attachCustomerPortToCRURI = "/v2/services/cloud-routers/%s/connections/packetfabric"
 
@@ -16,6 +19,7 @@ type CustomerOwnedPort struct {
 	IsPublic               bool   `json:"is_public,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 	PONumber               string `json:"po_number,omitempty"`
+	SubscriptionTerm       int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 type CustomerOwnedPortResp struct {
@@ -45,10 +49,16 @@ type CustomerOwnedPortResp struct {
 	BgpState                  string        `json:"bgp_state,omitempty"`
 	CloudRouterCircuitID      string        `json:"cloud_router_circuit_id,omitempty"`
 	NatCapable                bool          `json:"nat_capable,omitempty"`
+	SubscriptionTerm          int           `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 func (c *PFClient) AttachCustomerOwnedPortToCR(ownedPort CustomerOwnedPort, cID string) (*CustomerOwnedPortResp, error) {
 	formatedURI := fmt.Sprintf(attachCustomerPortToCRURI, cID)
+
+	if err := validator.New().Struct(ownedPort); err != nil {
+		return nil, err
+	}
+
 	expectedResp := &CustomerOwnedPortResp{}
 	_, err := c.sendRequest(formatedURI, postMethod, ownedPort, expectedResp)
 	if err != nil {

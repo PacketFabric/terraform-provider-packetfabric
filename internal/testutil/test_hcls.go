@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
@@ -31,6 +32,7 @@ const pfCloudRouterConnOracle = "packetfabric_cloud_router_connection_oracle"
 const pfCloudRouterConnPort = "packetfabric_cloud_router_connection_port"
 const pfCloudRouterConnIpsec = "packetfabric_cloud_router_connection_ipsec"
 const pfCloudRouterBgpSession = "packetfabric_cloud_router_bgp_session"
+const pfCloudRouterQuickConnect = "packetfabric_cloud_router_quick_connect"
 const pfCloudProviderCredAws = "packetfabric_cloud_provider_credential_aws"
 const pfCloudProviderCredGoogle = "packetfabric_cloud_provider_credential_google"
 const pfCsAwsHostedConn = "packetfabric_cs_aws_hosted_connection"
@@ -119,7 +121,7 @@ const GoogleNetwork = "default"
 // packetfabric_cs_ibm_hosted_connection
 const IbmBgpAsn = 64536
 const IbmRegion = "us-east"
-const IbmSpeed = 100 // must match const CloudRouterConnSpeed and HostedCloudSpeed
+const IbmSpeed = 50
 
 // packetfabric_cloud_router_connection_oracle
 // packetfabric_cs_oracle_hosted_connection
@@ -162,6 +164,10 @@ const CloudRouterBgpSessionPrefix3 = "192.168.2.0/24"
 const CloudRouterBgpSessionType3 = "out"
 const CloudRouterBgpSessionRemoteAddress = "169.254.247.41/30"
 const CloudRouterBgpSessionL3Address = "169.254.247.42/30"
+
+const CloudRouterQCReturnFilterPrefix1 = "185.56.153.165/32"
+const CloudRouterQCReturnFilterPrefix2 = "185.56.153.166/32"
+const CloudRouterQCReturnFilterType = "exact"
 
 // packetfabric_cs_aws_hosted_connection
 // packetfabric_cs_azure_hosted_connection
@@ -340,13 +346,14 @@ type RHclCloudRouterInput struct {
 // packetfabric_cloud_router_connection_aws
 type RHclCloudRouterConnectionAwsResult struct {
 	HclResultBase
-	CloudRouter  RHclCloudRouterResult
-	AwsAccountID string
-	AccountUuid  string
-	Desc         string
-	Pop          string
-	Zone         string
-	Speed        string
+	CloudRouter      RHclCloudRouterResult
+	AwsAccountID     string
+	AccountUuid      string
+	Desc             string
+	Pop              string
+	Zone             string
+	Speed            string
+	SubscriptionTerm int
 }
 
 // packetfabric_cloud_router_connection_google
@@ -434,6 +441,15 @@ type RHclBgpSessionResult struct {
 	Type1           string
 	Prefix2         string
 	Type2           string
+}
+
+// packetfabric_cloud_router_quick_connect
+type RHclCloudRouterQuickConnectResult struct {
+	HclResultBase
+	ReturnFilterPrefix1 string
+	ReturnFilterType1   string
+	ReturnFilterPrefix2 string
+	ReturnFilterType2   string
 }
 
 // packetfabric_cloud_provider_credential_aws
@@ -1016,7 +1032,6 @@ func DefaultRHclCloudRouterInput() RHclCloudRouterInput {
 }
 
 func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
-
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouter, input.HclName, uniqueDesc)
 
@@ -1028,7 +1043,8 @@ func RHclCloudRouter(input RHclCloudRouterInput) RHclCloudRouterResult {
 		CloudRouterASN,
 		input.Capacity,
 		CloudRouterRegionUS,
-		CloudRouterRegionUK)
+		CloudRouterRegionUK,
+		subscriptionTerm)
 
 	return RHclCloudRouterResult{
 		HclResultBase: HclResultBase{
@@ -1073,6 +1089,7 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 		uniqueDesc,
 		pop,
 		zone,
+		subscriptionTerm,
 		CloudRouterConnSpeed)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
@@ -1084,11 +1101,12 @@ func RHclCloudRouterConnectionAws() RHclCloudRouterConnectionAwsResult {
 			ResourceName:           resourceName,
 			AdditionalResourceName: hclCloudRouterRes.ResourceName,
 		},
-		AwsAccountID: os.Getenv("PF_AWS_ACCOUNT_ID"),
-		AccountUuid:  os.Getenv("PF_ACCOUNT_ID"),
-		Speed:        CloudRouterConnSpeed,
-		Pop:          pop,
-		Zone:         zone,
+		AwsAccountID:     os.Getenv("PF_AWS_ACCOUNT_ID"),
+		AccountUuid:      os.Getenv("PF_ACCOUNT_ID"),
+		Speed:            CloudRouterConnSpeed,
+		Pop:              pop,
+		Zone:             zone,
+		SubscriptionTerm: subscriptionTerm,
 	}
 }
 
@@ -1135,7 +1153,8 @@ func RHclCloudRouterConnectionGoogle() RHclCloudRouterConnectionGoogleResult {
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
 		pop,
-		CloudRouterConnSpeed)
+		CloudRouterConnSpeed,
+		subscriptionTerm)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1162,10 +1181,12 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
 
 	host := os.Getenv("PF_HOST")
+	testName := "t1"
 	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionAzure,
+		testName,
 		AzureLocation,
 		AzureLocation,
 		AzureVnetCidr,
@@ -1180,7 +1201,56 @@ func RHclCloudRouterConnectionAzure() RHclCloudRouterConnectionAzureResult {
 		hclCloudRouterRes.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
 		uniqueDesc,
-		CloudRouterConnSpeed)
+		CloudRouterConnSpeed,
+		false,
+		subscriptionTerm)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnAzure,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+	}
+}
+
+func RHclCloudRouterConnectionAzurePublic() RHclCloudRouterConnectionAzureResult {
+
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	testName := "t2"
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzure,
+		testName,
+		AzureLocation,
+		AzureLocation,
+		AzureVnetCidr,
+		AzureSubnetCidr,
+		AzureLocation,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		hclCloudRouterRes.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		CloudRouterConnSpeed,
+		true,
+		subscriptionTerm)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1228,8 +1298,9 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		uniqueDesc,
 		pop,
 		zone,
-		CloudRouterConnSpeed,
+		backboneVCspeed,
 		IbmBgpAsn,
+		subscriptionTerm,
 		IbmRegion,
 		uniqueDesc,
 		IbmBgpAsn,
@@ -1248,7 +1319,7 @@ func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Pop:         pop,
 		Zone:        zone,
-		Speed:       CloudRouterConnSpeed,
+		Speed:       backboneVCspeed,
 		IbmBgpAsn:   IbmBgpAsn,
 	}
 }
@@ -1269,7 +1340,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 		IsCloudConnection:     true,
 	}
 
-	pop, zone, region := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
 
 	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
 	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnOracle)
@@ -1278,9 +1349,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 
 	crcHcl := fmt.Sprintf(
 		RResourceCloudRouterConnectionOracle,
-		region,
 		OracleProviderName,
-		region,
 		OracleBandwidth,
 		OracleBgpAsn,
 		OracleAuthKey,
@@ -1292,7 +1361,7 @@ func RHclCloudRouterConnectionOracle() RHclCloudRouterConnectionOracleResult {
 		uniqueDesc,
 		pop,
 		zone,
-		region)
+		subscriptionTerm)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
 
@@ -1330,6 +1399,7 @@ func RHclCloudRouterConnectionPort() RHclCloudRouterConnectionPortResult {
 		portTestResult.ResourceName,
 		CloudRouterConnPortSpeed,
 		CloudRouterConnPortVlan,
+		subscriptionTerm,
 	)
 
 	hcl := fmt.Sprintf("%s\n%s\n%s", portTestResult.Hcl, hclCloudRouterRes.Hcl, crConnPortHcl)
@@ -1378,9 +1448,9 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 		CloudRouterConnIpsecPhase1Lifetime,
 		CloudRouterConnIpsecPhase2pfsGroup,
 		CloudRouterConnIpsecPhase2EncryptionAlgo,
-		CloudRouterConnIpsecPhase2AuthenticationAlgo,
 		CloudRouterConnIpsecPhase2Lifetime,
 		CloudRouterConnIpsecSharedKey,
+		subscriptionTerm,
 	)
 
 	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterResult.Hcl, cloudRouterIpsecHcl)
@@ -1403,7 +1473,6 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 		Phase1Lifetime:             CloudRouterConnIpsecPhase1Lifetime,
 		Phase2PfsGroup:             CloudRouterConnIpsecPhase2pfsGroup,
 		Phase2EncryptionAlgo:       CloudRouterConnIpsecPhase2EncryptionAlgo,
-		Phase2AuthenticationAlgo:   CloudRouterConnIpsecPhase2AuthenticationAlgo,
 		Phase2Lifetime:             CloudRouterConnIpsecPhase2Lifetime,
 		SharedKey:                  CloudRouterConnIpsecSharedKey,
 	}
@@ -1411,9 +1480,22 @@ func RHclCloudRouterConnectionIpsec() RHclCloudRouterConnectionIpsecResult {
 
 // packetfabric_cloud_router_bgp_session
 func RHclBgpSession() RHclBgpSessionResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
+	return RHclBgpSessionDisabled(resourceName, hclName, false)
+}
+
+// packetfabric_cloud_router_bgp_session
+func RHclBgpSessionEnabledAndDisabled() (RHclBgpSessionResult, RHclBgpSessionResult) {
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
+	enabled := RHclBgpSessionDisabled(resourceName, hclName, false)
+	disabled := RHclBgpSessionDisabled(resourceName, hclName, true)
+	return enabled, disabled
+}
+
+// packetfabric_cloud_router_bgp_session
+func RHclBgpSessionDisabled(resourceName string, hclName string, disabled bool) RHclBgpSessionResult {
 	hclCloudConnRes := RHclCloudRouterConnectionAws()
 
-	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterBgpSession)
 	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterBgpSession, hclName)
 
 	bgpSessionHcl := fmt.Sprintf(
@@ -1421,6 +1503,7 @@ func RHclBgpSession() RHclBgpSessionResult {
 		hclName,
 		hclCloudConnRes.HclResultBase.AdditionalResourceName,
 		hclCloudConnRes.HclResultBase.ResourceName,
+		fmt.Sprintf("%t", disabled),
 		CloudRouterBgpSessionRemoteAddress,
 		CloudRouterBgpSessionL3Address,
 		CloudRouterBgpSessionASN,
@@ -1445,6 +1528,44 @@ func RHclBgpSession() RHclBgpSessionResult {
 		Type1:           CloudRouterBgpSessionType1,
 		Prefix2:         CloudRouterBgpSessionPrefix2,
 		Type2:           CloudRouterBgpSessionType2,
+	}
+}
+
+// packetfabric_cloud_router_quick_connect
+func RHclCloudRouterQuickConnect() RHclCloudRouterQuickConnectResult {
+	bgpSessionResult := RHclBgpSession()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterQuickConnect)
+	log.Printf("Resource: %s, Resource name: %s\n", pfCloudRouterQuickConnect, hclName)
+
+	quickConnectHcl := fmt.Sprintf(
+		RResourceCloudRouterQuickConnect,
+		hclName,
+		bgpSessionResult.CloudRouterConn.AdditionalResourceName,
+		bgpSessionResult.CloudRouterConn.ResourceName,
+		os.Getenv("PF_QUICK_CONNECT_SERVICE_UUID"),
+		subscriptionTerm,
+		CloudRouterQCReturnFilterPrefix1,
+		CloudRouterQCReturnFilterType,
+		CloudRouterQCReturnFilterPrefix2,
+		CloudRouterQCReturnFilterType,
+	)
+
+	hcl := strings.Join([]string{
+		bgpSessionResult.Hcl,
+		quickConnectHcl,
+	}, "\n")
+
+	return RHclCloudRouterQuickConnectResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfCloudRouterQuickConnect,
+			ResourceName: resourceName,
+		},
+		ReturnFilterPrefix1: CloudRouterQCReturnFilterPrefix1,
+		ReturnFilterType1:   CloudRouterQCReturnFilterType,
+		ReturnFilterPrefix2: CloudRouterQCReturnFilterPrefix2,
+		ReturnFilterType2:   CloudRouterQCReturnFilterType,
 	}
 }
 
@@ -1686,7 +1807,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		uniqueDesc,
 		pop,
 		zone,
-		HostedCloudSpeed,
+		backboneVCspeed,
 		HostedCloudVlan4,
 		IbmBgpAsn,
 		IbmRegion,
@@ -1706,7 +1827,7 @@ func RHclCsIbmHostedConnection() RHclCsHostedCloudIbmResult {
 		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
 		Pop:         pop,
 		Zone:        zone,
-		Speed:       HostedCloudSpeed,
+		Speed:       backboneVCspeed,
 		Vlan:        HostedCloudVlan4,
 		IbmBgpAsn:   IbmBgpAsn,
 	}
@@ -1726,7 +1847,10 @@ func RHclCsOracleHostedConnection() RHclCsHostedCloudOracleResult {
 		DesiredConnectionType: "hosted",
 		IsCloudConnection:     true,
 	}
-	pop, zone, region := popDetails.FindAvailableCloudPopZone()
+	pop, zone, _ := popDetails.FindAvailableCloudPopZone()
+
+	// the region and drg need to match
+	region := os.Getenv("TF_VAR_pf_cs_oracle_region")
 
 	portDetails := CreateBasePortDetails()
 	portTestResult := portDetails.RHclPort(false)
@@ -1790,7 +1914,7 @@ func RHclCsAwsDedicatedConnection() RHclCsAwsDedicatedConnectionResult {
 		IsCloudConnection:     true,
 	}
 	pop, zone, region, err := popDetails.FindAvailableCloudPopZoneDedicated()
-	if err != nil {
+	if err != nil || "" == pop {
 		log.Println("Error getting pop and zone with available port: ", err)
 		log.Panic(err)
 	}

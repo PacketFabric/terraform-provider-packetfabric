@@ -5,10 +5,10 @@ resource "packetfabric_cloud_router_quick_connect" "cr_quick_connect" {
   service_uuid          = var.pf_service_uuid
   return_filters {
     prefix     = "185.56.153.165/32"
-    match_type = "orlonger"
+    match_type = "exact"
   }
   return_filters {
     prefix     = "185.56.153.166/32"
-    match_type = "orlonger"
+    match_type = "exact"
   }
 }

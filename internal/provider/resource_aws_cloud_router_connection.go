@@ -101,6 +101,13 @@ func resourceRouterConnectionAws() *schema.Resource {
 				Required:    true,
 				Description: "The desired speed of the new connection.\n\n\t Available: 50Mbps 100Mbps 200Mbps 300Mbps 400Mbps 500Mbps 1Gbps 2Gbps 5Gbps 10Gbps",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"published_quote_line_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -362,7 +369,6 @@ func resourceRouterConnectionAws() *schema.Resource {
 												"match_type": {
 													Type:         schema.TypeString,
 													Optional:     true,
-													Default:      "exact",
 													ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
 													Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
 												},
@@ -466,6 +472,7 @@ func resourceRouterConnectionAwsCreate(ctx context.Context, d *schema.ResourceDa
 		}
 		if resp != nil {
 			d.SetId(resp.CloudCircuitID)
+			_ = d.Set("subscription_term", resp.Billing.SubscriptionTerm)
 
 			if _, ok := d.GetOk("cloud_settings"); !ok {
 				time.Sleep(90 * time.Second) // wait for the connection to show on AWS
@@ -533,6 +540,7 @@ func resourceRouterConnectionAwsRead(ctx context.Context, d *schema.ResourceData
 
 	_ = d.Set("account_uuid", resp.AccountUUID)
 	_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 	_ = d.Set("description", resp.Description)
 	_ = d.Set("speed", resp.Speed)
 	_ = d.Set("pop", resp.CloudProvider.Pop)
@@ -688,6 +696,9 @@ func extractAwsConnection(d *schema.ResourceData) packetfabric.AwsConnection {
 	}
 	if isPublic, ok := d.GetOk("is_public"); ok {
 		awsConn.IsPublic = isPublic.(bool)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		awsConn.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	if speed, ok := d.GetOk("speed"); ok {
 		awsConn.Speed = speed.(string)

@@ -18,7 +18,6 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 
 	resource.ParallelTest(t, resource.TestCase{
-
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
@@ -30,6 +29,7 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "pop", cloudRouterConnectionOracleResult.Pop),
 					resource.TestCheckResourceAttr(cloudRouterConnectionOracleResult.ResourceName, "zone", cloudRouterConnectionOracleResult.Zone),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionOracleResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionOracleResult.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionOracleResult.ResourceName, "id"),
 				),
 			},
@@ -57,5 +57,4 @@ func TestAccCloudRouterConnectionOracleRequiredFields(t *testing.T) {
 			},
 		},
 	})
-
 }

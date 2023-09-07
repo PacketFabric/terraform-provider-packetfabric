@@ -112,7 +112,6 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which you want to provision the connection.
@@ -122,6 +121,7 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `bgp_settings_uuid` (String) BGP session ID generated when the cloud-side connection is provisioned by PacketFabric.
 - `cloud_settings` (Block List, Max: 1) Provision the cloud side of the connection with PacketFabric. (see [below for nested schema](#nestedblock--cloud_settings))
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console. Required if not using cloud_settings.
@@ -131,6 +131,9 @@ resource "packetfabric_cloud_router_connection_google" "crc2" {
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
+- `subscription_term` (Number) Subscription term of the Cloud Router Connection
+
+	Enum: ["1", "12", "24", "36"] Defaults: 1
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
@@ -213,7 +216,7 @@ Optional:
 	Available range is 1 through 4294967295.
 - `match_type` (String) The match type of this prefix.
 
-	Enum: `"exact"` `"orlonger"` Defaults: exact
+	Enum: `"exact"` `"orlonger"`
 - `med` (Number) The MED of this prefix. It is used when type = out.
 
 	Available range is 1 through 4294967295.

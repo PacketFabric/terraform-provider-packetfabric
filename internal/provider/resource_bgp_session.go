@@ -220,7 +220,6 @@ func resourceBgpSession() *schema.Resource {
 						"match_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							Default:      "exact",
 							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
 							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
 						},
@@ -480,6 +479,11 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 	if d.HasChange("secondary_subnet") {
 		if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
 			bgpSession.L3Address = secondarySubnet.(string)
+		}
+	}
+	if d.HasChange("disabled") {
+		if disabled, ok := d.GetOk("disabled"); ok {
+			bgpSession.Disabled = disabled.(bool)
 		}
 	}
 	if addressFamily, ok := d.GetOk("address_family"); ok {

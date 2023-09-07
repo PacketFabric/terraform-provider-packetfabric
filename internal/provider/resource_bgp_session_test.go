@@ -15,7 +15,7 @@ import (
 func TestAccCloudRouterBgpSessionRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
 
-	bgpSessionResult := testutil.RHclBgpSession()
+	bgpSessionResultEnabled, bgpSessionResultDisabled := testutil.RHclBgpSessionEnabledAndDisabled()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId, bgpSessionUuid string
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -23,35 +23,74 @@ func TestAccCloudRouterBgpSessionRequiredFields(t *testing.T) {
 		ExternalProviders: testAccExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: bgpSessionResult.Hcl,
+				Config: bgpSessionResultEnabled.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "remote_address", bgpSessionResult.RemoteAddress),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "l3_address", bgpSessionResult.L3Address),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "remote_asn", strconv.Itoa(bgpSessionResult.Asn)),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.0.prefix", bgpSessionResult.Prefix1),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.0.type", bgpSessionResult.Type1),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.prefix", bgpSessionResult.Prefix2),
-					resource.TestCheckResourceAttr(bgpSessionResult.ResourceName, "prefixes.1.type", bgpSessionResult.Type2),
-					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "circuit_id"),
-					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "connection_id"),
-					resource.TestCheckResourceAttrSet(bgpSessionResult.ResourceName, "id"),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "remote_address", bgpSessionResultEnabled.RemoteAddress),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "l3_address", bgpSessionResultEnabled.L3Address),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "remote_asn", strconv.Itoa(bgpSessionResultEnabled.Asn)),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "prefixes.0.prefix", bgpSessionResultEnabled.Prefix1),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "prefixes.0.type", bgpSessionResultEnabled.Type1),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "prefixes.1.prefix", bgpSessionResultEnabled.Prefix2),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "prefixes.1.type", bgpSessionResultEnabled.Type2),
+					resource.TestCheckResourceAttr(bgpSessionResultEnabled.ResourceName, "disabled", "false"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultEnabled.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultEnabled.ResourceName, "connection_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultEnabled.ResourceName, "id"),
 				),
 			},
 			{
-				Config: bgpSessionResult.Hcl,
+				Config: bgpSessionResultEnabled.Hcl,
 				Check: func(s *terraform.State) error {
-					rs, ok := s.RootModule().Resources[bgpSessionResult.ResourceName]
+					rs, ok := s.RootModule().Resources[bgpSessionResultEnabled.ResourceName]
 					if !ok {
-						return fmt.Errorf("Not found: %s", bgpSessionResult.ResourceName)
+						return fmt.Errorf("Not found: %s", bgpSessionResultEnabled.ResourceName)
 					}
 					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
 					cloudRouterConnectionCircuitId = rs.Primary.Attributes["connection_id"]
 					bgpSessionUuid = rs.Primary.Attributes["id"]
+					disabled := rs.Primary.Attributes["disabled"]
+					if "true" == disabled {
+						t.Errorf("Expected 'disabled' to be false, but it is true")
+					}
 					return nil
 				},
 			},
 			{
-				ResourceName:      bgpSessionResult.ResourceName,
+				Config: bgpSessionResultDisabled.Hcl,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "remote_address", bgpSessionResultDisabled.RemoteAddress),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "l3_address", bgpSessionResultDisabled.L3Address),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "remote_asn", strconv.Itoa(bgpSessionResultDisabled.Asn)),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "prefixes.0.prefix", bgpSessionResultDisabled.Prefix1),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "prefixes.0.type", bgpSessionResultDisabled.Type1),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "prefixes.1.prefix", bgpSessionResultDisabled.Prefix2),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "prefixes.1.type", bgpSessionResultDisabled.Type2),
+					resource.TestCheckResourceAttr(bgpSessionResultDisabled.ResourceName, "disabled", "true"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultDisabled.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultDisabled.ResourceName, "connection_id"),
+					resource.TestCheckResourceAttrSet(bgpSessionResultDisabled.ResourceName, "id"),
+				),
+			},
+			{
+				Config: bgpSessionResultDisabled.Hcl,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources[bgpSessionResultEnabled.ResourceName]
+					if !ok {
+						return fmt.Errorf("Not found: %s", bgpSessionResultEnabled.ResourceName)
+					}
+					cloudRouterCircuitId = rs.Primary.Attributes["circuit_id"]
+					cloudRouterConnectionCircuitId = rs.Primary.Attributes["connection_id"]
+					bgpSessionUuid = rs.Primary.Attributes["id"]
+					disabled := rs.Primary.Attributes["disabled"]
+					if "false" == disabled {
+						t.Errorf("Expected 'disabled' to be true, but it is false")
+					}
+					return nil
+				},
+			},
+			{
+				ResourceName:      bgpSessionResultDisabled.ResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {

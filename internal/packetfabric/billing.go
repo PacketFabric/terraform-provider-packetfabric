@@ -2,7 +2,6 @@ package packetfabric
 
 import (
 	"fmt"
-	"time"
 )
 
 const billingURI = "/v2/billing/services/%s"
@@ -81,12 +80,19 @@ func (c *PFClient) ModifyBilling(cID string, billing BillingUpgrade) (*BillingUp
 
 func (c *PFClient) GetEarlyTerminationLiability(circuitID string) (float64, error) {
 	formattedURI := fmt.Sprintf(etlURI, circuitID)
+
 	var resp float64
-	// Add a delay of 15 seconds to allow the billing system to catch up
-	time.Sleep(15 * time.Second)
-	_, err := c.sendRequest(formattedURI, getMethod, nil, &resp)
+	getETL := func() (interface{}, error) {
+		return c.sendRequest(formattedURI, getMethod, nil, &resp)
+	}
+
+	_, err := c.Retry(fmt.Sprintf("get etl for %s", circuitID), getETL)
 	if err != nil {
+		if c.Is404(err) {
+			return 0, nil
+		}
 		return 0, err
 	}
+
 	return resp, nil
 }

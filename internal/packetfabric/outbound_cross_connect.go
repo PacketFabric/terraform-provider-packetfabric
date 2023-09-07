@@ -36,6 +36,7 @@ type OutboundCrossConnectResp struct {
 	Progress                 int    `json:"progress,omitempty"`
 	Deleted                  bool   `json:"deleted,omitempty"`
 	ZLocCfa                  string `json:"z_loc_cfa,omitempty"`
+	CircuitID                string `json:"circuit_id,omitempty"`
 	TimeCreated              string `json:"time_created,omitempty"`
 	TimeUpdated              string `json:"time_updated,omitempty"`
 }
@@ -84,16 +85,8 @@ func (c *PFClient) UpdateOutboundCrossConnect(outboundCrossConnID, userDesc stri
 	return err
 }
 
-func (c *PFClient) DeleteOutboundCrossConnect(port string) error {
-	crossConns, err := c.ListOutboundCrossConnects()
-	if err != nil {
-		return err
-	}
-	for _, crossConn := range *crossConns {
-		if crossConn.Port == port {
-			formatedURI := fmt.Sprintf(outboundCrossConnectWithIDURI, crossConn.DataCenterCrossConnectID)
-			_, err = c.sendRequest(formatedURI, deleteMethod, nil, nil)
-		}
-	}
+func (c *PFClient) DeleteOutboundCrossConnect(circuit_id string) error {
+	formatedURI := fmt.Sprintf(outboundCrossConnectWithIDURI, circuit_id)
+	_, err := c.sendRequest(formatedURI, deleteMethod, nil, nil)
 	return err
 }

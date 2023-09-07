@@ -167,6 +167,8 @@ type CloudSettings struct {
 	PortCrossConnectOcid           string       `json:"port_cross_connect_ocid,omitempty"`
 	PortID                         string       `json:"port_id,omitempty"`
 	PublicIP                       string       `json:"public_ip,omitempty"`
+	PrimaryPublicIP                string       `json:"primary_public_ip,omitempty"`
+	SecondaryPublicIP              string       `json:"secondary_public_ip,omitempty"`
 	SvlanIDCust                    int          `json:"svlan_id_cust,omitempty"`
 	VcOcid                         string       `json:"vc_ocid,omitempty"`
 	VlanIDCust                     int          `json:"vlan_id_cust,omitempty"`
@@ -477,6 +479,8 @@ func (c *PFClient) CreateDedicadedAWSConn(dedicatedConn DedicatedAwsConn) (*Clou
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 60 seconds to allow the billing system to catch up
+	time.Sleep(60 * time.Second)
 	return expectedResp, err
 }
 
@@ -537,6 +541,26 @@ func (c *PFClient) GetCloudServiceStatus(cloudCID string) (*ServiceState, error)
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) WaitDeleteCloudService(vcRequestUUID string) (state *ServiceState, err error) {
+	message := fmt.Sprintf("Deleting service %s", vcRequestUUID)
+
+	checkStatus := func() (interface{}, error) {
+		state, err = c.GetCloudServiceStatus(vcRequestUUID)
+		if nil == err {
+			if !state.Status.Object.Deleted {
+				err = fmt.Errorf(message)
+			}
+		} else {
+			if c.Is404(err) {
+				err = nil
+			}
+		}
+		return state, err
+	}
+	_, _ = c.FunctionRetry(message, checkStatus, 600, 10)
+	return state, err
 }
 
 func (c *PFClient) DeleteRequestedHostedMktService(vcRequestUUID string) error {
@@ -601,6 +625,7 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	if err != nil {
 		return err
 	}
+	_, _ = c.WaitDeleteCloudService(vcRequestUUID)
 	return nil
 }
 

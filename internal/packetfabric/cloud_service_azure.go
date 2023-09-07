@@ -1,6 +1,10 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/go-playground/validator/v10"
+	"time"
+)
 
 const azureHostedMktReqURI = "/v2/services/third-party/hosted/azure"
 const azureExpressRouteURI = "/v2/services/cloud/hosted/azure"
@@ -144,6 +148,7 @@ type AzureExpressRouteConn struct {
 	IsPublic               bool   `json:"is_public,omitempty"`
 	PublishedQuoteLineUUID string `json:"published_quote_line_uuid,omitempty"`
 	PONumber               string `json:"po_number,omitempty"`
+	SubscriptionTerm       int    `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 // Struct representation: https://docs.packetfabric.com/api/v2/redoc/#operation/azure_dedicated_connection_post
@@ -181,6 +186,9 @@ func (c *PFClient) CreateAzureExpressRoute(azureExpressRoute AzureExpressRoute) 
 }
 
 func (c *PFClient) CreateAzureExpressRouteConn(azureExpressRoute AzureExpressRouteConn, cid string) (*CloudRouterConnectionReadResponse, error) {
+	if err := validator.New().Struct(azureExpressRoute); err != nil {
+		return nil, err
+	}
 	expressRouteResp := &CloudRouterConnectionReadResponse{}
 	formatedURI := fmt.Sprintf(azureExpressRouteConnURI, cid)
 	_, err := c.sendRequest(formatedURI, postMethod, azureExpressRoute, expressRouteResp)
@@ -196,5 +204,7 @@ func (c *PFClient) CreateAzureExpressRouteDedicated(azureExpressDedicated AzureE
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
 	return expressRouteResp, nil
 }

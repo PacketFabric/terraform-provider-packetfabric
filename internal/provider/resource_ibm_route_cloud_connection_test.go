@@ -32,6 +32,7 @@ func TestAccCloudRouterConnectionIbmRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "zone", cloudRouterConnectionIbmResult.Zone),
 					resource.TestCheckResourceAttr(cloudRouterConnectionIbmResult.ResourceName, "ibm_bgp_asn", strconv.Itoa(cloudRouterConnectionIbmResult.IbmBgpAsn)),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionIbmResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(cloudRouterConnectionIbmResult.ResourceName, "subscription_term"),
 					resource.TestCheckResourceAttrSet(cloudRouterConnectionIbmResult.ResourceName, "id"),
 				),
 			},

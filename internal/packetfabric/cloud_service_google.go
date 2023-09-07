@@ -1,6 +1,10 @@
 package packetfabric
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/go-playground/validator/v10"
+	"time"
+)
 
 const serviceGoogleMktConnReqURI = "/v2/services/third-party/hosted/google"
 const serviceGoogleHostedConnURI = "/v2/services/cloud/hosted/google"
@@ -31,6 +35,7 @@ type GoogleCloudRouterConn struct {
 	Speed                    string         `json:"speed,omitempty"`
 	PublishedQuoteLineUUID   string         `json:"published_quote_line_uuid,omitempty"`
 	PONumber                 string         `json:"po_number,omitempty"`
+	SubscriptionTerm         int            `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 	CloudSettings            *CloudSettings `json:"cloud_settings,omitempty"`
 }
 
@@ -92,6 +97,9 @@ func (c *PFClient) CreateRequestHostedGoogleMktConn(googleConn GoogleMktCloudCon
 }
 
 func (c *PFClient) CreateGoogleCloudRouterConn(googleConn GoogleCloudRouterConn, cID string) (*CloudRouterConnectionReadResponse, error) {
+	if err := validator.New().Struct(googleConn); err != nil {
+		return nil, err
+	}
 	formatedURI := fmt.Sprintf(servicesGoogleCloudRouterConnURI, cID)
 	expectedResp := &CloudRouterConnectionReadResponse{}
 	_, err := c.sendRequest(formatedURI, postMethod, googleConn, expectedResp)
@@ -116,5 +124,7 @@ func (c *PFClient) CreateRequestDedicatedGoogleConn(googleConn GoogleReqDedicate
 	if err != nil {
 		return nil, err
 	}
+	// Add a delay of 15 seconds to allow the billing system to catch up
+	time.Sleep(15 * time.Second)
 	return expectedResp, nil
 }

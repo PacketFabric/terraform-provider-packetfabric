@@ -57,7 +57,6 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `azure_service_key` (String) The Service Key provided by Microsoft Azure when you created your ExpressRoute circuit.
 - `circuit_id` (String) Circuit ID of the target cloud router. This starts with "PF-L3-CUST-".
 - `description` (String) A brief description of this connection.
@@ -67,12 +66,16 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `is_public` (Boolean) Whether PacketFabric should allocate a public IP address for this connection. Set this to true if you intend to set up peering with Microsoft public services (such as Microsoft 365). Defaults: false
 - `labels` (Set of String) Label value linked to an object.
 - `maybe_dnat` (Boolean) Set this to true if you intend to use DNAT on this connection. Defaults: false
 - `maybe_nat` (Boolean) Set this to true if you intend to use NAT on this connection. Defaults: false
 - `po_number` (String) Purchase order number or identifier of a service.
 - `published_quote_line_uuid` (String) UUID of the published quote line with which this connection should be associated.
+- `subscription_term` (Number) Subscription term of the Cloud Router Connection
+
+	Enum: ["1", "12", "24", "36"] Defaults: 1
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
@@ -81,6 +84,8 @@ resource "packetfabric_cloud_router_connection_azure" "crc4" {
 		Example: primary or seconday
 - `etl` (Number) Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.
 - `id` (String) The ID of this resource.
+- `primary_public_ip` (String)
+- `secondary_public_ip` (String)
 - `vlan_id_microsoft` (Number) The microsoft peering vlan.
 - `vlan_id_private` (Number) The private peering vlan.
 

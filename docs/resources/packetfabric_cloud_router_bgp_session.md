@@ -182,7 +182,7 @@ Optional:
 	Available range is 1 through 4294967295.
 - `match_type` (String) The match type of this prefix.
 
-	Enum: `"exact"` `"orlonger"` Defaults: exact
+	Enum: `"exact"` `"orlonger"`
 - `med` (Number) The MED of this prefix. It is used when type = out.
 
 	Available range is 1 through 4294967295.

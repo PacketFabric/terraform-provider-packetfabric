@@ -238,6 +238,14 @@ func dataSourceCloudConnection() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"primary_public_ip": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"secondary_public_ip": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"nat_public_ip": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -283,7 +291,6 @@ func dataSourceCloudConnection() *schema.Resource {
 					},
 				},
 			},
-
 			"pop": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -353,6 +360,11 @@ func dataSourceCloudConnection() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates the user's choice of NAT type",
 			},
+			"subscription_term": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 		},
 	}
 }
@@ -416,6 +428,7 @@ func flattenCloudConnection(conn *packetfabric.CloudRouterConnectionReadResponse
 		"dnat_capable":                 conn.DNatCapable,
 		"zone":                         conn.Zone,
 		"vlan":                         conn.Vlan,
+		"subscription_term":            conn.SubscriptionTerm,
 	}
 	connInfoMap["cloud_settings"] = flattenCloudSettings(&conn.CloudSettings)
 	connInfoMap["cloud_provider"] = flattenCloudProvider(&conn.CloudProvider)

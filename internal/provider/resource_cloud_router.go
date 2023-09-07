@@ -83,6 +83,13 @@ func resourceCloudRouter() *schema.Resource {
 				Computed:    true,
 				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -106,6 +113,7 @@ func resourceCloudRouterCreate(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		d.SetId(resp.CircuitID)
 
 		if labels, ok := d.GetOk("labels"); ok {
@@ -132,6 +140,7 @@ func resourceCloudRouterRead(ctx context.Context, d *schema.ResourceData, m inte
 		_ = d.Set("asn", resp.Asn)
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("capacity", resp.Capacity)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		var regions []string
 		for _, region := range resp.Regions {
 			regions = append(regions, region.Code)
@@ -179,6 +188,7 @@ func resourceCloudRouterUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	_ = d.Set("name", resp.Name)
 	_ = d.Set("capacity", resp.Capacity)
+	_ = d.Set("subscription_term", resp.SubscriptionTerm)
 	if d.HasChange("po_number") {
 		_ = d.Set("po_number", resp.PONumber)
 	}
@@ -233,6 +243,9 @@ func extractCloudRouter(d *schema.ResourceData) packetfabric.CloudRouter {
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		router.PONumber = poNumber.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		router.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	router.Regions = extractRegions(d)
 	return router

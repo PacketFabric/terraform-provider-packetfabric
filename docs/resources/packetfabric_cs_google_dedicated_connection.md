@@ -31,7 +31,6 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
 
 ### Required
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `pop` (String) The POP in which the dedicated port should be provisioned (the cloud on-ramp).
 - `service_class` (String) The service class for the given port, either long haul or metro. Specify metro if the cloud on-ramp (the `pop`) is in the same market as the source ports (the ports to which you will be building out virtual circuits).
@@ -49,6 +48,7 @@ resource "packetfabric_cs_google_dedicated_connection" "pf_cs_conn1_dedicated_go
 
 ### Optional
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `autoneg` (Boolean) Whether the port auto-negotiates or not. This is currently only possible with 1Gbps ports and the request will fail if specified with 10Gbps. Defaults: false
 - `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF of the LOA that Google provided.
