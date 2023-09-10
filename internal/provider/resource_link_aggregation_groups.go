@@ -107,15 +107,6 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 		}
 	}
 
-	if len(lag.Members) > 0 {
-		for _, member := range lag.Members {
-			_, err := c.CreateLagMember(d.Id(), member)
-			if err != nil {
-				diags = append(diags, diag.FromErr(err)...)
-			}
-		}
-	}
-
 	enabled := d.Get("enabled").(bool)
 	if !enabled {
 		_, err := c.DisableLinkAggregationGroup(d.Id())
