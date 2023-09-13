@@ -652,7 +652,7 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
 }
 resource "time_sleep" "wait_for_lag" {
   depends_on = [%s]
-  destroy_duration = "3m"
+  destroy_duration = "10m"
 }
 `
 

@@ -843,9 +843,8 @@ func RHclOutboundCrossConnect() RHcloutboundCrossConnectsResult {
 	}
 }
 
-// packetfabric_link_aggregation_group
-func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-
+// packetfabric_port
+func RHclPort() RHclPortResult {
 	c, err := _createPFClient()
 	if err != nil {
 		log.Panic(err)
@@ -855,9 +854,12 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		PFClient:     c,
 		DesiredSpeed: portSpeed,
 	}
+	return portDetails1.RHclPort(false)
+}
 
-	hclPortResult1 := portDetails1.RHclPort(false)
-
+// packetfabric_link_aggregation_group
+func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
+	hclPortResult1 := RHclPort()
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfLinkAggregationGroup, hclName, uniqueDesc)
