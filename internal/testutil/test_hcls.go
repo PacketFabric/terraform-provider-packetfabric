@@ -843,23 +843,47 @@ func RHclOutboundCrossConnect() RHcloutboundCrossConnectsResult {
 	}
 }
 
-// packetfabric_port
-func RHclPort() RHclPortResult {
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
+func LinkAggregationGroupPort() RHclPortResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfPort)
+	uniqueDesc := GenerateUniqueName()
 
-	portDetails1 := PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
+	media := "LX"
+	pop := "LAB1"
+	zone := "D"
+	speed := "1Gbps"
+	portEnabled := false
+
+	hcl := fmt.Sprintf(
+		RResourcePort,
+		hclName,
+		uniqueDesc,
+		media,
+		pop,
+		zone,
+		speed,
+		subscriptionTerm,
+		portEnabled,
+	)
+	return RHclPortResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfPort,
+			ResourceName: hclName,
+		},
+		ResourceName:     resourceName,
+		Description:      uniqueDesc,
+		Media:            media,
+		Pop:              pop,
+		Zone:             zone,
+		Speed:            speed,
+		SubscriptionTerm: subscriptionTerm,
+		Enabled:          portEnabled,
 	}
-	return portDetails1.RHclPort(false)
 }
 
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-	hclPortResult1 := RHclPort()
+	port1HclResult := LinkAggregationGroupPort()
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfLinkAggregationGroup, hclName, uniqueDesc)
@@ -868,12 +892,12 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		hclName,
 		uniqueDesc,
 		LinkAggGroupInterval,
-		hclPortResult1.ResourceName,
-		hclPortResult1.Pop,
+		port1HclResult.ResourceName,
+		port1HclResult.Pop,
 		resourceName,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+	hcl := fmt.Sprintf("%s\n%s", port1HclResult.Hcl, linkAggGroupHcl)
 
 	return RHclLinkAggregationGroupResult{
 		HclResultBase: HclResultBase{
@@ -884,9 +908,9 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		Desc:     uniqueDesc,
 		Interval: LinkAggGroupInterval,
 		Members: []string{
-			hclPortResult1.ResourceName,
+			port1HclResult.ResourceName,
 		},
-		Pop: hclPortResult1.Pop,
+		Pop: port1HclResult.Pop,
 	}
 }
 

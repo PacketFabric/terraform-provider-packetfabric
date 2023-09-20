@@ -131,6 +131,14 @@ func listContains[T comparable](items []T, key T) bool {
 	return false
 }
 
+func convertInterfToStringSlice(interfaceList []interface{}) []string {
+	strList := []string{}
+	for _, interf := range interfaceList {
+		strList = append(strList, interf.(string))
+	}
+	return strList
+}
+
 func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -172,7 +180,7 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 
 	if d.HasChange("members") {
 		oldMembers, newMembers := d.GetChange("members")
-		oldMembersList, newMembersList := oldMembers.([]string), newMembers.([]string)
+		oldMembersList, newMembersList := convertInterfToStringSlice(oldMembers.([]interface{})), convertInterfToStringSlice(newMembers.([]interface{}))
 
 		for _, oldMember := range oldMembersList {
 			if !listContains(newMembersList, oldMember) {
