@@ -197,6 +197,8 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 				}
 			}
 		}
+
+		time.Sleep(45 * time.Second)
 	}
 
 	return diags

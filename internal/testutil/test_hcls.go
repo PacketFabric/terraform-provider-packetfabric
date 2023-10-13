@@ -883,7 +883,7 @@ func LinkAggregationGroupPort() RHclPortResult {
 
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-	port1HclResult := LinkAggregationGroupPort()
+	portHclResult := LinkAggregationGroupPort()
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfLinkAggregationGroup, hclName, uniqueDesc)
@@ -892,12 +892,11 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		hclName,
 		uniqueDesc,
 		LinkAggGroupInterval,
-		port1HclResult.ResourceName,
-		port1HclResult.Pop,
-		resourceName,
+		portHclResult.ResourceName,
+		portHclResult.Pop,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s", port1HclResult.Hcl, linkAggGroupHcl)
+	hcl := fmt.Sprintf("%s\n%s", portHclResult.Hcl, linkAggGroupHcl)
 
 	return RHclLinkAggregationGroupResult{
 		HclResultBase: HclResultBase{
@@ -908,9 +907,9 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		Desc:     uniqueDesc,
 		Interval: LinkAggGroupInterval,
 		Members: []string{
-			port1HclResult.ResourceName,
+			portHclResult.ResourceName,
 		},
-		Pop: port1HclResult.Pop,
+		Pop: portHclResult.Pop,
 	}
 }
 
