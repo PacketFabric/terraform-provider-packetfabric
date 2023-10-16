@@ -131,7 +131,7 @@ func ListContains[T comparable](items []T, key T) bool {
 }
 
 func (c *PFClient) CheckLagMembersUpdated(lagId string, expectedMembersList []string) (interface{}, error) {
-	message := fmt.Sprintf("Updating LAG members %s", lagId)
+	message := fmt.Sprintf("Updating LAG members for %s", lagId)
 	return c.Retry(
 		message,
 		func() (interface{}, error) {
