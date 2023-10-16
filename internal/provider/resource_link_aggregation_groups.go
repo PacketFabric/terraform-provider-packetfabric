@@ -122,15 +122,6 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func listContains[T comparable](items []T, key T) bool {
-	for _, item := range items {
-		if key == item {
-			return true
-		}
-	}
-	return false
-}
-
 func convertInterfToStringSlice(interfaceList []interface{}) []string {
 	strList := []string{}
 	for _, interf := range interfaceList {
@@ -183,7 +174,7 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 		oldMembersList, newMembersList := convertInterfToStringSlice(oldMembers.([]interface{})), convertInterfToStringSlice(newMembers.([]interface{}))
 
 		for _, oldMember := range oldMembersList {
-			if !listContains(newMembersList, oldMember) {
+			if !packetfabric.ListContains(newMembersList, oldMember) {
 				if _, err := c.DeleteLinkAggregationGroupMember(d.Id(), oldMember); err != nil {
 					diags = append(diags, diag.FromErr(err)...)
 				}
@@ -191,14 +182,14 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 		}
 
 		for _, newMember := range newMembersList {
-			if !listContains(oldMembersList, newMember) {
+			if !packetfabric.ListContains(oldMembersList, newMember) {
 				if _, err := c.CreateLagMember(d.Id(), newMember); err != nil {
 					diags = append(diags, diag.FromErr(err)...)
 				}
 			}
 		}
 
-		time.Sleep(45 * time.Second)
+		_, _ = c.CheckLagMembersUpdated(d.Id(), newMembersList)
 	}
 
 	return diags
