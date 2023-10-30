@@ -13,21 +13,13 @@ func datasourceLocationsRegions() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceLocationsRegionsRead,
 		Schema: map[string]*schema.Schema{
-			"locations_regions": {
+			PfLocationsRegions: {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The location region name.",
-						},
-						"code": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The location region code.",
-						},
+						PfName: schemaStringComputed(PfNameDescription7),
+						PfCode: schemaStringComputed(PfCodeDescription3),
 					},
 				},
 			},
@@ -43,7 +35,7 @@ func datasourceLocationsRegionsRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("locations_regions", flattenLocationsRegions(&regions))
+	err = d.Set(PfLocationsRegions, flattenLocationsRegions(&regions))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -52,12 +44,10 @@ func datasourceLocationsRegionsRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func flattenLocationsRegions(regions *[]packetfabric.LocationRegion) []interface{} {
+	fields := stringsToMap(PfName, PfCode)
 	flattens := make([]interface{}, len(*regions))
 	for i, reg := range *regions {
-		flatten := make(map[string]interface{})
-		flatten["name"] = reg.Name
-		flatten["code"] = reg.Code
-		flattens[i] = flatten
+		flattens[i] = structToMap(&reg, fields)
 	}
 	return flattens
 }

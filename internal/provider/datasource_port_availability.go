@@ -7,57 +7,27 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourcePortAvailability() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourcePortAvailabilityRead,
 		Schema: map[string]*schema.Schema{
-			"pop": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The port POP.",
-			},
-			"ports_available": {
-				Type:     schema.TypeList,
-				Computed: true,
+			PfPop: schemaStringRequiredNotEmpty(PfPopDescriptionB),
+			PfPortsAvailable: {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: PfPortAvailabilityDescription,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"zone": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The pop zone.",
-						},
-						"speed": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The desired speed of the new connection.\n\t\tEnum: []\"1gps\", \"10gbps\"]",
-						},
-						"media": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The port media type.",
-						},
-						"count": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Description: "The port count.",
-						},
-						"partial": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "True if port is partial.",
-						},
-						"enni": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "True if port is enni.",
-						},
+						PfZone:    schemaStringComputed(PfZoneDescription2),
+						PfSpeed:   schemaStringComputed(PfSpeedDescriptionJ),
+						PfMedia:   schemaStringComputed(PfMediaDescription4),
+						PfCount:   schemaIntComputed(PfCountDescription),
+						PfPartial: schemaBoolComputed(PfPartialDescription),
+						PfEnni:    schemaBoolComputed(PfEnniDescription),
 					},
 				},
-				Description: "The list of ports available in the given POP.",
 			},
 		},
 	}
@@ -67,15 +37,15 @@ func dataSourcePortAvailabilityRead(ctx context.Context, d *schema.ResourceData,
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	pop, ok := d.GetOk("pop")
+	pop, ok := d.GetOk(PfPop)
 	if !ok {
-		return diag.Errorf("please provide a valid pop")
+		return diag.Errorf(MessageMissingPop)
 	}
 	ports, err := c.GetLocationPortAvailability(pop.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("ports_available", flattenPortsAvailable(&ports))
+	err = d.Set(PfPortsAvailable, flattenPortsAvailable(&ports))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -85,15 +55,9 @@ func dataSourcePortAvailabilityRead(ctx context.Context, d *schema.ResourceData,
 
 func flattenPortsAvailable(ports *[]packetfabric.PortAvailability) []interface{} {
 	flattens := make([]interface{}, len(*ports))
+	fields := stringsToMap(PfZone, PfSpeed, PfMedia, PfCount, PfPartial, PfEnni)
 	for i, port := range *ports {
-		flatten := make(map[string]interface{})
-		flatten["zone"] = port.Zone
-		flatten["speed"] = port.Speed
-		flatten["media"] = port.Media
-		flatten["count"] = port.Count
-		flatten["partial"] = port.Partial
-		flatten["enni"] = port.Enni
-		flattens[i] = flatten
+		flattens[i] = structToMap(&port, fields)
 	}
 	return flattens
 }

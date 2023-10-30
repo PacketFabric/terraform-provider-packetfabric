@@ -6,209 +6,51 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourcePortDeviceInfo() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourcePortDeviceInfoRead,
 		Schema: map[string]*schema.Schema{
-			"port_circuit_id": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The port circuit ID.",
-			},
-			"adjacent_router": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The adjcent router.",
-			},
-			"device_name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The device name.",
-			},
-			"device_make": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The device make name.",
-			},
-			"admin_status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The current admin status.",
-			},
-			"oper_status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The current oerational status.",
-			},
-			"auto_negotiation": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "True if auto negotiation is on.",
-			},
-			"iface_name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The interface name.",
-			},
-			"speed": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port speed.",
-			},
-			"optics_diagnostics_lane_tx_power_dbm": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "The optics diagnostics lane TX Power dbm.",
-			},
-			"optics_diagnostics_lane_tx_power": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "The optics diagnostics lane TX Power.",
-			},
-			"optics_diagnostics_lane_index": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The optics diagnostics lane Index.",
-			},
-			"optics_diagnostics_lane_rx_power_dbm": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "The optics diagnostics lane RX Power dbm.",
-			},
-			"optics_diagnostics_lane_rx_power": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "The optics diagnostics lane RX Power.",
-			},
-			"optics_diagnostics_lane_bias_current": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "The optics diagnostics lane bias current.",
-			},
-			"optics_diagnostics_lane_tx_status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The optics diagnostics lane tx status.",
-			},
-			"optics_diagnostics_lane_rx_status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The optics diagnostics lane rx status.",
-			},
-			"polltime": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port pool time.",
-			},
-			"time_flapped": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port time flapped.",
-			},
-			"traffic_rx_bps": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX bps.",
-			},
-			"traffic_rx_bytes": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX bytes.",
-			},
-			"traffic_rx_ipv6_bytes": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX IPv6 bytes.",
-			},
-			"traffic_rx_ipv6_packets": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX IPv6 packets.",
-			},
-			"traffic_rx_packets": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX packets.",
-			},
-			"traffic_rx_pps": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic RX pps.",
-			},
-			"traffic_tx_bps": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX bps.",
-			},
-			"traffic_tx_bytes": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX bytes.",
-			},
-			"traffic_tx_ipv6_bytes": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX IPv6 bytes.",
-			},
-			"traffic_tx_ipv6_packets": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX IPv6 packets.",
-			},
-			"traffic_tx_packets": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX bytes.",
-			},
-			"traffic_tx_pps": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port traffic TX pps.",
-			},
-			"wiring_media": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring media.",
-			},
-			"wiring_module": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring module.",
-			},
-			"wiring_panel": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring panel.",
-			},
-			"wiring_position": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring position.",
-			},
-			"wiring_reach": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring reach.",
-			},
-			"wiring_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The port wiring type.",
-			},
-			"lag_speed": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The port lag speed.",
-			},
-			"device_can_lag": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "True if device can lag.",
-			},
+			PfPortCircuitId:                    schemaStringRequiredNotEmpty(PfPortCircuitIdDescription2),
+			PfAdjacentRouter:                   schemaStringComputed(PfAdjacentRouterDescription),
+			PfDeviceName:                       schemaStringComputed(PfDeviceNameDescription),
+			PfDeviceMake:                       schemaStringComputed(PfDeviceMakeDescription),
+			PfAdminStatus:                      schemaStringComputed(PfAdminStatusDescription3),
+			PfOperStatus:                       schemaStringComputed(PfOperStatusDescription),
+			PfAutoNegotiation:                  schemaBoolComputed(PfAutoNegotiationDescription),
+			PfIfaceName:                        schemaStringComputed(PfIfaceNameDescription),
+			PfSpeed:                            schemaStringComputed(PfSpeedDescriptionC),
+			PfOpticsDiagnosticsLaneTxPowerDbm:  schemaFloatComputed(PfOpticsDiagnosticsLaneTxPowerDbmDescription),
+			PfOpticsDiagnosticsLaneTxPower:     schemaFloatComputed(PfOpticsDiagnosticsLaneTxPowerDescription),
+			PfOpticsDiagnosticsLaneIndex:       schemaStringComputed(PfOpticsDiagnosticsLaneIndexDescription),
+			PfOpticsDiagnosticsLaneRxPowerDbm:  schemaFloatComputed(PfOpticsDiagnosticsLaneRxPowerDbmDescription),
+			PfOpticsDiagnosticsLaneRxPower:     schemaFloatComputed(PfOpticsDiagnosticsLaneRxPowerDescription),
+			PfOpticsDiagnosticsLaneBiasCurrent: schemaFloatComputed(PfOpticsDiagnosticsLaneBiasCurrentDescription),
+			PfOpticsDiagnosticsLaneTxStatus:    schemaStringComputed(PfOpticsDiagnosticsLaneTxStatusDescription),
+			PfOpticsDiagnosticsLaneRxStatus:    schemaStringComputed(PfOpticsDiagnosticsLaneRxStatusDescription),
+			PfPolltime:                         schemaIntComputed(PfPolltimeDescription),
+			PfTimeFlapped:                      schemaStringComputed(PfTimeFlappedDescription),
+			PfTrafficRxBps:                     schemaIntComputed(PfTrafficRxBpsDescription),
+			PfTrafficRxBytes:                   schemaIntComputed(PfTrafficRxBytesDescription),
+			PfTrafficRxIpv6Bytes:               schemaIntComputed(PfTrafficRxIpv6BytesDescription),
+			PfTrafficRxIpv6Packets:             schemaIntComputed(PfTrafficRxIpv6PacketsDescription),
+			PfTrafficRxPackets:                 schemaIntComputed(PfTrafficRxPacketsDescription),
+			PfTrafficRxPps:                     schemaIntComputed(PfTrafficRxPpsDescription),
+			PfTrafficTxBps:                     schemaIntComputed(PfTrafficTxBpsDescription),
+			PfTrafficTxBytes:                   schemaIntComputed(PfTrafficTxBytesDescription),
+			PfTrafficTxIpv6Bytes:               schemaIntComputed(PfTrafficTxIpv6BytesDescription),
+			PfTrafficTxIpv6Packets:             schemaIntComputed(PfTrafficTxIpv6PacketsDescription),
+			PfTrafficTxPackets:                 schemaIntComputed(PfTrafficTxBytesDescription),
+			PfTrafficTxPps:                     schemaIntComputed(PfTrafficTxPpsDescription),
+			PfWiringMedia:                      schemaStringComputed(PfWiringMediaDescription),
+			PfWiringModule:                     schemaStringComputed(PfWiringModuleDescription),
+			PfWiringPanel:                      schemaStringComputed(PfWiringPanelDescription),
+			PfWiringPosition:                   schemaStringComputed(PfWiringPositionDescription),
+			PfWiringReach:                      schemaStringComputed(PfWiringReachDescription),
+			PfWiringType:                       schemaStringComputed(PfWiringTypeDescription),
+			PfLagSpeed:                         schemaIntComputed(PfLagSpeedDescription),
+			PfDeviceCanLag:                     schemaBoolComputed(PfDeviceCanLagDescription),
 		},
 	}
 }
@@ -226,50 +68,23 @@ func dataSourcePortDeviceInfoRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 	if portInfo != nil {
-		if portInfo.AdjacentRouter != nil {
-			_ = d.Set("adjacent_router", portInfo.AdjacentRouter)
-		}
-		_ = d.Set("device_name", portInfo.DeviceName)
-		_ = d.Set("device_make", portInfo.DeviceMake)
-		_ = d.Set("admin_status", portInfo.AdminStatus)
-		_ = d.Set("oper_status", portInfo.OperStatus)
-		_ = d.Set("auto_negotiation", portInfo.AutoNegotiation)
-		_ = d.Set("iface_name", portInfo.IfaceName)
-		_ = d.Set("speed", portInfo.Speed)
-		for _, optics := range portInfo.OpticsDiagnosticsLaneValues {
-			_ = d.Set("optics_diagnostics_lane_tx_power_dbm", optics.TxPowerDbm)
-			_ = d.Set("optics_diagnostics_lane_tx_power", optics.TxPower)
-			_ = d.Set("optics_diagnostics_lane_index", optics.LaneIndex)
-			_ = d.Set("optics_diagnostics_lane_rx_power_dbm", optics.RxPowerDbm)
-			_ = d.Set("optics_diagnostics_lane_rx_power", optics.RxPower)
-			_ = d.Set("optics_diagnostics_lane_bias_current", optics.BiasCurrent)
-			_ = d.Set("optics_diagnostics_lane_tx_status", optics.TxStatus)
-			_ = d.Set("optics_diagnostics_lane_rx_status", optics.RxStatus)
-		}
+		_ = setResourceDataKeys(d, portInfo, PfDeviceName, PfDeviceMake, PfAdminStatus, PfOperStatus, PfAutoNegotiation, PfIfaceName, PfSpeed, PfTimeFlapped, PfTrafficRxBps, PfTrafficRxBytes, PfTrafficRxIpv6Bytes, PfTrafficRxIpv6Packets, PfTrafficRxPackets, PfTrafficRxPps, PfTrafficTxBps, PfTrafficTxBytes, PfTrafficTxIpv6Bytes, PfTrafficTxIpv6Packets, PfTrafficTxPackets, PfTrafficTxPps, PfWiringMedia, PfWiringModule, PfWiringPanel, PfWiringPosition, PfWiringReach, PfWiringType, PfLagSpeed, PfDeviceCanLag)
 		if portInfo.Polltime != nil {
-			_ = d.Set("polltime", portInfo.Polltime)
+			_ = d.Set(PfPolltime, portInfo.Polltime) // constant: "polltime" -> PfPolltime
 		}
-		_ = d.Set("time_flapped", portInfo.TimeFlapped)
-		_ = d.Set("traffic_rx_bps", portInfo.TrafficRxBps)
-		_ = d.Set("traffic_rx_bytes", portInfo.TrafficRxBytes)
-		_ = d.Set("traffic_rx_ipv6_bytes", portInfo.TrafficRxIpv6Bytes)
-		_ = d.Set("traffic_rx_ipv6_packets", portInfo.TrafficRxIpv6Packets)
-		_ = d.Set("traffic_rx_packets", portInfo.TrafficRxPackets)
-		_ = d.Set("traffic_rx_pps", portInfo.TrafficRxPps)
-		_ = d.Set("traffic_tx_bps", portInfo.TrafficTxBps)
-		_ = d.Set("traffic_tx_bytes", portInfo.TrafficTxBytes)
-		_ = d.Set("traffic_tx_ipv6_bytes", portInfo.TrafficTxIpv6Bytes)
-		_ = d.Set("traffic_tx_ipv6_packets", portInfo.TrafficTxIpv6Packets)
-		_ = d.Set("traffic_tx_packets", portInfo.TrafficTxPackets)
-		_ = d.Set("traffic_tx_pps", portInfo.TrafficTxPps)
-		_ = d.Set("wiring_media", portInfo.WiringMedia)
-		_ = d.Set("wiring_module", portInfo.WiringModule)
-		_ = d.Set("wiring_panel", portInfo.WiringPanel)
-		_ = d.Set("wiring_position", portInfo.WiringPosition)
-		_ = d.Set("wiring_reach", portInfo.WiringReach)
-		_ = d.Set("wiring_type", portInfo.WiringType)
-		_ = d.Set("lag_speed", portInfo.LagSpeed)
-		_ = d.Set("device_can_lag", portInfo.DeviceCanLag)
+		if portInfo.AdjacentRouter != nil {
+			_ = d.Set(PfAdjacentRouter, portInfo.AdjacentRouter) // constant: "adjacent_router" -> PfAdjacentRouter
+		}
+		for _, optics := range portInfo.OpticsDiagnosticsLaneValues {
+			_ = d.Set(PfOpticsDiagnosticsLaneTxPowerDbm, optics.TxPowerDbm) // constant: "optics_diagnostics_lane_tx_power_dbm" -> PfOpticsDiagnosticsLaneTxPowerDbm
+			_ = d.Set(PfOpticsDiagnosticsLaneTxPower, optics.TxPower) // constant: "optics_diagnostics_lane_tx_power" -> PfOpticsDiagnosticsLaneTxPower
+			_ = d.Set(PfOpticsDiagnosticsLaneIndex, optics.LaneIndex) // constant: "optics_diagnostics_lane_index" -> PfOpticsDiagnosticsLaneIndex
+			_ = d.Set(PfOpticsDiagnosticsLaneRxPowerDbm, optics.RxPowerDbm) // constant: "optics_diagnostics_lane_rx_power_dbm" -> PfOpticsDiagnosticsLaneRxPowerDbm
+			_ = d.Set(PfOpticsDiagnosticsLaneRxPower, optics.RxPower) // constant: "optics_diagnostics_lane_rx_power" -> PfOpticsDiagnosticsLaneRxPower
+			_ = d.Set(PfOpticsDiagnosticsLaneBiasCurrent, optics.BiasCurrent) // constant: "optics_diagnostics_lane_bias_current" -> PfOpticsDiagnosticsLaneBiasCurrent
+			_ = d.Set(PfOpticsDiagnosticsLaneTxStatus, optics.TxStatus) // constant: "optics_diagnostics_lane_tx_status" -> PfOpticsDiagnosticsLaneTxStatus
+			_ = d.Set(PfOpticsDiagnosticsLaneRxStatus, optics.RxStatus) // constant: "optics_diagnostics_lane_rx_status" -> PfOpticsDiagnosticsLaneRxStatus
+		}
 	}
 	d.SetId(portCID.(string))
 	return diags

@@ -21,7 +21,7 @@ func TestAccAddSpeedBurstRequiredFields(t *testing.T) {
 				Config:             backboneVirtualCircuitSpeedBurstResult.Hcl,
 				ExpectNonEmptyPlan: true, // i.e. 150Mbps -> 50Mbps
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, "speed", backboneVirtualCircuitSpeedBurstResult.Speed),
+					resource.TestCheckResourceAttr(backboneVirtualCircuitSpeedBurstResult.ResourceName, PfSpeed, backboneVirtualCircuitSpeedBurstResult.Speed),
 				),
 			},
 		},

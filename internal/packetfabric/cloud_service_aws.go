@@ -504,7 +504,7 @@ func (c *PFClient) GetCurrentCustomersHosted() ([]HostedConnResp, error) {
 }
 
 func (c *PFClient) GetHostedCloudConnRequestsSent() ([]AwsHostedMktResp, error) {
-	formatedURI := fmt.Sprintf(cloudConnectionHostedRequestsSentURI, "sent")
+	formatedURI := fmt.Sprintf(cloudConnectionHostedRequestsSentURI, PfSent)
 	expectedResp := make([]AwsHostedMktResp, 0)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &expectedResp)
 	if err != nil {
@@ -596,18 +596,16 @@ func (c *PFClient) DeleteHostedMktConnection(vcRequestUUID string) (message stri
 		return
 	}
 	if vcReq == nil {
-		message = "The Marketplace connection request has been either accepted or rejected."
+		message = MessageMarketplaceConnected
 		return message, err
 	}
-	if vcReq.Status == "provisioned" {
-		message = `The Z side has approved the request and provisioned the connection.
-		Please import the new resource created to manage it with 
-		Terraform and update your Terraform configuration.`
+	if vcReq.Status == PfProvisioned {
+		message = MessageZSideApproved
 	}
-	if vcReq.Status == "rejected" {
-		message = "the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed"
+	if vcReq.Status == PfRejected {
+		message = MessageZSideRejected
 	}
-	if vcReq.Status == "pending" {
+	if vcReq.Status == PfPending {
 		err = c._deleteMktService(vcRequestUUID, hostedMktServiceRequestsURI)
 	}
 	return message, err
@@ -619,7 +617,7 @@ func (c *PFClient) _deleteMktService(vcRequestUUID, uri string) error {
 	}
 	formatedURI := fmt.Sprintf(uri, vcRequestUUID)
 	reason := DeleteReason{
-		DeleteReason: "Delete requested by PacketFabric terraform plugin.",
+		DeleteReason: MessageDeleteRequested,
 	}
 	_, err := c.sendRequest(formatedURI, deleteMethod, &reason, nil)
 	if err != nil {

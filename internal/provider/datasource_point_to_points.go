@@ -13,200 +13,60 @@ func datasourcePointToPoints() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourcePointToPointsRead,
 		Schema: map[string]*schema.Schema{
-			"point_to_points": {
+			PfPointToPoints: {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: "List of Point-to-Points.",
+				Description: PfPointToPointsDescription2,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"ptp_uuid": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "PTP UUID",
-						},
-						"ptp_circuit_id": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP Circuit ID.",
-						},
-						"description": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP description",
-						},
-						"speed": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP speed.",
-						},
-						"media": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP media type.",
-						},
-						"state": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP state.",
-						},
-						"billing": {
+						PfPtpUuid:      schemaStringComputed(PfPtpUuidDescription),
+						PfPtpCircuitId: schemaStringComputed(PfPtpCircuitIdDescription),
+						PfDescription:  schemaStringComputed(PfPointToPointsDescription),
+						PfSpeed:        schemaStringComputed(PfSpeedDescription9),
+						PfMedia:        schemaStringComputed(PfMediaDescription),
+						PfState:        schemaStringComputed(PfStateDescriptionA),
+						PfBilling: {
 							Type:     schema.TypeSet,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"account_uuid": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The billing account UUID.",
-									},
-									"subscription_term": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "The subscription term.",
-									},
-									"contracted_speed": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The contracted speed.",
-									},
+									PfAccountUuid:      schemaStringComputed(PfAccountUuidDescription),
+									PfSubscriptionTerm: schemaIntComputed(PfSubscriptionTermDescription6),
+									PfContractedSpeed:  schemaStringComputed(PfContractedSpeedDescription),
 								},
 							},
 						},
-						"time_created": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP time created.",
-						},
-						"time_updated": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The PTP time updated.",
-						},
-						"deleted": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "Is PTP deleted.",
-						},
-						"service_class": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service class for the associated VC of this PTP.",
-						},
-						"interfaces": {
+						PfTimeCreated:  schemaStringComputed(PfTimeCreatedDescriptionB),
+						PfTimeUpdated:  schemaStringComputed(PfTimeUpdatedDescription8),
+						PfDeleted:      schemaBoolComputed(PfDeletedDescription3),
+						PfServiceClass: schemaStringComputed(PfServiceClassDescription5),
+						PfInterfaces: {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"port_circuit_id": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The port circuit ID.",
-									},
-									"pop": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface POP.",
-									},
-									"site": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface site.",
-									},
-									"site_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface site name.",
-									},
-									"customer_site_code": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer site code.",
-									},
-									"customer_site_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The customer site name.",
-									},
-									"speed": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface speed.",
-									},
-									"media": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The media size.",
-									},
-									"zone": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface zone.",
-									},
-									"description": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface description.",
-									},
-									"vlan": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "The interface vlan.",
-									},
-									"untagged": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "The interface untagged state.",
-									},
-									"provisioning_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "Interface provisioning status.",
-									},
-									"admin_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface admin status.",
-									},
-									"operational_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface operational status.",
-									},
-									"customer_uuid": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer UUID.",
-									},
-									"customer_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer name.",
-									},
-									"region": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface region.",
-									},
-									"is_cloud": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "Interface cloud state.",
-									},
-									"is_ptp": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "Interface PTP state.",
-									},
-									"time_created": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface creation time.",
-									},
-									"time_updated": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface updated time.",
-									},
+									PfPortCircuitId:      schemaStringComputed(PfPortCircuitIdDescription2),
+									PfPop:                schemaStringComputed(PfPopDescription8),
+									PfSite:               schemaStringComputed(PfSiteDescription6),
+									PfSiteName:           schemaStringComputed(PfSiteNameDescription),
+									PfCustomerSiteCode:   schemaStringComputed(PfCustomerSiteCodeDescription),
+									PfCustomerSiteName:   schemaStringComputed(PfCustomerSiteNameDescription),
+									PfSpeed:              schemaStringComputed(PfSpeedDescriptionG),
+									PfMedia:              schemaStringComputed(PfMediaDescription2),
+									PfZone:               schemaStringComputed(PfZoneDescription3),
+									PfDescription:        schemaStringComputed(PfInterfacesDescription),
+									PfVlan:               schemaIntComputed(PfVlanDescription3),
+									PfUntagged:           schemaBoolComputed(PfUntaggedDescription3),
+									PfProvisioningStatus: schemaStringComputed(PfProvisioningStatusDescription),
+									PfAdminStatus:        schemaStringComputed(PfAdminStatusDescription),
+									PfOperationalStatus:  schemaStringComputed(PfOperationalStatusDescription),
+									PfCustomerUuid:       schemaStringComputed(PfCustomerUuidDescription4),
+									PfCustomerName:       schemaStringComputed(PfCustomerNameDescription2),
+									PfRegion:             schemaStringComputed(PfRegionDescription5),
+									PfIsCloud:            schemaBoolComputed(PfIsCloudDescription),
+									PfIsPtp:              schemaBoolComputed(PfIsPtpDescription),
+									PfTimeCreated:        schemaStringComputed(PfTimeCreatedDescription3),
+									PfTimeUpdated:        schemaStringComputed(PfTimeUpdatedDescription4),
 								},
 							},
 						},
@@ -225,7 +85,7 @@ func datasourcePointToPointsRead(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("point_to_points", flattenPointToPoints(ptps)); err != nil {
+	if err := d.Set(PfPointToPoints, flattenPointToPoints(ptps)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
@@ -233,22 +93,13 @@ func datasourcePointToPointsRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func flattenPointToPoints(ptps *[]packetfabric.PointToPointResp) []interface{} {
+	fields := stringsToMap(PfPtpUuid, PfPtpCircuitId, PfDescription, PfSpeed, PfMedia, PfState, PfTimeCreated, PfTimeUpdated, PfDeleted, PfServiceClass)
 	if ptps != nil {
 		flattens := make([]interface{}, len(*ptps))
 		for i, ptp := range *ptps {
-			flatten := make(map[string]interface{})
-			flatten["ptp_uuid"] = ptp.PtpUUID
-			flatten["ptp_circuit_id"] = ptp.PtpCircuitID
-			flatten["description"] = ptp.Description
-			flatten["speed"] = ptp.Speed
-			flatten["media"] = ptp.Media
-			flatten["state"] = ptp.State
-			flatten["billing"] = flattenBilling(&ptp.Billing)
-			flatten["time_created"] = ptp.TimeCreated
-			flatten["time_updated"] = ptp.TimeUpdated
-			flatten["deleted"] = ptp.Deleted
-			flatten["service_class"] = ptp.ServiceClass
-			flatten["interfaces"] = flattenPtpInterf(&ptp.Interfaces)
+			flatten := structToMap(&ptp, fields)
+			flatten[PfBilling] = flattenBilling(&ptp.Billing)
+			flatten[PfInterfaces] = flattenPtpInterf(&ptp.Interfaces)
 			flattens[i] = flatten
 		}
 		return flattens
@@ -259,43 +110,17 @@ func flattenPointToPoints(ptps *[]packetfabric.PointToPointResp) []interface{} {
 func flattenBilling(billing *packetfabric.Billing) []interface{} {
 	flattens := make([]interface{}, 0)
 	if billing != nil {
-		flatten := make(map[string]interface{})
-		flatten["account_uuid"] = billing.AccountUUID
-		flatten["subscription_term"] = billing.SubscriptionTerm
-		flatten["contracted_speed"] = billing.ContractedSpeed
-		flattens = append(flattens, flatten)
+		flattens = append(flattens, mapStruct(billing, PfAccountUuid, PfSubscriptionTerm, PfContractedSpeed))
 	}
 	return flattens
 }
 
 func flattenPtpInterf(interfs *[]packetfabric.Interfaces) []interface{} {
+	fields := stringsToMap(PfPortCircuitId, PfPop, PfSite, PfSiteName, PfCustomerSiteCode, PfCustomerSiteName, PfSpeed, PfMedia, PfZone, PfDescription, PfVlan, PfUntagged, PfProvisioningStatus, PfAdminStatus, PfOperationalStatus, PfCustomerUuid, PfCustomerName, PfRegion, PfIsCloud, PfIsPtp, PfTimeCreated, PfTimeUpdated)
 	if interfs != nil {
 		flattens := make([]interface{}, len(*interfs), len(*interfs))
 		for i, interf := range *interfs {
-			flatten := make(map[string]interface{})
-			flatten["port_circuit_id"] = interf.PortCircuitID
-			flatten["pop"] = interf.Pop
-			flatten["site"] = interf.Site
-			flatten["site_name"] = interf.SiteName
-			flatten["customer_site_code"] = interf.CustomerSiteCode
-			flatten["customer_site_name"] = interf.CustomerSiteName
-			flatten["speed"] = interf.Speed
-			flatten["media"] = interf.Media
-			flatten["zone"] = interf.Zone
-			flatten["description"] = interf.Description
-			flatten["vlan"] = interf.Vlan
-			flatten["untagged"] = interf.Untagged
-			flatten["provisioning_status"] = interf.ProvisioningStatus
-			flatten["admin_status"] = interf.AdminStatus
-			flatten["operational_status"] = interf.OperationalStatus
-			flatten["customer_uuid"] = interf.CustomerUUID
-			flatten["customer_name"] = interf.CustomerName
-			flatten["region"] = interf.Region
-			flatten["is_cloud"] = interf.IsCloud
-			flatten["is_ptp"] = interf.IsPtp
-			flatten["time_created"] = interf.TimeCreated
-			flatten["time_updated"] = interf.TimeUpdated
-			flattens[i] = flatten
+			flattens[i] = structToMap(&interf, fields)
 		}
 		return flattens
 	}

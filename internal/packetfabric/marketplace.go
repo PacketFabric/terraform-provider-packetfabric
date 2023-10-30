@@ -73,9 +73,9 @@ func (c *PFClient) CreateMarketplaceService(service MarketplaceService) (*Market
 
 func (c *PFClient) CreateMarketplaceServiceWithRouteSet(service MarketplaceService, mktServiceRouteSet MarketplaceServiceRouteSet) (*MarketplaceServiceResp, error) {
 	expectedResp := &MarketplaceServiceResp{}
-	if service.ServiceType == "quick-connect-service" {
+	if service.ServiceType == PfQuickConnectService {
 		// Please see this Github issue for more details: #248
-		service.ServiceType = "cloud-router-service"
+		service.ServiceType = PfCloudRouterService
 	}
 	var err error
 	type MarketplaceWithRouteSet struct {
@@ -104,7 +104,7 @@ func (c *PFClient) CreateMarketplaceServiceWithRouteSet(service MarketplaceServi
 	if err != nil {
 		return nil, err
 	}
-	if service.ServiceType == "cloud-router-service" && len(mktServiceRouteSet.ConnectionCircuitIDs) > 0 {
+	if service.ServiceType == PfCloudRouterService && len(mktServiceRouteSet.ConnectionCircuitIDs) > 0 {
 		err = c.UpdateMarketPlaceConnection(mktServiceRouteSet.CloudRouterCircuitID, expectedResp.RouteSetCircuitID, mktServiceRouteSet.ConnectionCircuitIDs)
 		if err != nil {
 			return nil, err

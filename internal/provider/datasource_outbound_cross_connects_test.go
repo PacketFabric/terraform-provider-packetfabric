@@ -19,6 +19,7 @@ func TestAccDataSourceOutboundCrossConnectsComputedRequiredFields(t *testing.T) 
 		Steps: []resource.TestStep{
 			{
 				Config: datasourceOutboundCrossConnectsResult.Hcl,
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(datasourceOutboundCrossConnectsResult.ResourceName, "outbound_cross_connects.0.port"),
 					resource.TestCheckResourceAttrSet(datasourceOutboundCrossConnectsResult.ResourceName, "outbound_cross_connects.0.site"),

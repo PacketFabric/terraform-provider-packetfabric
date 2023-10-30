@@ -32,11 +32,11 @@ type DocumentsPayload struct {
 func (c *PFClient) CreateDocument(documentsData DocumentsPayload) (*Document, error) {
 	resp := &Document{}
 	payload := map[string]string{
-		"type":            documentsData.Type,
-		"description":     documentsData.Description,
-		"port_circuit_id": documentsData.PortCircuitId,
+		PfType:          documentsData.Type,
+		PfDescription:   documentsData.Description,
+		PfPortCircuitId: documentsData.PortCircuitId,
 	}
-	fileField := "document"
+	fileField := PfDocument
 	filePath := documentsData.Document
 	_, err := c.sendMultipartRequest(documentsURI, postMethod, fileField, filePath, payload, &resp)
 	if err != nil {

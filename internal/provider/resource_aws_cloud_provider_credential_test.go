@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccCloudProviderCredentialAwsRequiredFields(t *testing.T) {
-	testutil.PreCheck(t, []string{"AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"})
+	testutil.PreCheck(t, []string{PfeAwsAccessKeyId, PfeAwsSecretAccessKey})
 
 	awsProviderCredentialsResult := testutil.RHclCloudProviderCredentialAws()
 
@@ -21,9 +21,9 @@ func TestAccCloudProviderCredentialAwsRequiredFields(t *testing.T) {
 			{
 				Config: awsProviderCredentialsResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, "description", awsProviderCredentialsResult.Desc),
-					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, "aws_access_key", os.Getenv("AWS_ACCESS_KEY_ID")),
-					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, "aws_secret_key", os.Getenv("AWS_SECRET_ACCESS_KEY")),
+					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, PfDescription, awsProviderCredentialsResult.Desc),
+					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, PfAwsAccessKey, os.Getenv(PfeAwsAccessKeyId)),
+					resource.TestCheckResourceAttr(awsProviderCredentialsResult.ResourceName, PfAwsSecretKey, os.Getenv(PfeAwsSecretAccessKey)),
 				),
 			},
 		},

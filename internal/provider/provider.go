@@ -134,6 +134,7 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_ibm_hosted_connection":           dataSourceCloudServicesConnInfo(),
 			"packetfabric_cs_dedicated_connections":           datasourceDedicatedCloudConnections(),
 			"packetfabric_billing":                            dataSourceBilling(),
+			"packetfabric_cloud_provider_credentials":         datasourceCloudProviderCredentials(),
 			"packetfabric_ports":                              datasourceInterfaces(),
 			"packetfabric_locations":                          dataSourceLocations(),
 			"packetfabric_link_aggregation_group":             datasourceLinkAggregationGroups(),

@@ -7,7 +7,6 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceAddSpeedBurst() *schema.Resource {
@@ -15,30 +14,11 @@ func resourceAddSpeedBurst() *schema.Resource {
 		CreateContext: resourceAddSpeedBurstCreate,
 		ReadContext:   resourceAddSpeedBurstRead,
 		DeleteContext: resourceAddSpeedBurstDelete,
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schemaTimeoutsCRD(10, 10, 10),
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"vc_circuit_id": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The circuit ID of the virtual circuit that you are bursting.",
-			},
-			"speed": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Speed in Mbps of the burst. This bandwidth will be added to the existing circuit speed. If an existing burst exists, this speed burst will replace the existing one. Must be a multiple of 100Mbps.",
-			},
+			PfId:          schemaStringComputedPlain(),
+			PfVcCircuitId: schemaStringRequiredNewNotEmpty(PfVcCircuitIdDescription2),
+			PfSpeed:       schemaStringRequiredNewNotEmpty(PfSpeedDescriptionD),
 		},
 	}
 }
@@ -47,8 +27,8 @@ func resourceAddSpeedBurstCreate(ctx context.Context, d *schema.ResourceData, m 
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if vcCID, ok := d.GetOk("vc_circuit_id"); ok {
-		if speed, ok := d.GetOk("speed"); ok {
+	if vcCID, ok := d.GetOk(PfVcCircuitId); ok {
+		if speed, ok := d.GetOk(PfSpeed); ok {
 			if _, err := c.AddSpeedBurstToCircuit(vcCID.(string), speed.(string)); err != nil {
 				return diag.FromErr(err)
 			}
@@ -74,7 +54,7 @@ func resourceAddSpeedBurstRead(ctx context.Context, d *schema.ResourceData, m in
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if vcCID, ok := d.GetOk("vc_circuit_id"); ok {
+	if vcCID, ok := d.GetOk(PfVcCircuitId); ok {
 		if _, err := c.GetBackboneByVcCID(vcCID.(string)); err != nil {
 			return diag.FromErr(err)
 		}
@@ -101,6 +81,6 @@ func resourceAddSpeedBurstDelete(ctx context.Context, d *schema.ResourceData, m 
 		}
 	}()
 	<-createOk
-	d.SetId("")
+	d.SetId(PfEmptyString)
 	return diags
 }

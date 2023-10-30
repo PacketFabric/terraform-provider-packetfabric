@@ -6,7 +6,6 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudProviderCredentialAws() *schema.Resource {
@@ -16,32 +15,10 @@ func resourceCloudProviderCredentialAws() *schema.Resource {
 		UpdateContext: resourceCloudProviderCredentialAwsUpdate,
 		DeleteContext: resourceCloudProviderCredentialDelete,
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"description": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Description of the Cloud Provider Credentials.",
-			},
-			"aws_access_key": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("AWS_ACCESS_KEY_ID", nil),
-				Description: "The AWS access key you want to save. " +
-					"Can also be set with the AWS_ACCESS_KEY_ID environment variable.",
-			},
-			"aws_secret_key": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("AWS_SECRET_ACCESS_KEY", nil),
-				Description: "The AWS secret key you want to save. " +
-					"Can also be set with the AWS_SECRET_ACCESS_KEY environment variable.",
-			},
+			PfId:           schemaStringComputedPlain(),
+			PfDescription:  schemaStringRequired(PfCloudProviderCredentials),
+			PfAwsAccessKey: schemaStringEnvSensitive(PfeAwsAccessKeyId, PfAwsAccessKeyDescription),
+			PfAwsSecretKey: schemaStringEnvSensitive(PfeAwsSecretAccessKey, PfAwsSecretKeyDescription),
 		},
 	}
 }
@@ -85,14 +62,14 @@ func resourceCloudProviderCredentialAwsUpdate(ctx context.Context, d *schema.Res
 
 	cpc := packetfabric.CloudProviderCredentialUpdate{}
 
-	if d.HasChange("description") {
-		cpc.Description = d.Get("description").(string)
+	if d.HasChange(PfDescription) {
+		cpc.Description = d.Get(PfDescription).(string)
 	}
 	credentials := packetfabric.CloudCredentials{}
-	if accessKey, ok := d.GetOk("aws_access_key"); ok {
+	if accessKey, ok := d.GetOk(PfAwsAccessKey); ok {
 		credentials.AWSAccessKey = accessKey.(string)
 	}
-	if secretKey, ok := d.GetOk("aws_secret_key"); ok {
+	if secretKey, ok := d.GetOk(PfAwsSecretKey); ok {
 		credentials.AWSSecretKey = secretKey.(string)
 	}
 	cpc.CloudCredentials = credentials
@@ -118,7 +95,7 @@ func resourceCloudProviderCredentialDelete(ctx context.Context, d *schema.Resour
 	}
 
 	if !resp.IsUnused {
-		return diag.Errorf("cannot delete cloud provider credential as it is currently in use")
+		return diag.Errorf(MessageCredentialsInUse)
 	}
 
 	_, err2 := c.DeleteCloudProviderCredential(cpcID)
@@ -126,21 +103,21 @@ func resourceCloudProviderCredentialDelete(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err2)
 	}
 
-	d.SetId("")
+	d.SetId(PfEmptyString)
 	return diags
 }
 
 func extractCloudProviderCredentialsAws(d *schema.ResourceData) packetfabric.CloudProviderCredentialCreate {
 	cpc := packetfabric.CloudProviderCredentialCreate{}
-	cpc.CloudProvider = "aws"
-	if description, ok := d.GetOk("description"); ok {
+	cpc.CloudProvider = PfAws
+	if description, ok := d.GetOk(PfDescription); ok {
 		cpc.Description = description.(string)
 	}
 	cloudCredentials := packetfabric.CloudCredentials{}
-	if awsAccessKey, ok := d.GetOk("aws_access_key"); ok {
+	if awsAccessKey, ok := d.GetOk(PfAwsAccessKey); ok {
 		cloudCredentials.AWSAccessKey = awsAccessKey.(string)
 	}
-	if awsSecretKey, ok := d.GetOk("aws_secret_key"); ok {
+	if awsSecretKey, ok := d.GetOk(PfAwsSecretKey); ok {
 		cloudCredentials.AWSSecretKey = awsSecretKey.(string)
 	}
 	cpc.CloudCredentials = cloudCredentials

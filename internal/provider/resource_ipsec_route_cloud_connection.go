@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -16,157 +15,31 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 		ReadContext:   resourceIPSecCloudRouteConnRead,
 		UpdateContext: resourceIPSecCloudRouteConnUpdate,
 		DeleteContext: resourceIPSecCloudRouteConnDelete,
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schema10MinuteTimeouts(),
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"circuit_id": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
-			},
-			"description": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "A brief description of this connection.",
-			},
-			"account_uuid": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
-				ValidateFunc: validation.IsUUID,
-				Description: "The UUID for the billing account that should be billed. " +
-					"Can also be set with the PF_ACCOUNT_ID environment variable.",
-			},
-			"pop": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The POP in which you want to provision the connection.",
-			},
-			"speed": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecSpeedOptions(), true),
-				Description:  "The desired speed of the new connection.\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\"]",
-			},
-			"ike_version": {
-				Type:         schema.TypeInt,
-				Required:     true,
-				ValidateFunc: validation.IntInSlice([]int{1, 2}),
-				Description:  "The Internet Key Exchange (IKE) version supported by your device. In most cases, this is v2 (v1 is deprecated).\n\n\tEnum: 1, 2.",
-			},
-			"phase1_authentication_method": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The authentication method to use during phase 1. For example, \"pre-shared-key\".",
-			},
-			"phase1_group": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPahsesGroupOptions(), false),
-				Description:  "Phase 1 is when the VPN peers are authenticated and we establish security associations (SAs) to protect IKE messaging between the two endpoints (which in this case is PacketFabric and your VPN device). This is also known as the IKE phase.\n\n\tThe Phase 1 group is the Diffie-Hellman (DH) algorithm used to create a shared secret between the endpoints.\n\n\tEnum: \"group1\" \"group14\" \"group15\" \"group16\" \"group19\" \"group2\" \"group20\" \"group24\" \"group5\" ",
-			},
-			"phase1_encryption_algo": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPhase1EncryptionAlgoOptions(), false),
-				Description:  "The encryption algorithm to use during phase 1.\n\n\tEnum: \"3des-cbc\" \"aes-128-cbc\" \"aes-192-cbc\" \"aes-256-cbc\" \"des-cbc\" ",
-			},
-			"phase1_authentication_algo": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPhase1AuthenticationAlgoOptions(), false),
-				Description:  "The authentication algorithm to use during phase 1.\n\n\tEnum: \"md5\" \"sha-256\" \"sha-384\" \"sha1\" ",
-			},
-			"phase1_lifetime": {
-				Type:         schema.TypeInt,
-				Required:     true,
-				ValidateFunc: validation.IntBetween(180, 86400),
-				Description:  "The time in seconds before a tunnel will need to re-authenticate. The phase 1 lifetime should be equal to or longer than phase 2. This can be between 180 and 86400.",
-			},
-			"phase2_pfs_group": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPahsesGroupOptions(), false),
-				Description:  "Phase 2 is when SAs are further established to protect and encrypt IP traffic within the tunnel. This is also known as the IPsec phase.\n\n\tThe PFS group is the Perfect Forward Secrecy group. This means that rather than using the keys from phase 1, new keys are generated per the selected Diffie-Hellman algorithm (same as those listed above).\n\n\tEnum: \"group1\" \"group14\" \"group15\" \"group16\" \"group19\" \"group2\" \"group20\" \"group24\" \"group5\" ",
-			},
-			"phase2_encryption_algo": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPhase2EncryptionAlgoOptions(), false),
-				Description:  "The encryption algorithm to use during phase 2.\n\n\tEnum: \"3des-cbc\" \"aes-128-cbc\" \"aes-128-gcm\" \"aes-192-cbc\" \"aes-192-gcm\" \"aes-256-cbc\" \"aes-256-gcm\" \"des-cbc\" ",
-			},
-			"phase2_authentication_algo": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice(iPSecPhase2AuthenticationAlgoOptions(), false),
-				Description:  "The authentication algorithm to use during phase 2. It cannot be null if phase2_encryption_algo is CBC. \n\n\tEnum: \"hmac-md5-96\" \"hmac-sha-256-128\" \"hmac-sha1-96\" ",
-			},
-			"phase2_lifetime": {
-				Type:         schema.TypeInt,
-				Required:     true,
-				ValidateFunc: validation.IntBetween(180, 86400),
-				Description:  "The time in seconds before phase 2 expires and needs to reauthenticate. We recommend that the phase 2 lifetime is equal to or shorter than phase 1. This can be between 180 and 86400.",
-			},
-			"gateway_address": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.IsIPv4Address,
-				Description:  "The gateway address of your VPN device. Because VPNs traverse the public internet, this must be a public IP address owned by you.",
-			},
-			"shared_key": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The pre-shared-key to use for authentication.",
-			},
-			"published_quote_line_uuid": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.IsUUID,
-				Description:  "UUID of the published quote line with which this connection should be associated.",
-			},
-			"po_number": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-				Description:  "Purchase order number or identifier of a service.",
-			},
-			"subscription_term": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      1,
-				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
-				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
-			},
-			"labels": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Label value linked to an object.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"etl": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
-			},
+			PfId:                         schemaStringComputedPlain(),
+			PfCircuitId:                  schemaStringRequiredNewNotEmpty(PfCircuitIdDescription),
+			PfDescription:                schemaStringRequiredNotEmpty(PfConnectionDescription),
+			PfAccountUuid:                schemaAccountUuid(PfAccountUuidDescription2),
+			PfPop:                        schemaStringRequiredNewNotEmpty(PfPopDescription5),
+			PfSpeed:                      schemaStringRequiredValidate(PfSpeedDescription5, validateIpSecSpeed()),
+			PfIkeVersion:                 schemaIntRequiredValidate(PfIkeVersionDescription2, validateIkeVersion()),
+			PfPhase1AuthenticationMethod: schemaStringRequiredNotEmpty(PfPhase1AuthenticationMethodDescription2),
+			PfPhase1Group:                schemaStringRequiredValidate(PfPhase1GroupDescription2, validatePhase1Group()),
+			PfPhase1EncryptionAlgo:       schemaStringRequiredValidate(PfPhase1EncryptionAlgoDescription2, validatePhase1EncryptionAlgo()),
+			PfPhase1AuthenticationAlgo:   schemaStringRequiredValidate(PfPhase1AuthenticationAlgoDescription2, validatePhase1AuthenticationAlgo()),
+			PfPhase1Lifetime:             schemaIntRequiredValidate(PfPhase1LifetimeDescription2, validatePhase1Lifetime()),
+			PfPhase2PfsGroup:             schemaStringRequiredValidate(PfPhase2PfsGroupDescription2, validatePhase2PfsGroup()),
+			PfPhase2EncryptionAlgo:       schemaStringRequiredValidate(PfPhase2EncryptionAlgoDescription2, validatePhase2EncryptionAlgo()),
+			PfPhase2AuthenticationAlgo:   schemaStringOptionalValidate(PfPhase2AuthenticationAlgoDescription2, validatePhase2AuthenticationAlgo()),
+			PfPhase2Lifetime:             schemaIntRequiredValidate(PfPhase2LifetimeDescription2, validatePhase2Lifetime()),
+			PfGatewayAddress:             schemaStringRequiredValidate(PfGatewayAddressDescription, validation.IsIPv4Address),
+			PfSharedKey:                  schemaStringRequiredNotEmpty(PfSharedKeyDescription),
+			PfPublishedQuoteLineUuid:     schemaStringOptionalNewValidate(PfPublishedQuoteLineUuidDescription2, validation.IsUUID),
+			PfPoNumber:                   schemaStringOptionalValidate(PfPoNumberDescription, validatePoNumber()),
+			PfSubscriptionTerm:           schemaIntOptionalValidateDefault(PfSubscriptionTermDescription2, validateSubscriptionTerm(), 1),
+			PfLabels:                     schemaStringSetOptional(PfLabelsDescription),
+			PfEtl:                        schemaFloatComputed(PfEtlDescription),
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: CloudRouterImportStatePassthroughContext,
@@ -183,7 +56,7 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if cid, ok := d.GetOk("circuit_id"); ok {
+	if cid, ok := d.GetOk(PfCircuitId); ok {
 		resp, err := c.CreateIPSecCloudRouerConnection(ipSecRouter, cid.(string))
 		if err != nil {
 			return diag.FromErr(err)
@@ -200,7 +73,7 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 		if resp != nil {
 			d.SetId(resp.VcCircuitID)
 
-			if labels, ok := d.GetOk("labels"); ok {
+			if labels, ok := d.GetOk(PfLabels); ok {
 				diagnostics, created := createLabels(c, d.Id(), labels)
 				if !created {
 					return diagnostics
@@ -210,8 +83,8 @@ func resourceIPSecCloudRouteConnCreate(ctx context.Context, d *schema.ResourceDa
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Circuit ID not present",
-			Detail:   "Please provide a valid Circuit ID.",
+			Summary:  MessageMissingCircuitId,
+			Detail:   MessageMissingCircuitIdDetail,
 		})
 	}
 	return diags
@@ -221,46 +94,34 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if cid, ok := d.GetOk("circuit_id"); ok {
-		cloudConnCID := d.Get("id")
+	if cid, ok := d.GetOk(PfCircuitId); ok {
+		cloudConnCID := d.Get(PfId)
 		resp, err := c.ReadCloudRouterConnection(cid.(string), cloudConnCID.(string))
 		if err != nil {
 			diags = diag.FromErr(err)
 			return diags
 		}
-		_ = d.Set("account_uuid", resp.AccountUUID)
-		_ = d.Set("circuit_id", resp.CloudRouterCircuitID)
-		_ = d.Set("description", resp.Description)
-		_ = d.Set("pop", resp.CloudProvider.Pop)
-		_ = d.Set("speed", resp.Speed)
+		_ = setResourceDataKeys(d, resp, PfAccountUuid, PfCircuitId, PfDescription, PfPop, PfSpeed, PfSubscriptionTerm, PfPoNumber)
 
 		resp2, err2 := c.GetIpsecSpecificConn(cloudConnCID.(string))
 		if err2 != nil {
 			diags = diag.FromErr(err2)
 		}
-		_ = d.Set("ike_version", resp2.IkeVersion)
-		_ = d.Set("phase1_authentication_method", resp2.Phase1AuthenticationMethod)
-		_ = d.Set("phase1_group", resp2.Phase1Group)
-		_ = d.Set("phase1_encryption_algo", resp2.Phase1EncryptionAlgo)
-		_ = d.Set("phase1_authentication_algo", resp2.Phase1AuthenticationAlgo)
-		_ = d.Set("phase1_lifetime", resp2.Phase1Lifetime)
-		_ = d.Set("phase2_pfs_group", resp2.Phase2PfsGroup)
-		_ = d.Set("phase2_encryption_algo", resp2.Phase2EncryptionAlgo)
-		_ = d.Set("phase2_authentication_algo", resp2.Phase2AuthenticationAlgo)
-		_ = d.Set("phase2_lifetime", resp2.Phase2Lifetime)
-		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
-		_ = d.Set("shared_key", resp2.PreSharedKey)
-		_ = d.Set("po_number", resp.PONumber)
-		_ = d.Set("subscription_term", resp.SubscriptionTerm)
+		errD := setResourceDataKeys(d, resp2, PfIkeVersion, PfPhase1AuthenticationMethod, PfPhase1Group, PfPhase1EncryptionAlgo, PfPhase1AuthenticationAlgo, PfPhase1Lifetime, PfPhase2PfsGroup, PfPhase2EncryptionAlgo, PfPhase2AuthenticationAlgo, PfPhase2Lifetime, PfGatewayAddress, PfSharedKey, PfPoNumber, PfSubscriptionTerm)
+		if nil != errD {
+			return diag.FromErr(errD)
+		}
+		_ = d.Set(PfSharedKey, resp2.PreSharedKey)
+		_ = d.Set(PfGatewayAddress, resp2.CustomerGatewayAddress)
 
 		// unsetFields: published_quote_line_uuid
 	}
-	if _, ok := d.GetOk("labels"); ok {
+	if _, ok := d.GetOk(PfLabels); ok {
 		labels, err3 := getLabels(c, d.Id())
 		if err3 != nil {
 			return diag.FromErr(err3)
 		}
-		_ = d.Set("labels", labels)
+		_ = d.Set(PfLabels, labels)
 	}
 
 	etl, err4 := c.GetEarlyTerminationLiability(d.Id())
@@ -268,7 +129,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err4)
 	}
 	if etl > 0 {
-		_ = d.Set("etl", etl)
+		_ = d.Set(PfEtl, etl)
 	}
 
 	return diags
@@ -285,7 +146,7 @@ func resourceIPSecCloudRouteConnUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if d.HasChanges([]string{"description", "speed", "po_number", "labels"}...) {
+	if d.HasChanges([]string{PfDescription, PfSpeed, PfPoNumber, PfLabels}...) {
 		return resourceCloudRouterConnUpdate(ctx, d, m)
 	}
 
@@ -298,61 +159,61 @@ func resourceIPSecCloudRouteConnDelete(ctx context.Context, d *schema.ResourceDa
 
 func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn, error) {
 	iPSecRouter := packetfabric.IPSecRouterConn{}
-	if desc, ok := d.GetOk("description"); ok {
+	if desc, ok := d.GetOk(PfDescription); ok {
 		iPSecRouter.Description = desc.(string)
 	}
-	if accountUUID, ok := d.GetOk("account_uuid"); ok {
+	if accountUUID, ok := d.GetOk(PfAccountUuid); ok {
 		iPSecRouter.AccountUUID = accountUUID.(string)
 	}
-	if pop, ok := d.GetOk("pop"); ok {
+	if pop, ok := d.GetOk(PfPop); ok {
 		iPSecRouter.Pop = pop.(string)
 	}
-	if speed, ok := d.GetOk("speed"); ok {
+	if speed, ok := d.GetOk(PfSpeed); ok {
 		iPSecRouter.Speed = speed.(string)
 	}
-	if ikeVersion, ok := d.GetOk("ike_version"); ok {
+	if ikeVersion, ok := d.GetOk(PfIkeVersion); ok {
 		iPSecRouter.IkeVersion = ikeVersion.(int)
 	}
-	if phaseOneAuthMethod, ok := d.GetOk("phase1_authentication_method"); ok {
+	if phaseOneAuthMethod, ok := d.GetOk(PfPhase1AuthenticationMethod); ok {
 		iPSecRouter.Phase1AuthenticationMethod = phaseOneAuthMethod.(string)
 	}
-	if phaseOneGroup, ok := d.GetOk("phase1_group"); ok {
+	if phaseOneGroup, ok := d.GetOk(PfPhase1Group); ok {
 		iPSecRouter.Phase1Group = phaseOneGroup.(string)
 	}
-	if phaseOneEncryptionAlgo, ok := d.GetOk("phase1_encryption_algo"); ok {
+	if phaseOneEncryptionAlgo, ok := d.GetOk(PfPhase1EncryptionAlgo); ok {
 		iPSecRouter.Phase1EncryptionAlgo = phaseOneEncryptionAlgo.(string)
 	}
-	if phaseOneAuthAlgo, ok := d.GetOk("phase1_authentication_algo"); ok {
+	if phaseOneAuthAlgo, ok := d.GetOk(PfPhase1AuthenticationAlgo); ok {
 		iPSecRouter.Phase1AuthenticationAlgo = phaseOneAuthAlgo.(string)
 	}
-	if phaseOneLifetime, ok := d.GetOk("phase1_lifetime"); ok {
+	if phaseOneLifetime, ok := d.GetOk(PfPhase1Lifetime); ok {
 		iPSecRouter.Phase1Lifetime = phaseOneLifetime.(int)
 	}
-	if phaseTwoPfsGroup, ok := d.GetOk("phase2_pfs_group"); ok {
+	if phaseTwoPfsGroup, ok := d.GetOk(PfPhase2PfsGroup); ok {
 		iPSecRouter.Phase2PfsGroup = phaseTwoPfsGroup.(string)
 	}
-	if phaseTwoEncryptionAlgo, ok := d.GetOk("phase2_encryption_algo"); ok {
+	if phaseTwoEncryptionAlgo, ok := d.GetOk(PfPhase2EncryptionAlgo); ok {
 		iPSecRouter.Phase2EncryptionAlgo = phaseTwoEncryptionAlgo.(string)
 	}
-	if phaseTwoAuthAlgo, ok := d.GetOk("phase2_authentication_algo"); ok {
+	if phaseTwoAuthAlgo, ok := d.GetOk(PfPhase2AuthenticationAlgo); ok {
 		iPSecRouter.Phase2AuthenticationAlgo = phaseTwoAuthAlgo.(string)
 	}
-	if phaseTwoLifetime, ok := d.GetOk("phase2_lifetime"); ok {
+	if phaseTwoLifetime, ok := d.GetOk(PfPhase2Lifetime); ok {
 		iPSecRouter.Phase2Lifetime = phaseTwoLifetime.(int)
 	}
-	if gatewayAddress, ok := d.GetOk("gateway_address"); ok {
+	if gatewayAddress, ok := d.GetOk(PfGatewayAddress); ok {
 		iPSecRouter.GatewayAddress = gatewayAddress.(string)
 	}
-	if sharedKey, ok := d.GetOk("shared_key"); ok {
+	if sharedKey, ok := d.GetOk(PfSharedKey); ok {
 		iPSecRouter.SharedKey = sharedKey.(string)
 	}
-	if publishedQuote, ok := d.GetOk("published_quote_line_uuid"); ok {
+	if publishedQuote, ok := d.GetOk(PfPublishedQuoteLineUuid); ok {
 		iPSecRouter.PublishedQuoteLineUUID = publishedQuote.(string)
 	}
-	if poNumber, ok := d.GetOk("po_number"); ok {
+	if poNumber, ok := d.GetOk(PfPoNumber); ok {
 		iPSecRouter.PONumber = poNumber.(string)
 	}
-	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+	if subscriptionTerm, ok := d.GetOk(PfSubscriptionTerm); ok {
 		iPSecRouter.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return iPSecRouter, nil
@@ -360,77 +221,41 @@ func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn
 
 func extractIPSecUpdate(d *schema.ResourceData) packetfabric.IPSecConnUpdate {
 	ipsec := packetfabric.IPSecConnUpdate{}
-	if custGatewayAdd, ok := d.GetOk("gateway_address"); ok {
+	if custGatewayAdd, ok := d.GetOk(PfGatewayAddress); ok {
 		ipsec.CustomerGatewayAddress = custGatewayAdd.(string)
 	}
-	if ikeVersion, ok := d.GetOk("ike_version"); ok {
+	if ikeVersion, ok := d.GetOk(PfIkeVersion); ok {
 		ipsec.IkeVersion = ikeVersion.(int)
 	}
-	if phaseOneAuthMethod, ok := d.GetOk("phase1_authentication_method"); ok {
+	if phaseOneAuthMethod, ok := d.GetOk(PfPhase1AuthenticationMethod); ok {
 		ipsec.Phase1AuthenticationMethod = phaseOneAuthMethod.(string)
 	}
-	if phaseOneGroup, ok := d.GetOk("phase1_group"); ok {
+	if phaseOneGroup, ok := d.GetOk(PfPhase1Group); ok {
 		ipsec.Phase1Group = phaseOneGroup.(string)
 	}
-	if phaseOneEncAlgo, ok := d.GetOk("phase1_encryption_algo"); ok {
+	if phaseOneEncAlgo, ok := d.GetOk(PfPhase1EncryptionAlgo); ok {
 		ipsec.Phase1EncryptionAlgo = phaseOneEncAlgo.(string)
 	}
-	if phaseOneAuthAlgo, ok := d.GetOk("phase1_authentication_algo"); ok {
+	if phaseOneAuthAlgo, ok := d.GetOk(PfPhase1AuthenticationAlgo); ok {
 		ipsec.Phase1AuthenticationAlgo = phaseOneAuthAlgo.(string)
 	}
-	if phaseOneLifetime, ok := d.GetOk("phase1_lifetime"); ok {
+	if phaseOneLifetime, ok := d.GetOk(PfPhase1Lifetime); ok {
 		ipsec.Phase1Lifetime = phaseOneLifetime.(int)
 	}
-	if phaseTwoPfsGroup, ok := d.GetOk("phase2_pfs_group"); ok {
+	if phaseTwoPfsGroup, ok := d.GetOk(PfPhase2PfsGroup); ok {
 		ipsec.Phase2PfsGroup = phaseTwoPfsGroup.(string)
 	}
-	if phaseTwoEncryptationAlgo, ok := d.GetOk("phase2_encryption_algo"); ok {
+	if phaseTwoEncryptationAlgo, ok := d.GetOk(PfPhase2EncryptionAlgo); ok {
 		ipsec.Phase2EncryptionAlgo = phaseTwoEncryptationAlgo.(string)
 	}
-	if phaseTwoAuthAlgo, ok := d.GetOk("phase2_authentication_algo"); ok {
+	if phaseTwoAuthAlgo, ok := d.GetOk(PfPhase2AuthenticationAlgo); ok {
 		ipsec.Phase2AuthenticationAlgo = phaseTwoAuthAlgo.(string)
 	}
-	if phaseTwoLifetime, ok := d.GetOk("phase2_lifetime"); ok {
+	if phaseTwoLifetime, ok := d.GetOk(PfPhase2Lifetime); ok {
 		ipsec.Phase2Lifetime = phaseTwoLifetime.(int)
 	}
-	if preSharedKey, ok := d.GetOk("shared_key"); ok {
+	if preSharedKey, ok := d.GetOk(PfSharedKey); ok {
 		ipsec.PreSharedKey = preSharedKey.(string)
 	}
 	return ipsec
-}
-
-func iPSecSpeedOptions() []string {
-	return []string{
-		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
-		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
-		"5Gbps", "10Gbps"}
-}
-
-func iPSecPahsesGroupOptions() []string {
-	return []string{
-		"group1", "group14", "group15", "group16",
-		"group19", "group2", "group20", "group24",
-		"group5"}
-}
-
-func iPSecPhase1EncryptionAlgoOptions() []string {
-	return []string{
-		"3des-cbc", "aes-128-cbc", "aes-192-cbc", "aes-256-cbc",
-		"des-cbc"}
-}
-
-func iPSecPhase1AuthenticationAlgoOptions() []string {
-	return []string{
-		"md5", "sha-256", "sha-384", "sha1"}
-}
-
-func iPSecPhase2EncryptionAlgoOptions() []string {
-	return []string{
-		"3des-cbc", "aes-128-cbc", "aes-128-gcm", "aes-192-cbc", "aes-256-cbc", "aes-192-gcm",
-		"aes-256-cbc", "aes-256-gcm", "des-cbc"}
-}
-
-func iPSecPhase2AuthenticationAlgoOptions() []string {
-	return []string{
-		"hmac-md5-96", "hmac-sha-256-128", "hmac-sha1-96"}
 }

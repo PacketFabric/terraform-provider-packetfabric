@@ -106,7 +106,7 @@ func (c *PFClient) UserPasswordUpdate(userID string, oldPassword string, newPass
 // This function represents the Action to Delete an existing User
 // https://docs.packetfabric.com/api/v2/swagger/#/Users/user_delete_by_login
 func (c *PFClient) DeleteUsers(userID string) (*UserDelResp, error) {
-	if userID == "" {
+	if userID == PfEmptyString {
 		return nil, errors.New(errorMsg)
 	}
 	formatedURI := fmt.Sprintf("%s/%s", UsersURI, userID)

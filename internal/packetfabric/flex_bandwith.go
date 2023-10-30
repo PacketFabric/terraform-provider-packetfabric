@@ -64,7 +64,7 @@ func (c *PFClient) ReadFlexBandwidth(flexID string) (*FlexBandwidthResponse, err
 // This function represents the Action to Delete an existing Flex Bandwidth
 // https://docs.packetfabric.com/api/v2/swagger/#/Flex%20Bandwidth/delete_flex_bandwidth
 func (c *PFClient) DeleteFlexBandwidth(flexID string) (*FlexBandwidthDelResp, error) {
-	if flexID == "" {
+	if flexID == PfEmptyString {
 		return nil, errors.New(errorMsg)
 	}
 	formatedURI := fmt.Sprintf("%s/%s", FlexBandwidthURI, flexID)

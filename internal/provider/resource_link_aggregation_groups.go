@@ -10,7 +10,6 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceLinkAggregationGroups() *schema.Resource {
@@ -19,66 +18,16 @@ func resourceLinkAggregationGroups() *schema.Resource {
 		ReadContext:   resourceLinkAggregationGroupsRead,
 		UpdateContext: resourceLinkAggregationGroupsUpdate,
 		DeleteContext: resourceLinkAggregationGroupsDelete,
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schema10MinuteTimeouts(),
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"description": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "A brief description of the LAG.",
-			},
-			"interval": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(intervalOptions(), false),
-				Description:  "The LACP interval determines the frequency in which LACP control packets (LACP PDUs) are sent. If you specify fast, they are sent at 1 second intervals. If you specify slow, they are sent at 30 second intervals.\n\n\tEnum: \"fast\" \"slow\"",
-			},
-			"pop": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Point of presence in which the LAG should be located.",
-			},
-			"members": {
-				Type:        schema.TypeList,
-				Required:    true,
-				ForceNew:    true,
-				Description: "A list of port circuit IDs to include in the LAG. To be included in a LAG, the ports must be at the same site, in the same zone, and have the same speed and media.",
-				Elem: &schema.Schema{
-					Type:        schema.TypeString,
-					Description: "The member circuit ID.",
-				},
-			},
-			"po_number": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-				Description:  "Purchase order number or identifier of a service.",
-			},
-			"labels": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Label value linked to an object.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"enabled": {
-				Type:        schema.TypeBool,
-				Default:     true,
-				Optional:    true,
-				Description: "Change LAG Admin Status. Set it to true when LAG is enabled, false when LAG is disabled. ",
-			},
+			PfId:          schemaStringComputedPlain(),
+			PfDescription: schemaStringRequiredNotEmpty(PfLagDescription),
+			PfInterval:    schemaStringRequiredValidate(PfIntervalDescription, validateInterval()),
+			PfPop:         schemaStringRequiredNewNotEmpty(PfPopDescriptionE),
+			PfMembers:     schemaStringListRequiredNewNotEmptyDescribed(PfMembersDescription2, PfMembersDescription),
+			PfPoNumber:    schemaStringOptionalValidate(PfPoNumberDescription, validatePoNumber()),
+			PfLabels:      schemaStringSetOptional(PfLabelsDescription),
+			PfEnabled:     schemaBoolOptionalDefault(PfEnabledDescription, true),
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -99,14 +48,14 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 	}
 	d.SetId(resp.PortCircuitID)
 
-	if labels, ok := d.GetOk("labels"); ok {
+	if labels, ok := d.GetOk(PfLabels); ok {
 		diagnostics, created := createLabels(c, d.Id(), labels)
 		if !created {
 			return diagnostics
 		}
 	}
 
-	enabled := d.Get("enabled").(bool)
+	enabled := d.Get(PfEnabled).(bool)
 	if !enabled {
 		_, err := c.DisableLinkAggregationGroup(d.Id())
 		if err != nil {
@@ -125,28 +74,28 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	_, err := c.UpdateLinkAggregationGroup(d.Id(), d.Get("description").(string), d.Get("interval").(string))
+	_, err := c.UpdateLinkAggregationGroup(d.Id(), d.Get(PfDescription).(string), d.Get(PfInterval).(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("po_number") {
+	if d.HasChange(PfPoNumber) {
 		diagnostics, updated := updatePort(c, d)
 		if !updated {
 			return diagnostics
 		}
 	}
 
-	if d.HasChange("labels") {
-		labels := d.Get("labels")
+	if d.HasChange(PfLabels) {
+		labels := d.Get(PfLabels)
 		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {
 			return diagnostics
 		}
 	}
 
-	if d.HasChange("enabled") {
-		enabled := d.Get("enabled").(bool)
+	if d.HasChange(PfEnabled) {
+		enabled := d.Get(PfEnabled).(bool)
 		if !enabled {
 			_, err := c.DisableLinkAggregationGroup(d.Id())
 			if err != nil {
@@ -169,9 +118,9 @@ func updatePort(c *packetfabric.PFClient, d *schema.ResourceData) (diag.Diagnost
 		return diag.FromErr(err), false
 	}
 
-	poNumber, ok := d.GetOk("po_number")
+	poNumber, ok := d.GetOk(PfPoNumber)
 	if !ok {
-		return diag.FromErr(errors.New("please enter a purchase order number")), true
+		return diag.FromErr(errors.New(MessageMissingPoNumber)), true
 	}
 
 	portUpdateData := packetfabric.PortUpdate{
@@ -193,15 +142,14 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_ = d.Set("description", lag.Description)
-	_ = d.Set("pop", lag.Pop)
-	_ = d.Set("interval", lag.LagInterval)
-	_ = d.Set("po_number", lag.PONumber)
+
+	_ = setResourceDataKeys(d, lag, PfDescription, PfPop, PfPoNumber)
+	_ = d.Set(PfInterval, lag.LagInterval)
 
 	if lag.Disabled {
-		_ = d.Set("enabled", false)
+		_ = d.Set(PfEnabled, false)
 	} else {
-		_ = d.Set("enabled", true)
+		_ = d.Set(PfEnabled, true)
 	}
 
 	interfaces, err := c.GetLAGInterfaces(d.Id())
@@ -213,14 +161,14 @@ func resourceLinkAggregationGroupsRead(ctx context.Context, d *schema.ResourceDa
 	for index, interf := range *interfaces {
 		members[index] = interf.PortCircuitID
 	}
-	_ = d.Set("members", members)
+	_ = d.Set(PfMembers, members)
 
-	if _, ok := d.GetOk("labels"); ok {
+	if _, ok := d.GetOk(PfLabels); ok {
 		labels, err2 := getLabels(c, d.Id())
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		_ = d.Set("labels", labels)
+		_ = d.Set(PfLabels, labels)
 	}
 	return diags
 }
@@ -230,15 +178,15 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 
-	host := os.Getenv("PF_HOST")
-	testingInLab := strings.Contains(host, "api.dev")
+	host := os.Getenv(PfPfeHost)
+	testingInLab := strings.Contains(host, PfDevLab)
 
 	if testingInLab {
-		enabled := d.Get("enabled")
+		enabled := d.Get(PfEnabled)
 		if enabled.(bool) {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
-				Summary:  "In the dev environment, LAGs are disabled prior to deletion.",
+				Summary:  MessageDevLag,
 			})
 			_, err := c.DisableLinkAggregationGroup(d.Id())
 			if err != nil {
@@ -259,25 +207,21 @@ func resourceLinkAggregationGroupsDelete(ctx context.Context, d *schema.Resource
 
 func extractLAG(d *schema.ResourceData) packetfabric.LinkAggregationGroup {
 	lag := packetfabric.LinkAggregationGroup{}
-	if description, ok := d.GetOk("description"); ok {
+	if description, ok := d.GetOk(PfDescription); ok {
 		lag.Description = description.(string)
 	}
-	if interval, ok := d.GetOk("interval"); ok {
+	if interval, ok := d.GetOk(PfInterval); ok {
 		lag.Interval = interval.(string)
 	}
-	if pop, ok := d.GetOk("pop"); ok {
+	if pop, ok := d.GetOk(PfPop); ok {
 		lag.Pop = pop.(string)
 	}
 	lag.Members = extractMembers(d)
 	return lag
 }
 
-func intervalOptions() []string {
-	return []string{"fast", "slow"}
-}
-
 func extractMembers(d *schema.ResourceData) []string {
-	if members, ok := d.GetOk("members"); ok {
+	if members, ok := d.GetOk(PfMembers); ok {
 		membersResult := make([]string, 0)
 		for _, member := range members.([]interface{}) {
 			membersResult = append(membersResult, member.(string))

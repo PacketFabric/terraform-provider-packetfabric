@@ -346,7 +346,7 @@ func (c *PFClient) DeleteVCRequest(vcUUID string) (*PortMessageResp, error) {
 		DeleteReason string `json:"delete_reason"`
 	}
 	deleteReason := DeleteReason{
-		DeleteReason: "Deleted from PF Terraform plugin.",
+		DeleteReason: MessageDeleted,
 	}
 	expectedResp := &PortMessageResp{}
 	if _, err := c.sendRequest(formatedURI, deleteMethod, deleteReason, expectedResp); err != nil {

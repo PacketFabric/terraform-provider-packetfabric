@@ -23,13 +23,13 @@ func TestAccPortRequiredFields(t *testing.T) {
 			{
 				Config: portTestResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "description", portTestResult.Description),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "speed", portTestResult.Speed),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "media", portTestResult.Media),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "subscription_term", strconv.Itoa(portTestResult.SubscriptionTerm)),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "pop", portTestResult.Pop),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "zone", portTestResult.Zone),
-					resource.TestCheckResourceAttr(portTestResult.ResourceName, "enabled", strconv.FormatBool(portTestResult.Enabled)),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfDescription, portTestResult.Description),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfSpeed, portTestResult.Speed),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfMedia, portTestResult.Media),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfSubscriptionTerm, strconv.Itoa(portTestResult.SubscriptionTerm)),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfPop, portTestResult.Pop),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfZone, portTestResult.Zone),
+					resource.TestCheckResourceAttr(portTestResult.ResourceName, PfEnabled, strconv.FormatBool(portTestResult.Enabled)),
 				),
 			},
 			{

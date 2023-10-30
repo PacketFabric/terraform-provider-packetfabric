@@ -9,181 +9,47 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceBackbone() *schema.Resource {
 	return &schema.Resource{
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schema10MinuteTimeouts(),
 		CreateContext: resourceBackboneCreate,
 		UpdateContext: resourceBackboneUpdate,
 		ReadContext:   resourceBackboneRead,
 		DeleteContext: resourceBackboneDelete,
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"description": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "A brief description of this connection.",
-			},
-			"bandwidth": {
+			PfId:          schemaStringComputedPlain(),
+			PfDescription: schemaStringRequired(PfConnectionDescription),
+			PfBandwidth: {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"account_uuid": {
-							Type:         schema.TypeString,
-							Required:     true,
-							DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
-							ValidateFunc: validation.IsUUID,
-							Description: "The UUID for the billing account that should be billed. " +
-								"Can also be set with the PF_ACCOUNT_ID environment variable.",
-						},
-						"speed": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice(speedOptions(), true),
-							Description:  "The desired speed of the new connection. Only applicable if `longhaul_type` is \"dedicated\" or \"hourly\".\n\n\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\" \"20Gbps\" \"30Gbps\" \"40Gbps\" \"50Gbps\" \"60Gbps\" \"80Gbps\" \"100Gbps\"]",
-						},
-						"subscription_term": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
-							Description:  "The billing term, in months, for this connection. Only applicable if `longhaul_type` is \"dedicated.\"\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"]",
-						},
-						"longhaul_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"dedicated", "usage", "hourly"}, true),
-							Description:  "Dedicated (no limits or additional charges), usage-based (per transferred GB) or hourly billing. Not applicable for Metro Dedicated.\n\n\tEnum [\"dedicated\" \"usage\" \"hourly\"]",
-						},
+						PfAccountUuid:      schemaAccountUuid(PfAccountUuidDescription2),
+						PfSpeed:            schemaStringOptionalValidate(PfSpeedDescriptionB, validateSpeed()),
+						PfSubscriptionTerm: schemaIntOptionalValidate(PfSubscriptionTermDescriptionA, validateSubscriptionTerm()),
+						PfLonghaulType:     schemaStringOptionalValidate(PfLonghaulTypeDescription, validateLongHaul()),
 					},
 				},
 			},
-			"interface_a": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"port_circuit_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
-						},
-						"vlan": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
-						},
-						"svlan": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
-						},
-						"untagged": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Default:     false,
-							Description: "Whether the interface should be untagged. ",
-						},
-					},
-				},
-			},
-			"interface_z": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"port_circuit_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "The circuit ID for the port. This starts with \"PF-AP-\"",
-						},
-						"vlan": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid VLAN range is from 4-4094, inclusive. ",
-						},
-						"svlan": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(4, 4094),
-							Description:  "Valid sVLAN range is from 4-4094, inclusive. ",
-						},
-						"untagged": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Default:     false,
-							Description: "Whether the interface should be untagged. ",
-						},
-					},
-				},
-			},
-			"rate_limit_in": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "The upper bound, in Mbps, by which to limit incoming data.",
-			},
-			"rate_limit_out": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "The upper bound, in Mbps, by which to limit outgoing data.",
-			},
-			"epl": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				ForceNew:    true,
-				Default:     false,
-				Description: "If true, the circuit will be an EPL connection rather than an EVPL. Default is false.\n\n\tEPL is an Ethernet Private Line. Typical access ports can only support one EPL connection (meaning one virtual circuit for that port). ENNI ports can support multiple EPL connections.\n\n\tEVPL is an Ethernet Virtual Private Line. A port can support multiple EVPL connections, as bandwidth allows.\n\n\tFor more information on the difference between the two, see [Virtual Circuit Ethernet Features](https://docs.packetfabric.com/reference/specs/ethernet_features/).\n\n\t",
-			},
-			"flex_bandwidth_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "ID of the flex bandwidth container from which to subtract this VC's speed.",
-			},
-			"po_number": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-				Description:  "Purchase order number or identifier of a service.",
-			},
-			"labels": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Label value linked to an object.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"etl": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
-			},
+			PfInterfaceA: resourceBackboneInterface(),
+			PfInterfaceZ: resourceBackboneInterface(),
+			PfRateLimitIn:     schemaIntOptional(PfRateLimitInDescription2),
+			PfRateLimitOut:    schemaIntOptional(PfRateLimitOutDescription2),
+			PfEpl:             schemaBoolOptionalNewDefault(PfEplDescription, false),
+			PfFlexBandwidthId: schemaStringOptionalNew(PfFlexBandwidthIdDescription),
+			PfPoNumber:        schemaStringOptionalValidate(PfPoNumberDescription, validatePoNumber()),
+			PfLabels:          schemaStringSetOptional(PfLabelsDescription),
+			PfEtl:             schemaFloatComputed(PfEtlDescription),
 		},
 		CustomizeDiff: customdiff.Sequence(
 			func(_ context.Context, d *schema.ResourceDiff, m interface{}) error {
-				if d.Id() == "" {
+				if d.Id() == PfEmptyString {
 					return nil
 				}
 
-				interfaces := []string{"interface_a", "interface_z"}
+				interfaces := []string{PfInterfaceA, PfInterfaceZ}
 
 				for _, iface := range interfaces {
 					oldRaw, newRaw := d.GetChange(iface)
@@ -195,7 +61,7 @@ func resourceBackbone() *schema.Resource {
 							oldResource := oldElem.(map[string]interface{})
 							newResource := newElem.(map[string]interface{})
 
-							if oldResource["port_circuit_id"] != newResource["port_circuit_id"] {
+							if oldResource[PfPortCircuitId] != newResource[PfPortCircuitId] {
 								return fmt.Errorf("updating %s port_circuit_id in-place is not supported, delete and recreate the resource with the updated values", iface)
 							}
 						}
@@ -207,6 +73,22 @@ func resourceBackbone() *schema.Resource {
 		),
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
+		},
+	}
+}
+
+// TODO: consider moving this to common_schema.go
+func resourceBackboneInterface() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Required: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				PfPortCircuitId: schemaStringRequired(PfPortCircuitIdDescription4),
+				PfVlan:          schemaIntOptionalValidateDefault(PfVlanDescription2, validateVlan(), 0),
+				PfSvlan:         schemaIntOptionalValidateDefault(PfSvlanDescription2, validateVlan(), 0),
+				PfUntagged:      schemaBoolOptionalDefault(PfUntaggedDescription4, false),
+			},
 		},
 	}
 }
@@ -224,7 +106,7 @@ func resourceBackboneCreate(ctx context.Context, d *schema.ResourceData, m inter
 		checkBackboneComplete(c, resp.VcCircuitID)
 		d.SetId(resp.VcCircuitID)
 
-		if labels, ok := d.GetOk("labels"); ok {
+		if labels, ok := d.GetOk(PfLabels); ok {
 			diagnostics, created := createLabels(c, d.Id(), labels)
 			if !created {
 				return diagnostics
@@ -243,11 +125,11 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("description", resp.Description)
-		if resp.Mode == "epl" {
-			_ = d.Set("epl", true)
+		_ = d.Set(PfDescription, resp.Description)
+		if resp.Mode == PfEpl {
+			_ = d.Set(PfEpl, true)
 		} else {
-			_ = d.Set("epl", false)
+			_ = d.Set(PfEpl, false)
 		}
 		// Create a new schema set for the bandwidth attribute
 		bandwidthSet := schema.NewSet(
@@ -255,78 +137,49 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 			[]interface{}{},
 		)
 		// Add the bandwidth values to the set
-		if resp.Bandwidth.LonghaulType == "dedicated" {
-			bandwidth := map[string]interface{}{
-				"account_uuid":      resp.Bandwidth.AccountUUID,
-				"longhaul_type":     resp.Bandwidth.LonghaulType,
-				"subscription_term": resp.Bandwidth.SubscriptionTerm,
-				"speed":             resp.Bandwidth.Speed,
-			}
-			bandwidthSet.Add(bandwidth)
+		if resp.Bandwidth.LonghaulType == PfDedicated {
+			bandwidthSet.Add(mapStruct(resp.Bandwidth, PfAccountUuid, PfLonghaulType, PfSubscriptionTerm, PfSpeed))
 		}
 		// metro dedicated doesn't need longhaul_type
-		if resp.Bandwidth.LonghaulType == "" {
-			bandwidth := map[string]interface{}{
-				"account_uuid":      resp.Bandwidth.AccountUUID,
-				"subscription_term": resp.Bandwidth.SubscriptionTerm,
-				"speed":             resp.Bandwidth.Speed,
-			}
-			bandwidthSet.Add(bandwidth)
+		if resp.Bandwidth.LonghaulType == PfEmptyString {
+			bandwidthSet.Add(mapStruct(resp.Bandwidth, PfAccountUuid, PfSubscriptionTerm, PfSpeed))
 		}
-		if resp.Bandwidth.LonghaulType == "usage" {
-			bandwidth := map[string]interface{}{
-				"account_uuid":  resp.Bandwidth.AccountUUID,
-				"longhaul_type": resp.Bandwidth.LonghaulType,
-			}
-			bandwidthSet.Add(bandwidth)
+		if resp.Bandwidth.LonghaulType == PfUsage {
+			bandwidthSet.Add(mapStruct(resp.Bandwidth, PfAccountUuid, PfLonghaulType))
 		}
-		if resp.Bandwidth.LonghaulType == "hourly" {
-			bandwidth := map[string]interface{}{
-				"account_uuid":  resp.Bandwidth.AccountUUID,
-				"longhaul_type": resp.Bandwidth.LonghaulType,
-				"speed":         resp.Bandwidth.Speed,
-			}
-			bandwidthSet.Add(bandwidth)
+		if resp.Bandwidth.LonghaulType == PfHourly {
+			bandwidthSet.Add(mapStruct(resp.Bandwidth, PfAccountUuid, PfLonghaulType, PfSpeed))
 		}
 		// Set the bandwidth attribute to the schema set
-		_ = d.Set("bandwidth", bandwidthSet)
+		_ = d.Set(PfBandwidth, bandwidthSet)
 
 		if len(resp.Interfaces) == 2 {
-			interfaceA := make(map[string]interface{})
-			interfaceA["port_circuit_id"] = resp.Interfaces[0].PortCircuitID
-			interfaceA["vlan"] = resp.Interfaces[0].Vlan
-			interfaceA["svlan"] = resp.Interfaces[0].Svlan
-			interfaceA["untagged"] = resp.Interfaces[0].Untagged
-			_ = d.Set("interface_a", []interface{}{interfaceA})
-
-			interfaceZ := make(map[string]interface{})
-			interfaceZ["port_circuit_id"] = resp.Interfaces[1].PortCircuitID
-			interfaceZ["vlan"] = resp.Interfaces[1].Vlan
-			interfaceZ["svlan"] = resp.Interfaces[1].Svlan
-			interfaceZ["untagged"] = resp.Interfaces[1].Untagged
-			_ = d.Set("interface_z", []interface{}{interfaceZ})
+			interfaceFields := stringsToMap(PfPortCircuitId, PfVlan, PfSvlan, PfUntagged)
+			interfaceA := structToMap(resp.Interfaces[0], interfaceFields)
+			interfaceZ := structToMap(resp.Interfaces[1], interfaceFields)
+			_ = d.Set(PfInterfaceA, []interface{}{interfaceA})
+			_ = d.Set(PfInterfaceZ, []interface{}{interfaceZ})
 		}
-		if _, ok := d.GetOk("rate_limit_in"); ok {
-			_ = d.Set("rate_limit_in", resp.RateLimitIn)
+		if _, ok := d.GetOk(PfRateLimitIn); ok {
+			_ = d.Set(PfRateLimitIn, resp.RateLimitIn)
 		}
-		if _, ok := d.GetOk("rate_limit_out"); ok {
-			_ = d.Set("rate_limit_out", resp.RateLimitOut)
+		if _, ok := d.GetOk(PfRateLimitOut); ok {
+			_ = d.Set(PfRateLimitOut, resp.RateLimitOut)
 		}
-		if _, ok := d.GetOk("flex_bandwidth_id"); ok {
-			_ = d.Set("flex_bandwidth_id", resp.AggregateCapacityID)
+		if _, ok := d.GetOk(PfFlexBandwidthId); ok {
+			_ = d.Set(PfFlexBandwidthId, resp.AggregateCapacityID)
 		} else {
-			_ = d.Set("flex_bandwidth_id", nil)
+			_ = d.Set(PfFlexBandwidthId, nil)
 		}
-		_ = d.Set("po_number", resp.PONumber)
-
+		_ = d.Set(PfPoNumber, resp.PONumber)
 	}
 
-	if _, ok := d.GetOk("labels"); ok {
+	if _, ok := d.GetOk(PfLabels); ok {
 		labels, err2 := getLabels(c, d.Id())
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		_ = d.Set("labels", labels)
+		_ = d.Set(PfLabels, labels)
 	}
 
 	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
@@ -334,7 +187,7 @@ func resourceBackboneRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err3)
 	}
 	if etl > 0 {
-		_ = d.Set("etl", etl)
+		_ = d.Set(PfEtl, etl)
 	}
 	return diags
 }
@@ -348,7 +201,7 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	settings := extractServiceSettings(d)
 	backboneVC := extractBack(d)
 
-	if d.HasChange("bandwidth") {
+	if d.HasChange(PfBandwidth) {
 		billing := packetfabric.BillingUpgrade{
 			Speed:            backboneVC.Bandwidth.Speed,
 			SubscriptionTerm: backboneVC.Bandwidth.SubscriptionTerm,
@@ -364,8 +217,8 @@ func resourceBackboneUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	checkBackboneComplete(c, d.Id())
 
-	if d.HasChange("labels") {
-		labels := d.Get("labels")
+	if d.HasChange(PfLabels) {
+		labels := d.Get(PfLabels)
 		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {
 			return diagnostics
@@ -393,7 +246,7 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if vcCircuitID, ok := d.GetOk("id"); ok {
+	if vcCircuitID, ok := d.GetOk(PfId); ok {
 		etlDiags, err2 := addETLWarning(c, vcCircuitID.(string))
 		if err2 != nil {
 			return diag.FromErr(err2)
@@ -403,36 +256,36 @@ func resourceBackboneDelete(ctx context.Context, d *schema.ResourceData, m inter
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		d.SetId("")
+		d.SetId(PfEmptyString)
 		return diags
 	}
-	return diag.Errorf("please provide a valid VC Circuit ID for deletion")
+	return diag.Errorf(MesssageVCCIdRequiredForDeletion)
 }
 
 func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 	backboneVC := packetfabric.Backbone{
-		Description: d.Get("description").(string),
-		Epl:         d.Get("epl").(bool),
+		Description: d.Get(PfDescription).(string),
+		Epl:         d.Get(PfEpl).(bool),
 	}
-	for _, interfA := range d.Get("interface_a").(*schema.Set).List() {
+	for _, interfA := range d.Get(PfInterfaceA).(*schema.Set).List() {
 		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfA.(map[string]interface{})))
 	}
-	for _, interfZ := range d.Get("interface_z").(*schema.Set).List() {
+	for _, interfZ := range d.Get(PfInterfaceZ).(*schema.Set).List() {
 		backboneVC.Interfaces = append(backboneVC.Interfaces, extractBackboneInterface(interfZ.(map[string]interface{})))
 	}
-	for _, bw := range d.Get("bandwidth").(*schema.Set).List() {
+	for _, bw := range d.Get(PfBandwidth).(*schema.Set).List() {
 		backboneVC.Bandwidth = extractBandwidth(bw.(map[string]interface{}))
 	}
-	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
+	if rateLimitIn, ok := d.GetOk(PfRateLimitIn); ok {
 		backboneVC.RateLimitIn = rateLimitIn.(int)
 	}
-	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
+	if rateLimitOut, ok := d.GetOk(PfRateLimitOut); ok {
 		backboneVC.RateLimitOut = rateLimitOut.(int)
 	}
-	if flexBandID, ok := d.GetOk("flex_bandwidth_id"); ok {
+	if flexBandID, ok := d.GetOk(PfFlexBandwidthId); ok {
 		backboneVC.FlexBandwidthID = flexBandID.(string)
 	}
-	if poNumber, ok := d.GetOk("po_number"); ok {
+	if poNumber, ok := d.GetOk(PfPoNumber); ok {
 		backboneVC.PONumber = poNumber.(string)
 	}
 	return backboneVC
@@ -441,34 +294,34 @@ func extractBack(d *schema.ResourceData) packetfabric.Backbone {
 func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettingsUpdate {
 	settUpdate := packetfabric.ServiceSettingsUpdate{}
 
-	if rateLimitIn, ok := d.GetOk("rate_limit_in"); ok {
+	if rateLimitIn, ok := d.GetOk(PfRateLimitIn); ok {
 		settUpdate.RateLimitIn = rateLimitIn.(int)
 	}
-	if rateLimitOut, ok := d.GetOk("rate_limit_out"); ok {
+	if rateLimitOut, ok := d.GetOk(PfRateLimitOut); ok {
 		settUpdate.RateLimitOut = rateLimitOut.(int)
 	}
-	if description, ok := d.GetOk("description"); ok {
+	if description, ok := d.GetOk(PfDescription); ok {
 		settUpdate.Description = description.(string)
 	}
-	if _, ok := d.GetOk("interface"); ok {
-		for _, interf := range d.Get("interface").(*schema.Set).List() {
+	if _, ok := d.GetOk(PfInterface); ok {
+		for _, interf := range d.Get(PfInterface).(*schema.Set).List() {
 			settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 		}
 	}
-	if _, ok := d.GetOk("interface_a"); ok {
-		for _, interf := range d.Get("interface_a").(*schema.Set).List() {
+	if _, ok := d.GetOk(PfInterfaceA); ok {
+		for _, interf := range d.Get(PfInterfaceA).(*schema.Set).List() {
 			settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 		}
 	}
-	if _, ok := d.GetOk("interface_z"); ok {
-		for _, interf := range d.Get("interface_z").(*schema.Set).List() {
+	if _, ok := d.GetOk(PfInterfaceZ); ok {
+		for _, interf := range d.Get(PfInterfaceZ).(*schema.Set).List() {
 			// Only include interface_z if it was modified
-			if d.HasChange("interface_z") {
+			if d.HasChange(PfInterfaceZ) {
 				settUpdate.Interfaces = append(settUpdate.Interfaces, extractBackboneInterface(interf.(map[string]interface{})))
 			}
 		}
 	}
-	if poNumber, ok := d.GetOk("po_number"); ok {
+	if poNumber, ok := d.GetOk(PfPoNumber); ok {
 		settUpdate.PONumber = poNumber.(string)
 	}
 
@@ -477,15 +330,15 @@ func extractServiceSettings(d *schema.ResourceData) packetfabric.ServiceSettings
 
 func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 	bandwidth := packetfabric.Bandwidth{}
-	bandwidth.AccountUUID = bw["account_uuid"].(string)
-	longhaulType := bw["longhaul_type"]
+	bandwidth.AccountUUID = bw[PfAccountUuid].(string)
+	longhaulType := bw[PfLonghaulType]
 	if longhaulType != nil {
 		bandwidth.LonghaulType = longhaulType.(string)
 	}
-	if subsTerm := bw["subscription_term"]; subsTerm != nil {
+	if subsTerm := bw[PfSubscriptionTerm]; subsTerm != nil {
 		bandwidth.SubscriptionTerm = subsTerm.(int)
 	}
-	if speed := bw["speed"]; speed != nil {
+	if speed := bw[PfSpeed]; speed != nil {
 		bandwidth.Speed = speed.(string)
 	}
 	return bandwidth
@@ -493,25 +346,17 @@ func extractBandwidth(bw map[string]interface{}) packetfabric.Bandwidth {
 
 func extractBackboneInterface(interf map[string]interface{}) packetfabric.Interfaces {
 	backboneInter := packetfabric.Interfaces{}
-	if portCID := interf["port_circuit_id"]; portCID != nil {
+	if portCID := interf[PfPortCircuitId]; portCID != nil {
 		backboneInter.PortCircuitID = portCID.(string)
 	}
-	if vlan := interf["vlan"]; vlan != nil {
+	if vlan := interf[PfVlan]; vlan != nil {
 		backboneInter.Vlan = vlan.(int)
 	}
-	if untagged := interf["untagged"]; untagged != nil {
+	if untagged := interf[PfUntagged]; untagged != nil {
 		backboneInter.Untagged = untagged.(bool)
 	}
-	if svlan := interf["svlan"]; svlan != nil {
+	if svlan := interf[PfSvlan]; svlan != nil {
 		backboneInter.Svlan = svlan.(int)
 	}
 	return backboneInter
-}
-
-func speedOptions() []string {
-	return []string{
-		"50Mbps", "100Mbps", "200Mbps", "300Mbps",
-		"400Mbps", "500Mbps", "1Gbps", "2Gbps",
-		"5Gbps", "10Gbps", "20Gbps", "30Gbps",
-		"40Gbps", "50Gbps", "60Gbps", "80Gbps", "100Gbps"}
 }

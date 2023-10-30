@@ -13,26 +13,14 @@ func dataSourceLocationsMarkets() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceLocationsMarketsRead,
 		Schema: map[string]*schema.Schema{
-			"locations_markets": {
+			PfLocationsMarkets: {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The market name.",
-						},
-						"code": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The market code.",
-						},
-						"country": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The market country.",
-						},
+						PfName:    schemaStringComputed(PfNameDescription6),
+						PfCode:    schemaStringComputed(PfCodeDescription2),
+						PfCountry: schemaStringComputed(PfCountryDescription3),
 					},
 				},
 			},
@@ -48,7 +36,7 @@ func dataSourceLocationsMarketsRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("locations_markets", flattenLocationsMarkets(&markets))
+	err = d.Set(PfLocationsMarkets, flattenLocationsMarkets(&markets))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -57,13 +45,10 @@ func dataSourceLocationsMarketsRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func flattenLocationsMarkets(markets *[]packetfabric.LocationMarket) []interface{} {
+	fields := stringsToMap(PfName, PfCode, PfCountry)
 	flattens := make([]interface{}, len(*markets))
 	for i, market := range *markets {
-		flatten := make(map[string]interface{})
-		flatten["name"] = market.Name
-		flatten["code"] = market.Code
-		flatten["country"] = market.Country
-		flattens[i] = flatten
+		flattens[i] = structToMap(market, fields)
 	}
 	return flattens
 }

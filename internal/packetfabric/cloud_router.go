@@ -102,7 +102,7 @@ func (c *PFClient) UpdateCloudRouter(router CloudRouterUpdate, cID string) (*Clo
 // This function represents the Action to Delete an existing Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_router_delete
 func (c *PFClient) DeleteCloudRouter(cID string) (*CloudRouterDelResp, error) {
-	if cID == "" {
+	if cID == PfEmptyString {
 		return nil, errors.New(errorMsg)
 	}
 	formatedURI := fmt.Sprintf("%s/%s", cloudRouterURI, cID)

@@ -356,7 +356,7 @@ func (c *PFClient) DeleteCloudRouterConnection(cID, connCid string) (*Connection
 
 func (c *PFClient) DeleteCloudRouterConnectionWait(cID, connCid string, shouldWait bool) (*ConnectionDeleteResp, error) {
 	formatedURI := fmt.Sprintf(cloudRouterConnectionByCidURI, cID, connCid)
-	if cID == "" {
+	if cID == PfEmptyString {
 		return nil, errors.New(errorMsg)
 	}
 

@@ -4,13 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
-	"time"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceBgpSession() *schema.Resource {
@@ -19,235 +16,64 @@ func resourceBgpSession() *schema.Resource {
 		ReadContext:   resourceBgpSessionRead,
 		UpdateContext: resourceBgpSessionUpdate,
 		DeleteContext: resourceBgpSessionDelete,
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schema10MinuteTimeouts(),
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"circuit_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Circuit ID of the target cloud router. This starts with \"PF-L3-CUST-\".",
-			},
-			"connection_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "The circuit ID of the connection associated with the BGP session. This starts with \"PF-L3-CON-\".",
-			},
-			"md5": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The MD5 value of the authenticated BGP sessions. Required for AWS.",
-			},
-			"l3_address": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateIPAddressWithPrefix,
-				Description:  "The L3 address of this instance. Not used for Azure connections. Required for all other CSP.",
-			},
-			"primary_subnet": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateIPAddressWithPrefix,
-				Description:  "Currently for Azure use only. Provide this as the primary subnet when creating the primary Azure cloud router connection.",
-			},
-			"secondary_subnet": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateIPAddressWithPrefix,
-				Description:  "Currently for Azure use only. Provide this as the secondary subnet when creating the secondary Azure cloud router connection.",
-			},
-			"address_family": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "v4",
-				ValidateFunc: validation.StringInSlice([]string{"v4", "v6"}, true),
-				Description:  "Whether this instance is IPv4 or IPv6. At this time, only IPv4 is supported.\n\n\tEnum: \"v4\" \"v6\" ",
-			},
-			"remote_address": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateIPAddressWithPrefix,
-				Description:  "The cloud-side router peer IP. Not used for Azure connections. Required for all other CSP.",
-			},
-			"remote_asn": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "The cloud-side ASN.",
-			},
-			"multihop_ttl": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      1,
-				ValidateFunc: validation.IntBetween(1, 4),
-				Description:  "The TTL of this session. For Google Cloud connections, see [the PacketFabric doc](https://docs.packetfabric.com/cr/bgp/bgp_google/#ttl).\n\n\tAvailable range is 1 through 4. ",
-			},
-			"local_preference": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     0,
-				Description: "The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
-			},
-			"med": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     0,
-				Description: "The Multi-Exit Discriminator of this instance. When the same route is advertised in multiple locations, those with a lower MED are preferred by the peer AS. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
-			},
-			"as_prepend": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(1, 5),
-				Description:  "The BGP prepend value for this instance. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
-			},
-			"orlonger": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Whether to use exact match or longer for all prefixes. ",
-			},
-			"bfd_interval": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(3, 30000),
-				Description:  "If you are using BFD, this is the interval (in milliseconds) at which to send test packets to peers.\n\n\tAvailable range is 3 through 30000. ",
-			},
-			"bfd_multiplier": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(2, 16),
-				Description:  "If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.\n\n\tAvailable range is 2 through 16. ",
-			},
-			"disabled": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Whether this BGP session is disabled. ",
-			},
-			"nat": {
+			PfId:              schemaStringComputedPlain(),
+			PfCircuitId:       schemaStringRequiredNew(PfCircuitIdDescription),
+			PfConnectionId:    schemaStringRequiredNew(PfConnectionIdDescription),
+			PfMd5:             schemaStringOptionalNotEmpty(PfMd5Description),
+			PfL3Address:       schemaPrefixOptional(PfL3AddressDescription3),
+			PfPrimarySubnet:   schemaPrefixOptional(PfPrimarySubnetDescription),
+			PfSecondarySubnet: schemaPrefixOptional(PfSecondarySubnetDescription),
+			PfAddressFamily:   schemaStringOptionalValidateDefault(PfAddressFamilyDescription3, validateIpVersion(), PfAddressFamily4v),
+			PfRemoteAddress:   schemaPrefixOptional(PfRemoteAddressDescription3),
+			PfRemoteAsn:       schemaIntRequired(PfRemoteAsnDescription3),
+			PfMultihopTtl:     schemaIntOptionalValidateDefault(PfMultihopTtlDescription2, validateTTl(), 1),
+			PfLocalPreference: schemaIntOptionalDefault(PfLocalPreferenceDescription, 0),
+			PfMed:             schemaIntOptionalDefault(PfMedDescription4, 0),
+			PfAsPrepend:       schemaIntOptionalValidateDefault(PfAsPrependDescription, validateAsPrepend(), 0),
+			PfOrlonger:        schemaBoolOptionalDefault(PfOrlongerDescription, false),
+			PfBfdInterval:     schemaIntOptionalValidateDefault(PfBfdIntervalDescription, validateBfdInterval(), 0),
+			PfBfdMultiplier:   schemaIntOptionalValidateDefault(PfBfdMultiplierDescription, validateBfdMultiplier(), 0),
+			PfDisabled:        schemaBoolOptionalDefault(PfDisabledDescription, false),
+			PfNat: {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
 				Optional:    true,
-				Description: "Translate the source or destination IP address.",
+				Description: PfNatDescription,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"pre_nat_sources": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
-							Elem: &schema.Schema{
-								Type:        schema.TypeString,
-								Description: "IP prefix using CIDR format.",
-							},
-						},
-						"pool_prefixes": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
-							Elem: &schema.Schema{
-								Type:        schema.TypeString,
-								Description: "IP prefix using CIDR format.",
-							},
-						},
-						"direction": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "output",
-							ValidateFunc: validation.StringInSlice([]string{"output", "input"}, true),
-							Description:  "If using NAT overload, the direction of the NAT connection (input=ingress, output=egress). \n\t\tEnum: output, input. ",
-						},
-						"nat_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "overload",
-							ValidateFunc: validation.StringInSlice([]string{"overload", "inline_dnat"}, true),
-							Description:  "The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). \n\t\tEnum: overload, inline_dnat. ",
-						},
-						"dnat_mappings": {
+						PfPreNatSources: schemaStringListOptionalDescribed(PfPreNatSourcesDescription3, PfPreNatSourcesDescription),
+						PfPoolPrefixes:  schemaStringListOptionalDescribed(PfPoolPrefixesDescription, PfPreNatSourcesDescription),
+						PfDirection:     schemaStringOptionalValidateDefault(PfDirectionDescription, validateDirection(), PfOutput),
+						PfNatType:       schemaStringOptionalValidateDefault(PfNatTypeDescription, validateNatType(), PfNatTypeOverload),
+						PfDnatMappings: {
 							Type:        schema.TypeSet,
 							Optional:    true,
-							Description: "Translate the destination IP address.",
+							Description: PfDnatMappingsDescription,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"private_prefix": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "Post-translation IP prefix.",
-									},
-									"public_prefix": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "Pre-translation IP prefix.",
-									},
-									"conditional_prefix": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validateIPAddressWithPrefix,
-										Description:  "Post-translation prefix must be equal to or included within the conditional IP prefix.",
-									},
+									PfPrivatePrefix:     schemaPrefixRequired(PfPrivatePrefixDescription),
+									PfPublicPrefix:      schemaPrefixRequired(PfPublicPrefixDescription),
+									PfConditionalPrefix: schemaPrefixOptional(PfConditionalPrefixDescription),
 								},
 							},
 						},
 					},
 				},
 			},
-			"prefixes": {
+			PfPrefixes: {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "The list of BGP prefixes",
+				Description: PfPrefixesDescription2,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"prefix": {
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validateIPAddressWithPrefix,
-							Description:  "The actual IP Prefix of this instance.",
-						},
-						"match_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"exact", "orlonger"}, true),
-							Description:  "The match type of this prefix.\n\n\tEnum: `\"exact\"` `\"orlonger\"` ",
-						},
-						"as_prepend": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      0,
-							ValidateFunc: validation.IntBetween(1, 5),
-							Description:  "The BGP prepend value of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 5. ",
-						},
-						"med": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     0,
-							Description: "The MED of this prefix. It is used when type = out.\n\n\tAvailable range is 1 through 4294967295. ",
-						},
-						"local_preference": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     0,
-							Description: "The local_preference of this prefix. It is used when type = in.\n\n\tAvailable range is 1 through 4294967295. ",
-						},
-						"type": {
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"in", "out"}, true),
-							Description:  "Whether this prefix is in (Allowed Prefixes from Cloud) or out (Allowed Prefixes to Cloud).\n\t\tEnum: in, out.",
-						},
+						PfPrefix:          schemaPrefixRequired(PfPrefixDescription2),
+						PfMatchType:       schemaStringOptionalValidate(PfMatchTypeDescription, validateMatchType()),
+						PfAsPrepend:       schemaIntOptionalValidateDefault(PfAsPrependDescription2, validateAsPrepend(), 0),
+						PfMed:             schemaIntOptionalDefault(PfMedDescription5, 0),
+						PfLocalPreference: schemaIntOptionalDefault(PfLocalPreferenceDescription4, 0),
+						PfType:            schemaStringRequiredValidate(PfTypeDescription8, validateIO()),
 					},
 				},
 			},
@@ -262,15 +88,15 @@ func resourceBgpSessionCreate(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
+	cID, ok := d.GetOk(PfCircuitId)
 	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
+		return diag.FromErr(errors.New(MessageMissingCircuitIdDetail))
 	}
-	connCID, ok := d.GetOk("connection_id")
+	connCID, ok := d.GetOk(PfConnectionId)
 	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
+		return diag.FromErr(errors.New(MesssageCRCIdRequired))
 	}
-	prefixesSet := d.Get("prefixes").(*schema.Set)
+	prefixesSet := d.Get(PfPrefixes).(*schema.Set)
 	prefixesList := prefixesSet.List()
 	if err := validatePrefixes(prefixesList); err != nil {
 		return diag.FromErr(err)
@@ -292,18 +118,19 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	c.Ctx = ctx
 	var diags diag.Diagnostics
 	var cID, connCID, bgpSettingsUUID string
-	if circuitID, ok := d.GetOk("circuit_id"); !ok {
-		return diag.FromErr(errors.New("could not extract cloud router circuit id from resource data"))
+
+	if circuitID, ok := d.GetOk(PfCircuitId); !ok {
+		return diag.FromErr(errors.New(MessageFailGetCRCId))
 	} else {
 		cID = circuitID.(string)
 	}
-	if connectionCID, ok := d.GetOk("connection_id"); !ok {
-		return diag.FromErr(errors.New("could not extract cloud router connection circuit id from resource data"))
+	if connectionCID, ok := d.GetOk(PfConnectionId); !ok {
+		return diag.FromErr(errors.New(MessageFailGetCRCCId))
 	} else {
 		connCID = connectionCID.(string)
 	}
-	if settingsUUID, ok := d.GetOk("id"); !ok {
-		return diag.FromErr(errors.New("could not extract bgp settings uuid from resource data"))
+	if settingsUUID, ok := d.GetOk(PfId); !ok {
+		return diag.FromErr(errors.New(MessageFailGetBgpSettings))
 	} else {
 		bgpSettingsUUID = settingsUUID.(string)
 	}
@@ -312,27 +139,22 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	bgp, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
 	if err != nil {
-		return diag.FromErr(errors.New("could not retrieve bgp session"))
+		return diag.FromErr(errors.New(MessageBgpSessionNotFound))
 	}
 
-	_ = d.Set("remote_asn", bgp.RemoteAsn)
-	_ = d.Set("disabled", bgp.Disabled)
-	_ = d.Set("orlonger", bgp.Orlonger)
-	_ = d.Set("address_family", bgp.AddressFamily)
-	_ = d.Set("multihop_ttl", bgp.MultihopTTL)
+	_ = setResourceDataKeys(d, bgp, PfRemoteAsn, PfDisabled, PfOrlonger, PfAddressFamily, PfMultihopTtl)
 
 	// If not Azure (Subnet empty)
 	if bgp.Subnet == "" {
-		_ = d.Set("l3_address", bgp.L3Address)
-		_ = d.Set("remote_address", bgp.RemoteAddress)
+		_ = setResourceDataKeys(d, bgp, PfL3Address, PfRemoteAddress)
 	} else {
 		// If Azure will unset l3_address remote_address as those aren't in the BGP resource definition for Azure
-		_ = d.Set("l3_address", nil)
-		_ = d.Set("remote_address", nil)
+		_ = d.Set(PfL3Address, nil)
+		_ = d.Set(PfRemoteAddress, nil)
 		// There is no way to know which Subnet is the primary or the secondary one
 		// Display warning in case none of the is set in the state file
-		if _, ok := d.GetOk("primary_subnet"); !ok {
-			if _, ok := d.GetOk("secondary_subnet"); !ok {
+		if _, ok := d.GetOk(PfPrimarySubnet); !ok {
+			if _, ok := d.GetOk(PfSecondarySubnet); !ok {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Warning,
 					Summary:  fmt.Sprintf("Manually set primary_subnet or secondary_subnet in Terraform state file using %s", bgp.Subnet),
@@ -340,23 +162,19 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 			}
 		}
 	}
-	if bgp.Md5 != "" {
-		_ = d.Set("md5", bgp.Md5)
+	if bgp.Md5 != PfEmptyString {
+		_ = d.Set(PfMd5, bgp.Md5)
 	}
-	_ = d.Set("med", bgp.Med)
-	_ = d.Set("as_prepend", bgp.AsPrepend)
-	_ = d.Set("local_preference", bgp.LocalPreference)
-	_ = d.Set("bfd_interval", bgp.BfdInterval)
-	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
+	_ = setResourceDataKeys(d, bgp, PfMed, PfAsPrepend, PfLocalPreference, PfBfdInterval, PfBfdMultiplier)
 
 	if bgp.Nat != nil {
 		nat := flattenNatConfiguration(bgp.Nat)
-		if err := d.Set("nat", nat); err != nil {
+		if err := d.Set(PfNat, nat); err != nil {
 			return diag.Errorf("error setting 'nat': %s", err)
 		}
 	}
 	prefixes := flattenPrefixConfiguration(bgp.Prefixes)
-	if err := d.Set("prefixes", prefixes); err != nil {
+	if err := d.Set(PfPrefixes, prefixes); err != nil {
 		return diag.Errorf("error setting 'prefixes': %s", err)
 	}
 
@@ -367,18 +185,18 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cID, ok := d.GetOk("circuit_id")
+	cID, ok := d.GetOk(PfCircuitId)
 	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Circuit ID"))
+		return diag.FromErr(errors.New(MessageMissingCircuitIdDetail))
 	}
-	connCID, ok := d.GetOk("connection_id")
+	connCID, ok := d.GetOk(PfConnectionId)
 	if !ok {
-		return diag.FromErr(errors.New("please provide a valid Cloud Router Connection ID"))
+		return diag.FromErr(errors.New(MesssageCRCIdRequired))
 	}
-	if d.HasChange("primary_subnet") && d.HasChange("secondary_subnet") {
-		return diag.FromErr(errors.New("cannot modify both primary_subnet and secondary_subnet at the same time"))
+	if d.HasChange(PfPrimarySubnet) && d.HasChange(PfSecondarySubnet) {
+		return diag.FromErr(errors.New(MessageCannotModifySubnets))
 	}
-	prefixesSet := d.Get("prefixes").(*schema.Set)
+	prefixesSet := d.Get(PfPrefixes).(*schema.Set)
 	prefixesList := prefixesSet.List()
 	if err := validatePrefixes(prefixesList); err != nil {
 		return diag.FromErr(err)
@@ -401,57 +219,57 @@ func resourceBgpSessionDelete(ctx context.Context, d *schema.ResourceData, m int
 	var diags diag.Diagnostics
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary:  "BGP session will be deleted together with the Cloud Router Connection.",
+		Summary:  MessageDeleteBgpSessionAndCRC,
 	})
-	d.SetId("")
+	d.SetId(PfEmptyString)
 	return diags
 }
 
 func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	bgpSession := packetfabric.BgpSession{}
-	if l3Address, ok := d.GetOk("l3_address"); ok {
+	if l3Address, ok := d.GetOk(PfL3Address); ok {
 		bgpSession.L3Address = l3Address.(string)
 	}
-	if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+	if primarySubnet, ok := d.GetOk(PfPrimarySubnet); ok {
 		bgpSession.PrimarySubnet = primarySubnet.(string)
 	}
-	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+	if secondarySubnet, ok := d.GetOk(PfSecondarySubnet); ok {
 		bgpSession.SecondarySubnet = secondarySubnet.(string)
 	}
-	if addressFamily, ok := d.GetOk("address_family"); ok {
+	if addressFamily, ok := d.GetOk(PfAddressFamily); ok {
 		bgpSession.AddressFamily = addressFamily.(string)
 	}
-	if remoteAddress, ok := d.GetOk("remote_address"); ok {
+	if remoteAddress, ok := d.GetOk(PfRemoteAddress); ok {
 		bgpSession.RemoteAddress = remoteAddress.(string)
 	}
-	if remoteAsn, ok := d.GetOk("remote_asn"); ok {
+	if remoteAsn, ok := d.GetOk(PfRemoteAsn); ok {
 		bgpSession.RemoteAsn = remoteAsn.(int)
 	}
-	if multihopTTL, ok := d.GetOk("multihop_ttl"); ok {
+	if multihopTTL, ok := d.GetOk(PfMultihopTtl); ok {
 		bgpSession.MultihopTTL = multihopTTL.(int)
 	}
-	if localPreference, ok := d.GetOk("local_preference"); ok {
+	if localPreference, ok := d.GetOk(PfLocalPreference); ok {
 		bgpSession.LocalPreference = localPreference.(int)
 	}
-	if med, ok := d.GetOk("med"); ok {
+	if med, ok := d.GetOk(PfMed); ok {
 		bgpSession.Med = med.(int)
 	}
-	if asPrepend, ok := d.GetOk("as_prepend"); ok {
+	if asPrepend, ok := d.GetOk(PfAsPrepend); ok {
 		bgpSession.AsPrepend = asPrepend.(int)
 	}
-	if orlonger, ok := d.GetOk("orlonger"); ok {
+	if orlonger, ok := d.GetOk(PfOrlonger); ok {
 		bgpSession.Orlonger = orlonger.(bool)
 	}
-	if bfdInterval, ok := d.GetOk("bfd_interval"); ok {
+	if bfdInterval, ok := d.GetOk(PfBfdInterval); ok {
 		bgpSession.BfdInterval = bfdInterval.(int)
 	}
-	if bfdMultiplier, ok := d.GetOk("bfd_multiplier"); ok {
+	if bfdMultiplier, ok := d.GetOk(PfBfdMultiplier); ok {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
 	}
-	if md5, ok := d.GetOk("md5"); ok {
+	if md5, ok := d.GetOk(PfMd5); ok {
 		bgpSession.Md5 = md5.(string)
 	}
-	if nat, ok := d.GetOk("nat"); ok {
+	if nat, ok := d.GetOk(PfNat); ok {
 		for _, nat := range nat.(*schema.Set).List() {
 			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
 		}
@@ -464,63 +282,63 @@ func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 
 func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 	bgpSession := packetfabric.BgpSession{}
-	if l3Address, ok := d.GetOk("l3_address"); ok {
+	if l3Address, ok := d.GetOk(PfL3Address); ok {
 		bgpSession.L3Address = l3Address.(string)
 	}
 	// https://docs.packetfabric.com/api/v2/swagger/#/Cloud%20Router%20BGP%20Session%20Settings/cloud_routers_bgp_update
 	// Azure BGP session Update: l3_address = Azure Subnet (primary or secondary)
 	// set l3Address based on the values of primarySubnet and secondarySubnet when modified
 	// This is a temporary solution until the BGP API is refactored.
-	if d.HasChange("primary_subnet") {
-		if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+	if d.HasChange(PfPrimarySubnet) {
+		if primarySubnet, ok := d.GetOk(PfPrimarySubnet); ok {
 			bgpSession.L3Address = primarySubnet.(string)
 		}
 	}
-	if d.HasChange("secondary_subnet") {
-		if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+	if d.HasChange(PfSecondarySubnet) {
+		if secondarySubnet, ok := d.GetOk(PfSecondarySubnet); ok {
 			bgpSession.L3Address = secondarySubnet.(string)
 		}
 	}
-	if d.HasChange("disabled") {
-		if disabled, ok := d.GetOk("disabled"); ok {
+	if d.HasChange(PfDisabled) {
+		if disabled, ok := d.GetOk(PfDisabled); ok {
 			bgpSession.Disabled = disabled.(bool)
 		}
 	}
-	if addressFamily, ok := d.GetOk("address_family"); ok {
+	if addressFamily, ok := d.GetOk(PfAddressFamily); ok {
 		bgpSession.AddressFamily = addressFamily.(string)
 	}
 	//remote_address not used for Azure
-	if remoteAddress, ok := d.GetOk("remote_address"); ok {
+	if remoteAddress, ok := d.GetOk(PfRemoteAddress); ok {
 		bgpSession.RemoteAddress = remoteAddress.(string)
 	}
-	if remoteAsn, ok := d.GetOk("remote_asn"); ok {
+	if remoteAsn, ok := d.GetOk(PfRemoteAsn); ok {
 		bgpSession.RemoteAsn = remoteAsn.(int)
 	}
-	if multihopTTL, ok := d.GetOk("multihop_ttl"); ok {
+	if multihopTTL, ok := d.GetOk(PfMultihopTtl); ok {
 		bgpSession.MultihopTTL = multihopTTL.(int)
 	}
-	if localPreference, ok := d.GetOk("local_preference"); ok {
+	if localPreference, ok := d.GetOk(PfLocalPreference); ok {
 		bgpSession.LocalPreference = localPreference.(int)
 	}
-	if med, ok := d.GetOk("med"); ok {
+	if med, ok := d.GetOk(PfMed); ok {
 		bgpSession.Med = med.(int)
 	}
-	if asPrepend, ok := d.GetOk("as_prepend"); ok {
+	if asPrepend, ok := d.GetOk(PfAsPrepend); ok {
 		bgpSession.AsPrepend = asPrepend.(int)
 	}
-	if orlonger, ok := d.GetOk("orlonger"); ok {
+	if orlonger, ok := d.GetOk(PfOrlonger); ok {
 		bgpSession.Orlonger = orlonger.(bool)
 	}
-	if bfdInterval, ok := d.GetOk("bfd_interval"); ok {
+	if bfdInterval, ok := d.GetOk(PfBfdInterval); ok {
 		bgpSession.BfdInterval = bfdInterval.(int)
 	}
-	if bfdMultiplier, ok := d.GetOk("bfd_multiplier"); ok {
+	if bfdMultiplier, ok := d.GetOk(PfBfdMultiplier); ok {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
 	}
-	if md5, ok := d.GetOk("md5"); ok {
+	if md5, ok := d.GetOk(PfMd5); ok {
 		bgpSession.Md5 = md5.(string)
 	}
-	if nat, ok := d.GetOk("nat"); ok {
+	if nat, ok := d.GetOk(PfNat); ok {
 		for _, nat := range nat.(*schema.Set).List() {
 			bgpSession.Nat = extractConnBgpSessionNat(nat.(map[string]interface{}))
 		}
@@ -532,16 +350,16 @@ func extractBgpSessionUpdate(d *schema.ResourceData) packetfabric.BgpSession {
 }
 
 func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPrefix {
-	if prefixes, ok := d.GetOk("prefixes"); ok {
+	if prefixes, ok := d.GetOk(PfPrefixes); ok {
 		sessionPrefixes := make([]packetfabric.BgpPrefix, 0)
 		for _, pref := range prefixes.(*schema.Set).List() {
 			sessionPrefixes = append(sessionPrefixes, packetfabric.BgpPrefix{
-				Prefix:          pref.(map[string]interface{})["prefix"].(string),
-				MatchType:       pref.(map[string]interface{})["match_type"].(string),
-				AsPrepend:       pref.(map[string]interface{})["as_prepend"].(int),
-				Med:             pref.(map[string]interface{})["med"].(int),
-				LocalPreference: pref.(map[string]interface{})["local_preference"].(int),
-				Type:            pref.(map[string]interface{})["type"].(string),
+				Prefix:          pref.(map[string]interface{})[PfPrefix].(string),
+				MatchType:       pref.(map[string]interface{})[PfMatchType].(string),
+				AsPrepend:       pref.(map[string]interface{})[PfAsPrepend].(int),
+				Med:             pref.(map[string]interface{})[PfMed].(int),
+				LocalPreference: pref.(map[string]interface{})[PfLocalPreference].(int),
+				Type:            pref.(map[string]interface{})[PfType].(string),
 			})
 		}
 		return sessionPrefixes
@@ -551,15 +369,15 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 
 func extractConnBgpSessionNat(n map[string]interface{}) *packetfabric.BgpNat {
 	nat := packetfabric.BgpNat{}
-	if direction := n["direction"]; direction != nil {
+	if direction := n[PfDirection]; direction != nil {
 		nat.Direction = direction.(string)
 	}
-	if natType := n["nat_type"]; natType != nil {
+	if natType := n[PfNatType]; natType != nil {
 		nat.NatType = natType.(string)
 	}
-	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
-	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
-	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"].(*schema.Set))
+	nat.PreNatSources = extractPreNatSources(n[PfPreNatSources])
+	nat.PoolPrefixes = extractPoolPrefixes(n[PfPoolPrefixes])
+	nat.DnatMappings = extractConnBgpSessionDnat(n[PfDnatMappings].(*schema.Set))
 	return &nat
 }
 
@@ -589,9 +407,9 @@ func extractConnBgpSessionDnat(d *schema.Set) []packetfabric.BgpDnatMapping {
 	sessionDnat := make([]packetfabric.BgpDnatMapping, 0)
 	for _, dnat := range d.List() {
 		sessionDnat = append(sessionDnat, packetfabric.BgpDnatMapping{
-			PrivateIP:         dnat.(map[string]interface{})["private_prefix"].(string),
-			PublicIP:          dnat.(map[string]interface{})["public_prefix"].(string),
-			ConditionalPrefix: dnat.(map[string]interface{})["conditional_prefix"].(string),
+			PrivateIP:         dnat.(map[string]interface{})[PfPrivatePrefix].(string),
+			PublicIP:          dnat.(map[string]interface{})[PfPublicPrefix].(string),
+			ConditionalPrefix: dnat.(map[string]interface{})[PfConditionalPrefix].(string),
 		})
 	}
 	return sessionDnat
@@ -602,14 +420,10 @@ func flattenNatConfiguration(nat *packetfabric.BgpNat) []interface{} {
 		return nil
 	}
 
-	data := make(map[string]interface{})
-	data["pre_nat_sources"] = nat.PreNatSources
-	data["pool_prefixes"] = nat.PoolPrefixes
-	data["direction"] = nat.Direction
-	data["nat_type"] = nat.NatType
+	data := mapStruct(&nat, PfPreNatSources, PfPoolPrefixes, PfDirection, PfNatType)
 
 	if nat.DnatMappings != nil {
-		data["dnat_mappings"] = flattenDnatMappings(nat.DnatMappings)
+		data[PfDnatMappings] = flattenDnatMappings(nat.DnatMappings)
 	}
 
 	return []interface{}{data}
@@ -618,53 +432,19 @@ func flattenNatConfiguration(nat *packetfabric.BgpNat) []interface{} {
 func flattenDnatMappings(dnatMappings []packetfabric.BgpDnatMapping) []interface{} {
 	result := make([]interface{}, len(dnatMappings))
 	for i, dnat := range dnatMappings {
-		data := make(map[string]interface{})
-		data["private_prefix"] = dnat.PrivateIP
-		data["public_prefix"] = dnat.PublicIP
-		data["conditional_prefix"] = dnat.ConditionalPrefix
+		data := mapStruct(&dnat, PfConditionalPrefix)
+		data[PfPrivatePrefix] = dnat.PrivateIP
+		data[PfPublicPrefix] = dnat.PublicIP
 		result[i] = data
 	}
 	return result
 }
 
 func flattenPrefixConfiguration(prefixes []packetfabric.BgpPrefix) []interface{} {
+	fields := stringsToMap(PfPrefix, PfMatchType, PfAsPrepend, PfMed, PfLocalPreference, PfType)
 	result := make([]interface{}, len(prefixes))
 	for i, prefix := range prefixes {
-		data := make(map[string]interface{})
-		data["prefix"] = prefix.Prefix
-		data["match_type"] = prefix.MatchType
-		data["as_prepend"] = prefix.AsPrepend
-		data["med"] = prefix.Med
-		data["local_preference"] = prefix.LocalPreference
-		data["type"] = prefix.Type
-		result[i] = data
+		result[i] = structToMap(&prefix, fields)
 	}
 	return result
-}
-
-func validatePrefixes(prefixesList []interface{}) error {
-	inCount, outCount := 0, 0
-	for _, prefix := range prefixesList {
-		prefixMap := prefix.(map[string]interface{})
-		prefixType := prefixMap["type"].(string)
-
-		if prefixType == "in" {
-			inCount++
-		} else if prefixType == "out" {
-			outCount++
-		}
-	}
-	if inCount == 0 || outCount == 0 {
-		return fmt.Errorf("at least 1 'in' and 1 'out' prefix must be provided")
-	}
-	return nil
-}
-
-func validateIPAddressWithPrefix(val interface{}, key string) (warns []string, errs []error) {
-	value := val.(string)
-	_, _, err := net.ParseCIDR(value)
-	if err != nil {
-		errs = append(errs, fmt.Errorf("%q is not a valid IP address with prefix: %s", key, value))
-	}
-	return
 }

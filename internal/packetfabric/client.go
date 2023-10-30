@@ -83,9 +83,10 @@ func (c *PFClient) _doRequest(req *http.Request, authToken *string, customHeader
 	if authToken != nil {
 		token = *authToken
 	}
-	req.Header.Add("Authorization", token)
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("pf-request-source", "terraform")
+
+	req.Header.Add(PfAuthorization, token)
+	req.Header.Add(PfContentType, PfApplicationJson)
+	req.Header.Add(PfRequestSource, PfTerraform)
 
 	if len(customHeaders) > 0 {
 		headers := customHeaders[0]
@@ -169,8 +170,8 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 
 	// Create a custom part header with the correct MIME type
 	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fileField, filepath.Base(filePath)))
-	h.Set("Content-Type", mimeType)
+	h.Set(PfContentDisposition, fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fileField, filepath.Base(filePath)))
+	h.Set(PfContentType, mimeType)
 
 	// Create the form file with the custom part header
 	part, err := writer.CreatePart(h)
@@ -193,7 +194,7 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 	}
 
 	req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, buffer)
-	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set(PfContentType, writer.FormDataContentType())
 
 	res, body, err := c._doRequest(req, &c.Token, map[string]string{})
 	if err != nil {
@@ -212,18 +213,18 @@ func (c *PFClient) sendMultipartRequest(uri, method, fileField, filePath string,
 // For debug use only.
 func (c *PFClient) _logDebug(url, method string, payload, resp interface{}, res *http.Response, body []byte) {
 	debug := make(map[string]interface{})
-	debug["url"] = url
+	debug[PfUrl] = url
 	if payload != nil {
-		debug["payload"] = payload
+		debug[PfPayload] = payload
 	}
 	if resp != nil {
-		debug["resp"] = resp
+		debug[PfResp] = resp
 	}
 	if body != nil {
-		debug["body"] = string(body)
+		debug[PfBody] = string(body)
 	}
 	if res != nil {
-		debug["statusCode"] = res.StatusCode
+		debug[PfStatusCode] = res.StatusCode
 	}
 
 	tflog.Debug(c.Ctx, fmt.Sprintf("\n##[CLIENT | SEND_REQUEST]## SENDING %s REQUEST", method), debug)

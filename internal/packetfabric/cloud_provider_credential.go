@@ -64,19 +64,27 @@ func (c *PFClient) UpdateCloudProviderCredential(creds CloudProviderCredentialUp
 	return resp, nil
 }
 
-// This function represents the Action to Read an existing Cloud Provider Credential
-func (c *PFClient) ReadCloudProviderCredential(cpcID string) (*CloudProviderCredentialResponse, error) {
-	if cpcID == "" {
-		return nil, errors.New(errorMsg)
-	}
-	resp := []*CloudProviderCredentialResponse{}
-	_, err := c.sendRequest(CloudProviderCredentialURI, getMethod, nil, &resp)
+func (c *PFClient) ListCloudProviderCredential() (*[]CloudProviderCredentialResponse, error) {
+	expectedResp := make([]CloudProviderCredentialResponse, 0)
+	_, err := c.sendRequest(CloudProviderCredentialURI, getMethod, nil, &expectedResp)
 	if err != nil {
 		return nil, err
 	}
-	for _, credential := range resp {
+	return &expectedResp, nil
+}
+
+// This function represents the Action to Read an existing Cloud Provider Credential
+func (c *PFClient) ReadCloudProviderCredential(cpcID string) (*CloudProviderCredentialResponse, error) {
+	if cpcID == PfEmptyString {
+		return nil, errors.New(errorMsg)
+	}
+	resp, err := c.ListCloudProviderCredential()
+	if err != nil {
+		return nil, err
+	}
+	for _, credential := range *resp {
 		if credential.CloudProviderCredentialUUID == cpcID {
-			return credential, nil
+			return &credential, nil
 		}
 	}
 	return nil, fmt.Errorf("cloud provider credential %s not found", cpcID)
@@ -84,7 +92,7 @@ func (c *PFClient) ReadCloudProviderCredential(cpcID string) (*CloudProviderCred
 
 // This function represents the Action to Delete an existing Cloud Provider Credential
 func (c *PFClient) DeleteCloudProviderCredential(cpcID string) (*CloudProviderCredentialDelResp, error) {
-	if cpcID == "" {
+	if cpcID == PfEmptyString {
 		return nil, errors.New(errorMsg)
 	}
 	formatedURI := fmt.Sprintf("%s/%s", CloudProviderCredentialURI, cpcID)

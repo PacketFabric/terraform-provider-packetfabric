@@ -6,71 +6,31 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func datasourcePortRouterLogs() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourcePortRouterLogsRead,
+		Description: PfPortRouterLogsDescription,
 		Schema: map[string]*schema.Schema{
-			"port_circuit_id": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Port identifier",
-			},
-			"time_from": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The ISO 8601 formatted datetime with optional timezone information, to filter from. Timezone defaults to UTC. Example: time_from=2020-05-23 00:00:00",
-			},
-			"time_to": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The ISO 8601 formatted datetime with optional timezone information, to filter from. Timezone defaults to UTC. Example: time_to=2020-05-23 00:00:00",
-			},
-			"port_router_logs": {
+			PfPortCircuitId: schemaStringRequiredNotEmpty(PfPortCircuitIdDescription),
+			PfTimeFrom:      schemaStringRequiredNotEmpty(PfTimeFromDescription),
+			PfTimeTo:        schemaStringRequiredNotEmpty(PfTimeToDescription),
+			PfPortRouterLogs: {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"device_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The device name.",
-						},
-						"iface_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The interface name.",
-						},
-						"message": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log message.",
-						},
-						"severity": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Description: "The log severity level.",
-						},
-						"severity_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log severity name.",
-						},
-						"timestamp": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log timestamp.",
-						},
+						PfDeviceName:   schemaStringComputed(PfDeviceNameDescription),
+						PfIfaceName:    schemaStringComputed(PfIfaceNameDescription),
+						PfMessage:      schemaStringComputed(PfMessageDescription2),
+						PfSeverity:     schemaIntComputed(PfSeverityDescription),
+						PfSeverityName: schemaStringComputed(PfSeverityNameDescription),
+						PfTimestamp:    schemaStringComputed(PfTimestampDescription),
 					},
 				},
 			},
 		},
-		Description: "The list of Port router logs.",
 	}
 }
 
@@ -78,18 +38,18 @@ func datasourcePortRouterLogsRead(ctx context.Context, d *schema.ResourceData, m
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	portCID, ok := d.GetOk("port_circuit_id")
+	portCID, ok := d.GetOk(PfPortCircuitId)
 	if !ok {
-		return diag.Errorf("please provide a valid port circuit ID")
+		return diag.Errorf(MessageMissingPortCiruitId)
 	}
 	var err error
-	timeFrom := d.Get("time_from")
-	timeTo := d.Get("time_to")
+	timeFrom := d.Get(PfTimeFrom)
+	timeTo := d.Get(PfTimeTo)
 	logs, err := c.GetPortRouterLogs(portCID.(string), timeFrom.(string), timeTo.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("port_router_logs", flattenPortRouterLogs(&logs))
+	err = d.Set(PfPortRouterLogs, flattenPortRouterLogs(&logs))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -98,16 +58,10 @@ func datasourcePortRouterLogsRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func flattenPortRouterLogs(logs *[]packetfabric.PortRouterLogs) []interface{} {
+	fields := stringsToMap(PfDeviceName, PfIfaceName, PfMessage, PfSeverity, PfSeverityName, PfTimestamp)
 	flattens := make([]interface{}, len(*logs))
 	for i, log := range *logs {
-		flatten := make(map[string]interface{})
-		flatten["device_name"] = log.DeviceName
-		flatten["iface_name"] = log.IfaceName
-		flatten["message"] = log.Message
-		flatten["severity"] = log.Severity
-		flatten["severity_name"] = log.SeverityName
-		flatten["timestamp"] = log.Timestamp
-		flattens[i] = flatten
+		flattens[i] = structToMap(&log, fields)
 	}
 	return flattens
 }

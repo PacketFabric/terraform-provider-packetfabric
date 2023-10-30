@@ -776,6 +776,12 @@ const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
 }`
 
+// Datasource: packetfabric_cloud_provider_credentials
+const DDataSourceCloudProviderCredentials = `data "packetfabric_cloud_provider_credentials" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
 // Datasource: packetfabric_ports
 const DDataSourcePorts = `data "packetfabric_ports" "%s" {
   provider   = packetfabric

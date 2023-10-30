@@ -13,52 +13,20 @@ func datasourceActivityLogs() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceActivityLogsRead,
 		Schema: map[string]*schema.Schema{
-			"activity_logs": {
+			PfActivityLogs: {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: "The active logs.",
+				Description: PfActivityLogsDescription,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"log_uuid": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log UUID.",
-						},
-						"user": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log User.",
-						},
-						"level": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Description: "The log level.",
-						},
-						"category": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log Category.",
-						},
-						"event": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log Event.",
-						},
-						"message": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log Message.",
-						},
-						"time_created": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log time created.",
-						},
-						"log_level_name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The log level name.",
-						},
+						PfLogUuid:      schemaStringComputed(PfLogUuidDescription),
+						PfUser:         schemaStringComputed(PfUserDescription2),
+						PfLevel:        schemaIntComputed(PfLevelDescription),
+						PfCategory:     schemaStringComputed(PfCategoryDescription),
+						PfEvent:        schemaStringComputed(PfEventDescription),
+						PfMessage:      schemaStringComputed(PfMessageDescription),
+						PfTimeCreated:  schemaStringComputed(PfTimeCreatedDescription2),
+						PfLogLevelName: schemaStringComputed(PfLogLevelNameDescription),
 					},
 				},
 			},
@@ -74,7 +42,7 @@ func datasourceActivityLogsRead(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err = d.Set("activity_logs", flattenActivityLogs(&activityLogs)); err != nil {
+	if err = d.Set(PfActivityLogs, flattenActivityLogs(&activityLogs)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(uuid.New().String())
@@ -82,19 +50,12 @@ func datasourceActivityLogsRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func flattenActivityLogs(logs *[]packetfabric.ActivityLog) []interface{} {
+	fields := stringsToMap(PfLogUuid, PfUser, PfLevel, PfCategory, PfEvent, PfMessage, PfTimeCreated, PfLogLevelName)
+
 	if logs != nil {
 		flattens := make([]interface{}, len(*logs), len(*logs))
 		for i, log := range *logs {
-			flatten := make(map[string]interface{})
-			flatten["log_uuid"] = log.LogUUID
-			flatten["user"] = log.User
-			flatten["level"] = log.Level
-			flatten["category"] = log.Category
-			flatten["event"] = log.Event
-			flatten["message"] = log.Message
-			flatten["time_created"] = log.TimeCreated
-			flatten["log_level_name"] = log.LevelName
-			flattens[i] = flatten
+			flattens[i] = structToMap(log, fields)
 		}
 		return flattens
 	}

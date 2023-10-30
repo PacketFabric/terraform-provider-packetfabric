@@ -217,7 +217,7 @@ func (c *PFClient) CreateInterface(interf Interface) (*InterfaceCreateResp, erro
 	if checked {
 		return expectedResp, nil
 	} else {
-		return nil, fmt.Errorf("could not determine port status")
+		return nil, fmt.Errorf(MessagePortStatusUndetermined)
 	}
 }
 
@@ -255,7 +255,7 @@ func (c *PFClient) changePortState(portCID string, enable bool) (*PortMessageRes
 	if statusChangeOk {
 		return expectedResp, nil
 	} else {
-		return nil, fmt.Errorf("could not determine port status")
+		return nil, fmt.Errorf(MessagePortStatusUndetermined)
 	}
 }
 
@@ -284,7 +284,7 @@ func (c *PFClient) changePortStateAutoneg(portCID string, enable bool) (*Interfa
 	if updateAutonegChangeOk {
 		return expectedResp, nil
 	} else {
-		return nil, fmt.Errorf("could not determine port status")
+		return nil, fmt.Errorf(MessagePortStatusUndetermined)
 	}
 }
 
@@ -359,7 +359,7 @@ func (c *PFClient) UpdatePort(portCID string, portUpdateData PortUpdate) (*Inter
 	if updated {
 		return expectedResp, nil
 	} else {
-		return nil, fmt.Errorf("could not determine port status")
+		return nil, fmt.Errorf(MessagePortStatusUndetermined)
 	}
 }
 
@@ -374,7 +374,7 @@ func (c *PFClient) DeletePort(portCID string) (*PortMessageResp, error) {
 	if deleted {
 		return expectedResp, nil
 	} else {
-		return nil, fmt.Errorf("could not determine port status")
+		return nil, fmt.Errorf(MessagePortStatusUndetermined)
 	}
 }
 

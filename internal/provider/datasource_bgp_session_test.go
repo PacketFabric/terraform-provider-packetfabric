@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccDataSourceBgpSessionComputedRequiredFields(t *testing.T) {
-	testutil.PreCheck(t, []string{"PF_AWS_ACCOUNT_ID"})
+	testutil.PreCheck(t, []string{PfPfeAwsAccountId})
 
 	datasourceBgpSessionResult := testutil.DHclDatasourceBgpSession()
 
@@ -20,8 +20,8 @@ func TestAccDataSourceBgpSessionComputedRequiredFields(t *testing.T) {
 			{
 				Config: datasourceBgpSessionResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "circuit_id"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "connection_id"),
+					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, PfCircuitId),
+					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, PfConnectionId),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.bgp_settings_uuid"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.address_family"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.remote_address"),

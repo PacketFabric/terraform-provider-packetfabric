@@ -13,139 +13,32 @@ import (
 
 func resourceOutboundCrossConnect() *schema.Resource {
 	return &schema.Resource{
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(10 * time.Minute),
-		},
+		Timeouts:      schema10MinuteTimeouts(),
 		CreateContext: resourceOutboundCrossConnectCreate,
 		ReadContext:   resourceOutboundCrossConnectRead,
 		UpdateContext: resourceOutboundCrossConnectUpdate,
 		DeleteContext: resourceOutboundCrossConnectDelete,
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"port": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The circuit ID of the PacketFabric port to which your are building the cross connect. This starts with \"PF-AP-\".",
-			},
-			"site": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The site code for the port location.",
-			},
-			"document_uuid": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.IsUUID,
-				Description:  "Document UUID for the LOA. When you order a cross connect, you must provide an LOA/CFA authorizing PacketFabric access to your equipment.",
-			},
-			"description": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "PacketFabric outbound cross connect description.",
-			},
-			"destination_name": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Z-side company name for the far side of the cross connect.",
-			},
-			"destination_circuit_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Z-side circuit id for the far side of the cross connect.",
-			},
-			"panel": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Z-side fiber panel info.",
-			},
-			"module": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Z-side fiber module info.",
-			},
-			"position": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Z-side fiber position info.",
-			},
-			"data_center_cross_connect_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Display ID for the outbound cross connect.",
-			},
-			"published_quote_line_uuid": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.IsUUID,
-				Description:  "UUID of the published quote line with which this cross connect should be associated.",
-			},
-			"user_description": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The user description used for update.",
-			},
-			"outbound_cross_connect_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Outbound Cross Connect Outbound Cross Connect ID.",
-			},
-			"obcc_status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Outbound Cross Connect OBCC Status.",
-			},
-			"progress": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "The Outbound Cross Connect Progress.",
-			},
-			"deleted": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "The Outbound Cross Connect delete state.",
-			},
-			"z_loc_cfa": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Outbound Cross Connect Panel/module/position.",
-			},
-			"time_created": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Outbound Cross Connect Time created.",
-			},
-			"time_updated": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "The Outbound Cross Connect Time updated.",
-			},
+			PfId:                       schemaStringComputedPlain(),
+			PfPort:                     schemaStringRequiredNewNotEmpty(PfPortDescription8),
+			PfSite:                     schemaStringRequiredNewNotEmpty(PfSiteDescription8),
+			PfDocumentUuid:             schemaStringRequiredNewValidate(PfDocumentUuidDescription2, validation.IsUUID),
+			PfDescription:              schemaStringRequiredNewNotEmpty(PfOutboundCrossConnectsDescription3),
+			PfDestinationName:          schemaStringOptionalNewNotEmpty(PfDestinationNameDescription2),
+			PfDestinationCircuitId:     schemaStringOptionalNewNotEmpty(PfDestinationCircuitIdDescription2),
+			PfPanel:                    schemaStringOptionalNewNotEmpty(PfPanelDescription2),
+			PfModule:                   schemaStringOptionalNewNotEmpty(PfModuleDescription2),
+			PfPosition:                 schemaStringOptionalNewNotEmpty(PfPositionDescription2),
+			PfDataCenterCrossConnectId: schemaStringOptionalNewNotEmpty(PfDataCenterCrossConnectIdDescription2),
+			PfPublishedQuoteLineUuid:   schemaStringOptionalNewValidate(PfPublishedQuoteLineUuidDescription4, validation.IsUUID),
+			PfUserDescription:          schemaStringOptionalNotEmpty(PfUserDescriptionDescription2),
+			PfOutboundCrossConnectId:   schemaStringComputed(PfOutboundCrossConnectIdDescription),
+			PfObccStatus:               schemaStringComputed(PfObccStatusDescription),
+			PfProgress:                 schemaIntComputed(PfProgressDescription),
+			PfDeleted:                  schemaBoolComputed(PfDeletedDescription4),
+			PfZLocCfa:                  schemaStringComputed(PfZLocCfaDescription),
+			PfTimeCreated:              schemaStringComputed(PfTimeCreatedDescription7),
+			PfTimeUpdated:              schemaStringComputed(PfTimeUpdatedDescription7),
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -163,13 +56,13 @@ func resourceOutboundCrossConnectCreate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
-	circuitID, err := getCrossConnectCircuitID(c, d.Get("port").(string))
+	circuitID, err := getCrossConnectCircuitID(c, d.Get(PfPort).(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if circuitID == "" {
-		return diag.Errorf("Failed to find the cross connect with port: %s", d.Get("port").(string))
+		return diag.Errorf("Failed to find the cross connect with port: %s", d.Get(PfPort).(string))
 	}
 
 	d.SetId(circuitID)
@@ -210,24 +103,7 @@ func resourceOutboundCrossConnectRead(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_ = d.Set("port", resp.Port)
-	_ = d.Set("site", resp.Site)
-	_ = d.Set("document_uuid", resp.DocumentUUID)
-	_ = d.Set("outbound_cross_connect_id", resp.OutboundCrossConnectID)
-	_ = d.Set("obcc_status", resp.ObccStatus)
-	_ = d.Set("description", resp.Description)
-	_ = d.Set("user_description", resp.UserDescription)
-	_ = d.Set("destination_name", resp.DestinationName)
-	_ = d.Set("destination_circuit_id", resp.DestinationCircuitID)
-	_ = d.Set("panel", resp.Panel)
-	_ = d.Set("module", resp.Module)
-	_ = d.Set("position", resp.Position)
-	_ = d.Set("data_center_cross_connect_id", resp.DataCenterCrossConnectID)
-	_ = d.Set("progress", resp.Progress)
-	_ = d.Set("deleted", resp.Deleted)
-	_ = d.Set("z_loc_cfa", resp.ZLocCfa)
-	_ = d.Set("time_created", resp.TimeCreated)
-	_ = d.Set("time_updated", resp.TimeUpdated)
+	_ = setResourceDataKeys(d, resp, PfPort, PfSite, PfDocumentUuid, PfOutboundCrossConnectId, PfObccStatus, PfDescription, PfUserDescription, PfDestinationName, PfDestinationCircuitId, PfPanel, PfModule, PfPosition, PfDataCenterCrossConnectId, PfProgress, PfDeleted, PfZLocCfa, PfTimeCreated, PfTimeUpdated)
 
 	return diags
 }
@@ -236,7 +112,7 @@ func resourceOutboundCrossConnectUpdate(ctx context.Context, d *schema.ResourceD
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	if userDesc, ok := d.GetOk("user_description"); ok {
+	if userDesc, ok := d.GetOk(PfUserDescription); ok {
 		err := c.UpdateOutboundCrossConnect(d.Id(), userDesc.(string))
 		if err != nil {
 			return diag.FromErr(err)
@@ -244,8 +120,8 @@ func resourceOutboundCrossConnectUpdate(ctx context.Context, d *schema.ResourceD
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Outbound Cross Connect update",
-			Detail:   "Please provide a valid User Description for update.",
+			Summary:  MessageObccUpdate,
+			Detail:   MessageObccUpdateDescription,
 		})
 	}
 	return diags
@@ -264,31 +140,31 @@ func resourceOutboundCrossConnectDelete(ctx context.Context, d *schema.ResourceD
 
 func extractCrossConnect(d *schema.ResourceData) packetfabric.OutboundCrossConnect {
 	crossConn := packetfabric.OutboundCrossConnect{}
-	crossConn.Port = d.Get("port").(string)
-	crossConn.Site = d.Get("site").(string)
-	crossConn.DocumentUUID = d.Get("document_uuid").(string)
-	if desc, ok := d.GetOk("description"); ok {
+	crossConn.Port = d.Get(PfPort).(string)
+	crossConn.Site = d.Get(PfSite).(string)
+	crossConn.DocumentUUID = d.Get(PfDocumentUuid).(string)
+	if desc, ok := d.GetOk(PfDescription); ok {
 		crossConn.Description = desc.(string)
 	}
-	if destinationName, ok := d.GetOk("destination_name"); ok {
+	if destinationName, ok := d.GetOk(PfDestinationName); ok {
 		crossConn.DestinationName = destinationName.(string)
 	}
-	if destinationCID, ok := d.GetOk("destination_circuit_id"); ok {
+	if destinationCID, ok := d.GetOk(PfDestinationCircuitId); ok {
 		crossConn.DestinationCircuitID = destinationCID.(string)
 	}
-	if panel, ok := d.GetOk("panel"); ok {
+	if panel, ok := d.GetOk(PfPanel); ok {
 		crossConn.Panel = panel.(string)
 	}
-	if module, ok := d.GetOk("module"); ok {
+	if module, ok := d.GetOk(PfModule); ok {
 		crossConn.Module = module.(string)
 	}
-	if position, ok := d.GetOk("position"); ok {
+	if position, ok := d.GetOk(PfPosition); ok {
 		crossConn.Position = position.(string)
 	}
-	if dataCenterCrossConnID, ok := d.GetOk("data_center_cross_connect_id"); ok {
+	if dataCenterCrossConnID, ok := d.GetOk(PfDataCenterCrossConnectId); ok {
 		crossConn.DataCenterCrossConnectID = dataCenterCrossConnID.(string)
 	}
-	if publishedQuoteLineUUID, ok := d.GetOk("published_quote_line_uuid"); ok {
+	if publishedQuoteLineUUID, ok := d.GetOk(PfPublishedQuoteLineUuid); ok {
 		crossConn.PublishedQuoteLineUUID = publishedQuoteLineUUID.(string)
 	}
 	return crossConn

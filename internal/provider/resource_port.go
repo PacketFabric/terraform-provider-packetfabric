@@ -9,112 +9,30 @@ import (
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/packetfabric"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceInterfaces() *schema.Resource {
 	return &schema.Resource{
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
-			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
-		},
+		Timeouts:      schemaTimeouts(30, 10, 10, 30),
 		CreateContext: resourceCreateInterface,
 		ReadContext:   resourceReadInterface,
 		UpdateContext: resourceUpdateInterface,
 		DeleteContext: resourceDeleteInterface,
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"account_uuid": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				DefaultFunc:  schema.EnvDefaultFunc("PF_ACCOUNT_ID", nil),
-				ValidateFunc: validation.IsUUID,
-				Description: "The UUID for the billing account that should be billed. " +
-					"Can also be set with the PF_ACCOUNT_ID environment variable.",
-			},
-			"autoneg": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: "Only applicable to 1Gbps ports. Controls whether auto negotiation is on (true) or off (false). Defaults: true",
-			},
-			"description": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "A brief description of the port.",
-			},
-			"media": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Optic media type.\n\n\tEnum: [\"LX\" \"EX\" \"ZX\" \"LR\" \"ER\" \"ER DWDM\" \"ZR\" \"ZR DWDM\" \"LR4\" \"ER4\" \"CWDM4\" \"LR4\" \"ER4 Lite\"]",
-			},
-			"nni": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				ForceNew:    true,
-				Default:     false,
-				Description: "Set this to true to provision an ENNI port. ENNI ports will use a nni_svlan_tpid value of 0x8100.\n\n\tBy default, ENNI ports are not available to all users. If you are provisioning your first ENNI port and are unsure if you have permission, contact support@packetfabric.com. ",
-			},
-			"pop": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Point of presence in which the port should be located.",
-			},
-			"speed": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Speed of the port.\n\n\tEnum: [\"1Gbps\" \"10Gbps\" \"40Gbps\" \"100Gbps\"]",
-			},
-			"subscription_term": {
-				Type:         schema.TypeInt,
-				Required:     true,
-				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
-				Description:  "Duration of the subscription in months\n\n\tEnum [\"1\" \"12\" \"24\" \"36\"]",
-			},
-			"zone": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "The desired availability zone of the port.\n\n\tExample: \"A\"",
-			},
-			"enabled": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				Description: "Change Port Admin Status. Set it to true when port is enabled, false when port is disabled. ",
-			},
-			"po_number": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-				Description:  "Purchase order number or identifier of a service.",
-			},
-			"labels": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Label value linked to an object.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"etl": {
-				Type:        schema.TypeFloat,
-				Computed:    true,
-				Description: "Early Termination Liability (ETL) fees apply when terminating a service before its term ends. ETL is prorated to the remaining contract days.",
-			},
+			PfId:               schemaStringComputedPlain(),
+			PfAccountUuid:      schemaAccountUuid(PfAccountUuidDescription2),
+			PfAutoneg:          schemaBoolOptional(PfAutonegDescription6),
+			PfDescription:      schemaStringRequiredNotEmpty(PfPortDescription9),
+			PfMedia:            schemaStringRequiredNewNotEmpty(PfMediaDescription5),
+			PfNni:              schemaBoolOptionalNewDefault(PfNniDescription, false),
+			PfPop:              schemaStringRequiredNewNotEmpty(PfPopDescription3),
+			PfSpeed:            schemaStringRequiredNewNotEmpty(PfSpeedDescription8),
+			PfSubscriptionTerm: schemaIntRequiredValidate(PfSubscriptionTermDescriptionB, validateSubscriptionTerm()),
+			PfZone:             schemaStringRequiredNewNotEmpty(PfZoneDescription6),
+			PfEnabled:          schemaBoolOptionalDefault(PfEnabledDescription2, true),
+			PfPoNumber:         schemaStringOptionalValidate(PfPoNumberDescription, validatePoNumber()),
+			PfLabels:           schemaStringSetOptional(PfLabelsDescription),
+			PfEtl:              schemaFloatComputed(PfEtlDescription),
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -126,9 +44,9 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	_, ok := d.GetOk("autoneg")
-	if ok && d.Get("speed").(string) != "1Gbps" {
-		return diag.Errorf("autoneg is only applicable to 1Gbps ports")
+	_, ok := d.GetOk(PfAutoneg)
+	if ok && d.Get(PfSpeed).(string) != Pf1Gbps {
+		return diag.Errorf(MessageAutonegOnly1Gbps)
 	}
 	interf := extractInterface(d)
 	resp, err := c.CreateInterface(interf)
@@ -137,22 +55,22 @@ func resourceCreateInterface(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		enabled := d.Get("enabled")
+		enabled := d.Get(PfEnabled)
 		if !enabled.(bool) {
 			if toggleErr := _togglePortStatus(c, enabled.(bool), resp.PortCircuitID); toggleErr != nil {
 				return diag.FromErr(toggleErr)
 			}
 		}
-		autoneg := d.Get("autoneg")
+		autoneg := d.Get(PfAutoneg)
 		// if autoneg = false and speed 1Gbps
-		if !autoneg.(bool) && d.Get("speed").(string) == "1Gbps" {
+		if !autoneg.(bool) && d.Get(PfSpeed).(string) == Pf1Gbps {
 			if togglePortAutonegErr := _togglePortAutoneg(c, autoneg.(bool), resp.PortCircuitID); togglePortAutonegErr != nil {
 				return diag.FromErr(togglePortAutonegErr)
 			}
 		}
 		d.SetId(resp.PortCircuitID)
 
-		if labels, ok := d.GetOk("labels"); ok {
+		if labels, ok := d.GetOk(PfLabels); ok {
 			diagnostics, created := createLabels(c, d.Id(), labels)
 			if !created {
 				return diagnostics
@@ -171,32 +89,25 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("account_uuid", resp.AccountUUID)
-		_ = d.Set("description", resp.Description)
-		if _, ok := d.GetOk("autoneg"); ok {
-			_ = d.Set("autoneg", resp.Autoneg)
+		_ = setResourceDataKeys(d, resp, PfAccountUuid, PfDescription, PfMedia, PfNni, PfPop, PfSpeed, PfSubscriptionTerm, PfZone, PfPoNumber)
+
+		if _, ok := d.GetOk(PfAutoneg); ok {
+			_ = d.Set(PfAutoneg, resp.Autoneg)
 		}
-		_ = d.Set("media", resp.Media)
-		_ = d.Set("nni", resp.IsNni)
-		_ = d.Set("pop", resp.Pop)
-		_ = d.Set("speed", resp.Speed)
-		_ = d.Set("subscription_term", resp.SubscriptionTerm)
-		_ = d.Set("zone", resp.Zone)
-		_ = d.Set("po_number", resp.PONumber)
 
 		if resp.Disabled {
-			_ = d.Set("enabled", false)
+			_ = d.Set(PfEnabled, false)
 		} else {
-			_ = d.Set("enabled", true)
+			_ = d.Set(PfEnabled, true)
 		}
 	}
 
-	if _, ok := d.GetOk("labels"); ok {
+	if _, ok := d.GetOk(PfLabels); ok {
 		labels, err2 := getLabels(c, d.Id())
 		if err2 != nil {
 			return diag.FromErr(err2)
 		}
-		_ = d.Set("labels", labels)
+		_ = d.Set(PfLabels, labels)
 	}
 
 	etl, err3 := c.GetEarlyTerminationLiability(d.Id())
@@ -204,25 +115,25 @@ func resourceReadInterface(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err3)
 	}
 	if etl > 0 {
-		_ = d.Set("etl", etl)
+		_ = d.Set(PfEtl, etl)
 	}
 	return diags
 }
 
 func resourceUpdateInterface(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	_, ok := d.GetOk("autoneg")
-	if ok && d.Get("speed").(string) != "1Gbps" {
-		return diag.Errorf("autoneg is only applicable to 1Gbps ports")
+	_, ok := d.GetOk(PfAutoneg)
+	if ok && d.Get(PfSpeed).(string) != Pf1Gbps {
+		return diag.Errorf(MessageAutonegOnly1Gbps)
 	}
 	_, err := _extractUpdateFn(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("labels") {
+	if d.HasChange(PfLabels) {
 		c := m.(*packetfabric.PFClient)
-		labels := d.Get("labels")
+		labels := d.Get(PfLabels)
 		diagnostics, updated := updateLabels(c, d.Id(), labels)
 		if !updated {
 			return diagnostics
@@ -242,15 +153,15 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	diags = append(diags, etlDiags...)
 
-	host := os.Getenv("PF_HOST")
-	testingInLab := strings.Contains(host, "api.dev")
+	host := os.Getenv(PfPfeHost)
+	testingInLab := strings.Contains(host, PfDevLab)
 
 	if testingInLab {
-		enabled := d.Get("enabled")
+		enabled := d.Get(PfEnabled)
 		if enabled.(bool) {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
-				Summary:  "In the dev environment, ports are disabled prior to deletion.",
+				Summary:  MessageDevDisableToDelete,
 			})
 
 			if toggleErr := _togglePortStatus(c, false, d.Id()); toggleErr != nil {
@@ -266,23 +177,23 @@ func resourceDeleteInterface(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId("")
+	d.SetId(PfEmptyString)
 	return diags
 }
 
 func extractInterface(d *schema.ResourceData) packetfabric.Interface {
 	interf := packetfabric.Interface{
-		AccountUUID:      d.Get("account_uuid").(string),
-		Description:      d.Get("description").(string),
-		Media:            d.Get("media").(string),
-		Nni:              d.Get("nni").(bool),
-		Pop:              d.Get("pop").(string),
-		Speed:            d.Get("speed").(string),
-		SubscriptionTerm: d.Get("subscription_term").(int),
-		Zone:             d.Get("zone").(string),
-		PONumber:         d.Get("po_number").(string),
+		AccountUUID:      d.Get(PfAccountUuid).(string),
+		Description:      d.Get(PfDescription).(string),
+		Media:            d.Get(PfMedia).(string),
+		Nni:              d.Get(PfNni).(bool),
+		Pop:              d.Get(PfPop).(string),
+		Speed:            d.Get(PfSpeed).(string),
+		SubscriptionTerm: d.Get(PfSubscriptionTerm).(int),
+		Zone:             d.Get(PfZone).(string),
+		PONumber:         d.Get(PfPoNumber).(string),
 	}
-	if autoneg, ok := d.GetOk("autoneg"); ok {
+	if autoneg, ok := d.GetOk(PfAutoneg); ok {
 		interf.Autoneg = autoneg.(bool)
 	}
 	return interf
@@ -293,34 +204,34 @@ func _extractUpdateFn(ctx context.Context, d *schema.ResourceData, m interface{}
 	c.Ctx = ctx
 
 	// Update if payload contains description and po_number
-	if d.HasChanges([]string{"po_number", "description"}...) {
+	if d.HasChanges([]string{PfPoNumber, PfDescription}...) {
 		portUpdateData := packetfabric.PortUpdate{
-			Description: d.Get("description").(string),
-			PONumber:    d.Get("po_number").(string),
+			Description: d.Get(PfDescription).(string),
+			PONumber:    d.Get(PfPoNumber).(string),
 		}
 		resp, err = c.UpdatePort(d.Id(), portUpdateData)
 	}
 
 	// Update autoneg only if speed == 1Gbps
-	if d.HasChange("autoneg") && d.Get("speed").(string) == "1Gbps" {
-		_, autonegChange := d.GetChange("autoneg")
+	if d.HasChange(PfAutoneg) && d.Get(PfSpeed).(string) == Pf1Gbps {
+		_, autonegChange := d.GetChange(PfAutoneg)
 		err = _togglePortAutoneg(c, autonegChange.(bool), d.Id())
 	}
 
 	// Update port status
-	if enabledHasChanged := d.HasChange("enabled"); enabledHasChanged {
-		_, enableChange := d.GetChange("enabled")
+	if enabledHasChanged := d.HasChange(PfEnabled); enabledHasChanged {
+		_, enableChange := d.GetChange(PfEnabled)
 		err = _togglePortStatus(c, enableChange.(bool), d.Id())
 	}
 
 	// Update port term
-	if d.HasChange("subscription_term") {
-		if subTerm, ok := d.GetOk("subscription_term"); ok {
+	if d.HasChange(PfSubscriptionTerm) {
+		if subTerm, ok := d.GetOk(PfSubscriptionTerm); ok {
 			billing := packetfabric.BillingUpgrade{
 				SubscriptionTerm: subTerm.(int),
 			}
 			_, err = c.ModifyBilling(d.Id(), billing)
-			_ = d.Set("subscription_term", subTerm.(int))
+			_ = d.Set(PfSubscriptionTerm, subTerm.(int))
 		}
 	}
 	return

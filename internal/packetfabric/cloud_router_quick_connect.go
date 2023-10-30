@@ -94,25 +94,25 @@ func (c *PFClient) UpdateCloudRouterQuickConnect(crCID, connCID, importCID strin
 func (c *PFClient) DeleteCloudRouterQuickConnect(crCID, connCID, importCID string) (warningMessage string, err error) {
 	state, err := c.GetCloudRouterQuickConnectState(importCID)
 	if err != nil {
-		return "error", err
+		return PfError, err
 	}
 	switch {
-	case state == "pending":
-		if importCID == "" {
-			err = errors.New("import circuit id cannot be empty")
+	case state == PfPending:
+		if importCID == PfEmptyString {
+			err = errors.New(MessageCircuitIdEmpty)
 			return
 		}
 		err = c._deletePendingCloudRouterQuickConnect(importCID)
-	case state == "active":
-		if crCID == "" || connCID == "" || importCID == "" {
+	case state == PfActive:
+		if crCID == PfEmptyString || connCID == PfEmptyString || importCID == PfEmptyString {
 			err = fmt.Errorf("import circuit id, cloud router circuit id, cloud router connection circuit id cannot be empty: id: %s; cr_circuit_id: %s; connection_circuit_id: %s", importCID, crCID, connCID)
 			return
 		}
 		err = c._deleteActiveCloudRouterQuickConnect(crCID, connCID, importCID)
-	case state == "rejected":
-		warningMessage = "the Z side has rejected the request. Remove the resource from Terraform state and resubmit your request as needed"
-	case state == "inactive":
-		warningMessage = "the cloud router quick connect is innactive and cannot be deleted"
+	case state == PfRejected:
+		warningMessage = MessageZSideRejected
+	case state == PfInactive:
+		warningMessage = MessageQuickConnectUndeletable
 	}
 	return
 }

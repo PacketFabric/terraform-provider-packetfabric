@@ -52,7 +52,7 @@ func (c *PFClient) CheckServiceStatus(ch chan bool, fn func() (*ServiceState, er
 			ch <- false
 		}
 		if state != nil {
-			if state.Status.Current.State == "COMPLETE" {
+			if state.Status.Current.State == PfComplete {
 				ticker.Stop()
 				ch <- true
 			} else if state.Status.LastWorkflow.Progress.Position ==
@@ -78,7 +78,7 @@ func (c *PFClient) CheckIPSecStatus(ch chan bool, fn func() (*ServiceState, erro
 			ch <- false
 		}
 		if state != nil {
-			if state.Status.Current.State == "COMPLETE" {
+			if state.Status.Current.State == PfComplete {
 				ticker.Stop()
 				ch <- true
 			}

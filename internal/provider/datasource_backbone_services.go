@@ -13,225 +13,65 @@ func datasourceBackboneServices() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: backboneServiceRead,
 		Schema: map[string]*schema.Schema{
-			"backbone_services": {
+			PfBackboneServices: {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"vc_circuit_id": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The VC Circuit ID.",
-						},
-						"customer_uuid": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The Customer UUID.",
-						},
-						"state": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service state.",
-						},
-						"service_type": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service type.",
-						},
-						"service_class": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service class.",
-						},
-						"mode": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service mode.",
-						},
-						"connected": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "Current connection status.",
-						},
-						"bandwidth": {
+						PfVcCircuitId:  schemaStringComputed(PfVcCircuitIdDescription),
+						PfCustomerUuid: schemaStringComputed(PfCustomerUuidDescription),
+						PfState:        schemaStringComputed(PfStateDescription),
+						PfServiceType:  schemaStringComputed(PfServiceTypeDescription),
+						PfServiceClass: schemaStringComputed(PfServiceClassDescription2),
+						PfMode:         schemaStringComputed(PfModeDescription),
+						PfConnected:    schemaBoolComputed(PfConnectedDescription),
+						PfBandwidth: {
 							Type:        schema.TypeSet,
 							Computed:    true,
-							Description: "Backbone service bandwidth",
+							Description: PfBandwidthDescription,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"account_uuid": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The UUID of the PacketFabric contact that will be billed.\n\t\tExample: a2115890-ed02-4795-a6dd-c485bec3529c",
-									},
-									"longhaul_type": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "Dedicated (no limits or additional charges), usage-based (per transfered GB) pricing model or hourly billing\n\t\tEnum: [\"dedicated\" \"usage\" \"hourly\"]",
-									},
-									"subscription_term": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "Subscription term in months. Not applicable for hourly billing.\n\t\tEnum: [\"1\" \"12\" \"24\" \"36\"]",
-									},
-									"speed": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The desired speed of the new connection.\n\t\tEnum: [\"50Mbps\" \"100Mbps\" \"200Mbps\" \"300Mbps\" \"400Mbps\" \"500Mbps\" \"1Gbps\" \"2Gbps\" \"5Gbps\" \"10Gbps\"]",
-									},
+									PfAccountUuid:      schemaStringComputed(PfAccountUuidDescription3),
+									PfLonghaulType:     schemaStringComputed(PfLonghaulTypeDescription2),
+									PfSubscriptionTerm: schemaIntComputed(PfSubscriptionTermDescription5),
+									PfSpeed:            schemaStringComputed(PfSpeedDescriptionE),
 								},
 							},
 						},
-						"description": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The service description.",
-						},
-						"rate_limit_in": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Description: "The rate limit in.",
-						},
-						"rate_limit_out": {
-							Type:        schema.TypeInt,
-							Computed:    true,
-							Description: "The rate limit out.",
-						},
-						"flex_bandwidth_id": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The flex bandwidth ID.",
-						},
-						"time_created": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Date and time of connection creation",
-						},
-						"time_updated": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Date and time connection was last updated",
-						},
-						"interfaces": {
+						PfDescription:     schemaStringComputed(PfServiceDescription3),
+						PfRateLimitIn:     schemaIntComputed(PfRateLimitInDescription),
+						PfRateLimitOut:    schemaIntComputed(PfRateLimitOutDescription),
+						PfFlexBandwidthId: schemaStringComputed(PfFlexBandwidthIdDescription2),
+						PfTimeCreated:     schemaStringComputed(PfTimeCreatedDescription),
+						PfTimeUpdated:     schemaStringComputed(PfTimeUpdatedDescription),
+						PfInterfaces: {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"port_circuit_id": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The port circuit ID.",
-									},
-									"pop": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface POP.",
-									},
-									"site": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface site.",
-									},
-									"site_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface site name.",
-									},
-									"customer_site_code": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer site code.",
-									},
-									"customer_site_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The customer site name.",
-									},
-									"speed": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface speed.",
-									},
-									"media": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The media size.",
-									},
-									"zone": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface zone.",
-									},
-									"description": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface description.",
-									},
-									"vlan": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "The interface vlan.",
-									},
-									"svlan": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "The interface svlan.",
-									},
-									"untagged": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "The interface untagged state.",
-									},
-									"provisioning_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "Interface provisioning status.",
-									},
-									"admin_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface admin status.",
-									},
-									"operational_status": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface operational status.",
-									},
-									"customer_uuid": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer UUID.",
-									},
-									"customer_name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface customer name.",
-									},
-									"region": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface region.",
-									},
-									"is_cloud": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "Interface cloud state.",
-									},
-									"is_ptp": {
-										Type:        schema.TypeBool,
-										Computed:    true,
-										Description: "Interface PTP state.",
-									},
-									"time_created": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface creation time.",
-									},
-									"time_updated": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "The interface updated time.",
-									},
+									PfPortCircuitId:      schemaStringComputed(PfPortCircuitIdDescription2),
+									PfPop:                schemaStringComputed(PfPopDescription8),
+									PfSite:               schemaStringComputed(PfSiteDescription6),
+									PfSiteName:           schemaStringComputed(PfSiteNameDescription),
+									PfCustomerSiteCode:   schemaStringComputed(PfCustomerSiteCodeDescription),
+									PfCustomerSiteName:   schemaStringComputed(PfCustomerSiteNameDescription),
+									PfSpeed:              schemaStringComputed(PfSpeedDescriptionG),
+									PfMedia:              schemaStringComputed(PfMediaDescription2),
+									PfZone:               schemaStringComputed(PfZoneDescription3),
+									PfDescription:        schemaStringComputed(PfInterfacesDescription),
+									PfVlan:               schemaIntComputed(PfVlanDescription3),
+									PfSvlan:              schemaIntComputed(PfSvlanDescription),
+									PfUntagged:           schemaBoolComputed(PfUntaggedDescription3),
+									PfProvisioningStatus: schemaStringComputed(PfProvisioningStatusDescription),
+									PfAdminStatus:        schemaStringComputed(PfAdminStatusDescription),
+									PfOperationalStatus:  schemaStringComputed(PfOperationalStatusDescription),
+									PfCustomerUuid:       schemaStringComputed(PfCustomerUuidDescription4),
+									PfCustomerName:       schemaStringComputed(PfCustomerNameDescription2),
+									PfRegion:             schemaStringComputed(PfRegionDescription5),
+									PfIsCloud:            schemaBoolComputed(PfIsCloudDescription),
+									PfIsPtp:              schemaBoolComputed(PfIsPtpDescription),
+									PfTimeCreated:        schemaStringComputed(PfTimeCreatedDescription3),
+									PfTimeUpdated:        schemaStringComputed(PfTimeUpdatedDescription4),
 								},
 							},
 						},
@@ -250,7 +90,7 @@ func backboneServiceRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err = d.Set("backbone_services", flattenBackboneService(&services)); err != nil {
+	if err = d.Set(PfBackboneServices, flattenBackboneService(&services)); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(string(uuid.New().String()))
@@ -258,56 +98,22 @@ func backboneServiceRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func flattenBackboneService(services *[]packetfabric.Services) []interface{} {
+	fields := stringsToMap(PfVcCircuitId, PfCustomerUuid, PfState, PfServiceType, PfServiceClass, PfMode, PfConnected, PfBandwidth, PfDescription, PfRateLimitIn, PfRateLimitOut, PfFlexBandwidthId, PfTimeCreated, PfTimeUpdated)
 	flattens := make([]interface{}, len(*services))
 	for i, service := range *services {
-		flatten := make(map[string]interface{})
-		flatten["vc_circuit_id"] = service.VcCircuitID
-		flatten["customer_uuid"] = service.CustomerUUID
-		flatten["state"] = service.State
-		flatten["service_type"] = service.ServiceType
-		flatten["service_class"] = service.ServiceClass
-		flatten["mode"] = service.Mode
-		flatten["connected"] = service.Connected
-		flatten["bandwidth"] = flattenServiceBandwidth(&service.Bandwidth)
-		flatten["description"] = service.Description
-		flatten["rate_limit_in"] = service.RateLimitIn
-		flatten["rate_limit_out"] = service.RateLimitOut
-		flatten["flex_bandwidth_id"] = service.FlexBandwidthID
-		flatten["time_created"] = service.TimeCreated
-		flatten["time_updated"] = service.TimeUpdated
-		flatten["interfaces"] = flattenBackBoneInterfaces(&service.Interfaces)
+		flatten := structToMap(&service, fields)
+		flatten[PfInterfaces] = flattenBackBoneInterfaces(&service.Interfaces)
 		flattens[i] = flatten
 	}
 	return flattens
 }
 
 func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []interface{} {
+	fields := stringsToMap(PfPortCircuitId, PfPop, PfSite, PfSiteName, PfSpeed, PfMedia, PfZone, PfDescription, PfVlan, PfSvlan, PfUntagged, PfProvisioningStatus, PfAdminStatus, PfOperationalStatus, PfCustomerUuid, PfCustomerName, PfRegion, PfIsCloud, PfIsPtp, PfTimeCreated, PfTimeUpdated)
 	if interfs != nil {
 		flattens := make([]interface{}, len(*interfs))
 		for i, interf := range *interfs {
-			flatten := make(map[string]interface{})
-			flatten["port_circuit_id"] = interf.PortCircuitID
-			flatten["pop"] = interf.Pop
-			flatten["site"] = interf.Site
-			flatten["site_name"] = interf.SiteName
-			flatten["speed"] = interf.Speed
-			flatten["media"] = interf.Media
-			flatten["zone"] = interf.Zone
-			flatten["description"] = interf.Description
-			flatten["vlan"] = interf.Vlan
-			flatten["svlan"] = interf.Svlan
-			flatten["untagged"] = interf.Untagged
-			flatten["provisioning_status"] = interf.ProvisioningStatus
-			flatten["admin_status"] = interf.AdminStatus
-			flatten["operational_status"] = interf.OperationalStatus
-			flatten["customer_uuid"] = interf.CustomerUUID
-			flatten["customer_name"] = interf.CustomerName
-			flatten["region"] = interf.Region
-			flatten["is_cloud"] = interf.IsCloud
-			flatten["is_ptp"] = interf.IsPtp
-			flatten["time_created"] = interf.TimeCreated
-			flatten["time_updated"] = interf.TimeUpdated
-			flattens[i] = flatten
+			flattens[i] = structToMap(interf, fields)
 		}
 		return flattens
 	}
@@ -316,13 +122,9 @@ func flattenBackBoneInterfaces(interfs *[]packetfabric.ServiceInterface) []inter
 
 func flattenServiceBandwidth(bandw *packetfabric.Bandwidth) []interface{} {
 	flattens := make([]interface{}, 0)
+	fields := stringsToMap(PfAccountUuid, PfSubscriptionTerm, PfSpeed, PfLonghaulType)
 	if bandw != nil {
-		flatten := make(map[string]interface{})
-		flatten["account_uuid"] = bandw.AccountUUID
-		flatten["subscription_term"] = bandw.SubscriptionTerm
-		flatten["speed"] = bandw.Speed
-		flatten["longhaul_type"] = bandw.LonghaulType
-		flattens = append(flattens, flatten)
+		flattens = append(flattens, structToMap(bandw, fields))
 	}
 	return flattens
 }

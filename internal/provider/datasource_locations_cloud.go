@@ -13,225 +13,52 @@ func datasourceCloudLocations() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCloudLocationsRead,
 		Schema: map[string]*schema.Schema{
-			"cloud_provider": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "packet", "google", "ibm", "oracle", "salesforce", "webex"}, true),
-				Description:  "Filter locations by cloud provider. Options are: aws, azure, packet, google, ibm, oracle, salesforce, webex",
-			},
-			"cloud_connection_type": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"hosted", "dedicated"}, true),
-				Description:  "Filter locations by cloud connection type. Options are: hosted or dedicated",
-			},
-			"nat_capable": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Flag specifying that only locations capable of NAT should be returned",
-			},
-			"has_cloud_router": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Flag to look for only cloud-router capable locations",
-			},
-			"any_type": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Flag specifying should only primary locations or locations of any type be returned",
-			},
-			"pop": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Filter locations by the POP name",
-			},
-			"city": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Filter locations by the city name",
-			},
-			"state": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Filter locations by the state",
-			},
-			"market": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Filter locations by the market code",
-			},
-			"region": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "Filter locations by the region's short name",
-			},
-			"cloud_locations": {
+			PfCloudProvider:       schemaStringRequiredValidate(PfCloudProviderDescription, validateProvider()),
+			PfCloudConnectionType: schemaStringRequiredValidate(PfCloudConnectionTypeDescription, validateCloudConnectionType()),
+			PfNatCapable:          schemaBoolOptionalDefault(PfNatCapableDescription, false),
+			PfHasCloudRouter:      schemaBoolOptionalDefault(PfHasCloudRouterDescription, false),
+			PfAnyType:             schemaBoolOptionalDefault(PfAnyTypeDescription, false),
+			PfPop:                 schemaStringOptionalValidate(PfPopDescription6, validation.StringIsNotEmpty),
+			PfCity:                schemaStringOptionalValidate(PfCityDescription2, validation.StringIsNotEmpty),
+			PfState:               schemaStringOptionalValidate(PfStateDescription8, validation.StringIsNotEmpty),
+			PfMarket:              schemaStringOptionalValidate(PfMarketDescription4, validation.StringIsNotEmpty),
+			PfRegion:              schemaStringOptionalValidate(PfRegionDescription2, validation.StringIsNotEmpty),
+			PfCloudLocations: {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: "The list of list of physical locations optionally filtered by provided parameters.",
+				Description: PfCloudLocationsDescription,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"pop": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Point of Presence for the cloud provider location\n\t\tExample: LAX1",
-						},
-						"region": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Interface Port Region.",
-						},
-						"market": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Interface Port Market.",
-						},
-						"market_description": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Interface Port Market description.",
-						},
-						"zones": {
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Schema{
-								Type:         schema.TypeString,
-								ValidateFunc: validation.StringIsNotEmpty,
-							},
-						},
-						"vendor": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud vendor.",
-						},
-						"site": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service site.",
-						},
-						"site_code": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service site code.",
-						},
-						"type": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service type.",
-						},
-						"status": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Tye cloud service staus.",
-						},
-						"latitude": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service location latitude.",
-						},
-						"longitude": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service location longitude.",
-						},
-						"timezone": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service timezone.",
-						},
-						"notes": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service notes.",
-						},
-						"pcode": {
-							Type:        schema.TypeFloat,
-							Computed:    true,
-							Description: "The cloud service PCODE.",
-						},
-						"lead_time": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service lead time.",
-						},
-						"single_armed": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "True if cloud service is single armed.",
-						},
-						"address1": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service address 1.",
-						},
-						"address2": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service address 2.",
-						},
-						"city": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service city.",
-						},
-						"state": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service state.",
-						},
-						"postal": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service postal code.",
-						},
-						"country": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service country.",
-						},
-						"cloud_provider": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service provider.",
-						},
-						"cloud_connection_region": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service connection region.",
-						},
-						"cloud_connection_hosted_type": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service connection hosted type.",
-						},
-						"cloud_connection_region_description": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service connection region description.",
-						},
-						"network_provider": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service network provider.",
-						},
-						"time_created": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The cloud service time created.",
-						},
-						"enni_supported": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "True if enni supported.",
-						},
+						PfPop:                               schemaStringComputed(PfPopDescription),
+						PfRegion:                            schemaStringComputed(PfRegionDescription3),
+						PfMarket:                            schemaStringComputed(PfMarketDescription5),
+						PfMarketDescription:                 schemaStringComputed(PfMarketDescriptionDescription),
+						PfZones:                             schemaStringListComputedNotEmpty(PfEmptyString),
+						PfVendor:                            schemaStringComputed(PfVendorDescription2),
+						PfSite:                              schemaStringComputed(PfSiteDescription4),
+						PfSiteCode:                          schemaStringComputed(PfSiteCodeDescription3),
+						PfType:                              schemaStringComputed(PfTypeDescription3),
+						PfStatus:                            schemaStringComputed(PfStatusDescription3),
+						PfLatitude:                          schemaStringComputed(PfLatitudeDescription2),
+						PfLongitude:                         schemaStringComputed(PfLongitudeDescription2),
+						PfTimezone:                          schemaStringComputed(PfTimezoneDescription2),
+						PfNotes:                             schemaStringComputed(PfNotesDescription2),
+						PfPcode:                             schemaFloatComputed(PfPcodeDescription),
+						PfLeadTime:                          schemaStringComputed(PfLeadTimeDescription2),
+						PfSingleArmed:                       schemaBoolComputed(PfSingleArmedDescription2),
+						PfAddress1:                          schemaStringComputed(PfAddress1Description2),
+						PfAddress2:                          schemaStringComputed(PfAddress2Description2),
+						PfCity:                              schemaStringComputed(PfCityDescription3),
+						PfState:                             schemaStringComputed(PfStateDescription9),
+						PfPostal:                            schemaStringComputed(PfPostalDescription2),
+						PfCountry:                           schemaStringComputed(PfCountryDescription2),
+						PfCloudProvider:                     schemaStringComputed(PfCloudProviderDescription2),
+						PfCloudConnectionRegion:             schemaStringComputed(PfCloudConnectionRegionDescription),
+						PfCloudConnectionHostedType:         schemaStringComputed(PfCloudConnectionHostedTypeDescription),
+						PfCloudConnectionRegionDescription2: schemaStringComputed(PfCloudConnectionRegionDescriptionDescription),
+						PfNetworkProvider:                   schemaStringComputed(PfNetworkProviderDescription2),
+						PfTimeCreated:                       schemaStringComputed(PfTimeCreatedDescriptionA),
+						PfEnniSupported:                     schemaBoolComputed(PfEnniSupportedDescription2),
 					},
 				},
 			},
@@ -243,13 +70,13 @@ func dataSourceCloudLocationsRead(ctx context.Context, d *schema.ResourceData, m
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	cp, ok := d.GetOk("cloud_provider")
+	cp, ok := d.GetOk(PfCloudProvider)
 	if !ok {
-		return diag.Errorf("please provide a valid cloud provider")
+		return diag.Errorf(MessageMissingCP)
 	}
-	ccType, ok := d.GetOk("cloud_connection_type")
+	ccType, ok := d.GetOk(PfCloudConnectionType)
 	if !ok {
-		return diag.Errorf("please provide a valid cloud connection type")
+		return diag.Errorf(MessageMissingCPType)
 	}
 	natCapable, hasCloudRouter, anyType := _extractOptionalLocationBoolValues(d)
 	pop, city, state, market, region := _extractOptionalLocationStringValues(d)
@@ -258,7 +85,7 @@ func dataSourceCloudLocationsRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = d.Set("cloud_locations", flattenCloudLocations(&locations))
+	err = d.Set(PfCloudLocations, flattenCloudLocations(&locations))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -267,47 +94,26 @@ func dataSourceCloudLocationsRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func flattenCloudLocations(locs *[]packetfabric.CloudLocation) []interface{} {
+	fields := stringsToMap(PfPop, PfRegion, PfMarket, PfMarketDescription, PfVendor, PfSite, PfSiteCode, PfType, PfStatus, PfLatitude, PfLongitude, PfTimezone, PfNotes, PfPcode, PfLeadTime, PfSingleArmed, PfAddress1, PfAddress2, PfZones, PfCity, PfState, PfPostal, PfCountry, PfCloudProvider, PfNetworkProvider, PfTimeCreated, PfEnniSupported)
 	flattens := make([]interface{}, len(*locs))
 	for i, loc := range *locs {
-		flatten := make(map[string]interface{})
-		flatten["pop"] = loc.Pop
-		flatten["region"] = loc.Region
-		flatten["market"] = loc.Market
-		flatten["market_description"] = loc.MarketDescription
-		flatten["vendor"] = loc.Vendor
-		flatten["site"] = loc.Site
-		flatten["site_code"] = loc.SiteCode
-		flatten["type"] = loc.Type
-		flatten["status"] = loc.Status
-		flatten["latitude"] = loc.Latitude
-		flatten["longitude"] = loc.Longitude
-		if loc.Timezone != nil {
-			flatten["timezone"] = loc.Timezone
-		}
-		if loc.Notes != nil {
-			flatten["notes"] = loc.Notes
-		}
-		if loc.Pcode != nil {
-			flatten["pcode"] = loc.Pcode
-		}
-		flatten["lead_time"] = loc.LeadTime
-		flatten["single_armed"] = loc.SingleArmed
-		flatten["address1"] = loc.Address1
-		if loc.Address2 != nil {
-			flatten["address2"] = loc.Address2
-		}
-		flatten["zones"] = loc.Zones
-		flatten["city"] = loc.City
-		flatten["state"] = loc.State
-		flatten["postal"] = loc.Postal
-		flatten["country"] = loc.Country
-		flatten["cloud_provider"] = loc.CloudProvider
-		flatten["cloud_connection_region"] = loc.CloudConnectionDetails.Region
-		flatten["cloud_connection_hosted_type"] = loc.CloudConnectionDetails.HostedType
-		flatten["cloud_connection_region_description"] = loc.CloudConnectionDetails.RegionDescription
-		flatten["network_provider"] = loc.NetworkProvider
-		flatten["time_created"] = loc.TimeCreated
-		flatten["enni_supported"] = loc.EnniSupported
+		flatten := structToMap(loc, fields)
+		// TODO: do we need these "nil guards"? should they be built into structToMap
+		//if loc.Timezone != nil {
+		//	flatten["timezone"] = loc.Timezone
+		//}
+		//if loc.Notes != nil {
+		//	flatten["notes"] = loc.Notes
+		//}
+		//if loc.Pcode != nil {
+		//	flatten["pcode"] = loc.Pcode
+		//}
+		//if loc.Address2 != nil {
+		//	flatten["address2"] = loc.Address2
+		//}
+		flatten[PfCloudConnectionRegion] = loc.CloudConnectionDetails.Region
+		flatten[PfCloudConnectionHostedType] = loc.CloudConnectionDetails.HostedType
+		flatten[PfCloudConnectionRegionDescription2] = loc.CloudConnectionDetails.RegionDescription
 		flattens[i] = flatten
 	}
 	return flattens
@@ -317,37 +123,37 @@ func _extractOptionalLocationBoolValues(d *schema.ResourceData) (natCapable, has
 	natCapable = false
 	hasCloudRouter = false
 	anyType = false
-	if nat, ok := d.GetOk("nat_capable"); ok {
+	if nat, ok := d.GetOk(PfNatCapable); ok {
 		natCapable = nat.(bool)
 	}
-	if cloudRouter, ok := d.GetOk("has_cloud_router"); ok {
+	if cloudRouter, ok := d.GetOk(PfHasCloudRouter); ok {
 		hasCloudRouter = cloudRouter.(bool)
 	}
-	if any, ok := d.GetOk("any_type"); ok {
+	if any, ok := d.GetOk(PfAnyType); ok {
 		anyType = any.(bool)
 	}
 	return
 }
 
 func _extractOptionalLocationStringValues(d *schema.ResourceData) (pop, city, state, market, region string) {
-	pop = ""
-	city = ""
-	state = ""
-	market = ""
-	region = ""
-	if p, ok := d.GetOk("pop"); ok {
+	pop = PfEmptyString
+	city = PfEmptyString
+	state = PfEmptyString
+	market = PfEmptyString
+	region = PfEmptyString
+	if p, ok := d.GetOk(PfPop); ok {
 		pop = p.(string)
 	}
-	if c, ok := d.GetOk("city"); ok {
+	if c, ok := d.GetOk(PfCity); ok {
 		city = c.(string)
 	}
-	if s, ok := d.GetOk("state"); ok {
+	if s, ok := d.GetOk(PfState); ok {
 		state = s.(string)
 	}
-	if m, ok := d.GetOk("market"); ok {
+	if m, ok := d.GetOk(PfMarket); ok {
 		market = m.(string)
 	}
-	if r, ok := d.GetOk("region"); ok {
+	if r, ok := d.GetOk(PfRegion); ok {
 		region = r.(string)
 	}
 	return
