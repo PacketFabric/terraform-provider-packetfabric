@@ -70,20 +70,20 @@ func dataSourcePortDeviceInfoRead(ctx context.Context, d *schema.ResourceData, m
 	if portInfo != nil {
 		_ = setResourceDataKeys(d, portInfo, PfDeviceName, PfDeviceMake, PfAdminStatus, PfOperStatus, PfAutoNegotiation, PfIfaceName, PfSpeed, PfTimeFlapped, PfTrafficRxBps, PfTrafficRxBytes, PfTrafficRxIpv6Bytes, PfTrafficRxIpv6Packets, PfTrafficRxPackets, PfTrafficRxPps, PfTrafficTxBps, PfTrafficTxBytes, PfTrafficTxIpv6Bytes, PfTrafficTxIpv6Packets, PfTrafficTxPackets, PfTrafficTxPps, PfWiringMedia, PfWiringModule, PfWiringPanel, PfWiringPosition, PfWiringReach, PfWiringType, PfLagSpeed, PfDeviceCanLag)
 		if portInfo.Polltime != nil {
-			_ = d.Set(PfPolltime, portInfo.Polltime) // constant: "polltime" -> PfPolltime
+			_ = d.Set(PfPolltime, portInfo.Polltime)
 		}
 		if portInfo.AdjacentRouter != nil {
-			_ = d.Set(PfAdjacentRouter, portInfo.AdjacentRouter) // constant: "adjacent_router" -> PfAdjacentRouter
+			_ = d.Set(PfAdjacentRouter, portInfo.AdjacentRouter)
 		}
 		for _, optics := range portInfo.OpticsDiagnosticsLaneValues {
-			_ = d.Set(PfOpticsDiagnosticsLaneTxPowerDbm, optics.TxPowerDbm) // constant: "optics_diagnostics_lane_tx_power_dbm" -> PfOpticsDiagnosticsLaneTxPowerDbm
-			_ = d.Set(PfOpticsDiagnosticsLaneTxPower, optics.TxPower) // constant: "optics_diagnostics_lane_tx_power" -> PfOpticsDiagnosticsLaneTxPower
-			_ = d.Set(PfOpticsDiagnosticsLaneIndex, optics.LaneIndex) // constant: "optics_diagnostics_lane_index" -> PfOpticsDiagnosticsLaneIndex
-			_ = d.Set(PfOpticsDiagnosticsLaneRxPowerDbm, optics.RxPowerDbm) // constant: "optics_diagnostics_lane_rx_power_dbm" -> PfOpticsDiagnosticsLaneRxPowerDbm
-			_ = d.Set(PfOpticsDiagnosticsLaneRxPower, optics.RxPower) // constant: "optics_diagnostics_lane_rx_power" -> PfOpticsDiagnosticsLaneRxPower
-			_ = d.Set(PfOpticsDiagnosticsLaneBiasCurrent, optics.BiasCurrent) // constant: "optics_diagnostics_lane_bias_current" -> PfOpticsDiagnosticsLaneBiasCurrent
-			_ = d.Set(PfOpticsDiagnosticsLaneTxStatus, optics.TxStatus) // constant: "optics_diagnostics_lane_tx_status" -> PfOpticsDiagnosticsLaneTxStatus
-			_ = d.Set(PfOpticsDiagnosticsLaneRxStatus, optics.RxStatus) // constant: "optics_diagnostics_lane_rx_status" -> PfOpticsDiagnosticsLaneRxStatus
+			_ = d.Set(PfOpticsDiagnosticsLaneTxPowerDbm, optics.TxPowerDbm)
+			_ = d.Set(PfOpticsDiagnosticsLaneTxPower, optics.TxPower)
+			_ = d.Set(PfOpticsDiagnosticsLaneIndex, optics.LaneIndex)
+			_ = d.Set(PfOpticsDiagnosticsLaneRxPowerDbm, optics.RxPowerDbm)
+			_ = d.Set(PfOpticsDiagnosticsLaneRxPower, optics.RxPower)
+			_ = d.Set(PfOpticsDiagnosticsLaneBiasCurrent, optics.BiasCurrent)
+			_ = d.Set(PfOpticsDiagnosticsLaneTxStatus, optics.TxStatus)
+			_ = d.Set(PfOpticsDiagnosticsLaneRxStatus, optics.RxStatus)
 		}
 	}
 	d.SetId(portCID.(string))
