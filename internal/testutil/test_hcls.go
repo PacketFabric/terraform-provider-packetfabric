@@ -843,21 +843,47 @@ func RHclOutboundCrossConnect() RHcloutboundCrossConnectsResult {
 	}
 }
 
+func LinkAggregationGroupPort() RHclPortResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfPort)
+	uniqueDesc := GenerateUniqueName()
+
+	media := "LX"
+	pop := "LAB1"
+	zone := "D"
+	speed := "1Gbps"
+	portEnabled := false
+
+	hcl := fmt.Sprintf(
+		RResourcePort,
+		hclName,
+		uniqueDesc,
+		media,
+		pop,
+		zone,
+		speed,
+		subscriptionTerm,
+		portEnabled,
+	)
+	return RHclPortResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfPort,
+			ResourceName: hclName,
+		},
+		ResourceName:     resourceName,
+		Description:      uniqueDesc,
+		Media:            media,
+		Pop:              pop,
+		Zone:             zone,
+		Speed:            speed,
+		SubscriptionTerm: subscriptionTerm,
+		Enabled:          portEnabled,
+	}
+}
+
 // packetfabric_link_aggregation_group
 func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
-
-	c, err := _createPFClient()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	portDetails1 := PortDetails{
-		PFClient:     c,
-		DesiredSpeed: portSpeed,
-	}
-
-	hclPortResult1 := portDetails1.RHclPort(false)
-
+	portHclResult := LinkAggregationGroupPort()
 	resourceName, hclName := GenerateUniqueResourceName(pfLinkAggregationGroup)
 	uniqueDesc := GenerateUniqueName()
 	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfLinkAggregationGroup, hclName, uniqueDesc)
@@ -866,12 +892,11 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		hclName,
 		uniqueDesc,
 		LinkAggGroupInterval,
-		hclPortResult1.ResourceName,
-		hclPortResult1.Pop,
-		resourceName,
+		portHclResult.ResourceName,
+		portHclResult.Pop,
 	)
 
-	hcl := fmt.Sprintf("%s\n%s", hclPortResult1.Hcl, linkAggGroupHcl)
+	hcl := fmt.Sprintf("%s\n%s", portHclResult.Hcl, linkAggGroupHcl)
 
 	return RHclLinkAggregationGroupResult{
 		HclResultBase: HclResultBase{
@@ -882,9 +907,9 @@ func RHclLinkAggregationGroup() RHclLinkAggregationGroupResult {
 		Desc:     uniqueDesc,
 		Interval: LinkAggGroupInterval,
 		Members: []string{
-			hclPortResult1.ResourceName,
+			portHclResult.ResourceName,
 		},
-		Pop: hclPortResult1.Pop,
+		Pop: portHclResult.Pop,
 	}
 }
 
