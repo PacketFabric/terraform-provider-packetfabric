@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"testing"
 )
 
@@ -83,6 +84,23 @@ func Test_CreateAwsConn(t *testing.T) {
 	cTest.runFakeHttpServer(_callCreateAwsConn, payload, expectedResp, _buildMockCloudRouterCreateResp(), "-test-create-aws-conn", t)
 }
 
+func Test_CreateAwsConnInvalidSubscriptionTerm(t *testing.T) {
+	var payload AwsConnection
+	var expectedResp AwsConnectionCreateResponse
+
+	if err := json.Unmarshal(_buildMockCloudRouterConnectionCreate(), &payload); err != nil {
+		t.Fatalf("Failed to unmarshal AwsConnection: %s", err)
+	}
+	if err := json.Unmarshal(_buildMockCloudRouterCreateResp(), &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal AwsConnectionCreateResponse: %s", err)
+	}
+
+	payload.SubscriptionTerm = 33
+	expectedError := validator.New().Struct(payload)
+
+	cTest.runFakeHttpServerWithErr(_callCreateAwsConn, payload, expectedResp, &expectedError, _buildMockCloudRouterCreateResp(), "-test-create-aws-conn-invalid-subscription-term", t)
+}
+
 func Test_ReadCloudRouterConnection(t *testing.T) {
 	readParamsPayload := MockedReadParams{
 		CircuitID:   _circuitIdMock,
@@ -124,6 +142,7 @@ func Test_DeleteCloudRouterConnection(t *testing.T) {
 	if err := json.Unmarshal(_buildConnDeleteResp(), &expectedResp); err != nil {
 		t.Fatalf("Failed to unmarshal ConnectionDeleteResp: %s", err)
 	}
+
 	cTest.runFakeHttpServer(_callDeleteAwsConn, nil, expectedResp, _buildConnDeleteResp(), "test-delete-aws-connection", t)
 }
 
@@ -148,7 +167,7 @@ func _callUpdateAwsConn(payload interface{}) (interface{}, error) {
 }
 
 func _callDeleteAwsConn(payload interface{}) (interface{}, error) {
-	return cTest.DeleteCloudRouterConnection(_circuitIdMock, _cloudConnCid)
+	return cTest.DeleteCloudRouterConnectionWait(_circuitIdMock, _cloudConnCid, false)
 }
 
 func _buildMockCloudRouterConnectionCreate() []byte {
@@ -161,7 +180,8 @@ func _buildMockCloudRouterConnectionCreate() []byte {
 		"pop": "LAX1",
 		"zone": "c",
 		"is_public": true,
-		"speed": "50Mbps"
+		"speed": "50Mbps",
+		"subscription_term": 12
 	  }`, _awsAccountID, _accountUUID))
 }
 
@@ -190,7 +210,7 @@ func _buildMockCloudRouterCreateResp() []byte {
 		},
 		"billing": {
 			"account_uuid": "%s",
-			"subscription_term": 1,
+			"subscription_term": 12,
 			"speed": "50Mbps"
 		},
 		"components": {
@@ -387,7 +407,8 @@ func _buildMockCloudRouterConnResps() []byte {
 		"dnat_capable": false,
 		"zone": "A",
 		"vlan": 4,
-		"desired_nat": "overload"
+		"desired_nat": "overload",
+		"subscription_term": 1
 	  }]`)
 }
 func _buildConnDeleteResp() []byte {

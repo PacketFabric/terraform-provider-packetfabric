@@ -38,6 +38,7 @@ Read-Only:
 - `capacity` (String)
 - `name` (String)
 - `regions` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_routers--regions))
+- `subscription_term` (Number)
 - `time_created` (String)
 - `time_updated` (String)
 

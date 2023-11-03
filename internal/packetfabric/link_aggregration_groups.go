@@ -31,6 +31,10 @@ type LinkAggregationGroupWorkflowResp struct {
 	WorkflowName string `json:"workflow_name"`
 }
 
+type CreateLAGMemberPayload struct {
+	MemberPortCircuitId string `json:"member_port_circuit_id"`
+}
+
 func (c *PFClient) CreateLinkAggregationGroup(lag LinkAggregationGroup) (*LinkAggregationGroupCreateResp, error) {
 	expectedResp := &LinkAggregationGroupCreateResp{}
 	_, err := c.sendRequest(lagURI, postMethod, lag, expectedResp)
@@ -105,4 +109,45 @@ func (c *PFClient) DeleteLinkAggregationGroupMember(lagPortCircuitID, memberPort
 		return nil, err
 	}
 	return expectedResp, nil
+}
+
+func (c *PFClient) CreateLagMember(lagId string, member string) (*LinkAggregationGroupWorkflowResp, error) {
+	formatedURI := fmt.Sprintf(lagInterfacesMemberURI, lagId)
+	expectedResp := &LinkAggregationGroupWorkflowResp{}
+	_, err := c.sendRequest(formatedURI, postMethod, CreateLAGMemberPayload{MemberPortCircuitId: member}, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func ListContains[T comparable](items []T, key T) bool {
+	for _, item := range items {
+		if key == item {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *PFClient) CheckLagMembersUpdated(lagId string, expectedMembersList []string) (interface{}, error) {
+	message := fmt.Sprintf("Updating LAG members for %s", lagId)
+	return c.Retry(
+		message,
+		func() (interface{}, error) {
+			interfs, err := c.GetLAGInterfaces(lagId)
+			if err != nil {
+				return false, err
+			}
+			if len(*interfs) != len(expectedMembersList) {
+				return false, fmt.Errorf(message)
+			}
+			for _, interf := range *interfs {
+				if !ListContains(expectedMembersList, interf.PortCircuitID) {
+					return false, fmt.Errorf(message)
+				}
+			}
+			return true, nil
+		},
+	)
 }

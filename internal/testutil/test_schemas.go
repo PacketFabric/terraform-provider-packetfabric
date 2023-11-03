@@ -52,24 +52,26 @@ const RResourceBackboneVirtualCircuitSpeedBurst = `resource "packetfabric_backbo
 
 // Resource: packetfabric_cloud_router
 const RResourcePacketfabricCloudRouter = `resource "packetfabric_cloud_router" "%s" {
-	provider      = packetfabric
-	name          = "%s"
-  account_uuid  = "%s"
-  asn           = %v
-	capacity      = "%s"
-  regions       = ["%s", "%s"]
-  }`
+  provider          = packetfabric
+  name              = "%s"
+  account_uuid      = "%s"
+  asn               = %v
+  capacity          = "%s"
+  regions           = ["%s", "%s"]
+  subscription_term = %v
+}`
 
 // Resource: packetfabric_cloud_router_connection_aws
 const RResourceCloudRouterConnectionAws = `resource "packetfabric_cloud_router_connection_aws" "%s" {
-  provider        = packetfabric
-  circuit_id      = %s.id
-  aws_account_id  = "%s"
-  account_uuid    = "%s"
-  description     = "%s"
-  pop             = "%s"
-  zone            = "%s"
-  speed           = "%s"
+  provider          = packetfabric
+  circuit_id        = %s.id
+  aws_account_id    = "%s"
+  account_uuid      = "%s"
+  description       = "%s"
+  pop               = "%s"
+  zone              = "%s"
+  subscription_term = %v
+  speed             = "%s"
 }`
 
 // Resource: packetfabric_cloud_router_bgp_session
@@ -77,8 +79,9 @@ const RResourceCloudRouterBgpSession = `resource "packetfabric_cloud_router_bgp_
 	provider       = packetfabric
 	circuit_id     = %s.id
 	connection_id  = %s.id
-  remote_address = "%s"
-  l3_address     = "%s"
+	disabled       = %s
+	remote_address = "%s"
+	l3_address     = "%s"
 	remote_asn     = %v
 	prefixes {
 		prefix = "%s"
@@ -96,6 +99,7 @@ const RResourceCloudRouterQuickConnect = `resource "packetfabric_cloud_router_qu
   cr_circuit_id         = %s.id
   connection_circuit_id = %s.id
   service_uuid          = "%s"
+  subscription_term     = %v
   return_filters {
     prefix     = "%s"
     match_type = "%s"
@@ -129,7 +133,7 @@ const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
   }
 }
 resource "azurerm_resource_group" "resource_group1" {
-  name     = "terraform-test-acc-azure-rg1"
+  name     = "terraform-test-acc-azure-rg1-%s" 
   location = "%s"
 }
 resource "azurerm_virtual_network" "virtual_network1" {
@@ -170,6 +174,7 @@ resource "packetfabric_cloud_router_connection_azure" "%s" {
   speed             = "%s"
   azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
   is_public         = %v
+  subscription_term = %v
 }`
 
 // Resource: packetfabric_cloud_router_connection_google
@@ -207,18 +212,20 @@ resource "packetfabric_cloud_router_connection_google" "%s" {
   google_vlan_attachment_name = google_compute_interconnect_attachment.google_interconnect1.name
   pop                         = "%s"
   speed                       = "%s"
+  subscription_term           = %v
 }`
 
 // Resource: packetfabric_cloud_router_connection_ibm
 const RResourceCloudRouterConnectionIbm = `resource "packetfabric_cloud_router_connection_ibm" "%s" {
-  provider     = packetfabric
-  circuit_id   = %s.id
-  account_uuid = "%s"
-  description  = "%s"
-  pop          = "%s"
-  zone          = "%s"
-  speed        = "%s"
-  ibm_bgp_asn  = %v
+  provider          = packetfabric
+  circuit_id        = %s.id
+  account_uuid      = "%s"
+  description       = "%s"
+  pop               = "%s"
+  zone              = "%s"
+  speed             = "%s"
+  ibm_bgp_asn       = %v
+  subscription_term = %v
 }
 resource "time_sleep" "wait_ibm_connection1" {
   create_duration = "3m"
@@ -271,9 +278,9 @@ const RResourceCloudRouterConnectionIpsec = `resource "packetfabric_cloud_router
   phase1_lifetime              = %v
   phase2_pfs_group             = "%s"
   phase2_encryption_algo       = "%s"
-  phase2_authentication_algo   = "%s"
   phase2_lifetime              = %v
   shared_key                   = "%s"
+  subscription_term            = %v
 }`
 
 // Resource: packetfabric_cloud_router_connection_oracle
@@ -299,8 +306,11 @@ variable "user_ocid" {
 variable "pf_cs_oracle_drg_ocid" {
   type        = string
 }
+variable "pf_cs_oracle_region" {
+  type        = string
+}
 provider "oci" {
-  region       = "%s"
+  region       = var.pf_cs_oracle_region
   auth         = "APIKey"
   tenancy_ocid = var.tenancy_ocid
   user_ocid    = var.user_ocid
@@ -319,7 +329,7 @@ resource "oci_core_virtual_circuit" "fast_connect1" {
   provider = oci
   compartment_id       = var.parent_compartment_id
   display_name         = "terraform-test-acc-oracle-fastconnect1"
-  region               = "%s"
+  region               = var.pf_cs_oracle_region
   type                 = "PRIVATE"
   gateway_id           = var.pf_cs_oracle_drg_ocid
   bandwidth_shape_name = "%s"
@@ -334,24 +344,26 @@ resource "oci_core_virtual_circuit" "fast_connect1" {
   provider_service_id = data.oci_core_fast_connect_provider_services.packetfabric_provider1.fast_connect_provider_services.0.id
 }
 resource "packetfabric_cloud_router_connection_oracle" "%s" {
-  provider     = packetfabric
-  circuit_id   = %s.id
-  account_uuid = "%s"
-  description  = "%s"
-  pop          = "%s"
-  zone         = "%s"
-  vc_ocid      = oci_core_virtual_circuit.fast_connect1.id
-  region       = "%s"
+  provider          = packetfabric
+  circuit_id        = %s.id
+  account_uuid      = "%s"
+  description       = "%s"
+  pop               = "%s"
+  zone              = "%s"
+  vc_ocid           = oci_core_virtual_circuit.fast_connect1.id
+  region            = var.pf_cs_oracle_region
+  subscription_term = %v
 }`
 
 // Resource: packetfabric_cloud_router_connection_port
 const RResourceCloudRouterConnectionPort = `resource "packetfabric_cloud_router_connection_port" "%s" {
-  provider        = packetfabric
-  description     = "%s"
-  circuit_id      = %s.id
-  port_circuit_id = %s.id
-  speed           = "%s"
-  vlan            = %v
+  provider          = packetfabric
+  description       = "%s"
+  circuit_id        = %s.id
+  port_circuit_id   = %s.id
+  speed             = "%s"
+  vlan              = %v
+  subscription_term = %v
 }`
 
 // Resource: packetfabric_cs_aws_dedicated_connection
@@ -637,10 +649,6 @@ const RResourceLinkAggregationGroup = `resource "packetfabric_link_aggregation_g
   interval    = "%s"
   members     = [%s.id]
   pop         = "%s"
-}
-resource "time_sleep" "wait_for_lag" {
-  depends_on = [%s]
-  destroy_duration = "3m"
 }
 `
 

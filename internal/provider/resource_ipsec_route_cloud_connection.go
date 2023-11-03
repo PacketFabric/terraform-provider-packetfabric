@@ -147,6 +147,13 @@ func resourceIPSecCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"labels": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -244,6 +251,7 @@ func resourceIPSecCloudRouteConnRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("gateway_address", resp2.CustomerGatewayAddress)
 		_ = d.Set("shared_key", resp2.PreSharedKey)
 		_ = d.Set("po_number", resp.PONumber)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 
 		// unsetFields: published_quote_line_uuid
 	}
@@ -343,6 +351,9 @@ func extractIPSecRouteConn(d *schema.ResourceData) (packetfabric.IPSecRouterConn
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		iPSecRouter.PONumber = poNumber.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		iPSecRouter.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return iPSecRouter, nil
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const cloudRouterURI = "/v2/services/cloud-routers"
@@ -13,26 +15,28 @@ const errorMsg = "Please provide a valid Account UUID."
 // This struct represents a Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_create
 type CloudRouter struct {
-	Asn         int      `json:"asn,omitempty"`
-	Name        string   `json:"name"`
-	AccountUUID string   `json:"account_uuid"`
-	Regions     []string `json:"regions,omitempty"`
-	Capacity    string   `json:"capacity"`
-	PONumber    string   `json:"po_number,omitempty"`
+	Asn              int      `json:"asn,omitempty"`
+	Name             string   `json:"name"`
+	AccountUUID      string   `json:"account_uuid"`
+	Regions          []string `json:"regions,omitempty"`
+	Capacity         string   `json:"capacity"`
+	PONumber         string   `json:"po_number,omitempty"`
+	SubscriptionTerm int      `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 // This struct represents a Cloud Router create response
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_create
 type CloudRouterResponse struct {
-	CircuitID   string   `json:"circuit_id"`
-	AccountUUID string   `json:"account_uuid"`
-	Asn         int      `json:"asn"`
-	Name        string   `json:"name"`
-	Capacity    string   `json:"capacity"`
-	Regions     []Region `json:"regions"`
-	TimeCreated string   `json:"time_created"`
-	TimeUpdated string   `json:"time_updated"`
-	PONumber    string   `json:"po_number"`
+	CircuitID        string   `json:"circuit_id"`
+	AccountUUID      string   `json:"account_uuid"`
+	Asn              int      `json:"asn"`
+	Name             string   `json:"name"`
+	Capacity         string   `json:"capacity"`
+	Regions          []Region `json:"regions"`
+	TimeCreated      string   `json:"time_created"`
+	TimeUpdated      string   `json:"time_updated"`
+	PONumber         string   `json:"po_number"`
+	SubscriptionTerm int      `json:"subscription_term,omitempty" validate:"oneof=1 12 24 36" default:"1"`
 }
 
 // This struct represents a Cloud Router Region
@@ -57,6 +61,10 @@ type CloudRouterDelResp struct {
 // This function represents the Action to create a new Cloud Router
 // https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_create
 func (c *PFClient) CreateCloudRouter(router CloudRouter) (*CloudRouterResponse, error) {
+	if err := validator.New().Struct(router); err != nil {
+		return nil, err
+	}
+
 	resp := &CloudRouterResponse{}
 	_, err := c.sendRequest(cloudRouterURI, postMethod, router, &resp)
 	if err != nil {

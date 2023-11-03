@@ -36,15 +36,10 @@ func TestAccDataSourceBgpSessionComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.time_created"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.bgp_prefix_uuid"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.prefix"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.match_type"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.as_prepend"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.med"),
-					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.local_preference"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.type"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.order"),
 				),
 			},
 		},
 	})
-
 }

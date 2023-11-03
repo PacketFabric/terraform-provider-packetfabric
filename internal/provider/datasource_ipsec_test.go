@@ -31,7 +31,6 @@ func TestAccDataSourceCloudRouterConnectionIpsecComputedRequiredFields(t *testin
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "phase1_lifetime"),
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "phase2_pfs_group"),
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "phase2_encryption_algo"),
-					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "phase2_authentication_algo"),
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "phase2_lifetime"),
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "pre_shared_key"),
 					resource.TestCheckResourceAttrSet(datasourceIpsecResult.ResourceName, "time_created"),

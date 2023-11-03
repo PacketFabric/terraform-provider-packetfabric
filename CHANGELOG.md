@@ -1,3 +1,15 @@
+## 1.7.0  (August 24, 2023)
+
+BUG FIXES:
+
+* Fixed OBCCs by adding proper support for creating, deleting, and, importing Outbound Cross Connects (#538)
+
+## 1.6.3  (July 31, 2023)
+
+BUG FIXES:
+
+* Changed the BGP Session update method to check the "disabled" field for modification (#536)
+
 ## 1.6.2  (June 29, 2023)
 
 BUG FIXES:

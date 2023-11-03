@@ -102,6 +102,13 @@ func resourceOracleCloudRouteConn() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 32),
 				Description:  "Purchase order number or identifier of a service.",
 			},
+			"subscription_term": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntInSlice([]int{1, 12, 24, 36}),
+				Description:  "Subscription term of the Cloud Router Connection\n\n\tEnum: [\"1\", \"12\", \"24\", \"36\"] ",
+			},
 			"labels": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -176,6 +183,7 @@ func resourceOracleCloudRouteConnRead(ctx context.Context, d *schema.ResourceDat
 		_ = d.Set("pop", resp.CloudProvider.Pop)
 		_ = d.Set("zone", resp.Zone)
 		_ = d.Set("po_number", resp.PONumber)
+		_ = d.Set("subscription_term", resp.SubscriptionTerm)
 		// unsetFields: published_quote_line_uuid
 	}
 
@@ -236,6 +244,9 @@ func extractOracleCloudRouterConn(d *schema.ResourceData) packetfabric.OracleClo
 	}
 	if poNumber, ok := d.GetOk("po_number"); ok {
 		oracleRouter.PONumber = poNumber.(string)
+	}
+	if subscriptionTerm, ok := d.GetOk("subscription_term"); ok {
+		oracleRouter.SubscriptionTerm = subscriptionTerm.(int)
 	}
 	return oracleRouter
 }

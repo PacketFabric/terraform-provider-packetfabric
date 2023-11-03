@@ -52,7 +52,8 @@ func resourceLinkAggregationGroups() *schema.Resource {
 			"members": {
 				Type:        schema.TypeList,
 				Required:    true,
-				ForceNew:    true,
+				MinItems:    1,
+				MaxItems:    2,
 				Description: "A list of port circuit IDs to include in the LAG. To be included in a LAG, the ports must be at the same site, in the same zone, and have the same speed and media.",
 				Elem: &schema.Schema{
 					Type:        schema.TypeString,
@@ -121,6 +122,14 @@ func resourceLinkAggregationGroupsCreate(ctx context.Context, d *schema.Resource
 	return diags
 }
 
+func convertInterfToStringSlice(interfaceList []interface{}) []string {
+	strList := []string{}
+	for _, interf := range interfaceList {
+		strList = append(strList, interf.(string))
+	}
+	return strList
+}
+
 func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
@@ -158,6 +167,29 @@ func resourceLinkAggregationGroupsUpdate(ctx context.Context, d *schema.Resource
 				return diag.FromErr(err)
 			}
 		}
+	}
+
+	if d.HasChange("members") {
+		oldMembers, newMembers := d.GetChange("members")
+		oldMembersList, newMembersList := convertInterfToStringSlice(oldMembers.([]interface{})), convertInterfToStringSlice(newMembers.([]interface{}))
+
+		for _, oldMember := range oldMembersList {
+			if !packetfabric.ListContains(newMembersList, oldMember) {
+				if _, err := c.DeleteLinkAggregationGroupMember(d.Id(), oldMember); err != nil {
+					diags = append(diags, diag.FromErr(err)...)
+				}
+			}
+		}
+
+		for _, newMember := range newMembersList {
+			if !packetfabric.ListContains(oldMembersList, newMember) {
+				if _, err := c.CreateLagMember(d.Id(), newMember); err != nil {
+					diags = append(diags, diag.FromErr(err)...)
+				}
+			}
+		}
+
+		_, _ = c.CheckLagMembersUpdated(d.Id(), newMembersList)
 	}
 
 	return diags

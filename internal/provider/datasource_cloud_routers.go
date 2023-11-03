@@ -60,6 +60,11 @@ func dataSourceCloudRouters() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"subscription_term": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "Subscription term of the Cloud Router",
+						},
 					},
 				},
 			},
@@ -95,6 +100,7 @@ func flattenCloudRouters(routers *[]packetfabric.CloudRouterResponse) []interfac
 			flatten["regions"] = flattenRegions(&router.Regions)
 			flatten["time_created"] = router.TimeCreated
 			flatten["time_updated"] = router.TimeUpdated
+			flatten["subscription_term"] = router.SubscriptionTerm
 			flattens[i] = flatten
 		}
 		return flattens

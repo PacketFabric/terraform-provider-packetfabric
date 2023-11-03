@@ -81,7 +81,14 @@ resource "packetfabric_outbound_cross_connect" "crossconnect_1" {
 
 ### Read-Only
 
+- `deleted` (Boolean) The Outbound Cross Connect delete state.
 - `id` (String) The ID of this resource.
+- `obcc_status` (String) The Outbound Cross Connect OBCC Status.
+- `outbound_cross_connect_id` (String) The Outbound Cross Connect Outbound Cross Connect ID.
+- `progress` (Number) The Outbound Cross Connect Progress.
+- `time_created` (String) The Outbound Cross Connect Time created.
+- `time_updated` (String) The Outbound Cross Connect Time updated.
+- `z_loc_cfa` (String) The Outbound Cross Connect Panel/module/position.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`

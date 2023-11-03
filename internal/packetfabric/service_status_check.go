@@ -99,3 +99,11 @@ func (c *PFClient) GetRandomSeconds() int {
 	}
 	return randomSeconds
 }
+
+func (c *PFClient) GetRandomPositiveSeconds() int {
+	r := c.GetRandomSeconds()
+	if r < 0 {
+		r = -r
+	}
+	return r
+}
