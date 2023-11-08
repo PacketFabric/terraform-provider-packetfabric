@@ -68,6 +68,17 @@ func (c *PFClient) ReadIpamContact(ipamContactID string) (*IpamContact, error) {
 	return resp, nil
 }
 
+// This function represents the Action to Retrieve an existing IPAM contact by ID
+// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact
+func (c *PFClient) ReadIpamContacts() ([]IpamContact, error) {
+	resp := make([]IpamContact, 0)
+	_, err := c.sendRequest(IpamContactURI, getMethod, nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 // This function represents the Action to update an existing IPAM Contact
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_patch
 func (c *PFClient) UpdateIpamContact(ipamContact IpamContact) (*IpamContact, error) {
