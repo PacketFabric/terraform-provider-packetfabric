@@ -116,6 +116,7 @@ func Provider() *schema.Provider {
 			"packetfabric_user":                                    resourceUser(),
 			"packetfabric_streaming_events":                        resourceStreamingEvents(),
 			"packetfabric_document":                                resourceDocuments(),
+			"packetfabric_ipam_prefix":                             resourceIpamPrefix(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
