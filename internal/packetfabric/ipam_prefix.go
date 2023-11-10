@@ -8,33 +8,11 @@ import (
 const IpamPrefixURI = "/ipam/prefix"
 const IpamPrefixConfirmationURI = "/ipam/prefix/%s/confirm" // <prefix_uuid>
 
-// Prefix Creation ; POST /ipam/prefix ; Fields:
-// - length -> int
-// - version -> int[4, 6], Defaults to 4
-// - bgp_region -> str, Optional
-// - admin_contact_uuid -> uuid, Optional
-// - tech_contact_uuid -> uuid, Optional
-// - ipj_details -> object, Optional
-// 	- currently_used_prefixes -> array of objects
-// 		- prefix -> str
-// 		- ips_in_use -> int
-// 		- description -> str, Optional
-// 		- ISP name -> str, Optional
-// 		- will_renumber -> bool, Optional
-// 	- planned_prefixes -> array of objects
-// 		- prefix -> str
-// 		- description -> str, Optional
-// 		- location -> str, Optional
-// 		- usage_30d -> int
-// 		- usage_3m -> int
-// 		- usage_6m -> int
-// 		- usage_1y -> int
-
 type IpamPrefix struct {
 	UUID             string      `json:"uuid,omitempty"`   // set by the client, not user or api
 	Prefix           string      `json:"prefix,omitempty"` // set by the client, not user or api
 	Length           int         `json:"length"`
-	Version          string      `json:"version" validate:"oneof=4 6" default:"4"`
+	Version          int         `json:"version" validate:"oneof=4 6" default:"4"`
 	BgpRegion        string      `json:"bgp_region,omitempty"`
 	AdminContactUuid string      `json:"admin_contact_uuid,omitempty"`
 	TechContactUuid  string      `json:"tech_contact_uuid,omitempty"`
@@ -64,10 +42,6 @@ type IpamPlannedPrefixes struct {
 	Usage1y     int    `json:"usage_1y"`
 }
 
-// Response:
-// - prefix_uuid -> uuid
-// - prefix -> str
-// - bgp_region -> str, Optional
 type IpamPrefixCreateResponse struct {
 	PrefixUuid string `json:"prefix_uuid"`
 	Prefix     string `json:"prefix"`
@@ -76,29 +50,6 @@ type IpamPrefixCreateResponse struct {
 type IpamPrefixDeleteResponse struct {
 	Message string `json:"message"`
 }
-
-// Prefix Confirmation
-// POST /ipam/prefix/<prefix_uuid>/confirm
-// Fields:
-// - admin_contact_uuid -> uuid
-// - tech_contact_uuid -> uuid
-// - ipj_details -> object
-// 	- currently_used_prefixes -> array of objects
-// 		- prefix -> str
-// 		- ips_in_use -> int
-// 		- description -> str, Optional
-// 		- ISP name -> str, Optional
-// 		- will_renumber -> bool, Optional
-// 	- planned_prefixes -> array of objects
-// 		- prefix -> str
-// 		- description -> str, Optional
-// 		- location -> str, Optional
-// 		- usage_30d -> int
-// 		- usage_3m -> int
-// 		- usage_6m -> int
-// 		- usage_1y -> int
-// Response:
-// - "Prefix has been confirmed"
 
 type IpamPrefixConfirmation struct {
 	PrefixUuid       string      `json:"prefix_uuid,omitempty"` // set by user, used by client, ignored by api
