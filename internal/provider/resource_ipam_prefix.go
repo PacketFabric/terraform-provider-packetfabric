@@ -46,18 +46,18 @@ func resourceIpamPrefix() *schema.Resource {
 				Optional: true,
 			},
 			"admin_contact_uuid": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.IsUUID,
 			},
 			"tech_contact_uuid": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.IsUUID,
 			},
 			"ipj_details": {
-				Type:        schema.TypeSet,
-				Optional:    true,
+				Type:     schema.TypeSet,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"currently_used_prefixes": {
@@ -165,13 +165,12 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("admin_contact_uuid", ipamPrefix.AdminContactUuid)
 	_ = d.Set("tech_contact_uuid", ipamPrefix.TechContactUuid)
 
-	if (nil != ipamPrefix.IpjDetails) {
+	if nil != ipamPrefix.IpjDetails {
 		ipjDetails := flattenIpjDetails(ipamPrefix.IpjDetails)
 		if err := d.Set("ipj_details", ipjDetails); err != nil {
 			return diag.Errorf("error setting 'ipj_details': %s", err)
 		}
 	}
-                                        
 	return diags
 }
 
@@ -230,16 +229,16 @@ func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 }
 
 func extractIpjDetails(ipj_details *schema.Set) *packetfabric.IpjDetails {
-	ipj_details_map := ipj_details.List()[0].(map[string]interface {})
+	ipj_details_map := ipj_details.List()[0].(map[string]interface{})
 	return &packetfabric.IpjDetails{
 		CurrentlyUsedPrefixes: extractIpamCurrentlyUsedPrefixes(ipj_details_map["currently_used_prefixes"].(*schema.Set)),
-		PlannedPrefixes: extractIpamPlannedPrefixes(ipj_details_map["planned_prefixes"].(*schema.Set)),
+		PlannedPrefixes:       extractIpamPlannedPrefixes(ipj_details_map["planned_prefixes"].(*schema.Set)),
 	}
 }
 
 func extractIpamCurrentlyUsedPrefixes(currently_used_prefixes *schema.Set) []packetfabric.IpamCurrentlyUsedPrefixes {
 	ipamCurrentlyUsedPrefixes := make([]packetfabric.IpamCurrentlyUsedPrefixes, 0)
-	for _, ipamCurrentlyUsedPrefix := range(currently_used_prefixes).List() {
+	for _, ipamCurrentlyUsedPrefix := range currently_used_prefixes.List() {
 		ipamCurrentlyUsedPrefixMap := ipamCurrentlyUsedPrefix.(map[string]interface{})
 		ipamCurrentlyUsedPrefixes = append(ipamCurrentlyUsedPrefixes, packetfabric.IpamCurrentlyUsedPrefixes{
 			Prefix:       ipamCurrentlyUsedPrefixMap["prefix"].(string),
@@ -254,7 +253,7 @@ func extractIpamCurrentlyUsedPrefixes(currently_used_prefixes *schema.Set) []pac
 
 func extractIpamPlannedPrefixes(planned_prefixes *schema.Set) []packetfabric.IpamPlannedPrefixes {
 	ipamPlannedPrefixes := make([]packetfabric.IpamPlannedPrefixes, 0)
-	for _, ipamPlannedPrefix := range(planned_prefixes).List() {
+	for _, ipamPlannedPrefix := range planned_prefixes.List() {
 		ipamPlannedPrefixMap := ipamPlannedPrefix.(map[string]interface{})
 		ipamPlannedPrefixes = append(ipamPlannedPrefixes, packetfabric.IpamPlannedPrefixes{
 			Prefix:      ipamPlannedPrefixMap["prefix"].(string),
@@ -274,17 +273,17 @@ func flattenIpjDetails(ipjDetails *packetfabric.IpjDetails) map[string]interface
 	data["currently_used_prefixes"] = flattenCurrentlyUsedPrefixes(ipjDetails.CurrentlyUsedPrefixes)
 	data["planned_prefixes"] = flattenPlannedPrefixes(ipjDetails.PlannedPrefixes)
 	return data
-}          
+}
 
 func flattenCurrentlyUsedPrefixes(currentlyUsedPrefixes []packetfabric.IpamCurrentlyUsedPrefixes) []interface{} {
 	result := make([]interface{}, len(currentlyUsedPrefixes))
 	for i, prefix := range currentlyUsedPrefixes {
 		data := make(map[string]interface{})
-		data["prefix"] = prefix.Prefix 
-		data["ips_in_use"] = prefix.IpsInUse 
-		data["description"] = prefix.Description 
-		data["isp_name"] = prefix.IspName 
-		data["will_renumber"] = prefix.WillRenumber 
+		data["prefix"] = prefix.Prefix
+		data["ips_in_use"] = prefix.IpsInUse
+		data["description"] = prefix.Description
+		data["isp_name"] = prefix.IspName
+		data["will_renumber"] = prefix.WillRenumber
 		result[i] = data
 	}
 	return result
@@ -294,13 +293,13 @@ func flattenPlannedPrefixes(plannedPrefixes []packetfabric.IpamPlannedPrefixes) 
 	result := make([]interface{}, len(plannedPrefixes))
 	for i, prefix := range plannedPrefixes {
 		data := make(map[string]interface{})
-		data["prefix"] = prefix.Prefix 
-		data["description"] = prefix.Description 
-		data["location"] = prefix.Location 
-		data["usage_30d"] = prefix.Usage30d 
-		data["usage_3m"] = prefix.Usage3m 
-		data["usage_6m"] = prefix.Usage6m 
-		data["usage_1y"] = prefix.Usage1y 
+		data["prefix"] = prefix.Prefix
+		data["description"] = prefix.Description
+		data["location"] = prefix.Location
+		data["usage_30d"] = prefix.Usage30d
+		data["usage_3m"] = prefix.Usage3m
+		data["usage_6m"] = prefix.Usage6m
+		data["usage_1y"] = prefix.Usage1y
 		result[i] = data
 	}
 	return result
