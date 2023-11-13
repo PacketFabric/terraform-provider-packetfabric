@@ -144,7 +144,7 @@ func resourceIpamPrefixCreate(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(err)
 	}
 
-	d.SetId(resp.UUID)
+	d.SetId(resp.PrefixUuid)
 	return diags
 }
 
