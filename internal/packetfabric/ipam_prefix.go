@@ -122,14 +122,14 @@ func (c *PFClient) DeleteIpamPrefix(ipamPrefixID string) (*IpamPrefixDeleteRespo
 
 // This function represents the Action to create a new ipam prefix confirmation
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
-func (c *PFClient) CreateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefixConfirmation) (*IpamPrefixConfirmationCreationResponse, error) {
+func (c *PFClient) CreateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefixConfirmation) (*IpamPrefixConfirmation, error) {
 	resp := &IpamPrefixConfirmationCreationResponse{}
 	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixConfirmationURI, ipamPrefixConfirmation.PrefixUuid)
 	_, err := c.sendRequest(formatedURI, postMethod, ipamPrefixConfirmation, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return c.ReadIpamPrefixConfirmation(ipamPrefixConfirmation.PrefixUuid)
 }
 
 // This function represents the Action to Retrieve an existing IPAM prefix confirmation by ID
@@ -141,6 +141,7 @@ func (c *PFClient) ReadIpamPrefixConfirmation(ipamPrefixConfirmationID string) (
 	if err != nil {
 		return nil, err
 	}
+	resp.PrefixUuid = ipamPrefixConfirmationID
 	return resp, nil
 }
 
