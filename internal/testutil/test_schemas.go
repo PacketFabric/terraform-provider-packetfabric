@@ -718,6 +718,41 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
+// Resource: packetfabric_ipam_prefix
+const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
+	length             = 33
+    version            = 4
+	bgp_region         = "Antarctica"
+	admin_contact_uuid = "%s"
+	tech_contact_uuid  = "%s"
+
+	ipj_details {
+		currently_used_prefixes {
+			prefix        = "128.192.1.0/24"
+			ips_in_use    = 33
+			description   = "Optional description"
+			isp_name      = "Optional ISP Name"
+			will_renumber = true
+		}
+		planned_prefixes {
+			prefix        = "8.8.8.0/24"
+			description   = "Another optional description"
+			location      = "Optional Location"
+			usage_30d     = 2
+			usage_3m      = 0
+			usage_6m      = 2
+			usage_1y      = 3
+		}
+		planned_prefixes {
+			prefix        = "4.4.4.0/24"
+			usage_30d     = 2
+			usage_3m      = 0
+			usage_6m      = 2
+			usage_1y      = 3
+		}
+	}
+}`
+
 // Resource: packetfabric_outbound_cross_connect
 const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
   provider        = packetfabric

@@ -18,6 +18,7 @@ import (
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDocument = "packetfabric_document"
+const pfIpamPrefix = "packetfabric_ipam_prefix"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
@@ -283,6 +284,11 @@ type RHcloutboundCrossConnectsResult struct {
 
 // packetfabric_document
 type RHclDocumentResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_prefix
+type RHclIpamPrefixResult struct {
 	HclResultBase
 }
 
@@ -769,6 +775,26 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_ipam_prefix
+func RHclIpamPrefix() RHclIpamPrefixResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamPrefix)
+
+	// FIXME: get this from ipam_contact resource
+	adminContactUuid := "11111a11-1a11-1a1a-111a-1a111a1a1a1a"
+	techContactUuid := "22222b22-2b22-2b2b-222b-2b222b2b2b2b"
+	log.Printf("Resource: %s, Resource name: %s, adminContactUuid: %s, techContactUuid: %s\n", pfIpamPrefix, hclName, adminContactUuid, techContactUuid)
+
+	hcl := fmt.Sprintf(RResourceIpamPrefix, hclName, adminContactUuid, techContactUuid)
+
+	return RHclIpamPrefixResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIpamPrefix,
+			ResourceName: resourceName,
+		},
 	}
 }
 
