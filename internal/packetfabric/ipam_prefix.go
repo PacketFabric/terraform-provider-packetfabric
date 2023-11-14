@@ -9,8 +9,8 @@ const IpamPrefixURI = "/ipam/prefix"
 const IpamPrefixConfirmationURI = "/ipam/prefix/%s/confirm" // <prefix_uuid>
 
 type IpamPrefix struct {
-	UUID             string      `json:"uuid,omitempty"`   // set by the client, not user or api
-	Prefix           string      `json:"prefix,omitempty"` // set by the client, not user or api
+	PrefixUuid       string      `json:"prefix_uuid,omitempty"` // set by the client, not user or api
+	Prefix           string      `json:"prefix,omitempty"`      // set by the client, not user or api
 	Length           int         `json:"length"`
 	Version          int         `json:"version" validate:"oneof=4 6" default:"4"`
 	BgpRegion        string      `json:"bgp_region,omitempty"`
@@ -88,13 +88,14 @@ func (c *PFClient) ReadIpamPrefix(ipamPrefixID string) (*IpamPrefix, error) {
 	if err != nil {
 		return nil, err
 	}
+	resp.PrefixUuid = ipamPrefixID
 	return resp, nil
 }
 
 // This function represents the Action to update an existing IPAM prefix
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
 func (c *PFClient) UpdateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) {
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefix.UUID)
+	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefix.PrefixUuid)
 	resp := &IpamPrefix{}
 	_, err := c.sendRequest(formatedURI, patchMethod, &ipamPrefix, &resp)
 	if err != nil {
@@ -107,7 +108,7 @@ func (c *PFClient) UpdateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) 
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
 func (c *PFClient) DeleteIpamPrefix(ipamPrefixID string) (*IpamPrefixDeleteResponse, error) {
 	if ipamPrefixID == "" {
-		return nil, errors.New(errorMsg)
+		return nil, errors.New("IPAM Prefix UUID required for delete operation")
 	}
 	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefixID)
 	expectedResp := &IpamPrefixDeleteResponse{}
@@ -124,8 +125,9 @@ func (c *PFClient) DeleteIpamPrefix(ipamPrefixID string) (*IpamPrefixDeleteRespo
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
 func (c *PFClient) CreateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefixConfirmation) (*IpamPrefixConfirmation, error) {
 	resp := &IpamPrefixConfirmationCreationResponse{}
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixConfirmationURI, ipamPrefixConfirmation.PrefixUuid)
-	_, err := c.sendRequest(formatedURI, postMethod, ipamPrefixConfirmation, &resp)
+	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmation.PrefixUuid)
+	// TODO: verify response message is good in resp
+	_, err := c.sendRequest(formatedURI, postMethod, &ipamPrefixConfirmation, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +138,7 @@ func (c *PFClient) CreateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefi
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
 func (c *PFClient) ReadIpamPrefixConfirmation(ipamPrefixConfirmationID string) (*IpamPrefixConfirmation, error) {
 	resp := &IpamPrefixConfirmation{}
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
+	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &resp)
 	if err != nil {
 		return nil, err
@@ -161,9 +163,9 @@ func (c *PFClient) UpdateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefi
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
 func (c *PFClient) DeleteIpamPrefixConfirmation(ipamPrefixConfirmationID string) (*IpamPrefixConfirmationDeleteResponse, error) {
 	if ipamPrefixConfirmationID == "" {
-		return nil, errors.New(errorMsg)
+		return nil, errors.New("IPAM Prefix UUID required for delete confiramation operation")
 	}
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
+	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
 	expectedResp := &IpamPrefixConfirmationDeleteResponse{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {
