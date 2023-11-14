@@ -124,16 +124,25 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 		if mErr != nil {
 			return nil, mErr
 		}
-		req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+		req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+		if err != nil {
+			return nil, err
+		}
 	case deleteMethod:
 		if payload != nil {
 			rb, pErr := json.Marshal(payload)
 			if pErr != nil {
 				return nil, pErr
 			}
-			req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+			req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+			if err != nil {
+				return nil, err
+			}
 		} else {
-			req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, nil)
+			req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, nil)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	res, body, err := c._doRequest(req, &c.Token)
