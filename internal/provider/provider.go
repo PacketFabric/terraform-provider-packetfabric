@@ -116,6 +116,7 @@ func Provider() *schema.Provider {
 			"packetfabric_user":                                    resourceUser(),
 			"packetfabric_streaming_events":                        resourceStreamingEvents(),
 			"packetfabric_document":                                resourceDocuments(),
+			"packetfabric_ipam_contact":                            resourceIpamContact(),
 			"packetfabric_ipam_prefix":                             resourceIpamPrefix(),
 			"packetfabric_ipam_prefix_confirmation":                resourceIpamPrefixConfirmation(),
 		},
