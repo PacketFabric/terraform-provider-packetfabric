@@ -718,11 +718,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
-// Resource: packetfabric_ipam_prefix
-const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
-	length             = 33
-    version            = 4
-	bgp_region         = "Antarctica"
+const RResourceIpamPrefixCommon = `
 	admin_contact_uuid = "%s"
 	tech_contact_uuid  = "%s"
 
@@ -752,6 +748,18 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 		}
 	}
 }`
+
+// Resource: packetfabric_ipam_prefix
+const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
+	length             = 33
+    version            = 4
+	bgp_region         = "Antarctica"
+` + RResourceIpamPrefixCommon
+
+// Resource: packetfabric_ipam_prefix_confirmation
+const RResourceIpamPrefixConfirmation = `resource "packetfabric_ipam_prefix_confirmation" "%s" {
+	prefix_uuid   = "%s"
+` + RResourceIpamPrefixCommon
 
 // Resource: packetfabric_outbound_cross_connect
 const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
