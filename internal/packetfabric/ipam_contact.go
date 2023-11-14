@@ -7,23 +7,6 @@ import (
 
 const IpamContactURI = "/ipam/contact"
 
-// Contact Creation ; POST /ipam/contact ; Fields:
-// - prefix -> str
-// - ips_in_use -> int
-// - description -> str, Optional
-// - ISP name -> str, Optional
-// - will_renumber -> bool, Optional
-// - planned_prefixes -> array of objects
-// - prefix -> str
-// - description -> str, Optional
-// - location -> str, Optional
-// - usage_30d -> int
-// - usage_3m -> int
-// - usage_6m -> int
-// - usage_1y -> int
-// Response:
-// - "Prefix has been confirmed"
-
 // This struct represents a IPAM contact
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_post
 type IpamContact struct {
