@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"regexp"
 	"time"
 
@@ -102,7 +103,7 @@ func resourceIpamContactRead(ctx context.Context, d *schema.ResourceData, m inte
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	ipamContactID := d.Get("uuid").(string)
+	ipamContactID := d.Id()
 	resp, err := c.ReadIpamContact(ipamContactID)
 	if err != nil {
 		return diag.FromErr(err)
