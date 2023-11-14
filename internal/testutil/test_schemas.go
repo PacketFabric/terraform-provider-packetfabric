@@ -718,6 +718,18 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
+const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
+	contact_name   = "Jane Smith"
+	org_name       = "Terraform Test Organization Name"
+	address        = "1234 Peachtree St, Atlanta, GA"
+	phone          = "123-456-7890"
+	email          = "jane.smith@test.com"
+	arin_org_id    = "Optional ARIN Organization ID"
+	apnic_org_id   = "Optional APNIC Organization ID"
+	ripe_org_id    = "Optional RIPE Organization ID"
+}
+`
+
 const RResourceIpamPrefixCommon = `
 	admin_contact_uuid = "%s"
 	tech_contact_uuid  = "%s"

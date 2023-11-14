@@ -18,6 +18,7 @@ import (
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDocument = "packetfabric_document"
+const pfIpamContact = "packetfabric_ipam_contact"
 const pfIpamPrefix = "packetfabric_ipam_prefix"
 const pfIpamPrefixConfirmation = "packetfabric_ipam_prefix_confirmation"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
@@ -285,6 +286,11 @@ type RHcloutboundCrossConnectsResult struct {
 
 // packetfabric_document
 type RHclDocumentResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_contact
+type RHclIpamContactResult struct {
 	HclResultBase
 }
 
@@ -781,6 +787,22 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_ipam_contact
+func RHclIpamContact() RHclIpamContactResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamContact)
+	log.Printf("Resource: %s, Resource %s, ResourceName: %s\n", pfIpamContact, hclName, resourceName)
+
+	hcl := fmt.Sprintf(RResourceIpamContact, hclName)
+
+	return RHclIpamContactResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIpamContact,
+			ResourceName: resourceName,
+		},
 	}
 }
 
