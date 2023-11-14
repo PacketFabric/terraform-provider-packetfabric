@@ -27,6 +27,11 @@ func resourceIpamPrefixConfirmation() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"prefix_uuid": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.IsUUID,
+			},
 			"admin_contact_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -140,6 +145,7 @@ func resourceIpamPrefixConfirmationRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
+	_ = d.Set("prefix_uuid", ipamPrefixConfirmation.PrefixUuid)
 	_ = d.Set("admin_contact_uuid", ipamPrefixConfirmation.AdminContactUuid)
 	_ = d.Set("tech_contact_uuid", ipamPrefixConfirmation.TechContactUuid)
 
@@ -180,6 +186,9 @@ func resourceIpamPrefixConfirmationDelete(ctx context.Context, d *schema.Resourc
 
 func extractIpamPrefixConfirmation(d *schema.ResourceData) packetfabric.IpamPrefixConfirmation {
 	ipamPrefixConfirmation := packetfabric.IpamPrefixConfirmation{}
+	if prefix_uuid, ok := d.GetOk("prefix_uuid"); ok {
+		ipamPrefixConfirmation.PrefixUuid = prefix_uuid.(string)
+	}
 	if admin_contact_uuid, ok := d.GetOk("admin_contact_uuid"); ok {
 		ipamPrefixConfirmation.AdminContactUuid = admin_contact_uuid.(string)
 	}
