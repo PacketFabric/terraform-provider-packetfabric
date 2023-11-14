@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccIpamPrefixequiredFields(t *testing.T) {
+func TestAccIpamPrefixRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
 	ipamPrefixResult := testutil.RHclIpamPrefix()
