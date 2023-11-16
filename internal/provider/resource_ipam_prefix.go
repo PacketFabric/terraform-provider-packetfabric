@@ -31,6 +31,10 @@ func resourceIpamPrefix() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"length": {
 				Type:     schema.TypeInt,
 				Required: true,
@@ -136,7 +140,6 @@ func resourceIpamPrefix() *schema.Resource {
 func resourceIpamPrefixCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
-	var diags diag.Diagnostics
 
 	ipamPrefix := extractIpamPrefix(d)
 	resp, err := c.CreateIpamPrefix(ipamPrefix)
@@ -145,7 +148,7 @@ func resourceIpamPrefixCreate(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	d.SetId(resp.PrefixUuid)
-	return diags
+	return resourceIpamPrefixRead(ctx, d, m)
 }
 
 func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -159,6 +162,7 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 
 	_ = d.Set("prefix", ipamPrefix.Prefix)
+	_ = d.Set("state", ipamPrefix.State)
 	_ = d.Set("length", ipamPrefix.Length)
 	_ = d.Set("version", ipamPrefix.Version)
 	_ = d.Set("bgp_region", ipamPrefix.BgpRegion)
@@ -204,6 +208,9 @@ func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 	ipamPrefix := packetfabric.IpamPrefix{}
 	if prefix, ok := d.GetOk("prefix"); ok {
 		ipamPrefix.Prefix = prefix.(string)
+	}
+	if state, ok := d.GetOk("state"); ok {
+		ipamPrefix.State = state.(string)
 	}
 	if length, ok := d.GetOk("length"); ok {
 		ipamPrefix.Length = length.(int)
@@ -268,11 +275,13 @@ func extractIpamPlannedPrefixes(planned_prefixes *schema.Set) []packetfabric.Ipa
 	return ipamPlannedPrefixes
 }
 
-func flattenIpjDetails(ipjDetails *packetfabric.IpjDetails) map[string]interface{} {
+func flattenIpjDetails(ipjDetails *packetfabric.IpjDetails) []interface{} {
+	result := make([]interface{}, 0)
 	data := make(map[string]interface{})
 	data["currently_used_prefixes"] = flattenCurrentlyUsedPrefixes(ipjDetails.CurrentlyUsedPrefixes)
 	data["planned_prefixes"] = flattenPlannedPrefixes(ipjDetails.PlannedPrefixes)
-	return data
+	result = append(result, data)
+	return result
 }
 
 func flattenCurrentlyUsedPrefixes(currentlyUsedPrefixes []packetfabric.IpamCurrentlyUsedPrefixes) []interface{} {

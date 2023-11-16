@@ -20,12 +20,13 @@ func TestAccIpamPrefixRequiredFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: ipamPrefixResult.Hcl,
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "admin_contact_uuid"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "bgp_region"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "id"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "length"),
+					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "prefix"),
+					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "state"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "tech_contact_uuid"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "version"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.#"),
@@ -52,7 +53,6 @@ func TestAccIpamPrefixRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.0.planned_prefixes.1.usage_30d"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.0.planned_prefixes.1.usage_3m"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.0.planned_prefixes.1.usage_6m"),
-
 				),
 			},
 		},

@@ -118,7 +118,6 @@ func Provider() *schema.Provider {
 			"packetfabric_document":                                resourceDocuments(),
 			"packetfabric_ipam_contact":                            resourceIpamContact(),
 			"packetfabric_ipam_prefix":                             resourceIpamPrefix(),
-			"packetfabric_ipam_prefix_confirmation":                resourceIpamPrefixConfirmation(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -138,6 +137,8 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_dedicated_connections":           datasourceDedicatedCloudConnections(),
 			"packetfabric_billing":                            dataSourceBilling(),
 			"packetfabric_ports":                              datasourceInterfaces(),
+			"packetfabric_ipam_contacts":                      datasourceIpamContacts(),
+			"packetfabric_ipam_prefixes":                      datasourceIpamPrefixes(),
 			"packetfabric_locations":                          dataSourceLocations(),
 			"packetfabric_link_aggregation_group":             datasourceLinkAggregationGroups(),
 			"packetfabric_outbound_cross_connects":            dataSourceOutboundCrossConnects(),

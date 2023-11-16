@@ -727,12 +727,15 @@ const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 	arin_org_id    = "Optional ARIN Organization ID"
 	apnic_org_id   = "Optional APNIC Organization ID"
 	ripe_org_id    = "Optional RIPE Organization ID"
-}
-`
+}`
 
-const RResourceIpamPrefixCommon = `
-	admin_contact_uuid = "%s"
-	tech_contact_uuid  = "%s"
+// Resource: packetfabric_ipam_prefix
+const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
+	length             = 33
+    version            = 4
+	bgp_region         = "Antarctica"
+	admin_contact_uuid = %s
+	tech_contact_uuid  = %s
 
 	ipj_details {
 		currently_used_prefixes {
@@ -760,18 +763,6 @@ const RResourceIpamPrefixCommon = `
 		}
 	}
 }`
-
-// Resource: packetfabric_ipam_prefix
-const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
-	length             = 33
-    version            = 4
-	bgp_region         = "Antarctica"
-` + RResourceIpamPrefixCommon
-
-// Resource: packetfabric_ipam_prefix_confirmation
-const RResourceIpamPrefixConfirmation = `resource "packetfabric_ipam_prefix_confirmation" "%s" {
-	prefix_uuid   = "%s"
-` + RResourceIpamPrefixCommon
 
 // Resource: packetfabric_outbound_cross_connect
 const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
@@ -825,6 +816,18 @@ const DDatasourceActivityLogs = `data "packetfabric_activitylogs" "%s" {
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_ipam_contacts
+const DDataIpamContacts = `data "packetfabric_ipam_contacts" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_ipam_prefixes
+const DDataIpamPrefixes = `data "packetfabric_ipam_prefixes" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_ports
