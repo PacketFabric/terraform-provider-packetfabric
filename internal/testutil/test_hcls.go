@@ -56,6 +56,7 @@ const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLogs = "data.packetfabric_activitylogs"
 const pfDataIpamContacts = "data.packetfabric_ipam_contacts"
 const pfDataIpamPrefixes = "data.packetfabric_ipam_prefixes"
+const pfDataCloudProviderCredentials = "data.packetfabric_cloud_provider_credentials"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataPortVlans = "data.packetfabric_port_vlans"
 const pfDataPortDeviceInfo = "data.packetfabric_port_device_info"
@@ -627,6 +628,10 @@ type DHclIpamContactsResult struct {
 
 // data packetfabric_ipam_prefixes
 type DHclIpamPrefixesResult struct {
+	HclResultBase
+}
+
+type DHclCloudProviderCredentialsResult struct {
 	HclResultBase
 }
 
@@ -2329,6 +2334,24 @@ func DHclIpamPrefixes() DHclIpamPrefixesResult {
 		HclResultBase: HclResultBase{
 			Hcl:          combined,
 			Resource:     pfDataIpamPrefixes,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_provider_credentials
+func DHclCloudProviderCredentials() DHclCloudProviderCredentialsResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudProviderCredentials)
+
+	awsCred := RHclCloudProviderCredentialAws()
+
+	hcl := fmt.Sprintf(DDataSourceCloudProviderCredentials, hclName, awsCred.ResourceName)
+	hcl = fmt.Sprintf("%s\n%s\n", awsCred.Hcl, hcl)
+
+	return DHclCloudProviderCredentialsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCloudProviderCredentials,
 			ResourceName: resourceName,
 		},
 	}

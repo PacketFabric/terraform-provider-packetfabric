@@ -82,6 +82,15 @@ func (c *PFClient) ReadCloudProviderCredential(cpcID string) (*CloudProviderCred
 	return nil, fmt.Errorf("cloud provider credential %s not found", cpcID)
 }
 
+func (c *PFClient) ListCloudProviderCredentials() ([]CloudProviderCredentialResponse, error) {
+	expectedResp := make([]CloudProviderCredentialResponse, 0)
+	_, err := c.sendRequest(CloudProviderCredentialURI, getMethod, nil, &expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
 // This function represents the Action to Delete an existing Cloud Provider Credential
 func (c *PFClient) DeleteCloudProviderCredential(cpcID string) (*CloudProviderCredentialDelResp, error) {
 	if cpcID == "" {
