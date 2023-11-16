@@ -6,7 +6,6 @@ import (
 )
 
 const IpamPrefixURI = "/ipam/prefix"
-const IpamPrefixConfirmationURI = "/ipam/prefix/%s/confirm" // <prefix_uuid>
 
 type IpamPrefix struct {
 	PrefixUuid       string      `json:"prefix_uuid,omitempty"` // set by the client, not user or api
@@ -16,6 +15,7 @@ type IpamPrefix struct {
 	BgpRegion        string      `json:"bgp_region,omitempty"`
 	AdminContactUuid string      `json:"admin_contact_uuid,omitempty"`
 	TechContactUuid  string      `json:"tech_contact_uuid,omitempty"`
+	State            string      `json:"state,omitempty"`
 	IpjDetails       *IpjDetails `json:"ipj_details,omitempty"`
 }
 
@@ -47,22 +47,8 @@ type IpamPrefixCreateResponse struct {
 	Prefix     string `json:"prefix"`
 	BgpRegion  string `json:"bgp_region,omitempty"`
 }
+
 type IpamPrefixDeleteResponse struct {
-	Message string `json:"message"`
-}
-
-type IpamPrefixConfirmation struct {
-	PrefixUuid       string      `json:"prefix_uuid,omitempty"` // set by user, used by client, ignored by api
-	AdminContactUuid string      `json:"admin_contact_uuid"`
-	TechContactUuid  string      `json:"tech_contact_uuid"`
-	IpjDetails       *IpjDetails `json:"ipj_details,omitempty"`
-}
-
-type IpamPrefixConfirmationCreationResponse struct {
-	Message string `json:"message"`
-}
-
-type IpamPrefixConfirmationDeleteResponse struct {
 	Message string `json:"message"`
 }
 
@@ -89,6 +75,15 @@ func (c *PFClient) ReadIpamPrefix(ipamPrefixID string) (*IpamPrefix, error) {
 		return nil, err
 	}
 	resp.PrefixUuid = ipamPrefixID
+	return resp, nil
+}
+
+func (c *PFClient) ReadIpamPrefixes() ([]IpamPrefix, error) {
+	resp := make([]IpamPrefix, 0)
+	_, err := c.sendRequest(IpamPrefixURI, getMethod, nil, &resp)
+	if err != nil {
+		return nil, err
+	}
 	return resp, nil
 }
 
@@ -120,56 +115,3 @@ func (c *PFClient) DeleteIpamPrefix(ipamPrefixID string) (*IpamPrefixDeleteRespo
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
-// This function represents the Action to create a new ipam prefix confirmation
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
-func (c *PFClient) CreateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefixConfirmation) (*IpamPrefixConfirmation, error) {
-	resp := &IpamPrefixConfirmationCreationResponse{}
-	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmation.PrefixUuid)
-	// TODO: verify response message is good in resp
-	_, err := c.sendRequest(formatedURI, postMethod, &ipamPrefixConfirmation, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return c.ReadIpamPrefixConfirmation(ipamPrefixConfirmation.PrefixUuid)
-}
-
-// This function represents the Action to Retrieve an existing IPAM prefix confirmation by ID
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
-func (c *PFClient) ReadIpamPrefixConfirmation(ipamPrefixConfirmationID string) (*IpamPrefixConfirmation, error) {
-	resp := &IpamPrefixConfirmation{}
-	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
-	_, err := c.sendRequest(formatedURI, getMethod, nil, &resp)
-	if err != nil {
-		return nil, err
-	}
-	resp.PrefixUuid = ipamPrefixConfirmationID
-	return resp, nil
-}
-
-// This function represents the Action to update an existing IPAM prefix confirmation
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
-func (c *PFClient) UpdateIpamPrefixConfirmation(ipamPrefixConfirmation IpamPrefixConfirmation) (*IpamPrefixConfirmation, error) {
-	resp := &IpamPrefixConfirmation{}
-	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmation.PrefixUuid)
-	_, err := c.sendRequest(formatedURI, patchMethod, &ipamPrefixConfirmation, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-// This function represents the Action to Delete an existing IPAM prefix confirmation
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix_confirmation
-func (c *PFClient) DeleteIpamPrefixConfirmation(ipamPrefixConfirmationID string) (*IpamPrefixConfirmationDeleteResponse, error) {
-	if ipamPrefixConfirmationID == "" {
-		return nil, errors.New("IPAM Prefix UUID required for delete confiramation operation")
-	}
-	formatedURI := fmt.Sprintf(IpamPrefixConfirmationURI, ipamPrefixConfirmationID)
-	expectedResp := &IpamPrefixConfirmationDeleteResponse{}
-	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
-	if err != nil {
-		return expectedResp, err
-	}
-	return expectedResp, nil
-}
