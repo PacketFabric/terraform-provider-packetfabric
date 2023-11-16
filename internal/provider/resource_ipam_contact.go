@@ -149,7 +149,7 @@ func resourceIpamContactUpdate(ctx context.Context, d *schema.ResourceData, m in
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		d.SetId(d.Get("uuid").(string))
+		d.SetId(d.Get("id").(string))
 	}
 	return diags
 }
