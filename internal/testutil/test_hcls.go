@@ -1292,6 +1292,51 @@ func RHclCloudRouterConnectionAzurePublic() RHclCloudRouterConnectionAzureResult
 	}
 }
 
+func RHclCloudRouterConnectionAzureBgpL3() RHclCloudRouterConnectionAzureResult {
+	hclCloudRouterRes := RHclCloudRouter(DefaultRHclCloudRouterInput())
+	resourceName, hclName := GenerateUniqueResourceName(pfCloudRouterConnAzure)
+	uniqueDesc := GenerateUniqueName()
+	log.Printf("Resource: %s, Resource name: %s, description: %s\n", pfCloudRouterConnAzure, hclName, uniqueDesc)
+
+	host := os.Getenv("PF_HOST")
+	testName := "t3"
+	AzureLocation, AzurePeeringLocation, AzureServiceProviderName := setAzureLocations(host)
+
+	crcHcl := fmt.Sprintf(
+		RResourceCloudRouterConnectionAzureBgp,
+		testName,
+		AzureLocation,
+		uniqueDesc,
+		AzureLocationDev,
+		AzurePeeringLocation,
+		AzureServiceProviderName,
+		AzurePeeringBandwidth,
+		AzureExpressRouteTier,
+		AzureExpressRouteFamily,
+		hclName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		uniqueDesc,
+		hclCloudRouterRes.ResourceName,
+		AzurePeeringBandwidth,
+		hclCloudRouterRes.ResourceName,
+		resourceName,
+		AzureSubnetCidr)
+
+	hcl := fmt.Sprintf("%s\n%s", hclCloudRouterRes.Hcl, crcHcl)
+
+	return RHclCloudRouterConnectionAzureResult{
+		HclResultBase: HclResultBase{
+			Hcl:                    hcl,
+			Resource:               pfCloudRouterConnAzure,
+			ResourceName:           resourceName,
+			AdditionalResourceName: hclCloudRouterRes.ResourceName,
+		},
+		Desc:        uniqueDesc,
+		AccountUuid: os.Getenv("PF_ACCOUNT_ID"),
+		Speed:       CloudRouterConnSpeed,
+	}
+}
+
 // packetfabric_cloud_router_connection_ibm
 func RHclCloudRouterConnectionIbm() RHclCloudRouterConnectionIbmResult {
 
