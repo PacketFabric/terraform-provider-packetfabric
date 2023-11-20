@@ -19,9 +19,6 @@ func TestAccCloudRouterConnectionAzureRequiredFields(t *testing.T) {
 	crConnAzureResult := testutil.RHclCloudRouterConnectionAzure()
 	var cloudRouterCircuitId, cloudRouterConnectionCircuitId string
 
-
-	return
-
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:         testAccProviders,
 		ExternalProviders: testAccExternalProviders,

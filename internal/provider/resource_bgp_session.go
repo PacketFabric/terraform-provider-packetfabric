@@ -481,17 +481,14 @@ func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, c
 	// Azure BGP session Update: l3_address = Azure Subnet (primary or secondary)
 	// set l3Address based on the values of primarySubnet and secondarySubnet when modified
 	// This is a temporary solution until the BGP API is refactored.
-	var primary, secondary string
-	if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
-		primary = primarySubnet.(string)
-		if d.HasChange("primary_subnet") {
-			bgpSession.L3Address = primary
+	if d.HasChange("primary_subnet") {
+		if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+			bgpSession.L3Address = primarySubnet.(string)
 		}
 	}
-	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
-		secondary = secondarySubnet.(string)
-		if d.HasChange("secondary_subnet") {
-			bgpSession.L3Address = secondary
+	if d.HasChange("secondary_subnet") {
+		if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+			bgpSession.L3Address = secondarySubnet.(string)
 		}
 	}
 	// For Azure, if the L3Address is still not set, retrieve the Subnet field
