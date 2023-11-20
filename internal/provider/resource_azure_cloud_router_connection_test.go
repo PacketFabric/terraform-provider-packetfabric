@@ -89,11 +89,12 @@ func TestAccCloudRouterConnectionAzureBgpL3(t *testing.T) {
 
 	crConnAzureResult := testutil.RHclCloudRouterConnectionAzureBgpL3()
 
+	// change disabled from false to true to verify the l3_address
+	// is set using the "subnet" field for the BGP session
 	r := regexp.MustCompile(`disabled *= *false`)
 	matches := r.FindAllString(crConnAzureResult.Hcl, -1)
-	modify := strings.Replace(matches[0], "false", "true", -1)
-	updatedHcl := r.ReplaceAllString(crConnAzureResult.Hcl, modify)
-
+	modification := strings.Replace(matches[0], "false", "true", -1)
+	updatedHcl := r.ReplaceAllString(crConnAzureResult.Hcl, modification)
 	const rn = "packetfabric_cloud_router_bgp_session.cr_az_tf_bgp_test"
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -113,14 +114,14 @@ func TestAccCloudRouterConnectionAzureBgpL3(t *testing.T) {
 			},
 			{
 				Config: updatedHcl,
-				Check: func(s *terraform.State) error {
-					rs, ok := s.RootModule().Resources[rn]
-					if !ok {
-						return fmt.Errorf("Not found: %s", rn)
-					}
-					fmt.Println("TODO: verify:",  rs.Primary.Attributes)
-					return nil
-				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "subscription_term"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
+				),
 			},
 		},
 	})
