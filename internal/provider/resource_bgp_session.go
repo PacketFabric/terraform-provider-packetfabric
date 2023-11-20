@@ -383,14 +383,7 @@ func resourceBgpSessionUpdate(ctx context.Context, d *schema.ResourceData, m int
 	if err := validatePrefixes(prefixesList); err != nil {
 		return diag.FromErr(err)
 	}
-
-	var bgpSettingsUUID string
-	if settingsUUID, ok := d.GetOk("id"); !ok {
-		return diag.FromErr(errors.New("could not extract bgp settings uuid from resource data"))
-	} else {
-		bgpSettingsUUID = settingsUUID.(string)
-	}
-	session, err := extractBgpSessionUpdate(d, c, cID.(string), connCID.(string), bgpSettingsUUID)
+	session, err := extractBgpSessionUpdate(d, c, cID.(string), connCID.(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -472,36 +465,44 @@ func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	return bgpSession
 }
 
-func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, cID string, connCID string, bgpSettingsUUID string) (packetfabric.BgpSession, error) {
+func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, cID string, connCID string) (packetfabric.BgpSession, error) {
 	bgpSession := packetfabric.BgpSession{}
 	if l3Address, ok := d.GetOk("l3_address"); ok {
 		bgpSession.L3Address = l3Address.(string)
 	}
-	// https://docs.packetfabric.com/api/v2/swagger/#/Cloud%20Router%20BGP%20Session%20Settings/cloud_routers_bgp_update
-	// Azure BGP session Update: l3_address = Azure Subnet (primary or secondary)
-	// set l3Address based on the values of primarySubnet and secondarySubnet when modified
-	// This is a temporary solution until the BGP API is refactored.
-	if d.HasChange("primary_subnet") {
-		if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
-			bgpSession.L3Address = primarySubnet.(string)
-		}
+
+	if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
+		bgpSession.PrimarySubnet = primarySubnet.(string)
 	}
-	if d.HasChange("secondary_subnet") {
-		if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
-			bgpSession.L3Address = secondarySubnet.(string)
-		}
+	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
+		bgpSession.SecondarySubnet = secondarySubnet.(string)
 	}
-	// For Azure, if the L3Address is still not set, retrieve the Subnet field
-	// and try to use it for the L3Address
+
+	// For Azure, the L3Address is not set so determine which subnet to use
 	if "" == bgpSession.L3Address {
-		bgp, err := c.GetBgpSessionBy(cID, connCID, bgpSettingsUUID)
+		crConnection, err := c.ReadCloudRouterConnection(cID, connCID)
 		if err != nil {
 			return packetfabric.BgpSession{}, err
 		}
-		if "" == bgp.Subnet {
-			return packetfabric.BgpSession{}, fmt.Errorf("l3_address and subnet unset, this is bug. please report it")
+		connectionType := crConnection.CloudSettings.AzureConnectionType
+		if "primary" == connectionType {
+			if "" == bgpSession.PrimarySubnet {
+				return packetfabric.BgpSession{}, fmt.Errorf("l3_address should use primary subnet but it has no value")
+			} else {
+				bgpSession.L3Address = bgpSession.PrimarySubnet
+			}
+		} else {
+			if "secondary" == connectionType {
+				if "" == bgpSession.SecondarySubnet {
+					return packetfabric.BgpSession{}, fmt.Errorf("l3_address should use secondary subnet but it has no value")
+				} else {
+					bgpSession.L3Address = bgpSession.SecondarySubnet
+				}
+			} else {
+				err := fmt.Errorf("Either set l3_address or (for Azure) subnet to a valid value (currently \"%s\"", connectionType)
+				return packetfabric.BgpSession{}, err
+			}
 		}
-		bgpSession.L3Address = bgp.Subnet
 	}
 	if d.HasChange("disabled") {
 		if disabled, ok := d.GetOk("disabled"); ok {
