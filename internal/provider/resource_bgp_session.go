@@ -470,39 +470,19 @@ func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, c
 	if l3Address, ok := d.GetOk("l3_address"); ok {
 		bgpSession.L3Address = l3Address.(string)
 	}
-
 	if primarySubnet, ok := d.GetOk("primary_subnet"); ok {
 		bgpSession.PrimarySubnet = primarySubnet.(string)
 	}
 	if secondarySubnet, ok := d.GetOk("secondary_subnet"); ok {
 		bgpSession.SecondarySubnet = secondarySubnet.(string)
 	}
-
 	// For Azure, the L3Address is not set so determine which subnet to use
 	if "" == bgpSession.L3Address {
-		crConnection, err := c.ReadCloudRouterConnection(cID, connCID)
+		l3Address, err := extractL3Address(&bgpSession, c, cID, connCID)
 		if err != nil {
 			return packetfabric.BgpSession{}, err
 		}
-		connectionType := crConnection.CloudSettings.AzureConnectionType
-		if "primary" == connectionType {
-			if "" == bgpSession.PrimarySubnet {
-				return packetfabric.BgpSession{}, fmt.Errorf("l3_address should use primary subnet but it has no value")
-			} else {
-				bgpSession.L3Address = bgpSession.PrimarySubnet
-			}
-		} else {
-			if "secondary" == connectionType {
-				if "" == bgpSession.SecondarySubnet {
-					return packetfabric.BgpSession{}, fmt.Errorf("l3_address should use secondary subnet but it has no value")
-				} else {
-					bgpSession.L3Address = bgpSession.SecondarySubnet
-				}
-			} else {
-				err := fmt.Errorf("Either set l3_address or (for Azure) subnet to a valid value (currently \"%s\"", connectionType)
-				return packetfabric.BgpSession{}, err
-			}
-		}
+		bgpSession.L3Address = l3Address
 	}
 	if d.HasChange("disabled") {
 		if disabled, ok := d.GetOk("disabled"); ok {
@@ -552,6 +532,32 @@ func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, c
 	}
 	bgpSession.Prefixes = extractConnBgpSessionPrefixes(d)
 	return bgpSession, nil
+}
+
+func extractL3Address(bgpSession *packetfabric.BgpSession, c *packetfabric.PFClient, cID string, connCID string) (string, error) {
+	value := ""
+	crConnection, err := c.ReadCloudRouterConnection(cID, connCID)
+	if err != nil {
+		return value, err
+	}
+	serviceProvider := crConnection.ServiceProvider
+	if "azure" != serviceProvider {
+		return value, fmt.Errorf("The l3_address is a required field for %s", serviceProvider)
+	}
+	connectionType := crConnection.CloudSettings.AzureConnectionType
+	switch connectionType {
+		case "primary":
+			value = bgpSession.PrimarySubnet
+		case "secondary":
+			value = bgpSession.SecondarySubnet
+		default:
+			err = fmt.Errorf("Invalid value for subnet: \"%s\"", connectionType)
+	}
+	if "" == value && nil == err {
+		noValueMessageFormat := "The l3_address should use \"%s\" subnet but it has no value"
+		err = fmt.Errorf(noValueMessageFormat, connectionType)
+	}
+	return value, err
 }
 
 func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPrefix {
