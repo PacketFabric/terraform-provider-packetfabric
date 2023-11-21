@@ -546,12 +546,12 @@ func extractL3Address(bgpSession *packetfabric.BgpSession, c *packetfabric.PFCli
 	}
 	connectionType := crConnection.CloudSettings.AzureConnectionType
 	switch connectionType {
-		case "primary":
-			value = bgpSession.PrimarySubnet
-		case "secondary":
-			value = bgpSession.SecondarySubnet
-		default:
-			err = fmt.Errorf("Invalid value for subnet: \"%s\"", connectionType)
+	case "primary":
+		value = bgpSession.PrimarySubnet
+	case "secondary":
+		value = bgpSession.SecondarySubnet
+	default:
+		err = fmt.Errorf("Invalid value for subnet: \"%s\"", connectionType)
 	}
 	if "" == value && nil == err {
 		noValueMessageFormat := "The l3_address should use \"%s\" subnet but it has no value"
