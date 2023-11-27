@@ -125,6 +125,64 @@ const RResourceCloudProviderCredentialGoogle = `resource "packetfabric_cloud_pro
 }`
 
 // Resource: packetfabric_cloud_router_connection_azure
+const RResourceCloudRouterConnectionAzureBgp = `provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+resource "azurerm_resource_group" "resource_group1" {
+  name     = "terraform-test-acc-azure-rg1-%s"
+  location = "%s"
+}
+resource "azurerm_express_route_circuit" "azure_express_route1" {
+  name                  = "%s"
+  resource_group_name   = azurerm_resource_group.resource_group1.name
+  location              = "%s"
+  peering_location      = "%s"
+  service_provider_name = "%s"
+  bandwidth_in_mbps     = %d
+  sku {
+    tier   = "%s"
+    family = "%s"
+  }
+  tags = {
+    environment = "terraform-test-acc-azure1"
+  }
+}
+//resource "packetfabric_cloud_router_connection_azure" "cr1-azr-er-circuit-1" 
+resource "packetfabric_cloud_router_connection_azure" "%s" {
+  provider          = packetfabric
+  account_uuid      = "%s"
+  description       = "%s"
+  circuit_id        = %s.id
+  azure_service_key = azurerm_express_route_circuit.azure_express_route1.service_key
+  speed             = "%dMbps"
+  maybe_nat         = false
+  is_public         = false
+  labels            = ["dev", "tf-azure-bgp-test"]
+}
+resource "packetfabric_cloud_router_bgp_session" "cr_az_tf_bgp_test" {
+  provider      = packetfabric
+  circuit_id    = %s.id
+  connection_id = %s.id
+  disabled      = false
+  remote_asn    = 64513
+  prefixes {
+    prefix     = "0.0.0.0/0"
+    type       = "out"
+    match_type = "orlonger"
+  }
+  prefixes {
+    prefix     = "0.0.0.0/0"
+    type       = "in"
+    match_type = "orlonger"
+  }
+  primary_subnet = "%s"
+}`
+
+// Resource: packetfabric_cloud_router_connection_azure
 const RResourceCloudRouterConnectionAzure = `provider "azurerm" {
   features {
     resource_group {

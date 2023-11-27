@@ -4,6 +4,8 @@ package provider
 
 import (
 	"fmt"
+	"strings"
+	"regexp"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -74,6 +76,49 @@ func TestAccCloudRouterConnectionPublicAzureIsPublic(t *testing.T) {
 			{
 				Config: crConnAzureResult.Hcl,
 				Check:  resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "is_public", "true"),
+			},
+		},
+	})
+}
+
+func TestAccCloudRouterConnectionAzureBgpL3(t *testing.T) {
+	testutil.PreCheck(t, []string{"ARM_SUBSCRIPTION_ID", "ARM_CLIENT_ID", "ARM_CLIENT_SECRET", "ARM_TENANT_ID"})
+
+	crConnAzureResult := testutil.RHclCloudRouterConnectionAzureBgpL3()
+
+	// change disabled from false to true to verify the l3_address
+	// is set using the "subnet" field for the BGP session
+	r := regexp.MustCompile(`disabled *= *false`)
+	matches := r.FindAllString(crConnAzureResult.Hcl, -1)
+	modification := strings.Replace(matches[0], "false", "true", -1)
+	updatedHcl := r.ReplaceAllString(crConnAzureResult.Hcl, modification)
+	const rn = "packetfabric_cloud_router_bgp_session.cr_az_tf_bgp_test"
+
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:         testAccProviders,
+		ExternalProviders: testAccExternalProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: crConnAzureResult.Hcl,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "subscription_term"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
+				),
+			},
+			{
+				Config: updatedHcl,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "description", crConnAzureResult.Desc),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "account_uuid", crConnAzureResult.AccountUuid),
+					resource.TestCheckResourceAttr(crConnAzureResult.ResourceName, "speed", crConnAzureResult.Speed),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "subscription_term"),
+					resource.TestCheckResourceAttrSet(crConnAzureResult.ResourceName, "id"),
+				),
 			},
 		},
 	})
