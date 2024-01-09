@@ -22,11 +22,7 @@ func datasourceIpamContacts() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"contact_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"org_name": {
+						"name": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -42,17 +38,29 @@ func datasourceIpamContacts() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"arin_org_id": {
+						"apnic_org_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"apnic_org_id": {
+						"apnic_ref": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"ripe_org_id": {
 							Type:     schema.TypeString,
 							Computed: true,
+						},
+						"ripe_ref": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"time_created": {
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"time_updated": {
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},
@@ -83,14 +91,14 @@ func flattenIpamContacts(ipamContacts *[]packetfabric.IpamContact) []interface{}
 		for i, ipamContact := range *ipamContacts {
 			flatten := make(map[string]interface{})
 			flatten["uuid"] = ipamContact.UUID
-			flatten["contact_name"] = ipamContact.ContactName
-			flatten["org_name"] = ipamContact.OrgName
+			flatten["name"] = ipamContact.Name
 			flatten["address"] = ipamContact.Address
 			flatten["phone"] = ipamContact.Phone
 			flatten["email"] = ipamContact.Email
-			flatten["arin_org_id"] = ipamContact.ArinOrgId
 			flatten["apnic_org_id"] = ipamContact.ApnicOrgId
 			flatten["ripe_org_id"] = ipamContact.RipeOrgId
+			flatten["apnic_ref"] = ipamContact.ApnicRef
+			flatten["ripe_ref"] = ipamContact.RipeRef
 			flattens[i] = flatten
 		}
 		return flattens

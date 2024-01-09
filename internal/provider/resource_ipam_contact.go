@@ -28,17 +28,11 @@ func resourceIpamContact() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"contact_name": {
+			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringLenBetween(1, 255),
 				Description:  "IPAM Contact Name.",
-			},
-			"org_name": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringLenBetween(1, 255),
-				Description:  "IPAM Contact Organization Name.",
 			},
 			"address": {
 				Type:         schema.TypeString,
@@ -58,23 +52,29 @@ func resourceIpamContact() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "IPAM Contact e-mail. Please note that this email address can only be updated by the IPAM contact themselves after creation.",
 			},
-			"arin_org_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "IPAM Contact ARIN Organization ID.",
-			},
 			"apnic_org_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "IPAM Contact APNIC Organization ID.",
 			},
+			"apnic_ref": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "IPAM Contact APNIC Reference.",
+			},
 			"ripe_org_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringIsNotEmpty,
-				Description:  "IPAM Contact RIPE Organization ID",
+				Description:  "IPAM Contact RIPE Organization ID.",
+			},
+			"ripe_ref": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
+				Description:  "IPAM Contact RIPE Reference.",
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -108,14 +108,14 @@ func resourceIpamContactRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	if resp != nil {
-		_ = d.Set("contact_name", resp.ContactName)
-		_ = d.Set("org_name", resp.OrgName)
+		_ = d.Set("name", resp.Name)
 		_ = d.Set("address", resp.Address)
 		_ = d.Set("phone", resp.Phone)
 		_ = d.Set("email", resp.Email)
-		_ = d.Set("arin_org_id", resp.ArinOrgId)
 		_ = d.Set("apnic_org_id", resp.ApnicOrgId)
 		_ = d.Set("ripe_org_id", resp.RipeOrgId)
+		_ = d.Set("apnic_ref", resp.ApnicRef)
+		_ = d.Set("ripe_ref", resp.RipeRef)
 	}
 	return diags
 }
@@ -136,14 +136,14 @@ func resourceIpamContactUpdate(ctx context.Context, d *schema.ResourceData, m in
 	if !d.HasChange("email") {
 		ipamContactUpdate := packetfabric.IpamContact{
 			UUID:        d.Id(),
-			ContactName: d.Get("contact_name").(string),
-			OrgName:     d.Get("org_name").(string),
+			Name:        d.Get("name").(string),
 			Address:     d.Get("address").(string),
 			Phone:       d.Get("phone").(string),
 			Email:       d.Get("email").(string),
-			ArinOrgId:   d.Get("arin_org_id").(string),
 			ApnicOrgId:  d.Get("apnic_org_id").(string),
 			RipeOrgId:   d.Get("ripe_org_id").(string),
+			ApnicRef:    d.Get("apnic_ref").(string),
+			RipeRef:     d.Get("ripe_ref").(string),
 		}
 		_, err := c.UpdateIpamContact(ipamContactUpdate)
 		if err != nil {
@@ -170,11 +170,8 @@ func resourceIpamContactDelete(ctx context.Context, d *schema.ResourceData, m in
 func extractIpamContact(d *schema.ResourceData) packetfabric.IpamContact {
 	ipamContact := packetfabric.IpamContact{}
 	ipamContact.UUID = d.Id()
-	if contact_name, ok := d.GetOk("contact_name"); ok {
-		ipamContact.ContactName = contact_name.(string)
-	}
-	if org_name, ok := d.GetOk("org_name"); ok {
-		ipamContact.OrgName = org_name.(string)
+	if name, ok := d.GetOk("name"); ok {
+		ipamContact.Name = name.(string)
 	}
 	if address, ok := d.GetOk("address"); ok {
 		ipamContact.Address = address.(string)
@@ -185,14 +182,17 @@ func extractIpamContact(d *schema.ResourceData) packetfabric.IpamContact {
 	if email, ok := d.GetOk("email"); ok {
 		ipamContact.Email = email.(string)
 	}
-	if arin_org_id, ok := d.GetOk("arin_org_id"); ok {
-		ipamContact.ArinOrgId = arin_org_id.(string)
-	}
 	if apnic_org_id, ok := d.GetOk("apnic_org_id"); ok {
 		ipamContact.ApnicOrgId = apnic_org_id.(string)
 	}
 	if ripe_org_id, ok := d.GetOk("ripe_org_id"); ok {
 		ipamContact.RipeOrgId = ripe_org_id.(string)
+	}
+	if apnic_ref, ok := d.GetOk("apnic_ref"); ok {
+		ipamContact.ApnicRef = apnic_ref.(string)
+	}
+	if ripe_ref, ok := d.GetOk("ripe_ref"); ok {
+		ipamContact.RipeRef = ripe_ref.(string)
 	}
 	return ipamContact
 }

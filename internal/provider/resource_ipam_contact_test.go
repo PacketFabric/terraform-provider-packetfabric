@@ -26,14 +26,14 @@ func TestAccIpamContactRequiredFields(t *testing.T) {
 			{
 				Config: ipamContactResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "contact_name"),
-					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "org_name"),
+					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "name"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "address"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "phone"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "email"),
-					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "arin_org_id"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "apnic_org_id"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "ripe_org_id"),
+					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "apnic_ref"),
+					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "ripe_ref"),
 				),
 			},
 			{

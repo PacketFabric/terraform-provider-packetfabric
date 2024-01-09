@@ -5,31 +5,32 @@ import (
 	"fmt"
 )
 
-const IpamContactURI = "/ipam/contact"
+const IpamContactURI = "/v2/services/ipam/contacts"
 
 // This struct represents a IPAM contact
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_post
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_post
 type IpamContact struct {
 	UUID        string `json:"uuid,omitempty"`
-	ContactName string `json:"contact_name"`
-	OrgName     string `json:"org_name"`
-	Address     string `json:"address"`
-	Phone       string `json:"phone"`
+	Name        string `json:"name"`
 	Email       string `json:"email"`
-	ArinOrgId   string `json:"arin_org_id,omitempty"`
+	Phone       string `json:"phone"`
+	Address     string `json:"address"`
 	ApnicOrgId  string `json:"apnic_org_id,omitempty"`
+	ApnicRef    string `json:"apnic_ref,omitempty"`
 	RipeOrgId   string `json:"ripe_org_id,omitempty"`
+	RipeRef     string `json:"ripe_ref,omitempty"`
+	TimeCreated string `json:"time_created,omitempty"`
+	TimeUpdated string `json:"time_updated,omitempty"`
 }
 
 // This struct represents a IPAM contact delete response
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_delete
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_delete
 type IpamContactDeleteResponse struct {
-	UUID    string `json:"uuid"`
 	Message string `json:"message"`
 }
 
 // This function represents the Action to create a new ipam contact
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_post
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_post
 func (c *PFClient) CreateIpamContact(ipamContact IpamContact) (*IpamContact, error) {
 	resp := &IpamContact{}
 	_, err := c.sendRequest(IpamContactURI, postMethod, ipamContact, &resp)
@@ -40,7 +41,7 @@ func (c *PFClient) CreateIpamContact(ipamContact IpamContact) (*IpamContact, err
 }
 
 // This function represents the Action to Retrieve an existing IPAM contact by ID
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_get_by_login
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_get
 func (c *PFClient) ReadIpamContact(ipamContactID string) (*IpamContact, error) {
 	formatedURI := fmt.Sprintf("%s/%s", IpamContactURI, ipamContactID)
 	resp := &IpamContact{}
@@ -52,7 +53,7 @@ func (c *PFClient) ReadIpamContact(ipamContactID string) (*IpamContact, error) {
 }
 
 // This function represents the Action to Retrieve an existing IPAM contact by ID
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_get_list
 func (c *PFClient) ReadIpamContacts() ([]IpamContact, error) {
 	resp := make([]IpamContact, 0)
 	_, err := c.sendRequest(IpamContactURI, getMethod, nil, &resp)
@@ -63,7 +64,7 @@ func (c *PFClient) ReadIpamContacts() ([]IpamContact, error) {
 }
 
 // This function represents the Action to update an existing IPAM Contact
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_patch
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_get_list
 func (c *PFClient) UpdateIpamContact(ipamContact IpamContact) (*IpamContact, error) {
 	formatedURI := fmt.Sprintf("%s/%s", IpamContactURI, ipamContact.UUID)
 	resp := &IpamContact{}
@@ -75,7 +76,7 @@ func (c *PFClient) UpdateIpamContact(ipamContact IpamContact) (*IpamContact, err
 }
 
 // This function represents the Action to Delete an existing IPAM contact
-// https://docs.packetfabric.com/api/v2/swagger/#/ipam/contact_delete_by_login
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_delete
 func (c *PFClient) DeleteIpamContact(ipamContactID string) (*IpamContactDeleteResponse, error) {
 	if ipamContactID == "" {
 		return nil, errors.New(errorMsg)
