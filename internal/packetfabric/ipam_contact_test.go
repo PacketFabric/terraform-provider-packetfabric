@@ -8,10 +8,10 @@ import (
 func Test_CreateIpamContact(t *testing.T) {
 	expectedPayload := IpamContact{}
 	expectedResp := IpamContact{}
-		//"uuid":         "88888f88-8f88-8f8f-888f-8f888f8f8f8f",
 	jsonPayload := []byte(`{
 		"name":         "Jane Smith",
 		"address":      "1234 Peachtree St, Atlanta, GA",
+		"country_code": "US",
 		"phone":        "123-456-7890",
 		"email":        "jane.smith@test.com",
 		"apnic_org_id": "Optional APNIC Organization ID",

@@ -30,6 +30,10 @@ func datasourceIpamContacts() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"country_code": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"phone": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -55,12 +59,12 @@ func datasourceIpamContacts() *schema.Resource {
 							Computed: true,
 						},
 						"time_created": {
-							Type:        schema.TypeString,
-							Computed:    true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"time_updated": {
-							Type:        schema.TypeString,
-							Computed:    true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 					},
 				},
@@ -93,6 +97,7 @@ func flattenIpamContacts(ipamContacts *[]packetfabric.IpamContact) []interface{}
 			flatten["uuid"] = ipamContact.UUID
 			flatten["name"] = ipamContact.Name
 			flatten["address"] = ipamContact.Address
+			flatten["country_code"] = ipamContact.CountryCode
 			flatten["phone"] = ipamContact.Phone
 			flatten["email"] = ipamContact.Email
 			flatten["apnic_org_id"] = ipamContact.ApnicOrgId

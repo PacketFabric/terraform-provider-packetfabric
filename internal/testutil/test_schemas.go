@@ -721,6 +721,7 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
 const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 	name         = "Jane Smith"
 	address      = "1234 Peachtree St, Atlanta, GA"
+	country_code = "US"
 	phone        = "123-456-7890"
 	email        = "jane.smith@test.com"
 	apnic_org_id = "Optional APNIC Organization ID"
@@ -731,31 +732,30 @@ const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 
 // Resource: packetfabric_ipam_prefix
 const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
-	length             = 33
-    version            = 4
-	bgp_region         = "Antarctica"
-	admin_contact_uuid = %s
-	tech_contact_uuid  = %s
+	length           = 33
+	market           = "US"
+	family           = "ipv6"
+	org_id           = "idk"
+	iso3166_1        = "US"
+	iso3166_2        = "GA"
+	address          = "1234 Peachtree St"
+	city             = "Atlanta"
+	postal_code      = "30339"
+
+	admin_ipam_contact_uuid = %s
+	tech_ipam_contact_uuid  = %s
 
 	ipj_details {
-		currently_used_prefixes {
+		current_prefixes {
 			prefix        = "128.192.1.0/24"
 			ips_in_use    = 33
 			description   = "Optional description"
 			isp_name      = "Optional ISP Name"
 			will_renumber = true
 		}
-		planned_prefixes {
-			prefix        = "8.8.8.0/24"
+		planned_prefix {
 			description   = "Another optional description"
 			location      = "Optional Location"
-			usage_30d     = 2
-			usage_3m      = 0
-			usage_6m      = 2
-			usage_1y      = 3
-		}
-		planned_prefixes {
-			prefix        = "4.4.4.0/24"
 			usage_30d     = 2
 			usage_3m      = 0
 			usage_6m      = 2

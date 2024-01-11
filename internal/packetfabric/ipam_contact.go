@@ -15,6 +15,7 @@ type IpamContact struct {
 	Email       string `json:"email"`
 	Phone       string `json:"phone"`
 	Address     string `json:"address"`
+	CountryCode string `json:"country_code"`
 	ApnicOrgId  string `json:"apnic_org_id,omitempty"`
 	ApnicRef    string `json:"apnic_ref,omitempty"`
 	RipeOrgId   string `json:"ripe_org_id,omitempty"`
@@ -64,15 +65,10 @@ func (c *PFClient) ReadIpamContacts() ([]IpamContact, error) {
 }
 
 // This function represents the Action to update an existing IPAM Contact
-// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_get_list
+// This operation is not a supported use case
+// https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_patch
 func (c *PFClient) UpdateIpamContact(ipamContact IpamContact) (*IpamContact, error) {
-	formatedURI := fmt.Sprintf("%s/%s", IpamContactURI, ipamContact.UUID)
-	resp := &IpamContact{}
-	_, err := c.sendRequest(formatedURI, patchMethod, &ipamContact, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return nil, fmt.Errorf("Unsupported operation")
 }
 
 // This function represents the Action to Delete an existing IPAM contact

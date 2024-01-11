@@ -28,6 +28,7 @@ func TestAccIpamContactRequiredFields(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "name"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "address"),
+					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "country_code"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "phone"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "email"),
 					resource.TestCheckResourceAttrSet(ipamContactResult.ResourceName, "apnic_org_id"),
@@ -37,6 +38,7 @@ func TestAccIpamContactRequiredFields(t *testing.T) {
 				),
 			},
 			{
+				// FIXME: expect this will puke now
 				Config: updatedHcl,
 				Check: func(s *terraform.State) error {
 					rs, ok := s.RootModule().Resources[ipamContactResult.ResourceName]

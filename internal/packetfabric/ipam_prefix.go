@@ -5,26 +5,36 @@ import (
 	"fmt"
 )
 
-const IpamPrefixURI = "/ipam/prefix"
+const IpamPrefixURI = "/v2/services/ipam/prefixes"
 
 type IpamPrefix struct {
-	PrefixUuid       string      `json:"prefix_uuid,omitempty"` // set by the client, not user or api
-	Prefix           string      `json:"prefix,omitempty"`      // set by the client, not user or api
-	Length           int         `json:"length"`
-	Version          int         `json:"version" validate:"oneof=4 6" default:"4"`
-	BgpRegion        string      `json:"bgp_region,omitempty"`
-	AdminContactUuid string      `json:"admin_contact_uuid,omitempty"`
-	TechContactUuid  string      `json:"tech_contact_uuid,omitempty"`
-	State            string      `json:"state,omitempty"`
-	IpjDetails       *IpjDetails `json:"ipj_details,omitempty"`
+	Length               int         `json:"length"`                // write
+	Market               string      `json:"market,omitempty"`      // write
+	Family               string      `json:"family,omitempty"`      // write
+	IpAddress            string      `json:"ip_address,omitempty"`  // read
+	CircuitId            string      `json:"circuit_id,omitempty"`  // read
+	Type                 string      `json:"type,omitempty"`        // read
+	State                string      `json:"state,omitempty"`       // read
+	OrgId                string      `json:"org_id,omitempty"`      // optional
+	Iso31661             string      `json:"iso3166_1,omitempty"`   // optional (required for ARIN if org_id was not provided)
+	Iso31662             string      `json:"iso3166_2,omitempty"`   // "
+	Address              string      `json:"address,omitempty"`     // "
+	City                 string      `json:"city,omitempty"`        // "
+	PostalCode           string      `json:"postal_code,omitempty"` // "
+	AdminIpamContactUuid string      `json:"admin_ipam_contact_uuid,omitempty"`
+	TechIpamContactUuid  string      `json:"tech_ipam_contact_uuid,omitempty"`
+	TimeCreated          string      `json:"time_created,omitempty"`
+	TimeUpdated          string      `json:"time_updated,omitempty"`
+	IpjDetails           *IpjDetails `json:"ipj_details,omitempty"`
 }
 
 type IpjDetails struct {
-	CurrentlyUsedPrefixes []IpamCurrentlyUsedPrefixes `json:"currently_used_prefixes"`
-	PlannedPrefixes       []IpamPlannedPrefixes       `json:"planned_prefixes"`
+	CurrentPrefixes []IpamCurrentPrefixes `json:"current_prefixes"`
+	PlannedPrefix   *IpamPlannedPrefix    `json:"planned_prefix"`
+	RejectionReason string                `json:"rejection_reason,omitempty"` // read
 }
 
-type IpamCurrentlyUsedPrefixes struct {
+type IpamCurrentPrefixes struct {
 	Prefix       string `json:"prefix"`
 	IpsInUse     int    `json:"ips_in_use"`
 	Description  string `json:"description,omitempty"`
@@ -32,20 +42,13 @@ type IpamCurrentlyUsedPrefixes struct {
 	WillRenumber bool   `json:"will_renumber,omitempty"`
 }
 
-type IpamPlannedPrefixes struct {
-	Prefix      string `json:"prefix"`
+type IpamPlannedPrefix struct {
 	Description string `json:"description,omitempty"`
 	Location    string `json:"location,omitempty"`
 	Usage30d    int    `json:"usage_30d"`
 	Usage3m     int    `json:"usage_3m"`
 	Usage6m     int    `json:"usage_6m"`
 	Usage1y     int    `json:"usage_1y"`
-}
-
-type IpamPrefixCreateResponse struct {
-	PrefixUuid string `json:"prefix_uuid"`
-	Prefix     string `json:"prefix"`
-	BgpRegion  string `json:"bgp_region,omitempty"`
 }
 
 type IpamPrefixDeleteResponse struct {
@@ -57,24 +60,23 @@ type IpamPrefixDeleteResponse struct {
 // This function represents the Action to create a new ipam prefix
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
 func (c *PFClient) CreateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) {
-	resp := &IpamPrefixCreateResponse{}
+	resp := &IpamPrefix{}
 	_, err := c.sendRequest(IpamPrefixURI, postMethod, ipamPrefix, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return c.ReadIpamPrefix(resp.PrefixUuid)
+	return c.ReadIpamPrefix(resp.CircuitId)
 }
 
 // This function represents the Action to Retrieve an existing IPAM prefix by ID
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
-func (c *PFClient) ReadIpamPrefix(ipamPrefixID string) (*IpamPrefix, error) {
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefixID)
+func (c *PFClient) ReadIpamPrefix(circuitId string) (*IpamPrefix, error) {
+	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, circuitId)
 	resp := &IpamPrefix{}
 	_, err := c.sendRequest(formatedURI, getMethod, nil, &resp)
 	if err != nil {
 		return nil, err
 	}
-	resp.PrefixUuid = ipamPrefixID
 	return resp, nil
 }
 
@@ -90,7 +92,7 @@ func (c *PFClient) ReadIpamPrefixes() ([]IpamPrefix, error) {
 // This function represents the Action to update an existing IPAM prefix
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
 func (c *PFClient) UpdateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) {
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefix.PrefixUuid)
+	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefix.CircuitId)
 	resp := &IpamPrefix{}
 	_, err := c.sendRequest(formatedURI, patchMethod, &ipamPrefix, &resp)
 	if err != nil {
@@ -101,11 +103,11 @@ func (c *PFClient) UpdateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) 
 
 // This function represents the Action to Delete an existing IPAM prefix
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
-func (c *PFClient) DeleteIpamPrefix(ipamPrefixID string) (*IpamPrefixDeleteResponse, error) {
-	if ipamPrefixID == "" {
-		return nil, errors.New("IPAM Prefix UUID required for delete operation")
+func (c *PFClient) DeleteIpamPrefix(circuitId string) (*IpamPrefixDeleteResponse, error) {
+	if circuitId == "" {
+		return nil, errors.New("Circuit ID required for delete operation")
 	}
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefixID)
+	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, circuitId)
 	expectedResp := &IpamPrefixDeleteResponse{}
 	_, err := c.sendRequest(formatedURI, deleteMethod, nil, expectedResp)
 	if err != nil {

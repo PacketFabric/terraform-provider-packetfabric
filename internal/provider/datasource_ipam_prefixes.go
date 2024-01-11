@@ -18,45 +18,56 @@ func datasourceIpamPrefixes() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"id": {
+						"ip_address": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"prefix": {
+						"circuit_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"state": {
+						"type": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"length": {
-							Type:     schema.TypeInt,
+						"org_id": {
+							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"version": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  4,
-						},
-						"bgp_region": {
+						"iso3166_1": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
-						"admin_contact_uuid": {
+						"iso3166_2": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
-						"tech_contact_uuid": {
+						"address": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
+						},
+						"city": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"postal_code": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"admin_ipam_contact_uuid": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"tech_ipam_contact_uuid": {
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"ipj_details": {
 							Type:     schema.TypeSet,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"currently_used_prefixes": {
+									"current_prefixes": {
 										Type:     schema.TypeSet,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -84,15 +95,11 @@ func datasourceIpamPrefixes() *schema.Resource {
 											},
 										},
 									},
-									"planned_prefixes": {
+									"planned_prefix": {
 										Type:     schema.TypeSet,
 										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"prefix": {
-													Type:     schema.TypeString,
-													Computed: true,
-												},
 												"description": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -151,14 +158,18 @@ func flattenIpamPrefixes(ipamPrefixes *[]packetfabric.IpamPrefix) []interface{} 
 		flattens := make([]interface{}, len(*ipamPrefixes))
 		for i, ipamPrefix := range *ipamPrefixes {
 			flatten := make(map[string]interface{})
-			flatten["id"] = ipamPrefix.PrefixUuid
-			flatten["prefix"] = ipamPrefix.Prefix
+			flatten["ip_address"] = ipamPrefix.IpAddress
+			flatten["circuit_id"] = ipamPrefix.CircuitId
+			flatten["type"] = ipamPrefix.Type
+			flatten["org_id"] = ipamPrefix.OrgId
+			flatten["iso3166_1"] = ipamPrefix.Iso31661
+			flatten["iso3166_2"] = ipamPrefix.Iso31662
+			flatten["address"] = ipamPrefix.Address
+			flatten["city"] = ipamPrefix.City
+			flatten["postal_code"] = ipamPrefix.PostalCode
+			flatten["admin_ipam_contact_uuid"] = ipamPrefix.AdminIpamContactUuid
+			flatten["tech_ipam_contact_uuid"] = ipamPrefix.TechIpamContactUuid
 			flatten["state"] = ipamPrefix.State
-			flatten["length"] = ipamPrefix.Length
-			flatten["version"] = ipamPrefix.Version
-			flatten["bgp_region"] = ipamPrefix.BgpRegion
-			flatten["admin_contact_uuid"] = ipamPrefix.AdminContactUuid
-			flatten["tech_contact_uuid"] = ipamPrefix.TechContactUuid
 			flatten["ipj_details"] = flattenIpjDetails(ipamPrefix.IpjDetails)
 			flattens[i] = flatten
 		}

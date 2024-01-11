@@ -39,32 +39,85 @@ func resourceIpamPrefix() *schema.Resource {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"version": {
-				Type:         schema.TypeInt,
+			"family": {
+				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      4,
-				ValidateFunc: validation.IntInSlice([]int{4, 6}),
+				Default:      "ipv4",
+				ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
 			},
-			"bgp_region": {
+			"market": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"admin_contact_uuid": {
+			"admin_ipam_contact_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.IsUUID,
 			},
-			"tech_contact_uuid": {
+			"tech_ipam_contact_uuid": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.IsUUID,
+			},
+			"ip_address": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"circuit_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"org_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"iso3166_1": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
+			},
+			"iso3166_2": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
+			},
+			"address": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
+			},
+			"city": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
+			},
+			"postal_code": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
+			},
+			"time_created": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"time_updated": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"ipj_details": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"currently_used_prefixes": {
+						"rejection_reason": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"current_prefixes": {
 							Type:     schema.TypeSet,
 							Required: true,
 							Elem: &schema.Resource{
@@ -93,16 +146,11 @@ func resourceIpamPrefix() *schema.Resource {
 								},
 							},
 						},
-						"planned_prefixes": {
+						"planned_prefix": {
 							Type:     schema.TypeSet,
 							Required: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"prefix": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validateIPAddressWithPrefix,
-									},
 									"description": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -147,7 +195,7 @@ func resourceIpamPrefixCreate(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(err)
 	}
 
-	d.SetId(resp.PrefixUuid)
+	d.SetId(resp.CircuitId)
 	return resourceIpamPrefixRead(ctx, d, m)
 }
 
@@ -161,13 +209,21 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
-	_ = d.Set("prefix", ipamPrefix.Prefix)
-	_ = d.Set("state", ipamPrefix.State)
 	_ = d.Set("length", ipamPrefix.Length)
-	_ = d.Set("version", ipamPrefix.Version)
-	_ = d.Set("bgp_region", ipamPrefix.BgpRegion)
-	_ = d.Set("admin_contact_uuid", ipamPrefix.AdminContactUuid)
-	_ = d.Set("tech_contact_uuid", ipamPrefix.TechContactUuid)
+	_ = d.Set("market", ipamPrefix.Market)
+	_ = d.Set("family", ipamPrefix.Family)
+	_ = d.Set("ip_address", ipamPrefix.IpAddress)
+	_ = d.Set("circuit_id", ipamPrefix.CircuitId)
+	_ = d.Set("type", ipamPrefix.Type)
+	_ = d.Set("org_id", ipamPrefix.OrgId)
+	_ = d.Set("iso3166_1", ipamPrefix.Iso31661)
+	_ = d.Set("iso3166_2", ipamPrefix.Iso31662)
+	_ = d.Set("address", ipamPrefix.Address)
+	_ = d.Set("city", ipamPrefix.City)
+	_ = d.Set("postal_code", ipamPrefix.PostalCode)
+	_ = d.Set("admin_ipam_contact_uuid", ipamPrefix.AdminIpamContactUuid)
+	_ = d.Set("tech_ipam_contact_uuid", ipamPrefix.TechIpamContactUuid)
+	_ = d.Set("state", ipamPrefix.State)
 
 	if nil != ipamPrefix.IpjDetails {
 		ipjDetails := flattenIpjDetails(ipamPrefix.IpjDetails)
@@ -206,26 +262,50 @@ func resourceIpamPrefixDelete(ctx context.Context, d *schema.ResourceData, m int
 
 func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 	ipamPrefix := packetfabric.IpamPrefix{}
-	if prefix, ok := d.GetOk("prefix"); ok {
-		ipamPrefix.Prefix = prefix.(string)
-	}
-	if state, ok := d.GetOk("state"); ok {
-		ipamPrefix.State = state.(string)
-	}
 	if length, ok := d.GetOk("length"); ok {
 		ipamPrefix.Length = length.(int)
 	}
-	if version, ok := d.GetOk("version"); ok {
-		ipamPrefix.Version = version.(int)
+	if market, ok := d.GetOk("market"); ok {
+		ipamPrefix.Market = market.(string)
 	}
-	if bgp_region, ok := d.GetOk("bgp_region"); ok {
-		ipamPrefix.BgpRegion = bgp_region.(string)
+	if family, ok := d.GetOk("family"); ok {
+		ipamPrefix.Family = family.(string)
 	}
-	if admin_contact_uuid, ok := d.GetOk("admin_contact_uuid"); ok {
-		ipamPrefix.AdminContactUuid = admin_contact_uuid.(string)
+	if ip_address, ok := d.GetOk("ip_address"); ok {
+		ipamPrefix.IpAddress = ip_address.(string)
 	}
-	if tech_contact_uuid, ok := d.GetOk("tech_contact_uuid"); ok {
-		ipamPrefix.TechContactUuid = tech_contact_uuid.(string)
+	if circuit_id, ok := d.GetOk("circuit_id"); ok {
+		ipamPrefix.CircuitId = circuit_id.(string)
+	}
+	if type_, ok := d.GetOk("type"); ok {
+		ipamPrefix.Type = type_.(string)
+	}
+	if org_id, ok := d.GetOk("org_id"); ok {
+		ipamPrefix.OrgId = org_id.(string)
+	}
+	if iso3166_1, ok := d.GetOk("iso3166_1"); ok {
+		ipamPrefix.Iso31661 = iso3166_1.(string)
+	}
+	if iso3166_2, ok := d.GetOk("iso3166_2"); ok {
+		ipamPrefix.Iso31662 = iso3166_2.(string)
+	}
+	if address, ok := d.GetOk("address"); ok {
+		ipamPrefix.Address = address.(string)
+	}
+	if city, ok := d.GetOk("city"); ok {
+		ipamPrefix.City = city.(string)
+	}
+	if postal_code, ok := d.GetOk("postal_code"); ok {
+		ipamPrefix.PostalCode = postal_code.(string)
+	}
+	if admin_ipam_contact_uuid, ok := d.GetOk("admin_ipam_contact_uuid"); ok {
+		ipamPrefix.AdminIpamContactUuid = admin_ipam_contact_uuid.(string)
+	}
+	if tech_ipam_contact_uuid, ok := d.GetOk("tech_ipam_contact_uuid"); ok {
+		ipamPrefix.TechIpamContactUuid = tech_ipam_contact_uuid.(string)
+	}
+	if state, ok := d.GetOk("state"); ok {
+		ipamPrefix.State = state.(string)
 	}
 	if ipj_details, ok := d.GetOk("ipj_details"); ok {
 		ipamPrefix.IpjDetails = extractIpjDetails(ipj_details.(*schema.Set))
@@ -238,55 +318,54 @@ func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 func extractIpjDetails(ipj_details *schema.Set) *packetfabric.IpjDetails {
 	ipj_details_map := ipj_details.List()[0].(map[string]interface{})
 	return &packetfabric.IpjDetails{
-		CurrentlyUsedPrefixes: extractIpamCurrentlyUsedPrefixes(ipj_details_map["currently_used_prefixes"].(*schema.Set)),
-		PlannedPrefixes:       extractIpamPlannedPrefixes(ipj_details_map["planned_prefixes"].(*schema.Set)),
+		CurrentPrefixes: extractIpamCurrentPrefixes(ipj_details_map["current_prefixes"].(*schema.Set)),
+		PlannedPrefix:   extractIpamPlannedPrefix(ipj_details_map["planned_prefix"].(*schema.Set)),
+		RejectionReason: ipj_details_map["rejection_reason"].(string),
 	}
 }
 
-func extractIpamCurrentlyUsedPrefixes(currently_used_prefixes *schema.Set) []packetfabric.IpamCurrentlyUsedPrefixes {
-	ipamCurrentlyUsedPrefixes := make([]packetfabric.IpamCurrentlyUsedPrefixes, 0)
-	for _, ipamCurrentlyUsedPrefix := range currently_used_prefixes.List() {
-		ipamCurrentlyUsedPrefixMap := ipamCurrentlyUsedPrefix.(map[string]interface{})
-		ipamCurrentlyUsedPrefixes = append(ipamCurrentlyUsedPrefixes, packetfabric.IpamCurrentlyUsedPrefixes{
-			Prefix:       ipamCurrentlyUsedPrefixMap["prefix"].(string),
-			IpsInUse:     ipamCurrentlyUsedPrefixMap["ips_in_use"].(int),
-			Description:  ipamCurrentlyUsedPrefixMap["description"].(string),
-			IspName:      ipamCurrentlyUsedPrefixMap["isp_name"].(string),
-			WillRenumber: ipamCurrentlyUsedPrefixMap["will_renumber"].(bool),
+func extractIpamCurrentPrefixes(current_prefixes *schema.Set) []packetfabric.IpamCurrentPrefixes {
+	ipamCurrentPrefixes := make([]packetfabric.IpamCurrentPrefixes, 0)
+	for _, ipamCurrentPrefix := range current_prefixes.List() {
+		ipamCurrentPrefixMap := ipamCurrentPrefix.(map[string]interface{})
+		ipamCurrentPrefixes = append(ipamCurrentPrefixes, packetfabric.IpamCurrentPrefixes{
+			Prefix:       ipamCurrentPrefixMap["prefix"].(string),
+			IpsInUse:     ipamCurrentPrefixMap["ips_in_use"].(int),
+			Description:  ipamCurrentPrefixMap["description"].(string),
+			IspName:      ipamCurrentPrefixMap["isp_name"].(string),
+			WillRenumber: ipamCurrentPrefixMap["will_renumber"].(bool),
 		})
 	}
-	return ipamCurrentlyUsedPrefixes
+	return ipamCurrentPrefixes
 }
 
-func extractIpamPlannedPrefixes(planned_prefixes *schema.Set) []packetfabric.IpamPlannedPrefixes {
-	ipamPlannedPrefixes := make([]packetfabric.IpamPlannedPrefixes, 0)
-	for _, ipamPlannedPrefix := range planned_prefixes.List() {
+func extractIpamPlannedPrefix(planned_prefix *schema.Set) *packetfabric.IpamPlannedPrefix {
+	for _, ipamPlannedPrefix := range planned_prefix.List() {
 		ipamPlannedPrefixMap := ipamPlannedPrefix.(map[string]interface{})
-		ipamPlannedPrefixes = append(ipamPlannedPrefixes, packetfabric.IpamPlannedPrefixes{
-			Prefix:      ipamPlannedPrefixMap["prefix"].(string),
+		return &packetfabric.IpamPlannedPrefix{
 			Description: ipamPlannedPrefixMap["description"].(string),
 			Location:    ipamPlannedPrefixMap["location"].(string),
 			Usage30d:    ipamPlannedPrefixMap["usage_30d"].(int),
 			Usage3m:     ipamPlannedPrefixMap["usage_3m"].(int),
 			Usage6m:     ipamPlannedPrefixMap["usage_6m"].(int),
 			Usage1y:     ipamPlannedPrefixMap["usage_1y"].(int),
-		})
+		}
 	}
-	return ipamPlannedPrefixes
+	return nil
 }
 
 func flattenIpjDetails(ipjDetails *packetfabric.IpjDetails) []interface{} {
 	result := make([]interface{}, 0)
 	data := make(map[string]interface{})
-	data["currently_used_prefixes"] = flattenCurrentlyUsedPrefixes(ipjDetails.CurrentlyUsedPrefixes)
-	data["planned_prefixes"] = flattenPlannedPrefixes(ipjDetails.PlannedPrefixes)
+	data["current_prefixes"] = flattenCurrentPrefixes(ipjDetails.CurrentPrefixes)
+	data["planned_prefix"] = flattenPlannedPrefix(ipjDetails.PlannedPrefix)
 	result = append(result, data)
 	return result
 }
 
-func flattenCurrentlyUsedPrefixes(currentlyUsedPrefixes []packetfabric.IpamCurrentlyUsedPrefixes) []interface{} {
-	result := make([]interface{}, len(currentlyUsedPrefixes))
-	for i, prefix := range currentlyUsedPrefixes {
+func flattenCurrentPrefixes(currentPrefixes []packetfabric.IpamCurrentPrefixes) []interface{} {
+	result := make([]interface{}, len(currentPrefixes))
+	for i, prefix := range currentPrefixes {
 		data := make(map[string]interface{})
 		data["prefix"] = prefix.Prefix
 		data["ips_in_use"] = prefix.IpsInUse
@@ -298,18 +377,13 @@ func flattenCurrentlyUsedPrefixes(currentlyUsedPrefixes []packetfabric.IpamCurre
 	return result
 }
 
-func flattenPlannedPrefixes(plannedPrefixes []packetfabric.IpamPlannedPrefixes) []interface{} {
-	result := make([]interface{}, len(plannedPrefixes))
-	for i, prefix := range plannedPrefixes {
-		data := make(map[string]interface{})
-		data["prefix"] = prefix.Prefix
-		data["description"] = prefix.Description
-		data["location"] = prefix.Location
-		data["usage_30d"] = prefix.Usage30d
-		data["usage_3m"] = prefix.Usage3m
-		data["usage_6m"] = prefix.Usage6m
-		data["usage_1y"] = prefix.Usage1y
-		result[i] = data
-	}
-	return result
+func flattenPlannedPrefix(plannedPrefix *packetfabric.IpamPlannedPrefix) map[string]interface{} {
+	data := make(map[string]interface{})
+	data["description"] = plannedPrefix.Description
+	data["location"] = plannedPrefix.Location
+	data["usage_30d"] = plannedPrefix.Usage30d
+	data["usage_3m"] = plannedPrefix.Usage3m
+	data["usage_6m"] = plannedPrefix.Usage6m
+	data["usage_1y"] = plannedPrefix.Usage1y
+	return data
 }

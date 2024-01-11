@@ -21,6 +21,7 @@ func TestAccDataSourceIpamContactsComputedRequiredFields(t *testing.T) {
 				Config: hclIpamContactResult.Hcl,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(hclIpamContactResult.ResourceName, "ipam_contacts.0.address"),
+					resource.TestCheckResourceAttrSet(hclIpamContactResult.ResourceName, "ipam_contacts.0.country_code"),
 					resource.TestCheckResourceAttrSet(hclIpamContactResult.ResourceName, "ipam_contacts.0.apnic_org_id"),
 					resource.TestCheckResourceAttrSet(hclIpamContactResult.ResourceName, "ipam_contacts.0.apnic_ref"),
 					resource.TestCheckResourceAttrSet(hclIpamContactResult.ResourceName, "ipam_contacts.0.name"),

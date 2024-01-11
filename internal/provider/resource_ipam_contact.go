@@ -40,6 +40,12 @@ func resourceIpamContact() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(1, 255),
 				Description:  "IPAM Contact Address.",
 			},
+			"country_code": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringLenBetween(2, 2),
+				Description:  "IPAM Contact Country Code.",
+			},
 			"phone": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -76,6 +82,14 @@ func resourceIpamContact() *schema.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 				Description:  "IPAM Contact RIPE Reference.",
 			},
+			"time_created": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"time_updated": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -110,12 +124,15 @@ func resourceIpamContactRead(ctx context.Context, d *schema.ResourceData, m inte
 	if resp != nil {
 		_ = d.Set("name", resp.Name)
 		_ = d.Set("address", resp.Address)
+		_ = d.Set("country_code", resp.CountryCode)
 		_ = d.Set("phone", resp.Phone)
 		_ = d.Set("email", resp.Email)
 		_ = d.Set("apnic_org_id", resp.ApnicOrgId)
 		_ = d.Set("ripe_org_id", resp.RipeOrgId)
 		_ = d.Set("apnic_ref", resp.ApnicRef)
 		_ = d.Set("ripe_ref", resp.RipeRef)
+		_ = d.Set("time_updated", resp.TimeUpdated)
+		_ = d.Set("time_created", resp.TimeCreated)
 	}
 	return diags
 }
@@ -138,6 +155,7 @@ func resourceIpamContactUpdate(ctx context.Context, d *schema.ResourceData, m in
 			UUID:        d.Id(),
 			Name:        d.Get("name").(string),
 			Address:     d.Get("address").(string),
+			CountryCode: d.Get("country_code").(string),
 			Phone:       d.Get("phone").(string),
 			Email:       d.Get("email").(string),
 			ApnicOrgId:  d.Get("apnic_org_id").(string),
@@ -176,6 +194,9 @@ func extractIpamContact(d *schema.ResourceData) packetfabric.IpamContact {
 	if address, ok := d.GetOk("address"); ok {
 		ipamContact.Address = address.(string)
 	}
+	if country_code, ok := d.GetOk("country_code"); ok {
+		ipamContact.CountryCode = country_code.(string)
+	}
 	if phone, ok := d.GetOk("phone"); ok {
 		ipamContact.Phone = phone.(string)
 	}
@@ -193,6 +214,12 @@ func extractIpamContact(d *schema.ResourceData) packetfabric.IpamContact {
 	}
 	if ripe_ref, ok := d.GetOk("ripe_ref"); ok {
 		ipamContact.RipeRef = ripe_ref.(string)
+	}
+	if time_created, ok := d.GetOk("time_created"); ok {
+		ipamContact.TimeCreated = time_created.(string)
+	}
+	if time_updated, ok := d.GetOk("time_updated"); ok {
+		ipamContact.TimeUpdated = time_updated.(string)
 	}
 	return ipamContact
 }
