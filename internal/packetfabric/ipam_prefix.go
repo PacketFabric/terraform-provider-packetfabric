@@ -92,13 +92,7 @@ func (c *PFClient) ReadIpamPrefixes() ([]IpamPrefix, error) {
 // This function represents the Action to update an existing IPAM prefix
 // https://docs.packetfabric.com/api/v2/swagger/#/ipam/prefix
 func (c *PFClient) UpdateIpamPrefix(ipamPrefix IpamPrefix) (*IpamPrefix, error) {
-	formatedURI := fmt.Sprintf("%s/%s", IpamPrefixURI, ipamPrefix.CircuitId)
-	resp := &IpamPrefix{}
-	_, err := c.sendRequest(formatedURI, patchMethod, &ipamPrefix, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return nil, fmt.Errorf("Ipam Prefix Update is an Unsupported operation")
 }
 
 // This function represents the Action to Delete an existing IPAM prefix
