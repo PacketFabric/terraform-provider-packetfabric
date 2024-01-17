@@ -15,7 +15,7 @@ func Test_CreateIpamContact(t *testing.T) {
 		"phone":        "123-456-7890",
 		"email":        "jane.smith@test.com",
 		"apnic_org_id": "Optional APNIC Organization ID",
-		"ripe_org_id":  "Optional RIPE Organization ID"
+		"ripe_org_id":  "Optional RIPE Organization ID",
 		"apnic_ref":    "Optional APNIC Reference",
 		"ripe_ref":     "Optional RIPE Reference"
 	}`)
