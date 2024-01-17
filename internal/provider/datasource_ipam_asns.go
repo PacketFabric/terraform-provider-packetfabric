@@ -13,7 +13,7 @@ func datasourceIpamAsns() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: datasourceIpamAsnsRead,
 		Schema: map[string]*schema.Schema{
-			"ipam_asn": {
+			"ipam_asns": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
