@@ -68,14 +68,14 @@ func (c *PFClient) ReadIpamContacts() ([]IpamContact, error) {
 // This operation is not a supported use case
 // https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_patch
 func (c *PFClient) UpdateIpamContact(ipamContact IpamContact) (*IpamContact, error) {
-	return nil, fmt.Errorf("Unsupported operation")
+	return nil, fmt.Errorf("Ipam Contact Update Unsupported operation")
 }
 
 // This function represents the Action to Delete an existing IPAM contact
 // https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_contact_delete
 func (c *PFClient) DeleteIpamContact(ipamContactID string) (*IpamContactDeleteResponse, error) {
 	if ipamContactID == "" {
-		return nil, errors.New(errorMsg)
+		return nil, errors.New("Ipam Contact Id cannot be empty")
 	}
 	formatedURI := fmt.Sprintf("%s/%s", IpamContactURI, ipamContactID)
 	expectedResp := &IpamContactDeleteResponse{}
