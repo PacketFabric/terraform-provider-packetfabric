@@ -718,6 +718,11 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
+// Resource: packetfabric_ipamAsn
+const RResourceIpamAsn = `resource "packetfabric_ipam_asn" "%s" {
+	asn_byte_type = 2
+}`
+
 const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 	name         = "Jane Smith"
 	address      = "1234 Peachtree St, Atlanta, GA"
@@ -733,7 +738,7 @@ const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 // Resource: packetfabric_ipam_prefix
 const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 	length           = 33
-	market           = "US"
+	market           = "ATL"
 	family           = "ipv6"
 	org_id           = "idk"
 	iso3166_1        = "US"
@@ -816,6 +821,12 @@ const DDatasourceActivityLogs = `data "packetfabric_activitylogs" "%s" {
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_ipam_asns
+const DDataIpamAsns = `data "packetfabric_ipam_asns" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_ipam_contacts

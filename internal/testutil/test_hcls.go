@@ -18,6 +18,7 @@ import (
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDocument = "packetfabric_document"
+const pfIpamAsn = "packetfabric_ipam_asn"
 const pfIpamContact = "packetfabric_ipam_contact"
 const pfIpamPrefix = "packetfabric_ipam_prefix"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
@@ -54,6 +55,7 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLogs = "data.packetfabric_activitylogs"
+const pfDataIpamAsns = "data.packetfabric_ipam_asns"
 const pfDataIpamContacts = "data.packetfabric_ipam_contacts"
 const pfDataIpamPrefixes = "data.packetfabric_ipam_prefixes"
 const pfDataCloudProviderCredentials = "data.packetfabric_cloud_provider_credentials"
@@ -288,6 +290,11 @@ type RHcloutboundCrossConnectsResult struct {
 
 // packetfabric_document
 type RHclDocumentResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_asn
+type RHclIpamAsnResult struct {
 	HclResultBase
 }
 
@@ -626,6 +633,11 @@ type DHclIpamContactsResult struct {
 	HclResultBase
 }
 
+// data packetfabric_ipam_asns
+type DHclIpamAsnsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_ipam_prefixes
 type DHclIpamPrefixesResult struct {
 	HclResultBase
@@ -799,6 +811,22 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_ipam_asn
+func RHclIpamAsn() RHclIpamAsnResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamAsn)
+	log.Printf("Resource: %s, Resource %s, ResourceName: %s\n", pfIpamAsn, hclName, resourceName)
+
+	hcl := fmt.Sprintf(RResourceIpamAsn, hclName)
+
+	return RHclIpamAsnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIpamAsn,
+			ResourceName: resourceName,
+		},
 	}
 }
 
@@ -2296,6 +2324,25 @@ func DHclBilling() DHclBillingResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_ipam_asns
+func DHclIpamAsns() DHclIpamAsnsResult {
+	ipamAsnResult := RHclIpamAsn()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataIpamAsns)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataIpamAsns, hclName)
+
+	hcl := fmt.Sprintf(DDataIpamAsns, hclName, ipamAsnResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", ipamAsnResult.Hcl, hcl)
+
+	return DHclIpamAsnsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataIpamAsns,
 			ResourceName: resourceName,
 		},
 	}
