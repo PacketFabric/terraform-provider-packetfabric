@@ -19,6 +19,7 @@ func TestAccDataSourceIpamAsnsComputedRequiredFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: hclIpamAsnResult.Hcl,
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(hclIpamAsnResult.ResourceName, "ipam_asns.0.asn_byte_type"),
 					resource.TestCheckResourceAttrSet(hclIpamAsnResult.ResourceName, "ipam_asns.0.asn"),
