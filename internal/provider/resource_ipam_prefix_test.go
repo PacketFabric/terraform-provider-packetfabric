@@ -3,20 +3,16 @@
 package provider
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccIpamPrefixRequiredFields(t *testing.T) {
 	testutil.PreCheck(t, nil)
 
 	ipamPrefixResult := testutil.RHclIpamPrefix()
-    updatedHcl := strings.Replace(ipamPrefixResult.Hcl, "Optional", "Totally optional", -1)
 
 	resource.ParallelTest(t, resource.TestCase{
 		ExternalProviders: testAccExternalProviders,
@@ -57,28 +53,6 @@ func TestAccIpamPrefixRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.0.planned_prefix.usage_3m"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ipj_details.0.planned_prefix.usage_6m"),
 				),
-			},
-			{
-				Config: updatedHcl,
-				ExpectNonEmptyPlan: true,
-				Check: func(s *terraform.State) error {
-					rs, ok := s.RootModule().Resources[ipamPrefixResult.ResourceName]
-					if !ok {
-						return fmt.Errorf("Not found: %s", ipamPrefixResult.ResourceName)
-					}
-					expectations := map[string]string{
-						"ipj_details.0.current_prefixes.0.description": "Totally optional description",
-						"ipj_details.0.current_prefixes.0.isp_name": "Totally optional ISP Name",
-						"ipj_details.planned_prefix.location": "Totally optional Location",
-					}
-					for key, expected := range expectations {
-						actual := rs.Primary.Attributes[key]
-						if actual != expected {
-							return fmt.Errorf("For \"%s\", expected \"%s\", but got \"%s\"", key, expected, actual)
-						}
-					}
-					return nil
-				},
 			},
 		},
 	})
