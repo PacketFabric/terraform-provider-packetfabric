@@ -737,15 +737,15 @@ const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 
 // Resource: packetfabric_ipam_prefix
 const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
-	length           = 33
-	market           = "ATL"
-	family           = "ipv6"
-	org_id           = "idk"
-	iso3166_1        = "US"
-	iso3166_2        = "GA"
-	address          = "1234 Peachtree St"
-	city             = "Atlanta"
-	postal_code      = "30339"
+	length      = 33
+	market      = "NYC"
+	family      = "ipv6"
+	org_id      = "idk"
+	iso3166_1   = "US"
+	iso3166_2   = "GA"
+	address     = "1234 Peachtree St"
+	city        = "Atlanta"
+	postal_code = "30339"
 
 	admin_ipam_contact_uuid = %s
 	tech_ipam_contact_uuid  = %s
