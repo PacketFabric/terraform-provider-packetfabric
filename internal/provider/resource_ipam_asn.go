@@ -15,19 +15,17 @@ func resourceIpamAsn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIpamAsnCreate,
 		ReadContext:   resourceIpamAsnRead,
-		UpdateContext: resourceIpamAsnUpdate,
 		DeleteContext: resourceIpamAsnDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"asn_byte_type": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Optional: false,
+				ForceNew: true,
 			},
 			"asn": {
 				Type:     schema.TypeInt,
@@ -81,28 +79,6 @@ func resourceIpamAsnRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("time_created", resp.TimeCreated)
 		_ = d.Set("time_updated", resp.TimeUpdated)
 	}
-	return diags
-}
-
-func resourceIpamAsnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-	var diags diag.Diagnostics
-	asn, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	ipamAsnUpdate := packetfabric.IpamAsn{
-		AsnByteType: d.Get("asn_byte_type").(int),
-		Asn: asn,
-		TimeCreated: d.Get("time_created").(string),
-		TimeUpdated: d.Get("time_updated").(string),
-	}
-	_, err = c.UpdateIpamAsn(ipamAsnUpdate)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	d.SetId(d.Get("id").(string))
 	return diags
 }
 

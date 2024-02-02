@@ -14,11 +14,9 @@ func resourceIpamPrefix() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIpamPrefixCreate,
 		ReadContext:   resourceIpamPrefixRead,
-		UpdateContext: resourceIpamPrefixUpdate,
 		DeleteContext: resourceIpamPrefixDelete,
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(10 * time.Minute),
-			Update: schema.DefaultTimeout(10 * time.Minute),
 			Read:   schema.DefaultTimeout(10 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
@@ -37,25 +35,30 @@ func resourceIpamPrefix() *schema.Resource {
 			},
 			"length": {
 				Type:     schema.TypeInt,
+				ForceNew: true,
 				Required: true,
 			},
 			"family": {
 				Type:         schema.TypeString,
+				ForceNew:     true,
 				Optional:     true,
 				Default:      "ipv4",
 				ValidateFunc: validation.StringInSlice([]string{"ipv4", "ipv6"}, false),
 			},
 			"market": {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Optional: true,
 			},
 			"admin_ipam_contact_uuid": {
 				Type:         schema.TypeString,
+				ForceNew:     true,
 				Optional:     true,
 				ValidateFunc: validation.IsUUID,
 			},
 			"tech_ipam_contact_uuid": {
 				Type:         schema.TypeString,
+				ForceNew:     true,
 				Optional:     true,
 				ValidateFunc: validation.IsUUID,
 			},
@@ -73,30 +76,36 @@ func resourceIpamPrefix() *schema.Resource {
 			},
 			"org_id": {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Optional: true,
 			},
 			"iso3166_1": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
 			},
 			"iso3166_2": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
 			},
 			"address": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
 			},
 			"city": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
 			},
 			"postal_code": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
 			},
@@ -110,6 +119,7 @@ func resourceIpamPrefix() *schema.Resource {
 			},
 			"ipj_details": {
 				Type:     schema.TypeSet,
+				ForceNew: true,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -232,18 +242,6 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 		}
 	}
 	return diags
-}
-
-func resourceIpamPrefixUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*packetfabric.PFClient)
-	c.Ctx = ctx
-
-	updateIpamPrefix := extractIpamPrefix(d)
-	ipamPrefix, err := c.UpdateIpamPrefix(updateIpamPrefix)
-	if err != nil || ipamPrefix == nil {
-		return diag.FromErr(err)
-	}
-	return resourceIpamPrefixRead(ctx, d, m)
 }
 
 func resourceIpamPrefixDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
