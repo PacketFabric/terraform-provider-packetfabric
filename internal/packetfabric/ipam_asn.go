@@ -11,9 +11,9 @@ const IpamAsnURI = "/v2/services/ipam/asns"
 // https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_asn_post
 type IpamAsn struct {
 	AsnByteType int    `json:"asn_byte_type,omitempty"` // write
-	Asn         int    `json:"asn,omitempty"`            // read
-	TimeCreated string `json:"time_created,omitempty"`   // read
-	TimeUpdated string `json:"time_updated,omitempty"`   // read
+	Asn         int    `json:"asn,omitempty"`           // read
+	TimeCreated string `json:"time_created,omitempty"`  // read
+	TimeUpdated string `json:"time_updated,omitempty"`  // read
 }
 
 // This struct represents a ipam asns delete response
@@ -60,7 +60,7 @@ func (c *PFClient) ReadIpamAsns() ([]IpamAsn, error) {
 // This operation is not a supported use case
 // https://docs.packetfabric.net/openapi/index.html#/IPAM/ipam_asn_patch
 func (c *PFClient) UpdateIpamAsn(ipamAsn IpamAsn) (*IpamAsn, error) {
-	return nil, fmt.Errorf("ipam asns Update Unsupported operation")
+	return nil, fmt.Errorf("IPAM ASNs Update Unsupported operation")
 }
 
 // This function represents the Action to Delete an existing ipam asns
