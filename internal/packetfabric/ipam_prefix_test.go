@@ -12,7 +12,7 @@ func Test_CreateIpamPrefix(t *testing.T) {
 		"state":              "complete",
 		"length":             33,
 		"version":            4,
-		"market":             "Antarctica",
+		"market":             "NYC",
 		"admin_contact_uuid": "11111a11-1a11-1a1a-111a-1a111a1a1a1a",
 		"tech_contact_uuid":  "22222b22-2b22-2b2b-222b-2b222b2b2b2b",
 		"ipj_details": {
