@@ -1,9 +1,9 @@
 package packetfabric
 
 import (
-    "fmt"
-    "encoding/json"
-    "testing"
+	"fmt"
+	"encoding/json"
+	"testing"
 )
 
 func Test_CreateHighPerformanceInternet(t *testing.T) {
