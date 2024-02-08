@@ -1,15 +1,14 @@
 package packetfabric
 
 import (
-	"fmt"
 	"encoding/json"
 	"testing"
 )
 
 func Test_CreateHighPerformanceInternet(t *testing.T) {
-    expectedPayload := HighPerformanceInternet{}
-    expectedResp := HighPerformanceInternet{}
-    jsonPayload := []byte(`{
+	expectedPayload := HighPerformanceInternet{}
+	expectedResp := HighPerformanceInternet{}
+	jsonPayload := []byte(`{
 		"account_uuid": "12345678-1234-1234-1234-123456789012",
 		"circuit_id": "PF-L3-TRAN-12345",
 		"description": "HPI for customer A",
@@ -68,17 +67,11 @@ func Test_CreateHighPerformanceInternet(t *testing.T) {
 			}
 		}
     }`)
-    jsonResponse := jsonPayload
-    if err := json.Unmarshal(jsonPayload, &expectedPayload); err != nil {
-        t.Fatalf("Failed to unmarshal payload: %s", err)
-    }
-    if err := json.Unmarshal(jsonResponse, &expectedResp); err != nil {
-        t.Fatalf("Failed to unmarshal response: %s", err)
-    }
-
-	jsonData, err := json.Marshal(expectedResp)
-    if err == nil {
-		s := string(jsonData)
-		fmt.Printf("testing:%s\n", s)
-    }
+	jsonResponse := jsonPayload
+	if err := json.Unmarshal(jsonPayload, &expectedPayload); err != nil {
+		t.Fatalf("Failed to unmarshal payload: %s", err)
+	}
+	if err := json.Unmarshal(jsonResponse, &expectedResp); err != nil {
+		t.Fatalf("Failed to unmarshal response: %s", err)
+	}
 }

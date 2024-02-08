@@ -25,8 +25,6 @@ func TestAccDataSourceIpamPrefixesComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.circuit_id"),
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.type"),
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.org_id"),
-					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.iso3166_1"),
-					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.iso3166_2"),
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.address"),
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.city"),
 					resource.TestCheckResourceAttrSet(hclIpamPrefixes.ResourceName, "ipam_prefixes.0.postal_code"),

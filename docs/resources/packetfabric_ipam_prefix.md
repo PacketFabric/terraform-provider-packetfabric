@@ -26,8 +26,6 @@ description: |-
 - `city` (String) Required for ARIN if org_id was not provided, otherwise optional.
 - `family` (String) Defaults: ipv4
 - `ipj_details` (Block Set) (see [below for nested schema](#nestedblock--ipj_details))
-- `iso3166_1` (String) Required for ARIN if org_id was not provided, otherwise optional.
-- `iso3166_2` (String) Required for ARIN if org_id was not provided, otherwise optional.
 - `market` (String)
 - `org_id` (String)
 - `postal_code` (String) Required for ARIN if org_id was not provided, otherwise optional.

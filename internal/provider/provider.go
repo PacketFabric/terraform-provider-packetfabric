@@ -119,6 +119,7 @@ func Provider() *schema.Provider {
 			"packetfabric_ipam_asn":                                resourceIpamAsn(),
 			"packetfabric_ipam_contact":                            resourceIpamContact(),
 			"packetfabric_ipam_prefix":                             resourceIpamPrefix(),
+			"packetfabric_high_performance_internet":               resourceHighPerformanceInternet(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list

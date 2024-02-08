@@ -7,16 +7,16 @@ import (
 const HighPerformanceInternetURI = "/v2/services/high-performance-internet"
 
 type HighPerformanceInternet struct {
-	CircuitId            string                                      `json:"circuit_id,omitempty"`            // read
+	AccountUUID          string                                      `json:"account_uuid,omitempty"`          // write
+	RoutingConfiguration HighPerformanceInternetRoutingConfiguration `json:"routing_configuration,omitempty"` // write/"read"
 	PortCircuitId        string                                      `json:"port_circuit_id,omitempty"`       // read/write
 	Speed                string                                      `json:"speed"`                           // read/write
 	Vlan                 int                                         `json:"vlan"`                            // read/write
 	Description          string                                      `json:"description"`                     // read/write
+	CircuitId            string                                      `json:"hpi_circuit_id,omitempty"`        // read
 	Market               string                                      `json:"market,omitempty"`                // read
 	RoutingType          string                                      `json:"routing_type,omitempty"`          // read
 	State                string                                      `json:"state,omitempty"`                 // read
-	AccountUUID          string                                      `json:"account_uuid,omitempty"`          // write
-	RoutingConfiguration HighPerformanceInternetRoutingConfiguration `json:"routing_configuration,omitempty"` // write/"read"
 }
 
 type HighPerformanceInternetRoutingConfiguration struct {

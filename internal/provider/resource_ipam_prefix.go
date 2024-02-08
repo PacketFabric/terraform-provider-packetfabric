@@ -79,18 +79,6 @@ func resourceIpamPrefix() *schema.Resource {
 				ForceNew: true,
 				Optional: true,
 			},
-			"iso3166_1": {
-				Type:        schema.TypeString,
-				ForceNew:    true,
-				Optional:    true,
-				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
-			},
-			"iso3166_2": {
-				Type:        schema.TypeString,
-				ForceNew:    true,
-				Optional:    true,
-				Description: "Required for ARIN if org_id was not provided, otherwise optional.",
-			},
 			"address": {
 				Type:        schema.TypeString,
 				ForceNew:    true,
@@ -226,8 +214,6 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("circuit_id", ipamPrefix.CircuitId)
 	_ = d.Set("type", ipamPrefix.Type)
 	_ = d.Set("org_id", ipamPrefix.OrgId)
-	_ = d.Set("iso3166_1", ipamPrefix.Iso31661)
-	_ = d.Set("iso3166_2", ipamPrefix.Iso31662)
 	_ = d.Set("address", ipamPrefix.Address)
 	_ = d.Set("city", ipamPrefix.City)
 	_ = d.Set("postal_code", ipamPrefix.PostalCode)
@@ -280,12 +266,6 @@ func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 	}
 	if org_id, ok := d.GetOk("org_id"); ok {
 		ipamPrefix.OrgId = org_id.(string)
-	}
-	if iso3166_1, ok := d.GetOk("iso3166_1"); ok {
-		ipamPrefix.Iso31661 = iso3166_1.(string)
-	}
-	if iso3166_2, ok := d.GetOk("iso3166_2"); ok {
-		ipamPrefix.Iso31662 = iso3166_2.(string)
 	}
 	if address, ok := d.GetOk("address"); ok {
 		ipamPrefix.Address = address.(string)

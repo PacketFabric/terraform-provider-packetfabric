@@ -795,12 +795,10 @@ const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
 
 // Resource: packetfabric_ipam_prefix
 const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
-	length      = 33
+	length      = %d
 	market      = "NYC"
-	family      = "ipv6"
+	family      = "%s"
 	org_id      = "idk"
-	iso3166_1   = "US"
-	iso3166_2   = "GA"
 	address     = "1234 Peachtree St"
 	city        = "Atlanta"
 	postal_code = "30339"
@@ -810,8 +808,8 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 
 	ipj_details {
 		current_prefixes {
-			prefix        = "128.192.1.0/24"
-			ips_in_use    = 33
+			prefix        = "104.198.66.55/32"
+			ips_in_use    = 2
 			description   = "Optional description"
 			isp_name      = "Optional ISP Name"
 			will_renumber = true
@@ -823,6 +821,71 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 			usage_3m      = 0
 			usage_6m      = 2
 			usage_1y      = 3
+		}
+	}
+}`
+
+// Resource: packetfabric_high_performance_internet
+const RResourceHighPerformanceInternet = `resource "packetfabric_high_performance_internet" "%s" {
+	account_uuid          = "%s"
+	port_circuit_id       = "%s"
+	speed                 = "%s"
+	vlan                  = 4
+	description           = "HPI for customer A"
+	routing_configuration {
+		bgp_v4 {
+			asn =  65056
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			md5            =  "string"
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference =  100
+			}
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference =  100
+			}
+		}
+		bgp_v6 {
+			asn            =  65000
+			l3_address     = %s.ip_address 
+			remote_address = %s.ip_address
+			md5            = "string"
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference = 100
+			}
+		}
+	}
+}`
+
+// Resource: packetfabric_high_performance_internet
+const RResourceHighPerformanceInternetStatic = `resource "packetfabric_high_performance_internet" "%s" {
+	account_uuid          = "%s"
+	port_circuit_id       = "%s"
+	speed                 = "%s"
+	vlan                  = 4
+	description           = "HPI for customer A"
+	account_uuid          = "%s"
+	routing_configuration {
+		static_v4 {
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			static_routes {
+				{
+					prefix = %s.ip_address
+				}
+			}
+		}
+		static_v6 {
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			static_routes {
+				{
+					prefix =  %s.ip_address
+				}
+			}
 		}
 	}
 }`

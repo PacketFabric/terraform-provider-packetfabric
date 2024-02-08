@@ -21,6 +21,7 @@ const pfDocument = "packetfabric_document"
 const pfIpamAsn = "packetfabric_ipam_asn"
 const pfIpamContact = "packetfabric_ipam_contact"
 const pfIpamPrefix = "packetfabric_ipam_prefix"
+const pfHighPerformanceInternet = "packetfabric_high_performance_internet"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
@@ -307,6 +308,11 @@ type RHclIpamContactResult struct {
 type RHclIpamPrefixResult struct {
 	HclResultBase
 	ContactUuid string
+}
+
+// packetfabric_high_performance_internet
+type RHclHighPerformanceInternetResult struct {
+	HclResultBase
 }
 
 // packetfabric_backbone_virtual_circuit
@@ -848,15 +854,31 @@ func RHclIpamContact() RHclIpamContactResult {
 
 // packetfabric_ipam_prefix
 func RHclIpamPrefix() RHclIpamPrefixResult {
-	rHclIpamContactResult := RHclIpamContact()
-	contactUuid := fmt.Sprintf("%s.id", rHclIpamContactResult.ResourceName)
+	return RHclIpamPrefixByFamily("ipv6", 128, nil)
+}
+
+// packetfabric_ipam_prefix
+func RHclIpamPrefixByFamily(family string, length int, contact *RHclIpamContactResult) RHclIpamPrefixResult {
+	created := false
+	if nil == contact {
+		tmp := RHclIpamContact()
+		contact = &tmp
+		created = true
+	}
+	contactUuid := fmt.Sprintf("%s.id", contact.ResourceName)
 
 	resourceName, hclName := GenerateUniqueResourceName(pfIpamPrefix)
 
 	log.Printf("Resource: %s, Resource %s\n", pfIpamPrefix, hclName)
 
-	hcl := fmt.Sprintf(RResourceIpamPrefix, hclName, contactUuid, contactUuid)
-	combined := fmt.Sprintf("%s\n%s", rHclIpamContactResult.Hcl, hcl)
+	hcl := fmt.Sprintf(RResourceIpamPrefix, hclName, length, family, contactUuid, contactUuid)
+
+	combined := ""
+	if created {
+		combined = fmt.Sprintf("%s\n%s", contact.Hcl, hcl)
+	} else {
+		combined = hcl
+	}
 
 	return RHclIpamPrefixResult{
 		HclResultBase: HclResultBase{
@@ -865,6 +887,61 @@ func RHclIpamPrefix() RHclIpamPrefixResult {
 			ResourceName: resourceName,
 		},
 		ContactUuid: contactUuid,
+	}
+}
+
+// packetfabric_high_performance_internet
+func RHclHighPerformanceInternet() RHclHighPerformanceInternetResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfHighPerformanceInternet)
+
+	log.Printf("Resource: %s, Resource %s\n", pfHighPerformanceInternet, hclName)
+
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort(true)
+
+	contact := RHclIpamContact()
+
+	v4_l3_address := RHclIpamPrefixByFamily("ipv4", 32, &contact)
+	v4_remote_address := RHclIpamPrefixByFamily("ipv4", 32, &contact)
+	v4_prefix1 := RHclIpamPrefixByFamily("ipv4", 30, &contact)
+	v4_prefix2 := RHclIpamPrefixByFamily("ipv4", 30, &contact)
+	v6_l3_address := RHclIpamPrefixByFamily("ipv6", 128, &contact)
+	v6_remote_address := RHclIpamPrefixByFamily("ipv6", 128, &contact)
+	v6_prefix := RHclIpamPrefixByFamily("ipv6", 120, &contact)
+
+	hcl := fmt.Sprintf(
+		RResourceHighPerformanceInternet,
+		hclName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		portTestResult.ResourceName,
+		backboneVCspeed,
+		v4_l3_address.ResourceName,
+		v4_remote_address.ResourceName,
+		v4_prefix1.ResourceName,
+		v4_prefix2.ResourceName,
+		v6_l3_address.ResourceName,
+		v6_remote_address.ResourceName,
+		v6_prefix.ResourceName,
+	)
+	combined := fmt.Sprintf(
+		"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+		portTestResult.Hcl,
+		contact.Hcl,
+		v4_l3_address.Hcl,
+		v4_remote_address.Hcl,
+		v4_prefix1.Hcl,
+		v4_prefix2.Hcl,
+		v6_l3_address.Hcl,
+		v6_remote_address.Hcl,
+		v6_prefix.Hcl,
+		hcl)
+
+	return RHclHighPerformanceInternetResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfHighPerformanceInternet,
+			ResourceName: resourceName,
+		},
 	}
 }
 

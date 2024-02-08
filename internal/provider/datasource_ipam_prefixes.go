@@ -34,14 +34,6 @@ func datasourceIpamPrefixes() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"iso3166_1": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"iso3166_2": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"address": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -162,8 +154,6 @@ func flattenIpamPrefixes(ipamPrefixes *[]packetfabric.IpamPrefix) []interface{} 
 			flatten["circuit_id"] = ipamPrefix.CircuitId
 			flatten["type"] = ipamPrefix.Type
 			flatten["org_id"] = ipamPrefix.OrgId
-			flatten["iso3166_1"] = ipamPrefix.Iso31661
-			flatten["iso3166_2"] = ipamPrefix.Iso31662
 			flatten["address"] = ipamPrefix.Address
 			flatten["city"] = ipamPrefix.City
 			flatten["postal_code"] = ipamPrefix.PostalCode

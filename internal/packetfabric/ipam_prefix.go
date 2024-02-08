@@ -8,19 +8,17 @@ import (
 const IpamPrefixURI = "/v2/services/ipam/prefixes"
 
 type IpamPrefix struct {
-	Length               int         `json:"length"`                // write
-	Market               string      `json:"market,omitempty"`      // write
-	Family               string      `json:"family,omitempty"`      // write
-	IpAddress            string      `json:"ip_address,omitempty"`  // read
-	CircuitId            string      `json:"circuit_id,omitempty"`  // read
-	Type                 string      `json:"type,omitempty"`        // read
-	State                string      `json:"state,omitempty"`       // read
-	OrgId                string      `json:"org_id,omitempty"`      // optional
-	Iso31661             string      `json:"iso3166_1,omitempty"`   // optional (required for ARIN if org_id was not provided)
-	Iso31662             string      `json:"iso3166_2,omitempty"`   // "
-	Address              string      `json:"address,omitempty"`     // "
-	City                 string      `json:"city,omitempty"`        // "
-	PostalCode           string      `json:"postal_code,omitempty"` // "
+	Length               int         `json:"length"`                      // write
+	Market               string      `json:"market,omitempty"`            // write
+	Family               string      `json:"address_family,omitempty"`    // write
+	IpAddress            string      `json:"ip_address,omitempty"`        // read
+	CircuitId            string      `json:"prefix_circuit_id,omitempty"` // read
+	Type                 string      `json:"type,omitempty"`              // read
+	State                string      `json:"state,omitempty"`             // read
+	OrgId                string      `json:"org_id,omitempty"`            // optional
+	Address              string      `json:"address,omitempty"`           // "
+	City                 string      `json:"city,omitempty"`              // "
+	PostalCode           string      `json:"postal_code,omitempty"`       // "
 	AdminIpamContactUuid string      `json:"admin_ipam_contact_uuid,omitempty"`
 	TechIpamContactUuid  string      `json:"tech_ipam_contact_uuid,omitempty"`
 	TimeCreated          string      `json:"time_created,omitempty"`
