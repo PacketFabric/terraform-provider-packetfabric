@@ -822,7 +822,7 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 const RResourceHighPerformanceInternet = `resource "packetfabric_high_performance_internet" "%s" {
 	depends_on = [%s]
 	account_uuid          = "%s"
-	port_circuit_id       = "%s"
+    port_circuit_id       = %s.id
 	speed                 = "%s"
 	vlan                  = 4
 	description           = "HPI for customer A"
@@ -857,7 +857,7 @@ const RResourceHighPerformanceInternet = `resource "packetfabric_high_performanc
 // Resource: packetfabric_high_performance_internet
 const RResourceHighPerformanceInternetStatic = `resource "packetfabric_high_performance_internet" "%s" {
 	account_uuid          = "%s"
-	port_circuit_id       = "%s"
+    port_circuit_id       = %s.id
 	speed                 = "%s"
 	vlan                  = 4
 	description           = "HPI for customer A"
