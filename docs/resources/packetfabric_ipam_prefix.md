@@ -48,27 +48,15 @@ description: |-
 
 Required:
 
-- `current_prefixes` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--ipj_details--current_prefixes))
 - `planned_prefix` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--ipj_details--planned_prefix))
+
+Optional:
+
+- `current_prefixes` (Block Set) (see [below for nested schema](#nestedblock--ipj_details--current_prefixes))
 
 Read-Only:
 
 - `rejection_reason` (String)
-
-<a id="nestedblock--ipj_details--current_prefixes"></a>
-### Nested Schema for `ipj_details.current_prefixes`
-
-Required:
-
-- `ips_in_use` (Number)
-- `prefix` (String)
-
-Optional:
-
-- `description` (String)
-- `isp_name` (String)
-- `will_renumber` (Boolean)
-
 
 <a id="nestedblock--ipj_details--planned_prefix"></a>
 ### Nested Schema for `ipj_details.planned_prefix`
@@ -84,6 +72,21 @@ Optional:
 
 - `description` (String)
 - `location` (String)
+
+
+<a id="nestedblock--ipj_details--current_prefixes"></a>
+### Nested Schema for `ipj_details.current_prefixes`
+
+Required:
+
+- `ips_in_use` (Number)
+- `prefix` (String)
+
+Optional:
+
+- `description` (String)
+- `isp_name` (String)
+- `will_renumber` (Boolean)
 
 
 
