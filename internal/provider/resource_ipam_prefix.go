@@ -117,7 +117,7 @@ func resourceIpamPrefix() *schema.Resource {
 						},
 						"current_prefixes": {
 							Type:     schema.TypeSet,
-							Required: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"prefix": {
