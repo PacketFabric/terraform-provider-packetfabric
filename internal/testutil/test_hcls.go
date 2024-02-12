@@ -59,6 +59,7 @@ const pfDataActivityLogs = "data.packetfabric_activitylogs"
 const pfDataIpamAsns = "data.packetfabric_ipam_asns"
 const pfDataIpamContacts = "data.packetfabric_ipam_contacts"
 const pfDataIpamPrefixes = "data.packetfabric_ipam_prefixes"
+const pfDataHighPerformanceInternets = "data.packetfabric_high_performance_internets"
 const pfDataCloudProviderCredentials = "data.packetfabric_cloud_provider_credentials"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataPortVlans = "data.packetfabric_port_vlans"
@@ -649,6 +650,11 @@ type DHclIpamPrefixesResult struct {
 	HclResultBase
 }
 
+// data packetfabric_high_performance_internets
+type DHclHighPerformanceInternetsResult struct {
+	HclResultBase
+}
+
 type DHclCloudProviderCredentialsResult struct {
 	HclResultBase
 }
@@ -912,6 +918,7 @@ func RHclHighPerformanceInternet() RHclHighPerformanceInternetResult {
 	hcl := fmt.Sprintf(
 		RResourceHighPerformanceInternet,
 		hclName,
+		portTestResult.ResourceName,
 		os.Getenv("PF_ACCOUNT_ID"),
 		portTestResult.ResourceName,
 		backboneVCspeed,
@@ -2484,6 +2491,25 @@ func DHclIpamContacts() DHclIpamContactsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          combined,
 			Resource:     pfDataIpamContacts,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_high_performance_internets
+func DHclHighPerformanceInternets() DHclHighPerformanceInternetsResult {
+	highPerformanceInternetResult := RHclHighPerformanceInternet()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataHighPerformanceInternets)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataHighPerformanceInternets, hclName)
+
+	hcl := fmt.Sprintf(DDataHighPerformanceInternets, hclName, highPerformanceInternetResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", highPerformanceInternetResult.Hcl, hcl)
+
+	return DHclHighPerformanceInternetsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataHighPerformanceInternets,
 			ResourceName: resourceName,
 		},
 	}

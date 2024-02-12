@@ -807,15 +807,8 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 	tech_ipam_contact_uuid  = %s
 
 	ipj_details {
-		current_prefixes {
-			prefix        = "104.198.66.55/32"
-			ips_in_use    = 2
-			description   = "Optional description"
-			isp_name      = "Optional ISP Name"
-			will_renumber = true
-		}
 		planned_prefix {
-			description   = "Another optional description"
+			description   = "An optional description"
 			location      = "Optional Location"
 			usage_30d     = 2
 			usage_3m      = 0
@@ -827,6 +820,7 @@ const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
 
 // Resource: packetfabric_high_performance_internet
 const RResourceHighPerformanceInternet = `resource "packetfabric_high_performance_internet" "%s" {
+	depends_on = [%s]
 	account_uuid          = "%s"
 	port_circuit_id       = "%s"
 	speed                 = "%s"
@@ -958,6 +952,12 @@ const DDataIpamContacts = `data "packetfabric_ipam_contacts" "%s" {
 
 // Datasource: packetfabric_ipam_prefixes
 const DDataIpamPrefixes = `data "packetfabric_ipam_prefixes" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_high_performance_internets
+const DDataHighPerformanceInternets = `data "packetfabric_high_performance_internets" "%s" {
   provider   = packetfabric
   depends_on = [%s]
 }`
