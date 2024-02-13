@@ -143,6 +143,7 @@ func Provider() *schema.Provider {
 			"packetfabric_ipam_contacts":                      datasourceIpamContacts(),
 			"packetfabric_ipam_prefixes":                      datasourceIpamPrefixes(),
 			"packetfabric_high_performance_internets":         datasourceHighPerformanceInternets(),
+			"packetfabric_high_performance_internet":          datasourceHighPerformanceInternet(),
 			"packetfabric_cloud_provider_credentials":         datasourceCloudProviderCredentials(),
 			"packetfabric_locations":                          dataSourceLocations(),
 			"packetfabric_link_aggregation_group":             datasourceLinkAggregationGroups(),

@@ -962,6 +962,13 @@ const DDataHighPerformanceInternets = `data "packetfabric_high_performance_inter
   depends_on = [%s]
 }`
 
+// Datasource: packetfabric_high_performance_internet
+const DDataHighPerformanceInternet = `data "packetfabric_high_performance_internet" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+  circuit_id = %s.circuit_id
+}`
+
 // Datasource: packetfabric_cloud_provider_credentials
 const DDataSourceCloudProviderCredentials = `data "packetfabric_cloud_provider_credentials" "%s" {
   provider   = packetfabric

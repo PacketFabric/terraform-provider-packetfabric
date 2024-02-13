@@ -60,6 +60,7 @@ const pfDataIpamAsns = "data.packetfabric_ipam_asns"
 const pfDataIpamContacts = "data.packetfabric_ipam_contacts"
 const pfDataIpamPrefixes = "data.packetfabric_ipam_prefixes"
 const pfDataHighPerformanceInternets = "data.packetfabric_high_performance_internets"
+const pfDataHighPerformanceInternet = "data.packetfabric_high_performance_internet"
 const pfDataCloudProviderCredentials = "data.packetfabric_cloud_provider_credentials"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataPortVlans = "data.packetfabric_port_vlans"
@@ -652,6 +653,11 @@ type DHclIpamPrefixesResult struct {
 
 // data packetfabric_high_performance_internets
 type DHclHighPerformanceInternetsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_high_performance_internet
+type DHclHighPerformanceInternetResult struct {
 	HclResultBase
 }
 
@@ -2510,6 +2516,29 @@ func DHclHighPerformanceInternets() DHclHighPerformanceInternetsResult {
 		HclResultBase: HclResultBase{
 			Hcl:          combined,
 			Resource:     pfDataHighPerformanceInternets,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_high_performance_internet
+func DHclHighPerformanceInternet() DHclHighPerformanceInternetResult {
+	highPerformanceInternetResult := RHclHighPerformanceInternet()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataHighPerformanceInternet)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataHighPerformanceInternet, hclName)
+
+	hcl := fmt.Sprintf(
+		DDataHighPerformanceInternet,
+		hclName,
+		highPerformanceInternetResult.ResourceName,
+		highPerformanceInternetResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", highPerformanceInternetResult.Hcl, hcl)
+
+	return DHclHighPerformanceInternetResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataHighPerformanceInternet,
 			ResourceName: resourceName,
 		},
 	}
