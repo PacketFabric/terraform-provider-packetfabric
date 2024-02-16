@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PacketFabric/terraform-provider-packetfabric/internal/testutil"
@@ -13,12 +14,14 @@ func TestAccDataSourceHighPerformanceInternetsComputedRequiredFields(t *testing.
 	testutil.PreCheck(t, nil)
 
 	hclHighPerformanceInternetResult := testutil.DHclHighPerformanceInternets()
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n%s\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", hclHighPerformanceInternetResult.Hcl)
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: hclHighPerformanceInternetResult.Hcl,
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(hclHighPerformanceInternetResult.ResourceName, "high_performance_internets.0.circuit_id"),
 					resource.TestCheckResourceAttrSet(hclHighPerformanceInternetResult.ResourceName, "high_performance_internets.0.port_circuit_id"),

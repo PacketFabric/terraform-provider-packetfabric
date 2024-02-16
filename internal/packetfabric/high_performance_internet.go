@@ -2,6 +2,7 @@ package packetfabric
 
 import (
 	"fmt"
+	"net"
 )
 
 const HighPerformanceInternetURI = "/v2/services/high-performance-internet"
@@ -9,11 +10,11 @@ const HighPerformanceInternetURI = "/v2/services/high-performance-internet"
 type HighPerformanceInternet struct {
 	AccountUUID          string                                      `json:"account_uuid,omitempty"`          // write
 	RoutingConfiguration HighPerformanceInternetRoutingConfiguration `json:"routing_configuration,omitempty"` // write/"read"
+	CircuitId            string                                      `json:"hpi_circuit_id,omitempty"`        // read
 	PortCircuitId        string                                      `json:"port_circuit_id,omitempty"`       // read/write
 	Speed                string                                      `json:"speed"`                           // read/write
 	Vlan                 int                                         `json:"vlan"`                            // read/write
 	Description          string                                      `json:"description"`                     // read/write
-	CircuitId            string                                      `json:"hpi_circuit_id,omitempty"`        // read
 	Market               string                                      `json:"market,omitempty"`                // read
 	RoutingType          string                                      `json:"routing_type,omitempty"`          // read
 	State                string                                      `json:"state,omitempty"`                 // read
@@ -74,6 +75,24 @@ func (c *PFClient) CreateHighPerformanceInternet(highPerformanceInternet *HighPe
 	if err != nil {
 		return nil, err
 	}
+
+	err = hpiPrefixRangeStatic(highPerformanceInternet.RoutingConfiguration.StaticRoutingV4)
+	if err != nil {
+		return nil, err
+	}
+	err = hpiPrefixRangeStatic(highPerformanceInternet.RoutingConfiguration.StaticRoutingV6)
+	if err != nil {
+		return nil, err
+	}
+	err = hpiPrefixRangeBgp(highPerformanceInternet.RoutingConfiguration.BgpV4)
+	if err != nil {
+		return nil, err
+	}
+	err = hpiPrefixRangeBgp(highPerformanceInternet.RoutingConfiguration.BgpV6)
+	if err != nil {
+		return nil, err
+	}
+
 	resp := &HighPerformanceInternet{}
 	_, err = c.sendRequest(HighPerformanceInternetURI, postMethod, highPerformanceInternet, &resp)
 	if err != nil {
@@ -109,18 +128,33 @@ func (c *PFClient) UpdateHighPerformanceInternet(highPerformanceInternet *HighPe
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	statusMessage := fmt.Sprintf("HighPerformanceInternet was updated (%s)", highPerformanceInternet.CircuitId)
+	ok, err := c.VerifyHighPerformanceInternetStatus(statusMessage, highPerformanceInternet.CircuitId)
+	if ok && nil == err {
+		return resp, nil
+	}
+	return nil, err
 }
 
 // DELETE /v2/services/high-performance-internet/{circuit_id}        Delete a HPI by circuit_id
 func (c *PFClient) DeleteHighPerformanceInternet(circuitId string) (*HighPerformanceInternetDeleteResponse, error) {
+	statusMessage := fmt.Sprintf("HighPerformanceInternet ready for delete (%s)", circuitId)
+	ok, err := c.VerifyHighPerformanceInternetStatus(statusMessage, circuitId)
+	if !ok || nil != err {
+		return nil, err
+	}
 	formatedURI := fmt.Sprintf("%s/%s", HighPerformanceInternetURI, circuitId)
 	resp := &HighPerformanceInternetDeleteResponse{}
-	_, err := c.sendRequest(formatedURI, deleteMethod, nil, &resp)
+	_, err = c.sendRequest(formatedURI, deleteMethod, nil, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	statusMessage = fmt.Sprintf("HighPerformanceInternet was deleted (%s)", circuitId)
+	ok, err = c.VerifyHighPerformanceInternetStatus(statusMessage, circuitId)
+	if ok && nil == err {
+		return resp, nil
+	}
+	return nil, err
 }
 
 // GET    /v2/services/high-performance-internet/{circuit_id}/bgp    Get the bgp routing configurations for this HPI
@@ -155,8 +189,6 @@ func (c *PFClient) ReadHighPerformanceInternets() ([]HighPerformanceInternet, er
 	}
 	return resp, nil
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GET    /v2/services/high-performance-internet/{circuit_id}        Get a HPI by circuit_id
 // Note: RoutingConfiguration will be empty and must be filled with calls to GET bgp and static
@@ -243,4 +275,111 @@ func (c *PFClient) AddHighPerformanceInternetStaticRoutes(hpi *HighPerformanceIn
 
 	}
 	return hpi, nil
+}
+
+func (c *PFClient) GetHighPerformanceInternetStatus(circuitId string) (*ServiceState, error) {
+	formatedURI := fmt.Sprintf("%s/%s/status", HighPerformanceInternetURI, circuitId)
+	expectedResp := &ServiceState{}
+	_, err := c.sendRequest(formatedURI, getMethod, nil, expectedResp)
+	if err != nil {
+		return nil, err
+	}
+	return expectedResp, nil
+}
+
+func (c *PFClient) VerifyHighPerformanceInternetStatus(message string, circuitId string) (bool, error) {
+	i, e := c.Retry(
+		message,
+		func() (interface{}, error) {
+			state, err := c.GetHighPerformanceInternetStatus(circuitId)
+			if nil != state && nil == err {
+				status := state.Status.Current
+				if "FAILED" == status.State {
+					err = fmt.Errorf("HighPerformanceInternet error: %s", status.Description)
+					return false, err
+				}
+				if "COMPLETE" == status.State || "ACTIVE" == status.State {
+					return true, nil
+				}
+			}
+			return false, err
+		},
+	)
+	return i.(bool), e
+}
+
+func checkHighPerformanceInternetStatus(c *PFClient, circuitId string) bool {
+	done := make(chan bool)
+	defer close(done)
+	fn := func() (*ServiceState, error) {
+		state, err := c.GetHighPerformanceInternetStatus(circuitId)
+		if nil != state && nil == err {
+			if "FAILED" == state.Status.Current.State {
+				err = fmt.Errorf("HighPerformanceInternet error: %s", state.Status.Current.Description)
+				return nil, err
+			}
+		}
+		return state, err
+	}
+	go c.CheckServiceStatus(done, fn)
+	return <-done
+}
+
+////
+
+func hpiPrefixRangeStatic(cfg *HighPerformanceInternetStaticConfiguration) error {
+	if nil == cfg || cfg.L3Address != cfg.RemoteAddress {
+		return nil
+	}
+	addresses, err := cidrToHosts(cfg.L3Address)
+	if nil != err {
+		return fmt.Errorf("HPI could not split L3Address %s: %v", cfg.L3Address, err)
+	}
+	if 2 < len(addresses) {
+		return fmt.Errorf("HPI could not split L3Address %s into 2+ addresses", cfg.L3Address)
+	}
+	cfg.L3Address = addresses[0]
+	cfg.RemoteAddress = addresses[1]
+	return nil
+}
+
+func hpiPrefixRangeBgp(cfg *HighPerformanceInternetBgpConfiguration) error {
+	if nil == cfg || cfg.L3Address != cfg.RemoteAddress {
+		return nil
+	}
+	addresses, err := cidrToHosts(cfg.L3Address)
+	if nil != err {
+		return fmt.Errorf("HPI could not split L3Address %s: %v", cfg.L3Address, err)
+	}
+	if 2 < len(addresses) {
+		return fmt.Errorf("HPI could not split L3Address %s into 2+ addresses", cfg.L3Address)
+	}
+	cfg.L3Address = addresses[0]
+	cfg.RemoteAddress = addresses[1]
+	return nil
+}
+
+func cidrToHosts(cidr string) ([]string, error) {
+	ip, ipnet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return nil, err
+	}
+
+	size, _ := ipnet.Mask.Size()
+
+	var ips []string
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); ipInc(ip) {
+		ips = append(ips, fmt.Sprintf("%s/%d", ip.String(), size))
+	}
+	// remove network address and broadcast address
+	return ips[1 : len(ips)-1], nil
+}
+
+func ipInc(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]++
+		if ip[j] > 0 {
+			break
+		}
+	}
 }

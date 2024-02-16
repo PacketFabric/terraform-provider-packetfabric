@@ -322,7 +322,11 @@ func extractStaticRoutingPrefixes(prefixes *schema.Set) []packetfabric.HighPerfo
 /////////////////////////////////
 
 func extractBgpRoutingConfiguration(bgpRoutingConfiguration *schema.Set) *packetfabric.HighPerformanceInternetBgpConfiguration {
-	bgpRoutingConfigurationMap := bgpRoutingConfiguration.List()[0].(map[string]interface{})
+	bgpRoutingConfigurationList := bgpRoutingConfiguration.List()
+	if 0 == len(bgpRoutingConfigurationList) {
+		return nil
+	}
+	bgpRoutingConfigurationMap := bgpRoutingConfigurationList[0].(map[string]interface{})
 	return &packetfabric.HighPerformanceInternetBgpConfiguration{
 		Asn:           bgpRoutingConfigurationMap["asn"].(int),
 		L3Address:     bgpRoutingConfigurationMap["l3_address"].(string),
