@@ -70,6 +70,10 @@ func resourceIpamPrefix() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"linked_object_circuit_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -212,6 +216,7 @@ func resourceIpamPrefixRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("family", ipamPrefix.Family)
 	_ = d.Set("ip_address", ipamPrefix.IpAddress)
 	_ = d.Set("circuit_id", ipamPrefix.CircuitId)
+	_ = d.Set("linked_object_circuit_id", ipamPrefix.LinkedCircuitId)
 	_ = d.Set("type", ipamPrefix.Type)
 	_ = d.Set("org_id", ipamPrefix.OrgId)
 	_ = d.Set("address", ipamPrefix.Address)
@@ -260,6 +265,9 @@ func extractIpamPrefix(d *schema.ResourceData) packetfabric.IpamPrefix {
 	}
 	if circuit_id, ok := d.GetOk("circuit_id"); ok {
 		ipamPrefix.CircuitId = circuit_id.(string)
+	}
+	if linked_object_circuit_id, ok := d.GetOk("linked_object_circuit_id"); ok {
+		ipamPrefix.LinkedCircuitId = linked_object_circuit_id.(string)
 	}
 	if type_, ok := d.GetOk("type"); ok {
 		ipamPrefix.Type = type_.(string)

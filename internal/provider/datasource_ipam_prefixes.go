@@ -26,6 +26,10 @@ func datasourceIpamPrefixes() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"linked_object_circuit_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"type": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -152,6 +156,7 @@ func flattenIpamPrefixes(ipamPrefixes *[]packetfabric.IpamPrefix) []interface{} 
 			flatten := make(map[string]interface{})
 			flatten["ip_address"] = ipamPrefix.IpAddress
 			flatten["circuit_id"] = ipamPrefix.CircuitId
+			flatten["linked_object_circuit_idk"] = ipamPrefix.LinkedCircuitId
 			flatten["type"] = ipamPrefix.Type
 			flatten["org_id"] = ipamPrefix.OrgId
 			flatten["address"] = ipamPrefix.Address

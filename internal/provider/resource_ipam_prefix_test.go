@@ -26,6 +26,7 @@ func TestAccIpamPrefixRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "family"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "ip_address"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "circuit_id"),
+					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "linked_object_circuit_id"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "type"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "org_id"),
 					resource.TestCheckResourceAttrSet(ipamPrefixResult.ResourceName, "address"),
