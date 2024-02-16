@@ -31,6 +31,7 @@ Read-Only:
 - `city` (String)
 - `ip_address` (String)
 - `ipj_details` (Set of Object) (see [below for nested schema](#nestedobjatt--ipam_prefixes--ipj_details))
+- `linked_object_circuit_id` (String)
 - `org_id` (String)
 - `postal_code` (String)
 - `tech_ipam_contact_uuid` (String)

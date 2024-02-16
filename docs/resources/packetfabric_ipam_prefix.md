@@ -37,6 +37,7 @@ description: |-
 - `circuit_id` (String)
 - `id` (String) The ID of this resource.
 - `ip_address` (String)
+- `linked_object_circuit_id` (String)
 - `prefix` (String)
 - `state` (String)
 - `time_created` (String)
