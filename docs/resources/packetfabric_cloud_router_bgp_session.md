@@ -198,10 +198,10 @@ Optional:
 - `dnat_mappings` (Block Set) Translate the destination IP address. (see [below for nested schema](#nestedblock--nat--dnat_mappings))
 - `nat_type` (String) The NAT type of the NAT connection, source NAT (overload) or destination NAT (inline_dnat). 
 		Enum: overload, inline_dnat. Defaults: overload
-- `pool_prefixes` (List of String) If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.
+- `pool_prefixes` (Set of String) If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.
 
 	Example: 10.0.0.0/32
-- `pre_nat_sources` (List of String) If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.
+- `pre_nat_sources` (Set of String) If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.
 
 	Example: 10.0.0.0/24
 

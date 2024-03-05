@@ -144,7 +144,7 @@ func resourceBgpSession() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"pre_nat_sources": {
-							Type:        schema.TypeList,
+							Type:        schema.TypeSet,
 							Optional:    true,
 							Description: "If using NAT overload, this is the prefixes from the cloud that you want to associate with the NAT pool.\n\n\tExample: 10.0.0.0/24",
 							Elem: &schema.Schema{
@@ -153,7 +153,7 @@ func resourceBgpSession() *schema.Resource {
 							},
 						},
 						"pool_prefixes": {
-							Type:        schema.TypeList,
+							Type:        schema.TypeSet,
 							Optional:    true,
 							Description: "If using NAT overload, all prefixes that are NATed on this connection will be translated to the pool prefix address.\n\n\tExample: 10.0.0.0/32",
 							Elem: &schema.Schema{
@@ -578,6 +578,10 @@ func extractConnBgpSessionPrefixes(d *schema.ResourceData) []packetfabric.BgpPre
 	return make([]packetfabric.BgpPrefix, 0)
 }
 
+func setToList(set interface{}) []interface{} {
+	return set.(*schema.Set).List()
+}
+
 func extractConnBgpSessionNat(n map[string]interface{}) *packetfabric.BgpNat {
 	nat := packetfabric.BgpNat{}
 	if direction := n["direction"]; direction != nil {
@@ -586,8 +590,8 @@ func extractConnBgpSessionNat(n map[string]interface{}) *packetfabric.BgpNat {
 	if natType := n["nat_type"]; natType != nil {
 		nat.NatType = natType.(string)
 	}
-	nat.PreNatSources = extractPreNatSources(n["pre_nat_sources"])
-	nat.PoolPrefixes = extractPoolPrefixes(n["pool_prefixes"])
+	nat.PreNatSources = extractPreNatSources(setToList(n["pre_nat_sources"]))
+	nat.PoolPrefixes = extractPoolPrefixes(setToList(n["pool_prefixes"]))
 	nat.DnatMappings = extractConnBgpSessionDnat(n["dnat_mappings"].(*schema.Set))
 	return &nat
 }
