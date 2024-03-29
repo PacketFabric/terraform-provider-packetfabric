@@ -1,3 +1,13 @@
+## 1.8.0  (March 29, 2024)
+
+FEATURES:
+
+* Add subscription_term to several resource types
+
+BUG FIXES:
+
+* Inconsistent result after apply when configuring BFD for BGP session (#543)
+
 ## 1.7.0  (August 24, 2023)
 
 BUG FIXES:
