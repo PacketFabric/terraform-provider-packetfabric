@@ -192,6 +192,7 @@ type BgpSettings struct {
 	AsPrepend                int         `json:"as_prepend,omitempty"`
 	BfdInterval              int         `json:"bfd_interval,omitempty"`
 	BfdMultiplier            int         `json:"bfd_multiplier,omitempty"`
+	IncludeSubDefaults       bool        `json:"include_sub_defaults,omitempty"`
 	CustomerAsn              int         `json:"customer_asn,omitempty"`
 	CustomerRouterIp         string      `json:"customer_router_ip,omitempty"`
 	Disabled                 bool        `json:"disabled,omitempty"`

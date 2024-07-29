@@ -214,6 +214,9 @@ func extractBgpSessionFromCloudSettings(d *schema.ResourceData, bgpSettings map[
 	if bfdMultiplier, ok := bgpSettings["bfd_multiplier"]; ok && bfdMultiplier.(int) != 0 {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
 	}
+	if includeSubDefaults, ok := d.GetOk("include_sub_defaults"); ok {
+		bgpSession.IncludeSubDefaults = includeSubDefaults.(bool)
+	}
 	if md5, ok := bgpSettings["md5"]; ok && md5.(string) != "" {
 		bgpSession.Md5 = md5.(string)
 	} else {
@@ -377,6 +380,9 @@ func extractRouterConnBgpSettings(bgpSettingsMap map[string]interface{}) *packet
 	}
 	if bfdMultiplier, ok := bgpSettingsMap["bfd_multiplier"]; ok {
 		bgpSettings.BfdMultiplier = bfdMultiplier.(int)
+	}
+	if includeSubDefaults, ok := bgpSettingsMap["include_sub_defaults"]; ok {
+		bgpSettings.IncludeSubDefaults = includeSubDefaults.(bool)
 	}
 	if nat, ok := bgpSettingsMap["nat"]; ok {
 		for _, nat := range nat.(*schema.Set).List() {

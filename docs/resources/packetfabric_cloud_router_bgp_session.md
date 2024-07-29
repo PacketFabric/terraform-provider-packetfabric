@@ -141,6 +141,7 @@ resource "packetfabric_cloud_router_bgp_session" "cr_bgp1" {
 
 	Available range is 2 through 16.
 - `disabled` (Boolean) Whether this BGP session is disabled. Defaults: false
+- `include_sub_defaults` (Boolean) Set this to true to Enable Quick Internet to announce more specific default-route to customer. Defaults: falseDefaults: false
 - `l3_address` (String) The L3 address of this instance. Not used for Azure connections. Required for all other CSP.
 - `local_preference` (Number) The local preference for this instance. When the same route is received in multiple locations, those with a higher local preference value are preferred by the cloud router. It is used when type = in.
 
