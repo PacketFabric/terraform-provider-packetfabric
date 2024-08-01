@@ -49,6 +49,7 @@ Read-Only:
 - `bgp_settings_uuid` (String)
 - `bgp_state` (String)
 - `disabled` (Boolean)
+- `include_sub_defaults` (Boolean)
 - `l3_address` (String)
 - `local_preference` (Number)
 - `med` (Number)

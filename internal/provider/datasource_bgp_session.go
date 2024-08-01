@@ -88,6 +88,11 @@ func dataSourceBgpSession() *schema.Resource {
 							Computed:    true,
 							Description: "The number of BFD Control packets not received by a neighbor that causes the session to be declared down.\n\t\tAvailable range is 2 through 16.",
 						},
+						"include_sub_defaults": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Set this to true to Enable Quick Internet to announce more specific default-route to customer. Defaults: false",
+						},
 						"disabled": {
 							Type:        schema.TypeBool,
 							Computed:    true,
@@ -266,6 +271,7 @@ func flattenBgpSessions(sessions *[]packetfabric.BgpSessionAssociatedResp) []int
 			flatten["orlonger"] = session.Orlonger
 			flatten["bfd_interval"] = session.BfdInterval
 			flatten["bfd_multiplier"] = session.BfdMultiplier
+			flatten["include_sub_defaults"] = session.IncludeSubDefaults
 			flatten["disabled"] = session.Disabled
 			flatten["bgp_state"] = session.BgpState
 			flatten["time_created"] = session.TimeCreated

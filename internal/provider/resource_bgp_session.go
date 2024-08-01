@@ -130,6 +130,12 @@ func resourceBgpSession() *schema.Resource {
 				ValidateFunc: validation.IntBetween(2, 16),
 				Description:  "If you are using BFD, this is the number of consecutive packets that can be lost before BFD considers a peer down and shuts down BGP.\n\n\tAvailable range is 2 through 16. ",
 			},
+			"include_sub_defaults": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Set this to true to Enable Quick Internet to announce more specific default-route to customer. Defaults: false",
+			},
 			"disabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -348,6 +354,7 @@ func resourceBgpSessionRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("local_preference", bgp.LocalPreference)
 	_ = d.Set("bfd_interval", bgp.BfdInterval)
 	_ = d.Set("bfd_multiplier", bgp.BfdMultiplier)
+	_ = d.Set("include_sub_defaults", bgp.IncludeSubDefaults)
 
 	if bgp.Nat != nil {
 		nat := flattenNatConfiguration(bgp.Nat)
@@ -451,6 +458,9 @@ func extractBgpSessionCreate(d *schema.ResourceData) packetfabric.BgpSession {
 	if bfdMultiplier, ok := d.GetOk("bfd_multiplier"); ok {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
 	}
+	if includeSubDefaults, ok := d.GetOk("include_sub_defaults"); ok {
+		bgpSession.IncludeSubDefaults = includeSubDefaults.(bool)
+	}
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)
 	}
@@ -519,6 +529,9 @@ func extractBgpSessionUpdate(d *schema.ResourceData, c *packetfabric.PFClient, c
 	}
 	if bfdMultiplier, ok := d.GetOk("bfd_multiplier"); ok {
 		bgpSession.BfdMultiplier = bfdMultiplier.(int)
+	}
+	if includeSubDefaults, ok := d.GetOk("include_sub_defaults"); ok {
+		bgpSession.IncludeSubDefaults = includeSubDefaults.(bool)
 	}
 	if md5, ok := d.GetOk("md5"); ok {
 		bgpSession.Md5 = md5.(string)

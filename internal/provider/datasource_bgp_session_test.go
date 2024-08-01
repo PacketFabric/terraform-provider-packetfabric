@@ -32,6 +32,7 @@ func TestAccDataSourceBgpSessionComputedRequiredFields(t *testing.T) {
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.med"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.bfd_interval"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.bfd_multiplier"),
+					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.include_sub_defaults"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.disabled"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.time_created"),
 					resource.TestCheckResourceAttrSet(datasourceBgpSessionResult.ResourceName, "bgp_sessions.0.prefixes.0.bgp_prefix_uuid"),
