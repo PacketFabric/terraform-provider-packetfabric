@@ -140,11 +140,11 @@ func (c *PFClient) CheckLagMembersUpdated(lagId string, expectedMembersList []st
 				return false, err
 			}
 			if len(*interfs) != len(expectedMembersList) {
-				return false, fmt.Errorf(message)
+				return false, fmt.Errorf("%s", message)
 			}
 			for _, interf := range *interfs {
 				if !ListContains(expectedMembersList, interf.PortCircuitID) {
-					return false, fmt.Errorf(message)
+					return false, fmt.Errorf("%s", message)
 				}
 			}
 			return true, nil
