@@ -1,4 +1,4 @@
-## 1.8.0  (September 12, 2024)
+## 1.9.0  (September 12, 2024)
 
 FEATURES:
 
