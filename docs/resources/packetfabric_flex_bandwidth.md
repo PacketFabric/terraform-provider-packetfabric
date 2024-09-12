@@ -30,6 +30,7 @@ resource "packetfabric_flex_bandwidth" "flex1" {
 
 ### Required
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `capacity` (String) Capacity of the flex bandwidth container. Must be in the format XXGbps.
 
 	Enum: ["100Gbps" "150Gbps" "200Gbps" "250Gbps" "300Gbps" "350Gbps" "400Gbps" "450Gbps" "500Gbps"]
@@ -40,7 +41,6 @@ resource "packetfabric_flex_bandwidth" "flex1" {
 
 ### Optional
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `po_number` (String) Purchase order number or identifier of a service.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

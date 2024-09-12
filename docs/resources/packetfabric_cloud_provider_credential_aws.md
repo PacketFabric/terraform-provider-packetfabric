@@ -26,12 +26,9 @@ resource "packetfabric_cloud_provider_credential_aws" "aws_creds_staged" {
 
 ### Required
 
-- `description` (String) Description of the Cloud Provider Credentials.
-
-### Optional
-
 - `aws_access_key` (String, Sensitive) The AWS access key you want to save. Can also be set with the AWS_ACCESS_KEY_ID environment variable.
 - `aws_secret_key` (String, Sensitive) The AWS secret key you want to save. Can also be set with the AWS_SECRET_ACCESS_KEY environment variable.
+- `description` (String) Description of the Cloud Provider Credentials.
 
 ### Read-Only
 

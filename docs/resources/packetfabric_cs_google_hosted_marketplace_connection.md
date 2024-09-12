@@ -33,6 +33,7 @@ resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_market
 
 ### Required
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `google_pairing_key` (String) The Google pairing key to use for this connection. This is provided when you create the VLAN attachment from the Google Cloud console.
 - `google_vlan_attachment_name` (String) The name you used for your VLAN attachment in Google.
@@ -49,7 +50,6 @@ resource "packetfabric_cs_google_hosted_marketplace_connection" "cs_conn1_market
 
 ### Optional
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

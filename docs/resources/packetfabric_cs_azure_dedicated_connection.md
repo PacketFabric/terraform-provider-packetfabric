@@ -32,6 +32,7 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
 
 ### Required
 
+- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `description` (String) A brief description of this connection.
 - `encapsulation` (String) Specify either QinQ and Dot1Q encapsulation.
 
@@ -55,7 +56,6 @@ resource "packetfabric_cs_azure_dedicated_connection" "pf_cs_conn1_dedicated_azu
 
 ### Optional
 
-- `account_uuid` (String) The UUID for the billing account that should be billed. Can also be set with the PF_ACCOUNT_ID environment variable.
 - `labels` (Set of String) Label value linked to an object.
 - `loa` (String) A base64 encoded string of a PDF for the LOA that you generated from the Azure portal
 - `po_number` (String) Purchase order number or identifier of a service.
