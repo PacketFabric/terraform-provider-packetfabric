@@ -1,4 +1,4 @@
-## 1.9.0  (September 12, 2024)
+## 1.9.1  (September 12, 2024)
 
 FEATURES:
 
@@ -7,6 +7,10 @@ FEATURES:
 IMPROVEMENTS/ENHANCEMENTS:
 
 * Adjust required fields in the documentation
+
+## 1.9.0  (September 12, 2024)
+
+Skipped because of CI problems.
 
 ## 1.8.0  (March 29, 2024)
 
