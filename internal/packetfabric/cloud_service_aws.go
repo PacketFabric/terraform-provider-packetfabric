@@ -551,7 +551,7 @@ func (c *PFClient) WaitDeleteCloudService(vcRequestUUID string) (state *ServiceS
 		state, err = c.GetCloudServiceStatus(vcRequestUUID)
 		if nil == err {
 			if !state.Status.Object.Deleted {
-				err = fmt.Errorf(message)
+				err = fmt.Errorf("%s", message)
 			}
 		} else {
 			if c.Is404(err) {

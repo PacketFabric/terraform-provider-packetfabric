@@ -3,6 +3,7 @@ package packetfabric
 import (
 	"errors"
 	"fmt"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -395,7 +396,7 @@ func (c *PFClient) WaitDeleteCloudRouterConnection(cID, connCid string) (state *
 		state, err = c.GetCloudConnectionStatus(cID, connCid)
 		if nil == err {
 			if !state.Status.Object.Deleted {
-				err = fmt.Errorf(message)
+				err = fmt.Errorf("%s", message)
 			}
 		} else {
 			if c.Is404(err) {

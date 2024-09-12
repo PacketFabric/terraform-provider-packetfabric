@@ -1,3 +1,13 @@
+## 1.8.0  (September 12, 2024)
+
+FEATURES:
+
+* Add include_sub_defaults to BGP Sessions
+
+IMPROVEMENTS/ENHANCEMENTS:
+
+* Adjust required fields in the documentation
+
 ## 1.8.0  (March 29, 2024)
 
 FEATURES:
