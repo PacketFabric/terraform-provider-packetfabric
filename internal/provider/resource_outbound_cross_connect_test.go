@@ -19,6 +19,7 @@ func TestAccOutboundCrossConnect(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: outboundCrossConnectResult.Hcl,
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(outboundCrossConnectResult.ResourceName, "description", outboundCrossConnectResult.Desc),
 					resource.TestCheckResourceAttrSet(outboundCrossConnectResult.ResourceName, "document_uuid"),

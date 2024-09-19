@@ -18,6 +18,10 @@ import (
 const pfPort = "packetfabric_port"
 const pfPortLoa = "packetfabric_port_loa"
 const pfDocument = "packetfabric_document"
+const pfIpamAsn = "packetfabric_ipam_asn"
+const pfIpamContact = "packetfabric_ipam_contact"
+const pfIpamPrefix = "packetfabric_ipam_prefix"
+const pfHighPerformanceInternet = "packetfabric_high_performance_internet"
 const pfOutboundCrossConnect = "packetfabric_outbound_cross_connect"
 const pfLinkAggregationGroup = "packetfabric_link_aggregation_group"
 const pfBackboneVirtualCircuit = "packetfabric_backbone_virtual_circuit"
@@ -52,6 +56,12 @@ const pfDataLocationsZones = "data.packetfabric_locations_pop_zones"
 const pfDataLocationsRegions = "data.packetfabric_locations_regions"
 const pfDataLocationsMarkets = "data.packetfabric_locations_markets"
 const pfDataActivityLogs = "data.packetfabric_activitylogs"
+const pfDataIpamAsns = "data.packetfabric_ipam_asns"
+const pfDataIpamContacts = "data.packetfabric_ipam_contacts"
+const pfDataIpamPrefixes = "data.packetfabric_ipam_prefixes"
+const pfDataHighPerformanceInternets = "data.packetfabric_high_performance_internets"
+const pfDataHighPerformanceInternet = "data.packetfabric_high_performance_internet"
+const pfDataCloudProviderCredentials = "data.packetfabric_cloud_provider_credentials"
 const pfDataPorts = "data.packetfabric_ports"
 const pfDataPortVlans = "data.packetfabric_port_vlans"
 const pfDataPortDeviceInfo = "data.packetfabric_port_device_info"
@@ -283,6 +293,27 @@ type RHcloutboundCrossConnectsResult struct {
 
 // packetfabric_document
 type RHclDocumentResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_asn
+type RHclIpamAsnResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_contact
+type RHclIpamContactResult struct {
+	HclResultBase
+}
+
+// packetfabric_ipam_prefix
+type RHclIpamPrefixResult struct {
+	HclResultBase
+	ContactUuid string
+}
+
+// packetfabric_high_performance_internet
+type RHclHighPerformanceInternetResult struct {
 	HclResultBase
 }
 
@@ -605,6 +636,35 @@ type DHclBillingResult struct {
 	HclResultBase
 }
 
+// data packetfabric_ipam_contacts
+type DHclIpamContactsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_ipam_asns
+type DHclIpamAsnsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_ipam_prefixes
+type DHclIpamPrefixesResult struct {
+	HclResultBase
+}
+
+// data packetfabric_high_performance_internets
+type DHclHighPerformanceInternetsResult struct {
+	HclResultBase
+}
+
+// data packetfabric_high_performance_internet
+type DHclHighPerformanceInternetResult struct {
+	HclResultBase
+}
+
+type DHclCloudProviderCredentialsResult struct {
+	HclResultBase
+}
+
 // data packetfabric_port
 type DHclPortsResult struct {
 	HclResultBase
@@ -769,6 +829,132 @@ func RHclPortLoa() RHclPortLoaResult {
 		},
 		LoaCustomerName:  PortLoaCustomerName,
 		DestinationEmail: email,
+	}
+}
+
+// packetfabric_ipam_asn
+func RHclIpamAsn() RHclIpamAsnResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamAsn)
+	log.Printf("Resource: %s, Resource %s, ResourceName: %s\n", pfIpamAsn, hclName, resourceName)
+
+	hcl := fmt.Sprintf(RResourceIpamAsn, hclName)
+
+	return RHclIpamAsnResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIpamAsn,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// packetfabric_ipam_contact
+func RHclIpamContact() RHclIpamContactResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamContact)
+	log.Printf("Resource: %s, Resource %s, ResourceName: %s\n", pfIpamContact, hclName, resourceName)
+
+	hcl := fmt.Sprintf(RResourceIpamContact, hclName)
+
+	return RHclIpamContactResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfIpamContact,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// packetfabric_ipam_prefix
+func RHclIpamPrefix() RHclIpamPrefixResult {
+	return RHclIpamPrefixByFamily("ipv6", 128, nil)
+}
+
+// packetfabric_ipam_prefix
+func RHclIpamPrefixByFamily(family string, length int, contact *RHclIpamContactResult) RHclIpamPrefixResult {
+	created := false
+	if nil == contact {
+		tmp := RHclIpamContact()
+		contact = &tmp
+		created = true
+	}
+	contactUuid := fmt.Sprintf("%s.id", contact.ResourceName)
+
+	resourceName, hclName := GenerateUniqueResourceName(pfIpamPrefix)
+
+	log.Printf("Resource: %s, Resource %s\n", pfIpamPrefix, hclName)
+
+	hcl := fmt.Sprintf(RResourceIpamPrefix, hclName, length, family, contactUuid, contactUuid)
+
+	combined := ""
+	if created {
+		combined = fmt.Sprintf("%s\n%s", contact.Hcl, hcl)
+	} else {
+		combined = hcl
+	}
+
+	return RHclIpamPrefixResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfIpamPrefix,
+			ResourceName: resourceName,
+		},
+		ContactUuid: contactUuid,
+	}
+}
+
+// packetfabric_high_performance_internet
+func RHclHighPerformanceInternet() RHclHighPerformanceInternetResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfHighPerformanceInternet)
+
+	log.Printf("Resource: %s, Resource %s\n", pfHighPerformanceInternet, hclName)
+
+	portDetails := CreateBasePortDetails()
+	portTestResult := portDetails.RHclPort(true)
+
+	contact := RHclIpamContact()
+
+	v4_l3_address := RHclIpamPrefixByFamily("ipv4", 32, &contact)
+	v4_remote_address := RHclIpamPrefixByFamily("ipv4", 32, &contact)
+	v4_prefix1 := RHclIpamPrefixByFamily("ipv4", 30, &contact)
+	v4_prefix2 := RHclIpamPrefixByFamily("ipv4", 30, &contact)
+	v6_l3_address := RHclIpamPrefixByFamily("ipv6", 128, &contact)
+	v6_remote_address := RHclIpamPrefixByFamily("ipv6", 128, &contact)
+	v6_prefix := RHclIpamPrefixByFamily("ipv6", 120, &contact)
+
+	hcl := fmt.Sprintf(
+		RResourceHighPerformanceInternet,
+		hclName,
+		portTestResult.ResourceName,
+		os.Getenv("PF_ACCOUNT_ID"),
+		portTestResult.ResourceName,
+		backboneVCspeed,
+		v4_l3_address.ResourceName,
+		v4_remote_address.ResourceName,
+		v4_prefix1.ResourceName,
+		v4_prefix2.ResourceName,
+		v6_l3_address.ResourceName,
+		v6_remote_address.ResourceName,
+		v6_prefix.ResourceName,
+	)
+	combined := fmt.Sprintf(
+		"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+		portTestResult.Hcl,
+		contact.Hcl,
+		v4_l3_address.Hcl,
+		v4_remote_address.Hcl,
+		v4_prefix1.Hcl,
+		v4_prefix2.Hcl,
+		v6_l3_address.Hcl,
+		v6_remote_address.Hcl,
+		v6_prefix.Hcl,
+		hcl)
+
+	return RHclHighPerformanceInternetResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfHighPerformanceInternet,
+			ResourceName: resourceName,
+		},
 	}
 }
 
@@ -2273,6 +2459,123 @@ func DHclBilling() DHclBillingResult {
 		HclResultBase: HclResultBase{
 			Hcl:          hcl,
 			Resource:     pfDataBilling,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_ipam_asns
+func DHclIpamAsns() DHclIpamAsnsResult {
+	ipamAsnResult := RHclIpamAsn()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataIpamAsns)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataIpamAsns, hclName)
+
+	hcl := fmt.Sprintf(DDataIpamAsns, hclName, ipamAsnResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", ipamAsnResult.Hcl, hcl)
+
+	return DHclIpamAsnsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataIpamAsns,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_ipam_contacts
+func DHclIpamContacts() DHclIpamContactsResult {
+	ipamContactResult := RHclIpamContact()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataIpamContacts)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataIpamContacts, hclName)
+
+	hcl := fmt.Sprintf(DDataIpamContacts, hclName, ipamContactResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", ipamContactResult.Hcl, hcl)
+
+	return DHclIpamContactsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataIpamContacts,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_high_performance_internets
+func DHclHighPerformanceInternets() DHclHighPerformanceInternetsResult {
+	highPerformanceInternetResult := RHclHighPerformanceInternet()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataHighPerformanceInternets)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataHighPerformanceInternets, hclName)
+
+	hcl := fmt.Sprintf(DDataHighPerformanceInternets, hclName, highPerformanceInternetResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", highPerformanceInternetResult.Hcl, hcl)
+
+	return DHclHighPerformanceInternetsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataHighPerformanceInternets,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_high_performance_internet
+func DHclHighPerformanceInternet() DHclHighPerformanceInternetResult {
+	highPerformanceInternetResult := RHclHighPerformanceInternet()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataHighPerformanceInternet)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataHighPerformanceInternet, hclName)
+
+	hcl := fmt.Sprintf(
+		DDataHighPerformanceInternet,
+		hclName,
+		highPerformanceInternetResult.ResourceName,
+		highPerformanceInternetResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", highPerformanceInternetResult.Hcl, hcl)
+
+	return DHclHighPerformanceInternetResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataHighPerformanceInternet,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_ipam_prefixes
+func DHclIpamPrefixes() DHclIpamPrefixesResult {
+	ipamPrefixResult := RHclIpamPrefix()
+
+	resourceName, hclName := GenerateUniqueResourceName(pfDataIpamPrefixes)
+	log.Printf("Data-source: %s, Data-source name: %s\n", pfDataIpamPrefixes, hclName)
+
+	hcl := fmt.Sprintf(DDataIpamPrefixes, hclName, ipamPrefixResult.ResourceName)
+	combined := fmt.Sprintf("%s\n%s", ipamPrefixResult.Hcl, hcl)
+
+	return DHclIpamPrefixesResult{
+		HclResultBase: HclResultBase{
+			Hcl:          combined,
+			Resource:     pfDataIpamPrefixes,
+			ResourceName: resourceName,
+		},
+	}
+}
+
+// data.packetfabric_cloud_provider_credentials
+func DHclCloudProviderCredentials() DHclCloudProviderCredentialsResult {
+	resourceName, hclName := GenerateUniqueResourceName(pfDataCloudProviderCredentials)
+
+	awsCred := RHclCloudProviderCredentialAws()
+
+	hcl := fmt.Sprintf(DDataSourceCloudProviderCredentials, hclName, awsCred.ResourceName)
+	hcl = fmt.Sprintf("%s\n%s\n", awsCred.Hcl, hcl)
+
+	return DHclCloudProviderCredentialsResult{
+		HclResultBase: HclResultBase{
+			Hcl:          hcl,
+			Resource:     pfDataCloudProviderCredentials,
 			ResourceName: resourceName,
 		},
 	}

@@ -13,6 +13,7 @@ import (
 	"net/textproto"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"time"
 
@@ -105,7 +106,15 @@ func (c *PFClient) _doRequest(req *http.Request, authToken *string, customHeader
 	}
 	if res.StatusCode == http.StatusBadRequest ||
 		res.StatusCode == http.StatusUnauthorized ||
+		res.StatusCode >= http.StatusInternalServerError ||
 		res.StatusCode == http.StatusNotFound {
+		c.WriteDebug(map[string]interface{}{
+			"msg":    "client.error",
+			"url":    req.URL,
+			"method": req.Method,
+			"body":   string(body),
+			"code":   res.StatusCode,
+		})
 		return res, nil, fmt.Errorf("Status: %d, body: %s", res.StatusCode, body)
 	}
 	return res, body, err
@@ -124,16 +133,25 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 		if mErr != nil {
 			return nil, mErr
 		}
-		req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+		req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+		if err != nil {
+			return nil, err
+		}
 	case deleteMethod:
 		if payload != nil {
 			rb, pErr := json.Marshal(payload)
 			if pErr != nil {
 				return nil, pErr
 			}
-			req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+			req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, strings.NewReader(string(rb)))
+			if err != nil {
+				return nil, err
+			}
 		} else {
-			req, _ = http.NewRequestWithContext(c.Ctx, method, formatedURL, nil)
+			req, err = http.NewRequestWithContext(c.Ctx, method, formatedURL, nil)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	res, body, err := c._doRequest(req, &c.Token)
@@ -142,6 +160,16 @@ func (c *PFClient) sendRequest(uri, method string, payload interface{}, resp int
 	}
 	if resp != nil {
 		err = json.Unmarshal(body, &resp)
+		c.WriteDebug(map[string]interface{}{
+			"msg":         "client.bodily",
+			"uri":         uri,
+			"formatedURL": formatedURL,
+			"method":      method,
+			"payload":     payload,
+			"resp":        resp,
+			"body":        string(body),
+			"code":        res.StatusCode,
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -259,4 +287,22 @@ func (c *PFClient) IsCode(err error, code int) bool {
 
 func (c *PFClient) Is404(err error) bool {
 	return c.IsCode(err, 404)
+}
+
+func (c *PFClient) WriteDebug(something interface{}) {
+	file, err := os.OpenFile("/tmp/debug-pf-tf.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	s := something
+	if reflect.TypeOf(s).Kind() != reflect.String {
+		jsonData, err := json.Marshal(s)
+		if err != nil {
+			return
+		}
+		s = string(jsonData)
+	}
+	_, _ = file.WriteString(s.(string) + "\n")
 }
