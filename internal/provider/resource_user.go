@@ -102,7 +102,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	c := m.(*packetfabric.PFClient)
 	c.Ctx = ctx
 	var diags diag.Diagnostics
-	userID := d.Get("login").(string)
+	userID := d.Id()
 	resp, err := c.ReadUsers(userID)
 	if err != nil {
 		return diag.FromErr(err)
