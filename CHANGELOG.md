@@ -1,3 +1,9 @@
+## 1.9.3  (November 27, 2024)
+
+BUG FIXES:
+
+* Fixed an issue with importing users
+
 ## 1.9.2  (September 12, 2024)
 
 FEATURES:
