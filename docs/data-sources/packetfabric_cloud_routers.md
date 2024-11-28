@@ -36,6 +36,7 @@ Read-Only:
 
 - `asn` (Number)
 - `capacity` (String)
+- `circuit_id` (String)
 - `name` (String)
 - `regions` (Set of Object) (see [below for nested schema](#nestedobjatt--cloud_routers--regions))
 - `subscription_term` (Number)

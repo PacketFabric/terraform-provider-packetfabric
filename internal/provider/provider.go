@@ -116,6 +116,10 @@ func Provider() *schema.Provider {
 			"packetfabric_user":                                    resourceUser(),
 			"packetfabric_streaming_events":                        resourceStreamingEvents(),
 			"packetfabric_document":                                resourceDocuments(),
+			"packetfabric_ipam_asn":                                resourceIpamAsn(),
+			"packetfabric_ipam_contact":                            resourceIpamContact(),
+			"packetfabric_ipam_prefix":                             resourceIpamPrefix(),
+			"packetfabric_high_performance_internet":               resourceHighPerformanceInternet(),
 		},
 		// packetfabric_cloud_router - https://docs.packetfabric.com/api/v2/redoc/#operation/cloud_routers_list
 		// packetfabric_cloud_router_bgp_prefixes - https://docs.packetfabric.com/api/v2/redoc/#operation/bgp_session_settings_list
@@ -135,6 +139,12 @@ func Provider() *schema.Provider {
 			"packetfabric_cs_dedicated_connections":           datasourceDedicatedCloudConnections(),
 			"packetfabric_billing":                            dataSourceBilling(),
 			"packetfabric_ports":                              datasourceInterfaces(),
+			"packetfabric_ipam_asns":                          datasourceIpamAsns(),
+			"packetfabric_ipam_contacts":                      datasourceIpamContacts(),
+			"packetfabric_ipam_prefixes":                      datasourceIpamPrefixes(),
+			"packetfabric_high_performance_internets":         datasourceHighPerformanceInternets(),
+			"packetfabric_high_performance_internet":          datasourceHighPerformanceInternet(),
+			"packetfabric_cloud_provider_credentials":         datasourceCloudProviderCredentials(),
 			"packetfabric_locations":                          dataSourceLocations(),
 			"packetfabric_link_aggregation_group":             datasourceLinkAggregationGroups(),
 			"packetfabric_outbound_cross_connects":            dataSourceOutboundCrossConnects(),

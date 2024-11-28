@@ -776,6 +776,114 @@ const RResourcePortLoa = `resource "packetfabric_port_loa" "%s" {
   destination_email = "%s"
 }`
 
+// Resource: packetfabric_ipamAsn
+const RResourceIpamAsn = `resource "packetfabric_ipam_asn" "%s" {
+	asn_byte_type = 2
+}`
+
+const RResourceIpamContact = `resource "packetfabric_ipam_contact" "%s" {
+	name         = "Jane Smith"
+	address      = "1234 Peachtree St, Atlanta, GA"
+	country_code = "US"
+	phone        = "123-456-7890"
+	email        = "jane.smith@test.com"
+	apnic_org_id = "Optional APNIC Organization ID"
+	ripe_org_id  = "Optional RIPE Organization ID"
+	apnic_ref    = "Optional APNIC Reference"
+	ripe_ref     = "Optional RIPE Reference"
+}`
+
+// Resource: packetfabric_ipam_prefix
+const RResourceIpamPrefix = `resource "packetfabric_ipam_prefix" "%s" {
+	length      = %d
+	market      = "NYC"
+	family      = "%s"
+	org_id      = "idk"
+	address     = "1234 Peachtree St"
+	city        = "Atlanta"
+	postal_code = "30339"
+
+	admin_ipam_contact_uuid = %s
+	tech_ipam_contact_uuid  = %s
+
+	ipj_details {
+		planned_prefix {
+			description   = "An optional description"
+			location      = "Optional Location"
+			usage_30d     = 2
+			usage_3m      = 0
+			usage_6m      = 2
+			usage_1y      = 3
+		}
+	}
+}`
+
+// Resource: packetfabric_high_performance_internet
+const RResourceHighPerformanceInternet = `resource "packetfabric_high_performance_internet" "%s" {
+	depends_on = [%s]
+	account_uuid          = "%s"
+    port_circuit_id       = %s.id
+	speed                 = "%s"
+	vlan                  = 4
+	description           = "HPI for customer A"
+	routing_configuration {
+		bgp_v4 {
+			asn =  65056
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			md5            =  "string"
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference =  100
+			}
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference =  100
+			}
+		}
+		bgp_v6 {
+			asn            =  65000
+			l3_address     = %s.ip_address 
+			remote_address = %s.ip_address
+			md5            = "string"
+			prefixes {
+				prefix           = %s.ip_address
+				local_preference = 100
+			}
+		}
+	}
+}`
+
+// Resource: packetfabric_high_performance_internet
+const RResourceHighPerformanceInternetStatic = `resource "packetfabric_high_performance_internet" "%s" {
+	account_uuid          = "%s"
+    port_circuit_id       = %s.id
+	speed                 = "%s"
+	vlan                  = 4
+	description           = "HPI for customer A"
+	account_uuid          = "%s"
+	routing_configuration {
+		static_v4 {
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			static_routes {
+				{
+					prefix = %s.ip_address
+				}
+			}
+		}
+		static_v6 {
+			l3_address     = %s.ip_address
+			remote_address = %s.ip_address
+			static_routes {
+				{
+					prefix =  %s.ip_address
+				}
+			}
+		}
+	}
+}`
+
 // Resource: packetfabric_outbound_cross_connect
 const RResourceDocumentMSA = `resource "packetfabric_document" "%s" {
   provider        = packetfabric
@@ -828,6 +936,43 @@ const DDatasourceActivityLogs = `data "packetfabric_activitylogs" "%s" {
 // Datasource: packetfabric_billing
 const DDatasourceBilling = `data "packetfabric_billing" "%s" {
   circuit_id        = %s.id
+}`
+
+// Datasource: packetfabric_ipam_asns
+const DDataIpamAsns = `data "packetfabric_ipam_asns" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_ipam_contacts
+const DDataIpamContacts = `data "packetfabric_ipam_contacts" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_ipam_prefixes
+const DDataIpamPrefixes = `data "packetfabric_ipam_prefixes" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_high_performance_internets
+const DDataHighPerformanceInternets = `data "packetfabric_high_performance_internets" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+}`
+
+// Datasource: packetfabric_high_performance_internet
+const DDataHighPerformanceInternet = `data "packetfabric_high_performance_internet" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
+  circuit_id = %s.circuit_id
+}`
+
+// Datasource: packetfabric_cloud_provider_credentials
+const DDataSourceCloudProviderCredentials = `data "packetfabric_cloud_provider_credentials" "%s" {
+  provider   = packetfabric
+  depends_on = [%s]
 }`
 
 // Datasource: packetfabric_ports
